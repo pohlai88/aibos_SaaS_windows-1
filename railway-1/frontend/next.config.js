@@ -17,6 +17,14 @@ const nextConfig = {
       },
     ];
   },
+  // Ensure TypeScript is properly configured
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  // Ensure ESLint is properly configured
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
 };
 
 module.exports = nextConfig; 

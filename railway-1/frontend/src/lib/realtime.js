@@ -57,7 +57,7 @@ class RealtimeClient {
 
   getWebSocketUrl() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = process.env.NEXT_PUBLIC_BACKEND_URL || window.location.host;
+    const host = process.env.NEXT_PUBLIC_API_URL || window.location.host;
     return `${protocol}//${host.replace('http://', '').replace('https://', '')}`;
   }
 

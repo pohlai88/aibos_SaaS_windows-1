@@ -9,6 +9,11 @@
   "env": {
     "NEXT_PUBLIC_API_URL": "@aibos-api-url"
   },
+  "functions": {
+    "src/app/**/*.tsx": {
+      "maxDuration": 30
+    }
+  },
   "headers": [
     {
       "source": "/api/(.*)",
