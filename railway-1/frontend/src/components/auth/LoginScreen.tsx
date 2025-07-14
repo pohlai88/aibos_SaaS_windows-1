@@ -10,6 +10,7 @@ export function LoginScreen() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   
   const { login, register } = useAuth();
 
@@ -20,10 +21,23 @@ export function LoginScreen() {
     tenant_name: '',
   });
 
+  // Password validation function
+  const validatePassword = (password: string) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return regex.test(password);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setPasswordError('');
+
+    if (!validatePassword(formData.password)) {
+      setPasswordError('Password must be at least 8 characters, include uppercase, lowercase, and a number.');
+      setLoading(false);
+      return;
+    }
 
     try {
       if (isLogin) {
@@ -98,6 +112,15 @@ export function LoginScreen() {
               onChange={(value) => handleInputChange('password', value)}
               required
             />
+            {/* Password rules helper text */}
+            <div className="text-xs text-gray-500 mb-2">
+              Password must be at least 8 characters, include uppercase, lowercase, and a number.
+            </div>
+            {passwordError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-2 mb-2">
+                <p className="text-xs text-red-600">{passwordError}</p>
+              </div>
+            )}
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3">
