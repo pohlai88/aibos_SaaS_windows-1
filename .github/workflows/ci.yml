@@ -1,0 +1,414 @@
+name: AI-BOS CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18'
+  NPM_VERSION: '9'
+
+jobs:
+  # Security and Code Quality
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd railway-1/backend && npm ci
+          cd ../frontend && npm ci
+
+      - name: Run security audit
+        run: |
+          npm audit --audit-level=moderate
+          cd railway-1/backend && npm audit --audit-level=moderate
+          cd ../frontend && npm audit --audit-level=moderate
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: Run CodeQL analysis
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript, typescript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  # Code Quality and Linting
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd railway-1/backend && npm ci
+          cd ../frontend && npm ci
+
+      - name: Run ESLint
+        run: |
+          npm run lint
+          cd railway-1/backend && npm run lint
+          cd ../frontend && npm run lint
+
+      - name: Run Prettier check
+        run: |
+          npm run format:check
+          cd railway-1/backend && npm run format:check
+          cd ../frontend && npm run format:check
+
+      - name: Check TypeScript
+        run: |
+          npm run type-check
+          cd railway-1/backend && npm run type-check
+          cd ../frontend && npm run type-check
+
+      - name: Run SonarQube analysis
+        uses: sonarqube-quality-gate-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          scannerHomeDir: ./.sonar/scanner
+          args: >
+            -Dsonar.projectKey=aibos-platform
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/.next/**,**/coverage/**
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.coverage.exclusions=**/*.test.js,**/*.spec.js,**/tests/**,**/__tests__/**
+
+  # Testing
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd railway-1/backend && npm ci
+          cd ../frontend && npm ci
+
+      - name: Run shared tests
+        run: npm test -- --coverage --watchAll=false
+
+      - name: Run backend tests
+        run: |
+          cd railway-1/backend
+          npm test -- --coverage --watchAll=false
+
+      - name: Run frontend tests
+        run: |
+          cd railway-1/frontend
+          npm test -- --coverage --watchAll=false
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results-${{ matrix.node-version }}
+          path: |
+            coverage/
+            railway-1/backend/coverage/
+            railway-1/frontend/coverage/
+
+  # Integration Tests
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: aibos_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd railway-1/backend && npm ci
+
+      - name: Setup test database
+        run: |
+          cd railway-1/backend
+          npm run db:setup:test
+
+      - name: Run integration tests
+        run: |
+          cd railway-1/backend
+          npm run test:integration
+
+      - name: Upload integration test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: integration-test-results
+          path: railway-1/backend/test-results/
+
+  # Build and Package
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [test, integration-test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd railway-1/backend && npm ci
+          cd ../frontend && npm ci
+
+      - name: Build shared library
+        run: npm run build
+
+      - name: Build backend
+        run: |
+          cd railway-1/backend
+          npm run build
+
+      - name: Build frontend
+        run: |
+          cd railway-1/frontend
+          npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+            railway-1/backend/dist/
+            railway-1/frontend/.next/
+
+  # Performance Testing
+  performance-test:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd railway-1/backend && npm ci
+
+      - name: Start backend server
+        run: |
+          cd railway-1/backend
+          npm run start:test &
+          sleep 10
+
+      - name: Run performance tests
+        run: |
+          npm run test:performance
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-results
+          path: performance-results/
+
+  # Deploy to Staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build, performance-test]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy backend to Railway (Staging)
+        uses: railway/deploy@v1
+        with:
+          service: aibos-backend-staging
+          token: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy frontend to Vercel (Staging)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+      - name: Run smoke tests
+        run: |
+          npm run test:smoke:staging
+
+  # Deploy to Production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, performance-test]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy backend to Railway (Production)
+        uses: railway/deploy@v1
+        with:
+          service: aibos-backend-production
+          token: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy frontend to Vercel (Production)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+      - name: Run smoke tests
+        run: |
+          npm run test:smoke:production
+
+      - name: Notify deployment success
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: 'AI-BOS Platform deployed successfully to production! 🚀'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # Post-deployment verification
+  post-deployment:
+    name: Post-deployment Verification
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run health checks
+        run: |
+          npm run health:check:production
+
+      - name: Run end-to-end tests
+        run: |
+          npm run test:e2e:production
+
+      - name: Generate deployment report
+        run: |
+          npm run report:deployment
+
+      - name: Upload deployment report
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-report
+          path: deployment-report.json
+
+  # Notifications
+  notify:
+    name: Notifications
+    runs-on: ubuntu-latest
+    needs: [post-deployment]
+    if: always()
+    steps:
+      - name: Notify on failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: 'AI-BOS Platform deployment failed! ❌'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Create deployment summary
+        if: always()
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY 

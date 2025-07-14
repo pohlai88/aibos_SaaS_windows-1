@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["shared/*"],
+      "@shared/types/*": ["shared/types/*"],
+      "@shared/utils/*": ["shared/lib/*"],
+      "@shared/validation/*": ["shared/validation/*"]
+    },
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+} 

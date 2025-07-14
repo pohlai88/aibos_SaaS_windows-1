@@ -1,5 +1,11 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  webpack: (config) => {
+    config.resolve.alias['@shared'] = path.join(__dirname, '../../shared');
+    return config;
+  },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
   },
