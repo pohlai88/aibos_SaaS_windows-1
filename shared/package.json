@@ -1,0 +1,66 @@
+{
+  "name": "@aibos/shared",
+  "version": "1.0.0",
+  "description": "AI-BOS Platform Shared Library - Enterprise-grade utilities for billing, caching, database, and performance optimization",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "prepublishOnly": "npm run build && npm run test",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "aibos",
+    "saas",
+    "billing",
+    "caching",
+    "database",
+    "queue",
+    "performance",
+    "enterprise",
+    "typescript"
+  ],
+  "author": "AI-BOS Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pohlai88/aibos_SaaS_windows-1.git",
+    "directory": "shared"
+  },
+  "bugs": {
+    "url": "https://github.com/pohlai88/aibos_SaaS_windows-1/issues"
+  },
+  "homepage": "https://github.com/pohlai88/aibos_SaaS_windows-1#readme",
+  "dependencies": {
+    "zod": "^3.22.4",
+    "redis": "^4.6.10",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/jest": "^29.5.5",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "eslint": "^8.51.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2",
+    "rimraf": "^5.0.5"
+  },
+  "peerDependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 
