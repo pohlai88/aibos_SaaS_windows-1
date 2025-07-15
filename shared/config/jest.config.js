@@ -1,27 +1,35 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/../'],
+  roots: ['<rootDir>'],
   testMatch: [
-    '**/__tests__/**/*.+(ts|tsx|js)',
-    '**/*.(test|spec).+(ts|tsx|js)'
+    '**/__tests__/**/*.test.ts',
+    '**/__tests__/**/*.spec.ts',
+    '**/*.test.ts',
+    '**/*.spec.ts'
   ],
-  transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-  },
   collectCoverageFrom: [
-    'shared/**/*.{ts,tsx}',
-    'railway-1/backend/src/**/*.{ts,tsx}',
-    'railway-1/frontend/src/**/*.{ts,tsx}',
+    '**/*.ts',
     '!**/*.d.ts',
     '!**/node_modules/**',
-    '!**/coverage/**',
     '!**/dist/**',
-    '!**/build/**',
-    '!**/.next/**'
+    '!**/coverage/**',
+    '!**/examples/**',
+    '!**/scripts/**',
+    '!**/config/**',
+    '!**/rollup.config.js',
+    '!**/jest.config.js',
+    '!**/jest.setup.js'
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html'],
+  coverageReporters: [
+    'text',
+    'text-summary',
+    'lcov',
+    'html',
+    'json',
+    'json-summary'
+  ],
   coverageThreshold: {
     global: {
       branches: 80,
@@ -30,15 +38,115 @@ module.exports = {
       statements: 80
     }
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/config/jest.setup.js'],
   moduleNameMapping: {
-    '^@shared/(.*)$': '<rootDir>/../shared/$1',
-    '^@shared/types/(.*)$': '<rootDir>/../shared/types/$1',
-    '^@shared/utils/(.*)$': '<rootDir>/../shared/lib/$1',
-    '^@shared/validation/(.*)$': '<rootDir>/../shared/validation/$1'
+    '^@/(.*)$': '<rootDir>/$1'
   },
-  testTimeout: 10000,
+  transform: {
+    '^.+\\.ts$': 'ts-jest'
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(zod|redis|pg)/)'
+  ],
+  testTimeout: 30000,
+  maxWorkers: '50%',
+  workerIdleMemoryLimit: '512MB',
+  detectOpenHandles: true,
+  forceExit: true,
   verbose: true,
-  clearMocks: true,
-  restoreMocks: true
+  // Performance testing configuration
+  projects: [
+    {
+      displayName: 'unit',
+      testMatch: [
+        '**/__tests__/**/*.test.ts',
+        '**/*.test.ts'
+      ],
+      testPathIgnorePatterns: [
+        '**/performance.test.ts',
+        '**/integration.test.ts',
+        '**/e2e.test.ts'
+      ]
+    },
+    {
+      displayName: 'performance',
+      testMatch: [
+        '**/performance.test.ts',
+        '**/*.performance.test.ts'
+      ],
+      testTimeout: 60000,
+      maxWorkers: 1
+    },
+    {
+      displayName: 'integration',
+      testMatch: [
+        '**/integration.test.ts',
+        '**/*.integration.test.ts'
+      ],
+      testTimeout: 60000,
+      maxWorkers: 2
+    }
+  ],
+  // Custom reporters
+  reporters: [
+    'default',
+    [
+      'jest-junit',
+      {
+        outputDirectory: 'coverage',
+        outputName: 'junit.xml',
+        classNameTemplate: '{classname}',
+        titleTemplate: '{title}',
+        ancestorSeparator: ' › ',
+        usePathForSuiteName: true
+      }
+    ],
+    [
+      'jest-html-reporters',
+      {
+        publicPath: './coverage',
+        filename: 'test-report.html',
+        expand: true,
+        hideIcon: false,
+        pageTitle: 'AI-BOS Shared Library Test Report'
+      }
+    ]
+  ],
+  // Performance monitoring
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.json',
+      diagnostics: {
+        ignoreCodes: [151001]
+      }
+    }
+  },
+  // Test environment setup
+  testEnvironmentOptions: {
+    url: 'http://localhost'
+  },
+  // Module resolution
+  moduleDirectories: ['node_modules', '<rootDir>'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  // Snapshot testing
+  snapshotSerializers: [],
+  // Watch mode configuration
+  watchPlugins: [
+    'jest-watch-typeahead/filename',
+    'jest-watch-typeahead/testname'
+  ],
+  // Custom test patterns
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/coverage/',
+    '/examples/',
+    '/scripts/'
+  ],
+  // Performance benchmarks
+  setupFiles: ['<rootDir>/config/jest.setup.js'],
+  // Custom matchers
+  setupFilesAfterEnv: [
+    '<rootDir>/config/jest.setup.js'
+  ]
 }; 

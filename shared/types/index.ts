@@ -9,3 +9,6 @@ export * from "./billing";
 export * from "./roles";
 export * from "./tenant";
 export * from "./user"; 
+
+// Metadata types
+export * from "./metadata"; 

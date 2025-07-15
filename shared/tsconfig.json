@@ -1,18 +1,30 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["ES2020"],
-    "outDir": "./dist",
-    "rootDir": "./",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    // Language and Environment
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "jsx": "react-jsx",
+
+    // Emit
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./",
     "removeComments": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    // Type Checking
+    "strict": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -24,22 +36,53 @@
     "noUncheckedIndexedAccess": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-    "resolveJsonModule": true,
-    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+
+    // Advanced
+    "useDefineForClassFields": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": true,
+
+    // Path Mapping
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": ["./*"],
+      "@/types/*": ["./types/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/utils/*": ["./utils/*"],
+      "@/validation/*": ["./validation/*"],
+      "@/metadata/*": ["./types/metadata/*"],
+      "@/config/*": ["./config/*"],
+      "@/examples/*": ["./examples/*"]
+    },
+
+    // Performance
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "assumeChangesOnlyAffectDirectDependencies": true
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "**/*.d.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
+    "coverage",
     "**/*.test.ts",
     "**/*.spec.ts",
-    "**/__tests__/**"
-  ]
+    "**/__tests__/**",
+    "**/examples/**",
+    "**/scripts/**",
+    "**/config/**",
+    "**/rollup.config.js",
+    "**/jest.config.js",
+    "**/jest.setup.js"
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 } 
