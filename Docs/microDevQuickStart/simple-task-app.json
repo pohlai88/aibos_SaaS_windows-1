@@ -1,0 +1,436 @@
+{
+  "name": "Simple Task Manager",
+  "version": "1.0.0",
+  "description": "A simple task management app for micro-developers",
+  "author": "AI-BOS",
+  "icon": "📝",
+  "color": "#3B82F6",
+  
+  "entities": [
+    {
+      "name": "Task",
+      "description": "A simple task with title and status",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "primary": true,
+          "description": "Unique identifier"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "maxLength": 200,
+          "description": "Task title"
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "description": "Task description"
+        },
+        {
+          "name": "completed",
+          "type": "boolean",
+          "default": false,
+          "description": "Task completion status"
+        },
+        {
+          "name": "priority",
+          "type": "enum",
+          "values": ["low", "medium", "high"],
+          "default": "medium",
+          "description": "Task priority level"
+        },
+        {
+          "name": "due_date",
+          "type": "date",
+          "required": false,
+          "description": "Task due date"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": "now()",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": "now()",
+          "description": "Last update timestamp"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_tasks_completed",
+          "fields": ["completed"]
+        },
+        {
+          "name": "idx_tasks_priority",
+          "fields": ["priority"]
+        },
+        {
+          "name": "idx_tasks_due_date",
+          "fields": ["due_date"]
+        }
+      ]
+    }
+  ],
+
+  "events": [
+    {
+      "name": "TaskCreated",
+      "description": "Emitted when a new task is created",
+      "payload": {
+        "taskId": "string",
+        "title": "string",
+        "priority": "string"
+      }
+    },
+    {
+      "name": "TaskCompleted",
+      "description": "Emitted when a task is marked as completed",
+      "payload": {
+        "taskId": "string",
+        "completedAt": "string"
+      }
+    },
+    {
+      "name": "TaskUpdated",
+      "description": "Emitted when a task is updated",
+      "payload": {
+        "taskId": "string",
+        "changes": "object"
+      }
+    }
+  ],
+
+  "ui": {
+    "layout": "single-page",
+    "theme": "default",
+    "components": [
+      {
+        "name": "TaskList",
+        "type": "data-grid",
+        "title": "My Tasks",
+        "description": "View and manage your tasks",
+        "entity": "Task",
+        "columns": [
+          {
+            "field": "title",
+            "header": "Task",
+            "width": "40%",
+            "sortable": true,
+            "searchable": true
+          },
+          {
+            "field": "priority",
+            "header": "Priority",
+            "width": "15%",
+            "sortable": true,
+            "renderer": "badge",
+            "colors": {
+              "low": "green",
+              "medium": "yellow", 
+              "high": "red"
+            }
+          },
+          {
+            "field": "due_date",
+            "header": "Due Date",
+            "width": "15%",
+            "sortable": true,
+            "renderer": "date"
+          },
+          {
+            "field": "completed",
+            "header": "Status",
+            "width": "15%",
+            "sortable": true,
+            "renderer": "checkbox",
+            "editable": true
+          },
+          {
+            "field": "actions",
+            "header": "Actions",
+            "width": "15%",
+            "renderer": "actions",
+            "actions": [
+              {
+                "name": "edit",
+                "label": "Edit",
+                "icon": "✏️",
+                "action": "openEditModal"
+              },
+              {
+                "name": "delete",
+                "label": "Delete",
+                "icon": "🗑️",
+                "action": "deleteTask",
+                "confirm": true
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "field": "completed",
+            "type": "select",
+            "label": "Status",
+            "options": [
+              {"value": "", "label": "All"},
+              {"value": "false", "label": "Pending"},
+              {"value": "true", "label": "Completed"}
+            ]
+          },
+          {
+            "field": "priority",
+            "type": "select",
+            "label": "Priority",
+            "options": [
+              {"value": "", "label": "All"},
+              {"value": "low", "label": "Low"},
+              {"value": "medium", "label": "Medium"},
+              {"value": "high", "label": "High"}
+            ]
+          }
+        ],
+        "pagination": {
+          "enabled": true,
+          "pageSize": 20
+        },
+        "actions": [
+          {
+            "name": "add",
+            "label": "Add Task",
+            "icon": "➕",
+            "action": "openAddModal"
+          },
+          {
+            "name": "bulk_complete",
+            "label": "Mark Selected Complete",
+            "icon": "✅",
+            "action": "bulkComplete",
+            "requiresSelection": true
+          }
+        ]
+      },
+      {
+        "name": "AddTaskModal",
+        "type": "modal",
+        "title": "Add New Task",
+        "trigger": "openAddModal",
+        "entity": "Task",
+        "fields": [
+          {
+            "name": "title",
+            "type": "text",
+            "label": "Task Title",
+            "required": true,
+            "placeholder": "Enter task title"
+          },
+          {
+            "name": "description",
+            "type": "textarea",
+            "label": "Description",
+            "required": false,
+            "placeholder": "Enter task description"
+          },
+          {
+            "name": "priority",
+            "type": "select",
+            "label": "Priority",
+            "required": true,
+            "options": [
+              {"value": "low", "label": "Low"},
+              {"value": "medium", "label": "Medium"},
+              {"value": "high", "label": "High"}
+            ]
+          },
+          {
+            "name": "due_date",
+            "type": "date",
+            "label": "Due Date",
+            "required": false
+          }
+        ],
+        "actions": [
+          {
+            "name": "save",
+            "label": "Save Task",
+            "type": "primary",
+            "action": "saveTask"
+          },
+          {
+            "name": "cancel",
+            "label": "Cancel",
+            "type": "secondary",
+            "action": "closeModal"
+          }
+        ]
+      },
+      {
+        "name": "EditTaskModal",
+        "type": "modal",
+        "title": "Edit Task",
+        "trigger": "openEditModal",
+        "entity": "Task",
+        "fields": [
+          {
+            "name": "title",
+            "type": "text",
+            "label": "Task Title",
+            "required": true
+          },
+          {
+            "name": "description",
+            "type": "textarea",
+            "label": "Description",
+            "required": false
+          },
+          {
+            "name": "priority",
+            "type": "select",
+            "label": "Priority",
+            "required": true,
+            "options": [
+              {"value": "low", "label": "Low"},
+              {"value": "medium", "label": "Medium"},
+              {"value": "high", "label": "High"}
+            ]
+          },
+          {
+            "name": "due_date",
+            "type": "date",
+            "label": "Due Date",
+            "required": false
+          },
+          {
+            "name": "completed",
+            "type": "checkbox",
+            "label": "Completed",
+            "required": false
+          }
+        ],
+        "actions": [
+          {
+            "name": "save",
+            "label": "Update Task",
+            "type": "primary",
+            "action": "updateTask"
+          },
+          {
+            "name": "cancel",
+            "label": "Cancel",
+            "type": "secondary",
+            "action": "closeModal"
+          }
+        ]
+      },
+      {
+        "name": "TaskStats",
+        "type": "dashboard",
+        "title": "Task Statistics",
+        "description": "Overview of your tasks",
+        "widgets": [
+          {
+            "name": "total_tasks",
+            "type": "metric",
+            "title": "Total Tasks",
+            "query": "SELECT COUNT(*) FROM Task",
+            "color": "blue"
+          },
+          {
+            "name": "completed_tasks",
+            "type": "metric",
+            "title": "Completed",
+            "query": "SELECT COUNT(*) FROM Task WHERE completed = true",
+            "color": "green"
+          },
+          {
+            "name": "pending_tasks",
+            "type": "metric",
+            "title": "Pending",
+            "query": "SELECT COUNT(*) FROM Task WHERE completed = false",
+            "color": "yellow"
+          },
+          {
+            "name": "high_priority_tasks",
+            "type": "metric",
+            "title": "High Priority",
+            "query": "SELECT COUNT(*) FROM Task WHERE priority = 'high' AND completed = false",
+            "color": "red"
+          }
+        ]
+      }
+    ]
+  },
+
+  "permissions": {
+    "read": ["user", "admin"],
+    "write": ["user", "admin"],
+    "delete": ["admin"],
+    "admin": ["admin"]
+  },
+
+  "settings": {
+    "autoSave": true,
+    "notifications": true,
+    "defaultView": "list",
+    "itemsPerPage": 20
+  },
+
+  "hooks": {
+    "beforeCreate": [
+      {
+        "name": "setCreatedAt",
+        "action": "setField",
+        "field": "created_at",
+        "value": "now()"
+      }
+    ],
+    "beforeUpdate": [
+      {
+        "name": "setUpdatedAt",
+        "action": "setField",
+        "field": "updated_at",
+        "value": "now()"
+      }
+    ],
+    "afterCreate": [
+      {
+        "name": "emitTaskCreated",
+        "action": "emitEvent",
+        "event": "TaskCreated",
+        "payload": {
+          "taskId": "{{id}}",
+          "title": "{{title}}",
+          "priority": "{{priority}}"
+        }
+      }
+    ],
+    "afterUpdate": [
+      {
+        "name": "emitTaskUpdated",
+        "action": "emitEvent",
+        "event": "TaskUpdated",
+        "payload": {
+          "taskId": "{{id}}",
+          "changes": "{{changes}}"
+        }
+      },
+      {
+        "name": "emitTaskCompleted",
+        "condition": "{{completed}} == true",
+        "action": "emitEvent",
+        "event": "TaskCompleted",
+        "payload": {
+          "taskId": "{{id}}",
+          "completedAt": "now()"
+        }
+      }
+    ]
+  }
+} 

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { LoginScreen } from '@/components/auth/LoginScreen';
-import { AibosShell } from '@/components/shell/AibosShell';
+import { AibosShellEnhanced } from '@/components/shell/AibosShellEnhanced';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export default function HomePage() {
@@ -21,5 +21,5 @@ export default function HomePage() {
     return <LoginScreen />;
   }
 
-  return <AibosShell />;
+  return <AibosShellEnhanced />;
 } 

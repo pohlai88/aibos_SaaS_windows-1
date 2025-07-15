@@ -38,7 +38,7 @@ app.use('/api/manifests', require('./routes/manifests'));
 app.use('/api/apps', require('./routes/apps'));
 app.use('/api/events', require('./routes/events'));
 app.use('/api/entities', require('./routes/entities'));
-app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth', require('./routes/auth-enhanced')); // Enhanced with shared library
 app.use('/api/realtime', require('./routes/realtime'));
 
 // Error handling middleware

@@ -23,6 +23,30 @@ export * from './form-builder/FormBuilder';
 // NEW: App Shell Component (Migrated from legacy)
 export * from './app-shell/AppShell';
 
+// NEW: Job Queue Components (Enterprise-grade job management)
+export * from './job-queue';
+
+// NEW: AI Assistant Components (State-of-the-art AI chat and conversation management)
+export * from './ai-assistant';
+
+// NEW: Analytics Components (Advanced data visualization and real-time metrics)
+export * from './analytics';
+
+// NEW: Primitive Components (Enterprise-grade foundational components)
+export * from './primitives';
+
+// NEW: Feedback Components (Toast notifications and user feedback)
+export * from './feedback';
+
+// NEW: Advanced Layout Components (AI-powered layout system)
+export * from './layout';
+
+// NEW: Advanced Form Components (AI-powered form controls)
+export * from './forms';
+
+// NEW: Revolutionary Data Components (enterprise-grade data handling)
+export * from './data';
+
 // Desktop Environment (from reference)
 export * from './desktop/Desktop';
 export * from './desktop/Window';
@@ -138,6 +162,46 @@ export const COMPONENT_REGISTRY = {
   // NEW: App Shell Components (Migrated from legacy)
   AppShell: 'app-shell/AppShell',
   
+  // NEW: Job Queue Components (Enterprise-grade job management)
+  JobQueueDashboard: 'job-queue/JobQueueDashboard',
+  JobQueueProvider: 'job-queue/JobQueueProvider',
+  JobForm: 'job-queue/JobForm',
+  
+  // NEW: AI Assistant Components (State-of-the-art AI chat and conversation management)
+  AIAssistant: 'ai-assistant/AIAssistant',
+  AIAssistantProvider: 'ai-assistant/AIAssistantProvider',
+  
+  // NEW: Analytics Components (Advanced data visualization and real-time metrics)
+  AnalyticsDashboard: 'analytics/AnalyticsDashboard',
+  
+  // NEW: Primitive Components (Enterprise-grade foundational components)
+  Button: 'primitives/Button',
+  Modal: 'primitives/Modal',
+  Tooltip: 'primitives/Tooltip',
+  Skeleton: 'primitives/Skeleton',
+  Progress: 'primitives/Progress',
+  Badge: 'primitives/Badge',
+  
+  // NEW: Feedback Components (Toast notifications and user feedback)
+  ToastProvider: 'feedback/Toast',
+  useToast: 'feedback/Toast',
+  
+  // NEW: Advanced Layout Components (AI-powered layout system)
+  Drawer: 'layout/Drawer',
+  Tabs: 'layout/Tabs',
+  Breadcrumb: 'layout/Breadcrumb',
+  
+  // NEW: Advanced Form Components (AI-powered form controls)
+  DateTimePicker: 'forms/DateTimePicker',
+  FormBuilder: 'forms/FormBuilder',
+  
+  // NEW: Revolutionary Data Components (enterprise-grade data handling)
+  DataGrid: 'data/DataGrid',
+  
+  // Demo Components
+  PrimitivesDemo: 'primitives/PrimitivesDemo',
+  UltimateDemo: 'UltimateDemo',
+  
   // Desktop Components
   Desktop: 'desktop/Desktop',
   Window: 'desktop/Window',
@@ -203,6 +267,46 @@ export const COMPONENT_CATEGORIES = {
     name: 'Layout Components',
     description: 'Application layout and shell components',
     components: ['AppShell']
+  },
+  jobQueue: {
+    name: 'Job Queue Management',
+    description: 'Enterprise-grade job queue monitoring and management',
+    components: ['JobQueueDashboard', 'JobQueueProvider', 'JobForm']
+  },
+  aiAssistant: {
+    name: 'AI Assistant',
+    description: 'State-of-the-art AI chat and conversation management',
+    components: ['AIAssistant', 'AIAssistantProvider']
+  },
+  analytics: {
+    name: 'Analytics & Data Visualization',
+    description: 'Advanced data visualization and real-time metrics',
+    components: ['AnalyticsDashboard']
+  },
+  primitives: {
+    name: 'Primitive Components',
+    description: 'Enterprise-grade foundational components',
+    components: ['Button', 'Modal', 'Tooltip', 'Skeleton', 'Progress', 'Badge']
+  },
+  feedback: {
+    name: 'Feedback & Notifications',
+    description: 'Toast notifications and user feedback systems',
+    components: ['ToastProvider', 'useToast']
+  },
+  layout: {
+    name: 'Advanced Layout System',
+    description: 'AI-powered layout components with smart features',
+    components: ['Drawer', 'Tabs', 'Breadcrumb']
+  },
+  forms: {
+    name: 'Advanced Form Controls',
+    description: 'AI-powered form components with intelligent features',
+    components: ['DateTimePicker', 'FormBuilder']
+  },
+  data: {
+    name: 'Revolutionary Data Components',
+    description: 'Enterprise-grade data handling with AI intelligence',
+    components: ['DataGrid']
   },
   desktop: {
     name: 'Desktop Environment',
