@@ -128,7 +128,7 @@ export class AIEngine {
   private cache: Map<string, AIResponse>;
   private learningData: AILearningData[];
   private performanceMetrics: AIPerformanceMetrics[];
-  private requestQueue: Array<{ request: AIRequest; resolve: Function; reject: Function }>;
+  private requestQueue: Array<{ request: AIRequest; resolve: (value: AIResponse) => void; reject: (reason: any) => void }>;
   private isProcessing: boolean;
 
   constructor(config: Partial<AIEngineConfig> = {}) {
@@ -276,36 +276,29 @@ export class AIEngine {
   private async queueRequest(request: AIRequest): Promise<AIResponse> {
     return new Promise((resolve, reject) => {
       this.requestQueue.push({ request, resolve, reject });
-      this.processQueue();
+      this.processNext();
     });
   }
 
   /**
-   * Process request queue
+   * Process queue with non-blocking event-driven approach
    */
-  private async processQueue(): Promise<void> {
-    if (this.isProcessing || this.requestQueue.length === 0) {
-      return;
-    }
-
+  private async processNext(): Promise<void> {
+    if (this.isProcessing || this.requestQueue.length === 0) return;
+    
     this.isProcessing = true;
-
-    while (this.requestQueue.length > 0) {
-      const batch = this.requestQueue.splice(0, this.config.maxConcurrentRequests);
-      
-      await Promise.allSettled(
-        batch.map(async ({ request, resolve, reject }) => {
-          try {
-            const response = await this.executeRequest(request);
-            resolve(response);
-          } catch (error) {
-            reject(error);
-          }
-        })
-      );
-    }
-
+    const batch = this.requestQueue.splice(0, this.config.maxConcurrentRequests);
+    
+    // Process batch concurrently
+    const promises = batch.map(({ request, resolve, reject }) =>
+      this.executeRequest(request).then(resolve).catch(reject)
+    );
+    
+    await Promise.allSettled(promises);
     this.isProcessing = false;
+    
+    // Schedule next batch processing
+    setTimeout(() => this.processNext(), 0);
   }
 
   /**
