@@ -17,7 +17,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
-import { JobStatus, JobPriority, Job } from '@aibos/shared/lib/queue';
+import { JobStatus, JobPriority, Job, JOB_STATUS_CONFIG, JOB_PRIORITY_CONFIG, comparePriorities } from './types';
 
 export interface JobQueueDashboardProps {
   className?: string;
@@ -170,7 +170,7 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
           comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           break;
         case 'priority':
-          comparison = a.priority - b.priority;
+          comparison = comparePriorities(a.priority, b.priority);
           break;
         case 'status':
           comparison = a.status.localeCompare(b.status);
@@ -192,7 +192,7 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
       running: allJobs.filter(job => job.status === JobStatus.RUNNING).length,
       completed: allJobs.filter(job => job.status === JobStatus.COMPLETED).length,
       failed: allJobs.filter(job => job.status === JobStatus.FAILED).length,
-      retry: allJobs.filter(job => job.status === JobStatus.RETRY).length,
+      retry: allJobs.filter(job => job.status === JobStatus.RETRYING).length,
       cancelled: allJobs.filter(job => job.status === JobStatus.CANCELLED).length
     };
   }, [filteredJobs]);
@@ -231,7 +231,7 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
     }));
 
     const csv = [
-      Object.keys(data[0]).join(','),
+      data[0] ? Object.keys(data[0]).join(',') : '',
       ...data.map(row => Object.values(row).map(v => `"${v}"`).join(','))
     ].join('\n');
 
@@ -412,18 +412,18 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
                       <label key={priority} className="flex items-center">
                         <input
                           type="checkbox"
-                          checked={filter.priority?.includes(Number(priority) as JobPriority) || false}
+                                                     checked={filter.priority?.includes(priority as JobPriority) || false}
                           onChange={(e) => {
                             const currentPriorities = filter.priority || [];
                             if (e.target.checked) {
                               setFilter(prev => ({ 
                                 ...prev, 
-                                priority: [...currentPriorities, Number(priority) as JobPriority] 
+                                priority: [...currentPriorities, priority as JobPriority] 
                               }));
                             } else {
                               setFilter(prev => ({ 
                                 ...prev, 
-                                priority: currentPriorities.filter(p => p !== Number(priority)) 
+                                priority: currentPriorities.filter(p => p !== priority) 
                               }));
                             }
                           }}
@@ -592,7 +592,7 @@ const JobCard: React.FC<{
   showActions: boolean;
   viewMode: 'list' | 'grid';
 }> = ({ job, isSelected, onSelect, onAction, showActions, viewMode }) => {
-  const status = statusConfig[job.status];
+  const status = statusConfig[job.status] || statusConfig[JobStatus.PENDING];
   const priority = priorityConfig[job.priority];
   const StatusIcon = status.icon;
 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { Job, JobStatus, JobPriority } from '@aibos/shared/lib/queue';
+import { Job, JobStatus, JobPriority } from './types';
 
 export interface JobQueueContextValue {
   jobs: Job[];
@@ -55,7 +55,7 @@ export const JobQueueProvider: React.FC<JobQueueProviderProps> = ({
     running: jobs.filter(job => job.status === JobStatus.RUNNING).length,
     completed: jobs.filter(job => job.status === JobStatus.COMPLETED).length,
     failed: jobs.filter(job => job.status === JobStatus.FAILED).length,
-    retry: jobs.filter(job => job.status === JobStatus.RETRY).length,
+    retry: jobs.filter(job => job.status === JobStatus.RETRYING).length,
     cancelled: jobs.filter(job => job.status === JobStatus.CANCELLED).length
   };
 

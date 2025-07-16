@@ -24,7 +24,7 @@ import {
   Star,
   ChevronDown,
   ChevronRight,
-  DragHandle,
+  GripVertical,
   Code,
   Palette,
   Shield,

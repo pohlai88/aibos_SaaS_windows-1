@@ -13,7 +13,6 @@ import {
   Command, 
   ArrowUp, 
   ArrowDown, 
-  Enter, 
   X,
   FileText,
   Settings,

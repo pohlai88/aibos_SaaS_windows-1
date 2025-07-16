@@ -25,24 +25,18 @@ export function variantClass(base: string, variants: Record<string, string>, var
   return `${base} ${variants[variant]}`;
 }
 
-export function formatDate(date: string | Date) {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+// Utility function for combining multiple class utilities
+export function combineClasses(...classUtils: (string | undefined | null | false)[]) {
+  return classUtils.filter(Boolean).join(' ');
 }
 
-export function formatDateTime(date: string | Date) {
-  return new Date(date).toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+// Utility function for dynamic class generation
+export function dynamicClass(base: string, conditions: Record<string, boolean | undefined | null>) {
+  const classes = [base];
+  Object.entries(conditions).forEach(([className, condition]) => {
+    if (condition) {
+      classes.push(className);
+    }
   });
-}
-
-export function generateId() {
-  return Math.random().toString(36).substr(2, 9);
+  return classes.join(' ');
 } 

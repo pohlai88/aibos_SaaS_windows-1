@@ -275,14 +275,14 @@ export const Tooltip: React.FC<TooltipProps> = ({
                   className={cn(
                     'absolute w-2 h-2 bg-inherit border-inherit',
                     {
-                      'top-full left-1/2 -translate-x-1/2 border-t border-l': placement.startsWith('top'),
-                      'bottom-full left-1/2 -translate-x-1/2 border-b border-r': placement.startsWith('bottom'),
-                      'left-full top-1/2 -translate-y-1/2 border-l border-t': placement.startsWith('left'),
-                      'right-full top-1/2 -translate-y-1/2 border-r border-b': placement.startsWith('right'),
+                      'top-full left-1/2 -translate-x-1/2 border-t border-l': placement?.startsWith('top'),
+                      'bottom-full left-1/2 -translate-x-1/2 border-b border-r': placement?.startsWith('bottom'),
+                      'left-full top-1/2 -translate-y-1/2 border-l border-t': placement?.startsWith('left'),
+                      'right-full top-1/2 -translate-y-1/2 border-r border-b': placement?.startsWith('right'),
                     }
                   )}
                   style={{
-                    transform: placement.startsWith('top') || placement.startsWith('bottom')
+                    transform: placement?.startsWith('top') || placement?.startsWith('bottom')
                       ? 'translateX(-50%) rotate(45deg)'
                       : 'translateY(-50%) rotate(45deg)',
                   }}

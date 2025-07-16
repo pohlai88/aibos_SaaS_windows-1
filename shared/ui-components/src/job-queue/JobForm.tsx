@@ -11,7 +11,7 @@ import {
   FileText,
   Calendar
 } from 'lucide-react';
-import { JobPriority } from '@aibos/shared/lib/queue';
+import { JobPriority } from './types';
 
 export interface JobFormData {
   name: string;
@@ -212,7 +212,7 @@ export const JobForm: React.FC<JobFormProps> = ({
             <select
               id="jobPriority"
               value={formData.priority}
-              onChange={(e) => setFormData(prev => ({ ...prev, priority: Number(e.target.value) as JobPriority }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as JobPriority }))}
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {priorityOptions.map(option => (

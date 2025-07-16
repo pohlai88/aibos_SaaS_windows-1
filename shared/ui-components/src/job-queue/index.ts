@@ -5,20 +5,20 @@
  * Provides comprehensive job monitoring, management, and creation capabilities.
  */
 
-// Main Components
+// Job Queue Components
+// Enterprise-grade job queue management and monitoring
+
 export { JobQueueDashboard } from './JobQueueDashboard';
-export { JobQueueProvider, useJobQueue } from './JobQueueProvider';
+export { JobQueueProvider } from './JobQueueProvider';
 export { JobForm } from './JobForm';
-export { JobQueueDemo, JobQueueDemoStandalone } from './JobQueueDemo';
 
-// Types
+// Re-export types
 export type { JobQueueDashboardProps } from './JobQueueDashboard';
-export type { JobQueueProviderProps, JobQueueContextValue } from './JobQueueProvider';
-export type { JobFormData, JobFormProps } from './JobForm';
-export type { JobQueueDemoProps } from './JobQueueDemo';
+export type { JobQueueProviderProps } from './JobQueueProvider';
+export type { JobFormProps } from './JobForm';
 
-// Re-export queue types from shared library
-export type { Job, JobConfig, JobStatus, JobPriority } from '@aibos/shared/lib/queue';
+// Re-export job types
+export * from './types';
 
 // Component Registry Entry
 export const JOB_QUEUE_COMPONENTS = {

@@ -1,53 +1,17 @@
-// Button Component
-export { Button, buttonVariants } from './Button';
-export type { ButtonProps } from './Button';
-
-// Modal Component
-export { Modal, modalVariants, contentVariants } from './Modal';
-export type { ModalProps } from './Modal';
-
-// Tooltip Component
+// Primitives - Core UI Components
+export { Button } from './Button';
+export { Badge } from './Badge';
+export { Modal } from './Modal';
 export { Tooltip } from './Tooltip';
+export { Skeleton } from './Skeleton';
+export { Progress } from './Progress';
+export { Input } from './Input';
+
+// Re-export types
+export type { ButtonProps } from './Button';
+export type { BadgeProps } from './Badge';
+export type { ModalProps } from './Modal';
 export type { TooltipProps } from './Tooltip';
-
-// Skeleton Components
-export {
-  Skeleton,
-  SkeletonText,
-  SkeletonAvatar,
-  SkeletonButton,
-  SkeletonCard,
-  SkeletonTable,
-  SkeletonList,
-} from './Skeleton';
 export type { SkeletonProps } from './Skeleton';
-
-// Progress Components
-export {
-  Progress,
-  CircularProgress,
-  MultiStepProgress,
-} from './Progress';
-export type {
-  ProgressProps,
-  CircularProgressProps,
-  MultiStepProgressProps,
-  Step,
-} from './Progress';
-
-// Badge Components
-export {
-  Badge,
-  StatusBadge,
-  NotificationBadge,
-  ProgressBadge,
-} from './Badge';
-export type {
-  BadgeProps,
-  StatusBadgeProps,
-  NotificationBadgeProps,
-  ProgressBadgeProps,
-} from './Badge';
-
-// Demo Component
-export { PrimitivesDemo } from './PrimitivesDemo'; 
+export type { ProgressProps } from './Progress';
+export type { InputProps } from './Input'; 

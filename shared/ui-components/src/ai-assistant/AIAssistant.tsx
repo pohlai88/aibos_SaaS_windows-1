@@ -120,7 +120,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
   }, [messages, streamingMessage, scrollToBottom]);
 
   // Voice recording functionality
-  const startRecording = async () => {
+  const startRecording = async (): Promise<void> => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
@@ -146,7 +146,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     }
   };
 
-  const stopRecording = () => {
+  const stopRecording = (): void => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
@@ -154,7 +154,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     }
   };
 
-  const processVoiceInput = async (audioBlob: Blob) => {
+  const processVoiceInput = async (audioBlob: Blob): Promise<void> => {
     try {
       setIsProcessing(true);
       const formData = new FormData();
@@ -180,17 +180,17 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
   };
 
   // File upload handling
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const files = Array.from(event.target.files || []);
-    setAttachments(prev => [...prev, ...files]);
+    setAttachments((prev: File[]) => [...prev, ...files]);
   };
 
-  const removeAttachment = (index: number) => {
-    setAttachments(prev => prev.filter((_, i) => i !== index));
+  const removeAttachment = (index: number): void => {
+    setAttachments((prev: File[]) => prev.filter((_, i: number) => i !== index));
   };
 
   // Message sending
-  const sendMessage = async () => {
+  const sendMessage = async (): Promise<void> => {
     if (!inputValue.trim() && attachments.length === 0) return;
 
     const userMessage: AIMessage = {
@@ -202,13 +202,13 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       status: 'sending'
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev: AIMessage[]) => [...prev, userMessage]);
     onMessageSend?.(userMessage);
 
     // Add attachments to message
     if (attachments.length > 0) {
       userMessage.metadata = {
-        attachments: attachments.map(file => ({
+        attachments: attachments.map((file: File) => ({
           name: file.name,
           type: file.type,
           url: URL.createObjectURL(file),
@@ -229,7 +229,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       formData.append('temperature', temperature.toString());
       formData.append('enableStreaming', enableStreaming.toString());
 
-      attachments.forEach(file => {
+      attachments.forEach((file: File) => {
         formData.append('files', file);
       });
 
@@ -241,7 +241,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     } catch (error) {
       console.error('Error sending message:', error);
       onError?.('Failed to send message');
-      setMessages(prev => prev.map(msg => 
+      setMessages((prev: AIMessage[]) => prev.map((msg: AIMessage) => 
         msg.id === userMessage.id ? { ...msg, status: 'error' } : msg
       ));
     } finally {
@@ -249,7 +249,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     }
   };
 
-  const streamResponse = async (formData: FormData) => {
+  const streamResponse = async (formData: FormData): Promise<void> => {
     const response = await fetch(`${apiEndpoint}/stream`, {
       method: 'POST',
       body: formData
@@ -269,7 +269,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       status: 'processing'
     };
 
-    setMessages(prev => [...prev, assistantMessage]);
+    setMessages((prev: AIMessage[]) => [...prev, assistantMessage]);
 
     try {
       while (true) {
@@ -283,7 +283,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
           if (line.startsWith('data: ')) {
             const data = line.slice(6);
             if (data === '[DONE]') {
-              setMessages(prev => prev.map(msg => 
+              setMessages((prev: AIMessage[]) => prev.map((msg: AIMessage) => 
                 msg.id === assistantMessage.id ? { ...msg, status: 'sent' } : msg
               ));
               onMessageReceive?.(assistantMessage);
@@ -307,7 +307,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     }
   };
 
-  const sendRegularRequest = async (formData: FormData) => {
+  const sendRegularRequest = async (formData: FormData): Promise<void> => {
     const response = await fetch(apiEndpoint, {
       method: 'POST',
       body: formData
@@ -333,12 +333,12 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       status: 'sent'
     };
 
-    setMessages(prev => [...prev, assistantMessage]);
+    setMessages((prev: AIMessage[]) => [...prev, assistantMessage]);
     onMessageReceive?.(assistantMessage);
   };
 
   // Keyboard shortcuts
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -349,7 +349,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
   useEffect(() => {
     if (enableSuggestions && messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
-      if (lastMessage.role === 'assistant') {
+      if (lastMessage?.role === 'assistant') {
         const suggestions = generateSuggestions(messages);
         setSuggestions(suggestions);
       }
@@ -370,21 +370,21 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     ];
   };
 
-  const copyMessage = (content: string) => {
+  const copyMessage = (content: string): void => {
     navigator.clipboard.writeText(content);
   };
 
-  const editMessage = (messageId: string, newContent: string) => {
-    setMessages(prev => prev.map(msg => 
+  const editMessage = (messageId: string, newContent: string): void => {
+    setMessages((prev: AIMessage[]) => prev.map((msg: AIMessage) => 
       msg.id === messageId ? { ...msg, content: newContent } : msg
     ));
   };
 
-  const deleteMessage = (messageId: string) => {
-    setMessages(prev => prev.filter(msg => msg.id !== messageId));
+  const deleteMessage = (messageId: string): void => {
+    setMessages((prev: AIMessage[]) => prev.filter((msg: AIMessage) => msg.id !== messageId));
   };
 
-  const speakMessage = (content: string) => {
+  const speakMessage = (content: string): void => {
     if ('speechSynthesis' in window && !isMuted) {
       const utterance = new SpeechSynthesisUtterance(content);
       speechSynthesis.speak(utterance);
@@ -423,7 +423,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <AnimatePresence>
-          {messages.map((message) => (
+          {messages.map((message: AIMessage) => (
             <motion.div
               key={message.id}
               initial={{ opacity: 0, y: 20 }}
@@ -454,7 +454,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
 
                     {message.metadata?.attachments && (
                       <div className="mt-2 space-y-1">
-                        {message.metadata.attachments.map((attachment, index) => (
+                        {message.metadata.attachments.map((attachment, index: number) => (
                           <div key={index} className="flex items-center space-x-2 text-sm">
                             <FileText className="w-4 h-4" />
                             <span>{attachment.name}</span>
@@ -540,7 +540,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-wrap gap-2"
           >
-            {suggestions.map((suggestion, index) => (
+            {suggestions.map((suggestion: string, index: number) => (
               <button
                 key={index}
                 onClick={() => setInputValue(suggestion)}
@@ -560,7 +560,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
         {/* Attachments */}
         {attachments.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
-            {attachments.map((file, index) => (
+            {attachments.map((file: File, index: number) => (
               <div key={index} className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg">
                 <FileText className="w-4 h-4" />
                 <span className="text-sm">{file.name}</span>
@@ -580,7 +580,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
             <textarea
               ref={inputRef}
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={placeholder}
               rows={1}
@@ -647,7 +647,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                 <label className="block font-medium mb-1">Model</label>
                 <select 
                   value={model}
-                  onChange={(e) => {/* Handle model change */}}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {/* Handle model change */}}
                   className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded"
                 >
                   <option value="gpt-4">GPT-4</option>
@@ -663,7 +663,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                   max="1"
                   step="0.1"
                   value={temperature}
-                  onChange={(e) => {/* Handle temperature change */}}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {/* Handle temperature change */}}
                   className="w-full"
                 />
                 <span className="text-xs">{temperature}</span>

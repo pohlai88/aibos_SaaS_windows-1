@@ -191,7 +191,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
           strokeDasharray={strokeDasharray}
           strokeDashoffset={strokeDashoffset}
           className={cn(
-            variantColors[variant],
+            variantColors[variant || 'default'],
             animated && 'transition-all duration-300 ease-in-out'
           )}
         />

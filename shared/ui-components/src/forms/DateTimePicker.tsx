@@ -94,7 +94,7 @@ class NaturalLanguageDateParser {
     // Handle time expressions
     const timeMatch = input.match(/(\d{1,2}):?(\d{2})?\s*(am|pm)?/i);
     if (timeMatch) {
-      let hours = parseInt(timeMatch[1]);
+      let hours = parseInt(timeMatch[1] || '0');
       const minutes = timeMatch[2] ? parseInt(timeMatch[2]) : 0;
       const period = timeMatch[3]?.toLowerCase();
 
@@ -120,7 +120,7 @@ class NaturalLanguageDateParser {
       const match = input.match(format);
       if (match) {
         const [_, month, day, year] = match;
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        const date = new Date(parseInt(year || '0'), parseInt(month || '1') - 1, parseInt(day || '1'));
         
         return {
           date,

@@ -5,80 +5,42 @@
  * Provides comprehensive analytics dashboards, charts, and metrics visualization.
  */
 
-// Main Components
+// Analytics Components
+// Advanced data visualization and real-time metrics
+
 export { AnalyticsDashboard } from './AnalyticsDashboard';
 
-// Types
-export type { 
-  Metric, 
-  ChartData, 
-  AnalyticsDashboardProps 
-} from './AnalyticsDashboard';
+// Re-export types
+export type { AnalyticsDashboardProps } from './AnalyticsDashboard';
 
-// Component Registry Entry
-export const ANALYTICS_COMPONENTS = {
-  AnalyticsDashboard: 'analytics/AnalyticsDashboard'
-} as const;
+// Chart data types
+export interface ChartData {
+  name: string;
+  value: number;
+  [key: string]: any;
+}
 
-// Default Configuration
-export const DEFAULT_ANALYTICS_CONFIG = {
-  refreshInterval: 30000,
-  enableRealTime: true,
-  showFilters: true,
-  showExport: true,
-  theme: 'auto',
-  layout: 'grid'
-} as const;
+export interface AnalyticsMetric {
+  id: string;
+  name: string;
+  value: number;
+  change: number;
+  changeType: 'increase' | 'decrease' | 'neutral';
+  format: 'number' | 'percentage' | 'currency' | 'duration';
+  trend: 'up' | 'down' | 'stable';
+}
 
-// Utility Functions
-export const formatMetricValue = (value: number, format?: string, unit?: string): string => {
-  switch (format) {
-    case 'currency':
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-      }).format(value);
-    case 'percentage':
-      return `${value.toFixed(1)}%`;
-    case 'duration':
-      return `${Math.floor(value / 60)}m ${value % 60}s`;
-    case 'bytes':
-      return formatBytes(value);
-    default:
-      return new Intl.NumberFormat('en-US').format(value) + (unit ? ` ${unit}` : '');
-  }
-};
+export interface AnalyticsFilter {
+  dateRange: {
+    start: Date;
+    end: Date;
+  };
+  metrics: string[];
+  groupBy?: string;
+  segmentBy?: string;
+}
 
-export const formatBytes = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
-  
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-};
-
-export const calculatePercentageChange = (current: number, previous: number): number => {
-  if (previous === 0) return 0;
-  return ((current - previous) / previous) * 100;
-};
-
-export const getTrendIcon = (change: number): 'up' | 'down' | 'stable' => {
-  if (change > 0) return 'up';
-  if (change < 0) return 'down';
-  return 'stable';
-};
-
-export const getTrendColor = (change: number): string => {
-  if (change > 0) return 'text-green-600';
-  if (change < 0) return 'text-red-600';
-  return 'text-gray-600';
-};
-
-// Chart Utilities
+// Utility functions for chart data generation
 export const generateChartData = (data: any[], xKey: string, yKey: string): ChartData[] => {
   return data.map(item => ({
     name: item[xKey],
@@ -94,7 +56,7 @@ export const aggregateData = (data: any[], groupBy: string, aggregateBy: string,
     }
     acc[key].push(item[aggregateBy]);
     return acc;
-  }, {});
+  }, {} as Record<string, number[]>);
 
   return Object.entries(grouped).map(([name, values]) => {
     let value: number;
@@ -102,137 +64,143 @@ export const aggregateData = (data: any[], groupBy: string, aggregateBy: string,
     
     switch (operation) {
       case 'sum':
-        value = numValues.reduce((a, b) => a + b, 0);
+        value = numValues.reduce((sum: number, val: number) => sum + (val || 0), 0);
         break;
       case 'avg':
-        value = numValues.reduce((a, b) => a + b, 0) / numValues.length;
+        value = numValues.reduce((sum: number, val: number) => sum + (val || 0), 0) / numValues.length;
         break;
       case 'count':
         value = numValues.length;
         break;
       case 'max':
-        value = Math.max(...numValues);
+        value = Math.max(...numValues.map(val => val || 0));
         break;
       case 'min':
-        value = Math.min(...numValues);
+        value = Math.min(...numValues.map(val => val || 0));
         break;
       default:
         value = 0;
     }
-
     return { name, value };
   });
 };
 
-// Time Series Utilities
-export const generateTimeSeriesData = (
-  startDate: Date,
-  endDate: Date,
-  interval: 'hour' | 'day' | 'week' | 'month',
-  data: any[]
-): ChartData[] => {
-  const result: ChartData[] = [];
-  const current = new Date(startDate);
-
-  while (current <= endDate) {
-    const key = formatTimeKey(current, interval);
-    const matchingData = data.filter(item => {
-      const itemDate = new Date(item.timestamp || item.date);
-      return formatTimeKey(itemDate, interval) === key;
-    });
-
-    const value = matchingData.reduce((sum, item) => sum + (item.value || 0), 0);
-    result.push({ name: key, value });
-
-    // Increment date
-    switch (interval) {
-      case 'hour':
-        current.setHours(current.getHours() + 1);
-        break;
-      case 'day':
-        current.setDate(current.getDate() + 1);
-        break;
-      case 'week':
-        current.setDate(current.getDate() + 7);
-        break;
-      case 'month':
-        current.setMonth(current.getMonth() + 1);
-        break;
-    }
+export const formatMetricValue = (value: number, format: AnalyticsMetric['format']): string => {
+  switch (format) {
+    case 'percentage':
+      return `${value.toFixed(1)}%`;
+    case 'currency':
+      return `$${value.toLocaleString()}`;
+    case 'duration':
+      return `${Math.floor(value / 60)}m ${Math.floor(value % 60)}s`;
+    default:
+      return value.toLocaleString();
   }
+};
 
+export const calculateTrend = (current: number, previous: number): 'up' | 'down' | 'stable' => {
+  if (previous === 0) return 'stable';
+  const change = ((current - previous) / previous) * 100;
+  if (change > 5) return 'up';
+  if (change < -5) return 'down';
+  return 'stable';
+};
+
+export const generateTimeSeriesData = (
+  data: any[],
+  timeKey: string,
+  valueKey: string,
+  interval: 'hour' | 'day' | 'week' | 'month' = 'day'
+): ChartData[] => {
+  return data.map(item => ({
+    name: new Date(item[timeKey]).toLocaleDateString(),
+    value: item[valueKey]
+  }));
+};
+
+// Component Registry Entry
+export const ANALYTICS_REGISTRY = {
+  AnalyticsDashboard: () => import('./AnalyticsDashboard')
+} as const;
+
+// Utility Functions
+export const formatBytes = (bytes: number): string => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+export const formatDuration = (seconds: number): string => {
+  if (seconds < 60) return `${seconds}s`;
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return `${hours}h ${minutes}m`;
+};
+
+export const formatPercentage = (value: number, decimals: number = 1): string => {
+  return `${value.toFixed(decimals)}%`;
+};
+
+export const formatCurrency = (value: number, currency: string = 'USD'): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }).format(value);
+};
+
+// Chart color utilities
+export const CHART_COLORS = [
+  '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6',
+  '#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6366F1'
+];
+
+export const getChartColor = (index: number): string => {
+  const color = CHART_COLORS[index % CHART_COLORS.length];
+  return color || CHART_COLORS[0];
+};
+
+// Data processing utilities
+export const calculateMovingAverage = (data: number[], window: number): number[] => {
+  const result: number[] = [];
+  for (let i = 0; i < data.length; i++) {
+    const start = Math.max(0, i - window + 1);
+    const values = data.slice(start, i + 1);
+    const average = values.reduce((sum, val) => sum + val, 0) / values.length;
+    result.push(average);
+  }
   return result;
 };
 
-const formatTimeKey = (date: Date, interval: string): string => {
-  switch (interval) {
-    case 'hour':
-      return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric' });
-    case 'day':
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    case 'week':
-      return `Week ${Math.ceil(date.getDate() / 7)}`;
-    case 'month':
-      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    default:
-      return date.toLocaleDateString();
-  }
+export const calculatePercentile = (data: number[], percentile: number): number => {
+  const sorted = [...data].sort((a, b) => a - b);
+  const index = Math.ceil((percentile / 100) * sorted.length) - 1;
+  return sorted[index] || 0;
 };
 
-// Export Utilities
-export const exportToCSV = (data: any[], filename: string): void => {
-  if (data.length === 0) return;
-
-  const headers = Object.keys(data[0]);
-  const csvContent = [
-    headers.join(','),
-    ...data.map(row => headers.map(header => `"${row[header]}"`).join(','))
-  ].join('\n');
-
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', `${filename}.csv`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+export const detectAnomalies = (data: number[], threshold: number = 2): number[] => {
+  const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
+  const variance = data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length;
+  const stdDev = Math.sqrt(variance);
+  
+  return data.map((value, index) => {
+    const zScore = Math.abs((value - mean) / stdDev);
+    return zScore > threshold ? index : -1;
+  }).filter(index => index !== -1);
 };
 
-export const exportToJSON = (data: any[], filename: string): void => {
-  const jsonContent = JSON.stringify(data, null, 2);
-  const blob = new Blob([jsonContent], { type: 'application/json' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', `${filename}.json`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+// Performance monitoring utilities
+export const measurePerformance = <T>(fn: () => T): { result: T; duration: number } => {
+  const start = performance.now();
+  const result = fn();
+  const duration = performance.now() - start;
+  return { result, duration };
 };
 
-// Color Utilities
-export const CHART_COLORS = [
-  '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444',
-  '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1',
-  '#14b8a6', '#f43f5e', '#8b5cf6', '#06b6d4', '#84cc16'
-];
-
-export const getColorForIndex = (index: number): string => {
-  return CHART_COLORS[index % CHART_COLORS.length];
-};
-
-export const generateColorPalette = (count: number): string[] => {
-  const colors: string[] = [];
-  for (let i = 0; i < count; i++) {
-    colors.push(getColorForIndex(i));
-  }
-  return colors;
-};
-
-// Performance Utilities
 export const debounce = <T extends (...args: any[]) => any>(
   func: T,
   wait: number

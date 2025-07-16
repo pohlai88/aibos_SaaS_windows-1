@@ -18,8 +18,7 @@ import {
   Edit,
   Trash,
   Pin,
-  Unpin,
-  Column,
+  Columns,
   SortAsc,
   SortDesc,
   RefreshCw,
@@ -446,7 +445,7 @@ export const DataGrid = <T extends Record<string, any>>({
               size="icon-sm"
               onClick={() => setShowColumnMenu('columns')}
             >
-              <Column className="h-4 w-4" />
+              <Columns className="h-4 w-4" />
             </Button>
           </div>
         </div>

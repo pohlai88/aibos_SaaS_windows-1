@@ -27,7 +27,6 @@ import {
 import { 
   Activity, 
   Cpu, 
-  Memory, 
   HardDrive, 
   Network, 
   AlertTriangle,
@@ -346,13 +345,13 @@ export function PerformanceDashboard({
           title="CPU Usage"
           value={`${currentMetrics?.cpu.usage.toFixed(1)}%`}
           icon={<Cpu />}
-          trend={currentMetrics?.cpu.usage > 70 ? 'up' : 'down'}
-          color={currentMetrics?.cpu.usage > 80 ? 'error' : 'success'}
+          trend={(currentMetrics?.cpu.usage || 0) > 70 ? 'up' : 'down'}
+          color={(currentMetrics?.cpu.usage || 0) > 80 ? 'error' : 'success'}
         />
         <MetricCard
           title="Memory Usage"
           value={`${currentMetrics ? ((currentMetrics.memory.used / currentMetrics.memory.total) * 100).toFixed(1) : 0}%`}
-          icon={<Memory />}
+          icon={<Activity />}
           trend={currentMetrics && (currentMetrics.memory.used / currentMetrics.memory.total) > 0.8 ? 'up' : 'down'}
           color={currentMetrics && (currentMetrics.memory.used / currentMetrics.memory.total) > 0.85 ? 'error' : 'success'}
         />
@@ -360,8 +359,8 @@ export function PerformanceDashboard({
           title="Response Time"
           value={`${currentMetrics?.application.responseTime.toFixed(0)}ms`}
           icon={<Clock />}
-          trend={currentMetrics?.application.responseTime > 500 ? 'up' : 'down'}
-          color={currentMetrics?.application.responseTime > 1000 ? 'error' : 'success'}
+          trend={(currentMetrics?.application.responseTime || 0) > 500 ? 'up' : 'down'}
+          color={(currentMetrics?.application.responseTime || 0) > 1000 ? 'error' : 'success'}
         />
         <MetricCard
           title="Throughput"
