@@ -326,7 +326,7 @@ aibos security compliance
     "defaultTemplate": "minimal",
     "autoValidate": true,
     "showNotifications": true,
-    "testFramework": "jest",
+    "testFramework": "vitest",
     "database": "postgresql",
     "cache": "redis"
   }
@@ -340,7 +340,7 @@ aibos security compliance
   "aibos.defaultTemplate": "minimal",
   "aibos.autoValidate": true,
   "aibos.showNotifications": true,
-  "aibos.testFramework": "jest",
+  "aibos.testFramework": "vitest",
   "aibos.database": "postgresql",
   "aibos.cache": "redis"
 }
@@ -444,7 +444,7 @@ aibos analyze
 aibos test --verbose
 
 # Check test configuration
-cat jest.config.js
+cat vitest.config.ts
 
 # Run specific test
 aibos test --testNamePattern="User Entity"

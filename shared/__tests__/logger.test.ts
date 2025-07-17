@@ -247,8 +247,8 @@ describe('Request Logger Middleware', () => {
 describe('Error Logger Middleware', () => {
   let mockReq: any;
   let mockRes: any;
-  let mockNext: jest.Mock;
-  let consoleSpy: jest.SpyInstance;
+  let mockNext: Mock;
+  let consoleSpy: any;
 
   beforeEach(() => {
     mockReq = {
@@ -258,8 +258,8 @@ describe('Error Logger Middleware', () => {
     };
 
     mockRes = {};
-    mockNext = jest.fn();
-    consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    mockNext = vi.fn();
+    consoleSpy = vi.spyOn(console, 'log').mockImplementation();
   });
 
   afterEach(() => {

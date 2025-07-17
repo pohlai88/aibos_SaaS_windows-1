@@ -12,7 +12,7 @@ This project uses a world-class ESLint configuration with advanced plugins for T
 
 - `@typescript-eslint` for TypeScript best practices
 - `eslint-plugin-react` and `eslint-plugin-react-hooks` for React
-- `eslint-plugin-jest` for tests
+- `vitest` for testing
 - `eslint-plugin-security` for security
 - `eslint-plugin-perfectionist`, `eslint-plugin-unicorn`, `eslint-plugin-sonarjs` for code quality
 - `eslint-plugin-testing-library` for React component tests
