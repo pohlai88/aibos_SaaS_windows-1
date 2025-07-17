@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import {
   PerformanceMonitor,
   HealthMonitor,
@@ -122,7 +123,7 @@ describe('HealthMonitor', () => {
 
   describe('Health Check Registration', () => {
     it('should register health checks', () => {
-      const mockCheck = jest.fn().mockResolvedValue({
+      const mockCheck = vi.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'OK',
         timestamp: Date.now(),
@@ -138,13 +139,13 @@ describe('HealthMonitor', () => {
 
   describe('Health Check Execution', () => {
     it('should run all registered checks', async () => {
-      const check1 = jest.fn().mockResolvedValue({
+      const check1 = vi.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'Check 1 OK',
         timestamp: Date.now(),
       });
 
-      const check2 = jest.fn().mockResolvedValue({
+      const check2 = vi.fn().mockResolvedValue({
         status: HealthStatus.DEGRADED,
         message: 'Check 2 degraded',
         timestamp: Date.now(),
@@ -161,7 +162,7 @@ describe('HealthMonitor', () => {
     });
 
     it('should handle check failures', async () => {
-      const failingCheck = jest.fn().mockRejectedValue(new Error('Check failed'));
+      const failingCheck = vi.fn().mockRejectedValue(new Error('Check failed'));
 
       healthMonitor.registerCheck('failing_check', failingCheck);
       const results = await healthMonitor.runChecks();
@@ -174,7 +175,7 @@ describe('HealthMonitor', () => {
 
   describe('Overall Health Status', () => {
     it('should return HEALTHY when all checks pass', async () => {
-      const healthyCheck = jest.fn().mockResolvedValue({
+      const healthyCheck = vi.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'OK',
         timestamp: Date.now(),
@@ -187,13 +188,13 @@ describe('HealthMonitor', () => {
     });
 
     it('should return DEGRADED when some checks are degraded', async () => {
-      const healthyCheck = jest.fn().mockResolvedValue({
+      const healthyCheck = vi.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'OK',
         timestamp: Date.now(),
       });
 
-      const degradedCheck = jest.fn().mockResolvedValue({
+      const degradedCheck = vi.fn().mockResolvedValue({
         status: HealthStatus.DEGRADED,
         message: 'Degraded',
         timestamp: Date.now(),
@@ -207,13 +208,13 @@ describe('HealthMonitor', () => {
     });
 
     it('should return UNHEALTHY when any check fails', async () => {
-      const healthyCheck = jest.fn().mockResolvedValue({
+      const healthyCheck = vi.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'OK',
         timestamp: Date.now(),
       });
 
-      const unhealthyCheck = jest.fn().mockResolvedValue({
+      const unhealthyCheck = vi.fn().mockResolvedValue({
         status: HealthStatus.UNHEALTHY,
         message: 'Failed',
         timestamp: Date.now(),
@@ -334,7 +335,7 @@ describe('Global Monitoring Instance', () => {
 describe('Request Monitoring Middleware', () => {
   let mockReq: any;
   let mockRes: any;
-  let mockNext: jest.Mock;
+      let mockNext: Mock;
 
   beforeEach(() => {
     mockReq = {
@@ -344,10 +345,10 @@ describe('Request Monitoring Middleware', () => {
 
     mockRes = {
       statusCode: 200,
-      end: jest.fn(),
+      end: vi.fn(),
     };
 
-    mockNext = jest.fn();
+    mockNext = vi.fn();
   });
 
   it('should record request metrics', () => {
@@ -366,7 +367,7 @@ describe('Request Monitoring Middleware', () => {
 
 describe('Database Monitoring Wrapper', () => {
   it('should monitor successful database operations', async () => {
-    const mockOperation = jest.fn().mockResolvedValue('success');
+          const mockOperation = vi.fn().mockResolvedValue('success');
 
     const result = await monitorDatabaseOperation('SELECT', 'users', mockOperation);
 
@@ -375,7 +376,7 @@ describe('Database Monitoring Wrapper', () => {
   });
 
   it('should monitor failed database operations', async () => {
-    const mockOperation = jest.fn().mockRejectedValue(new Error('Database error'));
+          const mockOperation = vi.fn().mockRejectedValue(new Error('Database error'));
 
     await expect(monitorDatabaseOperation('SELECT', 'users', mockOperation)).rejects.toThrow(
       'Database error',
@@ -392,7 +393,7 @@ describe('Health Check Implementations', () => {
 
       // Mock process.memoryUsage to return normal values
       const originalMemoryUsage = process.memoryUsage;
-      process.memoryUsage = jest.fn().mockReturnValue({
+      process.memoryUsage = vi.fn().mockReturnValue({
         heapUsed: 50 * 1024 * 1024, // 50MB
         heapTotal: 100 * 1024 * 1024, // 100MB
         rss: 80 * 1024 * 1024, // 80MB

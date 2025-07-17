@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import {
   RateLimiter,
   SecurityUtils,
@@ -262,7 +263,7 @@ describe('SecurityMiddleware', () => {
   let middleware: SecurityMiddleware;
   let mockReq: any;
   let mockRes: any;
-  let mockNext: jest.Mock;
+  let mockNext: Mock;
 
   beforeEach(() => {
     middleware = new SecurityMiddleware();
@@ -278,11 +279,11 @@ describe('SecurityMiddleware', () => {
       params: {},
     };
     mockRes = {
-      set: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      set: vi.fn(),
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
     };
-    mockNext = jest.fn();
+    mockNext = vi.fn();
   });
 
   describe('Rate Limiting Middleware', () => {

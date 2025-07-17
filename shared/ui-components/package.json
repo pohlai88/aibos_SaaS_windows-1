@@ -86,7 +86,6 @@
     "dev": "rollup -c -w",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
-    "test": "jest",
     "clean": "rimraf dist",
     "prebuild": "npm run clean"
   },

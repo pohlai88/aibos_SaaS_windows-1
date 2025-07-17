@@ -1,8 +1,9 @@
+import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import { Logger, LogLevel, logger, createLogger, requestLogger, errorLogger } from '../lib/logger';
 
 describe('Logger', () => {
   let testLogger: Logger;
-  let consoleSpy: jest.SpyInstance;
+  let consoleSpy: any;
 
   beforeEach(() => {
     testLogger = new Logger({
@@ -10,7 +11,7 @@ describe('Logger', () => {
       enableConsole: true,
       enableStructured: false,
     });
-    consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    consoleSpy = vi.spyOn(console, 'log').mockImplementation();
   });
 
   afterEach(() => {
@@ -161,10 +162,10 @@ describe('Logger', () => {
 });
 
 describe('Global Logger', () => {
-  let consoleSpy: jest.SpyInstance;
+  let consoleSpy: any;
 
   beforeEach(() => {
-    consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    consoleSpy = vi.spyOn(console, 'log').mockImplementation();
   });
 
   afterEach(() => {
@@ -191,8 +192,8 @@ describe('createLogger', () => {
 describe('Request Logger Middleware', () => {
   let mockReq: any;
   let mockRes: any;
-  let mockNext: jest.Mock;
-  let consoleSpy: jest.SpyInstance;
+  let mockNext: Mock;
+  let consoleSpy: any;
 
   beforeEach(() => {
     mockReq = {
@@ -208,8 +209,8 @@ describe('Request Logger Middleware', () => {
 
     mockRes = {
       statusCode: 200,
-      get: jest.fn().mockReturnValue('1024'),
-      end: jest.fn(),
+      get: vi.fn().mockReturnValue('1024'),
+      end: vi.fn(),
     };
 
     mockNext = jest.fn();

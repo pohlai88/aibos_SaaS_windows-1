@@ -8,15 +8,15 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:ci": "jest --ci --coverage --watchAll=false",
-    "test:integration": "jest --testPathPattern=integration",
-    "test:e2e": "jest --testPathPattern=e2e",
-    "test:performance": "jest --testPathPattern=performance",
-    "test:smoke:staging": "jest --testPathPattern=smoke --testEnvironment=node --setupFilesAfterEnv=./shared/config/jest.setup.js",
-    "test:smoke:production": "jest --testPathPattern=smoke --testEnvironment=node --setupFilesAfterEnv=./shared/config/jest.setup.js",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "test:ci": "vitest --ci --coverage --watchAll=false",
+    "test:integration": "vitest --testPathPattern=integration",
+    "test:e2e": "vitest --testPathPattern=e2e",
+    "test:performance": "vitest --testPathPattern=performance",
+    "test:smoke:staging": "vitest --testPathPattern=smoke --testEnvironment=node --setupFilesAfterEnv=./shared/config/jest.setup.js",
+    "test:smoke:production": "vitest --testPathPattern=smoke --testEnvironment=node --setupFilesAfterEnv=./shared/config/jest.setup.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
@@ -128,31 +128,6 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "setupFilesAfterEnv": [
-      "<rootDir>/shared/config/jest.setup.js"
-    ],
-    "collectCoverageFrom": [
-      "shared/**/*.{ts,tsx}",
-      "!shared/**/*.d.ts",
-      "!shared/**/__tests__/**",
-      "!shared/**/*.test.{ts,tsx}",
-      "!shared/**/*.spec.{ts,tsx}"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 80,
-        "functions": 80,
-        "lines": 80,
-        "statements": 80
-      }
-    },
-    "moduleNameMapping": {
-      "^@shared/(.*)$": "<rootDir>/shared/$1"
-    }
   },
   "eslintConfig": {
     "extends": [
