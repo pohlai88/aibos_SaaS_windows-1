@@ -213,8 +213,8 @@ describe('Request Logger Middleware', () => {
       end: vi.fn(),
     };
 
-    mockNext = jest.fn();
-    consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    mockNext = vi.fn();
+    consoleSpy = vi.spyOn(console, 'log').mockImplementation();
   });
 
   afterEach(() => {

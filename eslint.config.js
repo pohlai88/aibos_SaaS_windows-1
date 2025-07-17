@@ -10,7 +10,7 @@ import tseslint from 'typescript-eslint';
 import reactRecommended from 'eslint-plugin-react/configs/recommended.js';
 import reactJsxRuntime from 'eslint-plugin-react/configs/jsx-runtime.js';
 import reactHooks from 'eslint-plugin-react-hooks';
-import jest from 'eslint-plugin-jest';
+
 import security from 'eslint-plugin-security';
 import importPlugin from 'eslint-plugin-import';
 import nodePlugin from 'eslint-plugin-node';
@@ -46,7 +46,7 @@ const globals = {
   afterEach: 'readonly',
   beforeAll: 'readonly',
   afterAll: 'readonly',
-  jest: 'readonly',
+
   // React globals
   React: 'readonly',
   JSX: 'readonly',
@@ -371,52 +371,11 @@ export default tseslint.config(
     },
   },
 
-  // Jest configuration
-  {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
-    plugins: {
-      jest,
-    },
-    rules: {
-      ...jest.configs.recommended.rules,
-      'jest/no-disabled-tests': 'warn',
-      'jest/no-focused-tests': 'error',
-      'jest/no-identical-title': 'error',
-      'jest/prefer-to-have-length': 'warn',
-      'jest/valid-expect': 'error',
-      'jest/expect-expect': ['error', { assertFunctionNames: ['expect', 'expect*'] }],
-      'jest/no-commented-out-tests': 'warn',
-      'jest/no-conditional-expect': 'error',
-      'jest/no-deprecated-functions': 'error',
-      'jest/no-duplicate-hooks': 'error',
-      'jest/no-export': 'error',
-      'jest/no-if': 'error',
-      'jest/no-interpolation-in-snapshots': 'error',
 
-      'jest/no-mocks-import': 'error',
-      'jest/no-standalone-expect': 'error',
-      'jest/no-test-return-statement': 'error',
-      'jest/prefer-called-with': 'error',
-      'jest/prefer-hooks-on-top': 'error',
-      'jest/prefer-spy-on': 'error',
-      'jest/prefer-strict-equal': 'error',
-      'jest/prefer-to-be': 'error',
-      'jest/prefer-to-contain': 'error',
-      'jest/prefer-todo': 'error',
-      'jest/require-hook': 'error',
-      'jest/require-to-throw-message': 'error',
-      'jest/require-top-level-describe': 'error',
-      'jest/valid-describe-callback': 'error',
-      'jest/valid-expect-in-promise': 'error',
-      'jest/valid-title': 'error',
-      'jest/prefer-expect-assertions': ['error', { onlyFunctionsWithAsyncKeyword: true }],
-
-    },
-  },
 
   // Configuration files
   {
-    files: ['*.config.js', '*.config.ts', 'rollup.config.js', 'jest.config.js'],
+    files: ['*.config.js', '*.config.ts', 'rollup.config.js'],
     rules: {
       '@typescript-eslint/no-var-requires': 'off',
       'node/no-unpublished-require': 'off',
