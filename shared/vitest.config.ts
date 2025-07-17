@@ -5,9 +5,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    setupFiles: ['./__tests__/setup.ts'],
     coverage: {
-      provider: 'c8',
-      reporter: ['text', 'lcov', 'html'],
+      provider: 'v8',
+      reporter: ['text', 'lcov', 'html', 'json', 'json-summary'],
       exclude: [
         'node_modules/',
         'dist/',
@@ -19,10 +20,72 @@ export default defineConfig({
         'scripts/',
         'config/',
         'examples/',
+        '**/*.d.ts',
+        '**/types/**',
+        '**/index.ts',
+        '**/rollup.config.js',
+        '**/vitest.config.ts',
+        '**/tsconfig.json',
+        '**/package.json',
+        '**/README.md',
+        '**/.eslintrc*',
+        '**/.prettierrc*',
       ],
+      thresholds: {
+        global: {
+          branches: 80,
+          functions: 80,
+          lines: 80,
+          statements: 80,
+        },
+        './lib/': {
+          branches: 85,
+          functions: 85,
+          lines: 85,
+          statements: 85,
+        },
+        './types/': {
+          branches: 90,
+          functions: 90,
+          lines: 90,
+          statements: 90,
+        },
+      },
+      all: true,
     },
     include: ['**/*.test.ts', '**/*.spec.ts', '**/__tests__/**/*.ts'],
-    exclude: ['node_modules/', 'dist/', 'coverage/', '**/*.d.ts'],
+    exclude: [
+      'node_modules/',
+      'dist/',
+      'coverage/',
+      '**/*.d.ts',
+      '**/examples/**',
+      '**/scripts/**',
+      '**/config/**',
+    ],
+    testTimeout: 10000,
+    hookTimeout: 10000,
+    teardownTimeout: 10000,
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
+    maxConcurrency: 1,
+    isolate: true,
+    passWithNoTests: true,
+    silent: false,
+    reporters: ['verbose', 'json'],
+    outputFile: {
+      json: './coverage/test-results.json',
+    },
+    onConsoleLog(log, type) {
+      if (type === 'stderr') {
+        return false;
+      }
+      return true;
+    },
   },
   resolve: {
     alias: {
