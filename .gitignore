@@ -1,30 +1,78 @@
-# Dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# ====================== #
+#  AI-BOS Enterprise     #
+#  World-Class .gitignore#
+# ====================== #
 
-# Production builds
+############## SECURITY ##############
+# Secrets (matches GitHub, Google, Vercel, Stripe, etc.)
+*.key
+*.pem
+*.cert
+*.crt
+*.pub
+*.gpg
+*.pass
+*.secret
+*.env
+.env.*
+.vault
+.kubeconfig
+*.p12
+*.pfx
+*.asc
+
+############## BUILD ARTIFACTS ##############
 .next/
 out/
-build/
 dist/
+build/
+.serverless/
+.vercel/
+.nuxt/
+.gatsby/
+.cache/
+.output/
+.turbo/
+.vite/
+.eslintcache
+.prettiercache
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+############## DEPENDENCIES ##############
+node_modules/
+jspm_packages/
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/install-state.gz
+.bun.lockb
 
-# IDE and editor files
+############## TESTING ##############
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+cypress/screenshots/
+cypress/videos/
+jest-cache/
+vitest_cache/
+
+############## RUNTIME ##############
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+pids/
+*.tsbuildinfo
+.npm/
+.yarn-integrity
+
+############## IDEs & OS ##############
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -33,65 +81,22 @@ dist/
 ehthumbs.db
 Thumbs.db
 
-# Logs
-logs
-*.log
+############## MONOREPO SUPPORT ##############
+lerna-debug.log
+**/dist/
+!packages/core/dist/ # Example allowlist
+**/node_modules/
+!node_modules/ # Root-only exception
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# Temporary folders
+############## DOCS & TEMP ##############
+.vuepress/dist/
+docs/_site/
 tmp/
-temp/ 
+temp/
+*.tmp
+*.temp
+
+############## CUSTOM EXCEPTIONS ##############
+!shared/.env.example
+
+############## SEE CONTRIBUTING.md FOR POLICY ##############
