@@ -1,0 +1,93 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# TypeScript and JavaScript files
+[*.{ts,tsx,js,jsx}]
+indent_size = 2
+max_line_length = 100
+
+# JSON files
+[*.json]
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 80
+
+# Package files
+[package.json]
+indent_size = 2
+
+# Configuration files
+[*.{config.js,config.ts}]
+indent_size = 2
+
+# Test files
+[*.{test.ts,test.tsx,spec.ts,spec.tsx}]
+indent_size = 2
+
+# Documentation
+[*.{md,mdx}]
+trim_trailing_whitespace = false
+max_line_length = 80
+
+# Shell scripts
+[*.{sh,bat}]
+indent_size = 2
+
+# Docker files
+[Dockerfile]
+indent_size = 2
+
+# Git ignore and config
+[*.{gitignore,gitattributes}]
+indent_size = 2
+
+# Environment files
+[*.env*]
+indent_size = 2
+
+# SQL files
+[*.sql]
+indent_size = 2
+max_line_length = 120
+
+# CSS and SCSS
+[*.{css,scss,sass}]
+indent_size = 2
+
+# HTML files
+[*.html]
+indent_size = 2
+
+# XML files
+[*.xml]
+indent_size = 2
+
+# Lock files (keep as-is)
+[package-lock.json]
+indent_size = 2
+
+# Generated files (keep as-is)
+[dist/**]
+indent_size = 2
+
+# Node modules (keep as-is)
+[node_modules/**]
+indent_size = 2
