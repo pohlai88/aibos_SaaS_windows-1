@@ -1,11 +1,11 @@
-import { z } from "zod";
-import { UUID, ISODate } from "@shared/types/primitives";
-import { TenantStatus, SubscriptionPlan, TaxIdType } from "./tenant.enums";
+import { z } from 'zod';
+import { UUID, ISODate } from '@shared/types/primitives';
+import { TenantStatus, SubscriptionPlan, TaxIdType } from './tenant.enums';
 import {
   TenantSchema,
   CreateTenantSchema,
   UpdateTenantSchema,
-} from "@shared/validation/tenant.schema";
+} from '@shared/validation/tenant.schema';
 
 // Re-export enums for convenient access
 export { TenantStatus, SubscriptionPlan, TaxIdType };
@@ -24,7 +24,7 @@ export namespace Tenant {
   export type CreateInput = z.input<typeof CreateTenantSchema>;
   export type UpdateInput = z.input<typeof UpdateTenantSchema>;
   export type BillingAddress = z.infer<typeof TenantSchema.shape.billing_address>;
-  
+
   /**
    * Runtime validation checker
    */
@@ -38,7 +38,7 @@ export {
   TenantSchema,
   CreateTenantSchema,
   UpdateTenantSchema,
-} from "@shared/validation/tenant.schema";
+} from '@shared/validation/tenant.schema';
 
 /**
  * BI-optimized address structure with validation-ready constraints
@@ -54,7 +54,7 @@ export interface BillingAddress {
   geolocation?: {
     lat: number;
     lng: number;
-    precision?: 'rooftop'|'range'|'approximate';
+    precision?: 'rooftop' | 'range' | 'approximate';
   };
 }
 
@@ -71,4 +71,4 @@ export type TenantLocationAnalytics = {
   industry_code?: string;
   plan_type: SubscriptionPlan;
   tenant_age_days: number;
-}; 
+};

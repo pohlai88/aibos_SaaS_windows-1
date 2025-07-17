@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Send, 
-  Mic, 
-  MicOff, 
-  Bot, 
-  User, 
-  Sparkles, 
-  Settings, 
-  Download, 
-  Share2, 
-  Copy, 
+import {
+  Send,
+  Mic,
+  MicOff,
+  Bot,
+  User,
+  Sparkles,
+  Settings,
+  Download,
+  Share2,
+  Copy,
   Edit3,
   Trash2,
   Volume2,
@@ -25,7 +25,7 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
-  Loader2
+  Loader2,
 } from 'lucide-react';
 
 export interface AIMessage {
@@ -89,7 +89,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
   placeholder = 'Ask me anything...',
   autoScroll = true,
   showTypingIndicator = true,
-  enableStreaming = true
+  enableStreaming = true,
 }) => {
   const [messages, setMessages] = useState<AIMessage[]>(initialMessages);
   const [inputValue, setInputValue] = useState('');
@@ -134,7 +134,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         await processVoiceInput(audioBlob);
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorder.start();
@@ -163,7 +163,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
 
       const response = await fetch(`${apiEndpoint}/transcribe`, {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
       if (!response.ok) throw new Error('Transcription failed');
@@ -199,7 +199,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       content: inputValue,
       timestamp: new Date(),
       type: 'text',
-      status: 'sending'
+      status: 'sending',
     };
 
     setMessages((prev: AIMessage[]) => [...prev, userMessage]);
@@ -212,8 +212,8 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
           name: file.name,
           type: file.type,
           url: URL.createObjectURL(file),
-          size: file.size
-        }))
+          size: file.size,
+        })),
       };
     }
 
@@ -241,9 +241,11 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     } catch (error) {
       console.error('Error sending message:', error);
       onError?.('Failed to send message');
-      setMessages((prev: AIMessage[]) => prev.map((msg: AIMessage) => 
-        msg.id === userMessage.id ? { ...msg, status: 'error' } : msg
-      ));
+      setMessages((prev: AIMessage[]) =>
+        prev.map((msg: AIMessage) =>
+          msg.id === userMessage.id ? { ...msg, status: 'error' } : msg,
+        ),
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -252,7 +254,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
   const streamResponse = async (formData: FormData): Promise<void> => {
     const response = await fetch(`${apiEndpoint}/stream`, {
       method: 'POST',
-      body: formData
+      body: formData,
     });
 
     if (!response.ok) throw new Error('Streaming request failed');
@@ -266,7 +268,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       content: '',
       timestamp: new Date(),
       type: 'text',
-      status: 'processing'
+      status: 'processing',
     };
 
     setMessages((prev: AIMessage[]) => [...prev, assistantMessage]);
@@ -283,9 +285,11 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
           if (line.startsWith('data: ')) {
             const data = line.slice(6);
             if (data === '[DONE]') {
-              setMessages((prev: AIMessage[]) => prev.map((msg: AIMessage) => 
-                msg.id === assistantMessage.id ? { ...msg, status: 'sent' } : msg
-              ));
+              setMessages((prev: AIMessage[]) =>
+                prev.map((msg: AIMessage) =>
+                  msg.id === assistantMessage.id ? { ...msg, status: 'sent' } : msg,
+                ),
+              );
               onMessageReceive?.(assistantMessage);
               return;
             }
@@ -310,13 +314,13 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
   const sendRegularRequest = async (formData: FormData): Promise<void> => {
     const response = await fetch(apiEndpoint, {
       method: 'POST',
-      body: formData
+      body: formData,
     });
 
     if (!response.ok) throw new Error('Request failed');
 
     const data = await response.json();
-    
+
     const assistantMessage: AIMessage = {
       id: `msg-${Date.now()}-assistant`,
       role: 'assistant',
@@ -328,9 +332,9 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
         tokens: data.tokens,
         processingTime: data.processingTime,
         confidence: data.confidence,
-        suggestions: data.suggestions
+        suggestions: data.suggestions,
       },
-      status: 'sent'
+      status: 'sent',
     };
 
     setMessages((prev: AIMessage[]) => [...prev, assistantMessage]);
@@ -358,15 +362,18 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
 
   const generateSuggestions = (conversation: AIMessage[]): string[] => {
     // AI-powered suggestion generation based on conversation context
-    const context = conversation.slice(-3).map(msg => msg.content).join(' ');
-    
+    const context = conversation
+      .slice(-3)
+      .map((msg) => msg.content)
+      .join(' ');
+
     // This would typically call an AI service for contextual suggestions
     // For now, return generic suggestions
     return [
       'Can you explain that in more detail?',
       'What are the alternatives?',
       'How can I implement this?',
-      'Show me an example'
+      'Show me an example',
     ];
   };
 
@@ -375,9 +382,9 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
   };
 
   const editMessage = (messageId: string, newContent: string): void => {
-    setMessages((prev: AIMessage[]) => prev.map((msg: AIMessage) => 
-      msg.id === messageId ? { ...msg, content: newContent } : msg
-    ));
+    setMessages((prev: AIMessage[]) =>
+      prev.map((msg: AIMessage) => (msg.id === messageId ? { ...msg, content: newContent } : msg)),
+    );
   };
 
   const deleteMessage = (messageId: string): void => {
@@ -392,7 +399,9 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
   };
 
   return (
-    <div className={`flex flex-col h-full bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div
+      className={`flex flex-col h-full bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 ${className}`}
+    >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="flex items-center space-x-3">
@@ -431,19 +440,29 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
               exit={{ opacity: 0, y: -20 }}
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`flex items-start space-x-3 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                <div className={`p-2 rounded-lg ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
-                  {message.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+              <div
+                className={`flex items-start space-x-3 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}
+              >
+                <div
+                  className={`p-2 rounded-lg ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}
+                >
+                  {message.role === 'user' ? (
+                    <User className="w-4 h-4" />
+                  ) : (
+                    <Bot className="w-4 h-4" />
+                  )}
                 </div>
                 <div className={`flex-1 ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
-                  <div className={`p-3 rounded-lg ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
+                  <div
+                    className={`p-3 rounded-lg ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}
+                  >
                     {message.status === 'processing' && (
                       <div className="flex items-center space-x-2 mb-2">
                         <Loader2 className="w-4 h-4 animate-spin" />
                         <span className="text-sm">AI is thinking...</span>
                       </div>
                     )}
-                    
+
                     {message.type === 'code' && enableCodeHighlighting ? (
                       <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm overflow-x-auto">
                         <code>{message.content}</code>
@@ -458,25 +477,29 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                           <div key={index} className="flex items-center space-x-2 text-sm">
                             <FileText className="w-4 h-4" />
                             <span>{attachment.name}</span>
-                            <span className="text-gray-500">({(attachment.size / 1024).toFixed(1)}KB)</span>
+                            <span className="text-gray-500">
+                              ({(attachment.size / 1024).toFixed(1)}KB)
+                            </span>
                           </div>
                         ))}
                       </div>
                     )}
                   </div>
-                  
-                  <div className={`flex items-center space-x-2 mt-2 text-xs text-gray-500 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+
+                  <div
+                    className={`flex items-center space-x-2 mt-2 text-xs text-gray-500 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
                     <span>{message.timestamp.toLocaleTimeString()}</span>
                     {message.metadata?.processingTime && (
                       <span>• {message.metadata.processingTime}ms</span>
                     )}
-                    {message.metadata?.tokens && (
-                      <span>• {message.metadata.tokens} tokens</span>
-                    )}
+                    {message.metadata?.tokens && <span>• {message.metadata.tokens} tokens</span>}
                   </div>
 
                   {/* Message Actions */}
-                  <div className={`flex items-center space-x-1 mt-1 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`flex items-center space-x-1 mt-1 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
                     <button
                       onClick={() => copyMessage(message.content)}
                       className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
@@ -561,7 +584,10 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
         {attachments.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
             {attachments.map((file: File, index: number) => (
-              <div key={index} className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg">
+              <div
+                key={index}
+                className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg"
+              >
                 <FileText className="w-4 h-4" />
                 <span className="text-sm">{file.name}</span>
                 <button
@@ -580,7 +606,9 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
             <textarea
               ref={inputRef}
               value={inputValue}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputValue(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setInputValue(e.target.value)
+              }
               onKeyPress={handleKeyPress}
               placeholder={placeholder}
               rows={1}
@@ -588,7 +616,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
               style={{ minHeight: '44px', maxHeight: '120px' }}
             />
           </div>
-          
+
           <div className="flex items-center space-x-1">
             {enableFileUpload && (
               <button
@@ -598,26 +626,28 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                 <Camera className="w-5 h-5" />
               </button>
             )}
-            
+
             {enableVoice && (
               <button
                 onClick={isRecording ? stopRecording : startRecording}
                 className={`p-2 rounded-lg transition-colors ${
-                  isRecording 
-                    ? 'bg-red-500 text-white' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                  isRecording ? 'bg-red-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
               </button>
             )}
-            
+
             <button
               onClick={sendMessage}
               disabled={(!inputValue.trim() && attachments.length === 0) || isProcessing}
               className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition-colors"
             >
-              {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+              {isProcessing ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Send className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
@@ -645,9 +675,11 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <label className="block font-medium mb-1">Model</label>
-                <select 
+                <select
                   value={model}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {/* Handle model change */}}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    /* Handle model change */
+                  }}
                   className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded"
                 >
                   <option value="gpt-4">GPT-4</option>
@@ -663,7 +695,9 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                   max="1"
                   step="0.1"
                   value={temperature}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {/* Handle temperature change */}}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    /* Handle temperature change */
+                  }}
                   className="w-full"
                 />
                 <span className="text-xs">{temperature}</span>
@@ -674,4 +708,4 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       </AnimatePresence>
     </div>
   );
-}; 
+};

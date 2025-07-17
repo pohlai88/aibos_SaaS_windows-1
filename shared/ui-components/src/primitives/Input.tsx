@@ -12,13 +12,13 @@ const inputVariants = {
   default: 'border-gray-300 focus:border-blue-500 focus:ring-blue-500',
   error: 'border-red-300 focus:border-red-500 focus:ring-red-500',
   success: 'border-green-300 focus:border-green-500 focus:ring-green-500',
-  warning: 'border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500'
+  warning: 'border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500',
 };
 
 const inputSizes = {
   sm: 'px-3 py-1.5 text-sm',
   md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg'
+  lg: 'px-6 py-3 text-lg',
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -39,7 +39,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             inputSizes[inputSize],
             leftIcon && 'pl-10',
             rightIcon && 'pr-10',
-            className
+            className,
           )}
           ref={ref}
           {...props}
@@ -51,7 +51,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
-Input.displayName = 'Input'; 
+Input.displayName = 'Input';

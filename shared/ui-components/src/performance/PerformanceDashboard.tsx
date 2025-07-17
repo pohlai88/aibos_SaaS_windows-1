@@ -1,6 +1,6 @@
 /**
  * AI-BOS Performance Dashboard
- * 
+ *
  * Real-time performance monitoring with charts, metrics,
  * and optimization suggestions.
  */
@@ -22,18 +22,18 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
 } from 'recharts';
-import { 
-  Activity, 
-  Cpu, 
-  HardDrive, 
-  Network, 
+import {
+  Activity,
+  Cpu,
+  HardDrive,
+  Network,
   AlertTriangle,
   TrendingUp,
   TrendingDown,
   Zap,
-  Clock
+  Clock,
 } from 'lucide-react';
 
 // Performance metrics types
@@ -115,8 +115,8 @@ export function PerformanceDashboard({
     cpu: 80,
     memory: 85,
     responseTime: 1000,
-    errorRate: 5
-  }
+    errorRate: 5,
+  },
 }: PerformanceDashboardProps) {
   const [metrics, setMetrics] = useState<PerformanceMetrics[]>([]);
   const [alerts, setAlerts] = useState<PerformanceAlert[]>([]);
@@ -131,30 +131,30 @@ export function PerformanceDashboard({
       cpu: {
         usage: Math.random() * 100,
         cores: 8,
-        temperature: 45 + Math.random() * 20
+        temperature: 45 + Math.random() * 20,
       },
       memory: {
         used: 6 + Math.random() * 4,
         total: 16,
         available: 16 - (6 + Math.random() * 4),
-        swap: Math.random() * 2
+        swap: Math.random() * 2,
       },
       network: {
         bytesIn: Math.random() * 1000000,
         bytesOut: Math.random() * 500000,
-        connections: 50 + Math.random() * 100
+        connections: 50 + Math.random() * 100,
       },
       disk: {
         read: Math.random() * 100,
         write: Math.random() * 50,
-        iops: Math.random() * 1000
+        iops: Math.random() * 1000,
       },
       application: {
         responseTime: 100 + Math.random() * 500,
         throughput: 1000 + Math.random() * 2000,
         errorRate: Math.random() * 10,
-        activeConnections: 100 + Math.random() * 200
-      }
+        activeConnections: 100 + Math.random() * 200,
+      },
     };
   }, []);
 
@@ -164,18 +164,17 @@ export function PerformanceDashboard({
     try {
       // In real implementation, this would fetch from your monitoring API
       const newMetrics = generateMockMetrics();
-      
-      setMetrics(prev => {
+
+      setMetrics((prev) => {
         const updated = [...prev, newMetrics];
         return updated.slice(-maxDataPoints);
       });
 
       // Check for alerts
       checkAlerts(newMetrics);
-      
+
       // Generate optimization suggestions
       generateSuggestions(newMetrics);
-      
     } catch (error) {
       console.error('Failed to fetch performance metrics:', error);
     } finally {
@@ -184,70 +183,73 @@ export function PerformanceDashboard({
   }, [generateMockMetrics, maxDataPoints]);
 
   // Check for performance alerts
-  const checkAlerts = useCallback((metrics: PerformanceMetrics) => {
-    const newAlerts: PerformanceAlert[] = [];
-    
-    if (metrics.cpu.usage > thresholds.cpu) {
-      newAlerts.push({
-        id: `cpu-${Date.now()}`,
-        type: 'warning',
-        message: `High CPU usage: ${metrics.cpu.usage.toFixed(1)}%`,
-        metric: 'cpu',
-        value: metrics.cpu.usage,
-        threshold: thresholds.cpu,
-        timestamp: Date.now(),
-        resolved: false
-      });
-    }
-    
-    if (metrics.memory.used / metrics.memory.total * 100 > thresholds.memory) {
-      newAlerts.push({
-        id: `memory-${Date.now()}`,
-        type: 'warning',
-        message: `High memory usage: ${((metrics.memory.used / metrics.memory.total) * 100).toFixed(1)}%`,
-        metric: 'memory',
-        value: (metrics.memory.used / metrics.memory.total) * 100,
-        threshold: thresholds.memory,
-        timestamp: Date.now(),
-        resolved: false
-      });
-    }
-    
-    if (metrics.application.responseTime > thresholds.responseTime) {
-      newAlerts.push({
-        id: `response-${Date.now()}`,
-        type: 'error',
-        message: `Slow response time: ${metrics.application.responseTime.toFixed(0)}ms`,
-        metric: 'responseTime',
-        value: metrics.application.responseTime,
-        threshold: thresholds.responseTime,
-        timestamp: Date.now(),
-        resolved: false
-      });
-    }
-    
-    if (metrics.application.errorRate > thresholds.errorRate) {
-      newAlerts.push({
-        id: `error-${Date.now()}`,
-        type: 'error',
-        message: `High error rate: ${metrics.application.errorRate.toFixed(1)}%`,
-        metric: 'errorRate',
-        value: metrics.application.errorRate,
-        threshold: thresholds.errorRate,
-        timestamp: Date.now(),
-        resolved: false
-      });
-    }
-    
-    if (newAlerts.length > 0) {
-      setAlerts(prev => [...newAlerts, ...prev].slice(0, 50));
-    }
-  }, [thresholds]);
+  const checkAlerts = useCallback(
+    (metrics: PerformanceMetrics) => {
+      const newAlerts: PerformanceAlert[] = [];
+
+      if (metrics.cpu.usage > thresholds.cpu) {
+        newAlerts.push({
+          id: `cpu-${Date.now()}`,
+          type: 'warning',
+          message: `High CPU usage: ${metrics.cpu.usage.toFixed(1)}%`,
+          metric: 'cpu',
+          value: metrics.cpu.usage,
+          threshold: thresholds.cpu,
+          timestamp: Date.now(),
+          resolved: false,
+        });
+      }
+
+      if ((metrics.memory.used / metrics.memory.total) * 100 > thresholds.memory) {
+        newAlerts.push({
+          id: `memory-${Date.now()}`,
+          type: 'warning',
+          message: `High memory usage: ${((metrics.memory.used / metrics.memory.total) * 100).toFixed(1)}%`,
+          metric: 'memory',
+          value: (metrics.memory.used / metrics.memory.total) * 100,
+          threshold: thresholds.memory,
+          timestamp: Date.now(),
+          resolved: false,
+        });
+      }
+
+      if (metrics.application.responseTime > thresholds.responseTime) {
+        newAlerts.push({
+          id: `response-${Date.now()}`,
+          type: 'error',
+          message: `Slow response time: ${metrics.application.responseTime.toFixed(0)}ms`,
+          metric: 'responseTime',
+          value: metrics.application.responseTime,
+          threshold: thresholds.responseTime,
+          timestamp: Date.now(),
+          resolved: false,
+        });
+      }
+
+      if (metrics.application.errorRate > thresholds.errorRate) {
+        newAlerts.push({
+          id: `error-${Date.now()}`,
+          type: 'error',
+          message: `High error rate: ${metrics.application.errorRate.toFixed(1)}%`,
+          metric: 'errorRate',
+          value: metrics.application.errorRate,
+          threshold: thresholds.errorRate,
+          timestamp: Date.now(),
+          resolved: false,
+        });
+      }
+
+      if (newAlerts.length > 0) {
+        setAlerts((prev) => [...newAlerts, ...prev].slice(0, 50));
+      }
+    },
+    [thresholds],
+  );
 
   // Generate optimization suggestions
   const generateSuggestions = useCallback((metrics: PerformanceMetrics) => {
     const newSuggestions: OptimizationSuggestion[] = [];
-    
+
     // CPU suggestions
     if (metrics.cpu.usage > 70) {
       newSuggestions.push({
@@ -258,10 +260,10 @@ export function PerformanceDashboard({
         impact: 'high',
         effort: 'medium',
         action: 'Review and optimize database queries',
-        priority: 1
+        priority: 1,
       });
     }
-    
+
     // Memory suggestions
     if (metrics.memory.used / metrics.memory.total > 0.8) {
       newSuggestions.push({
@@ -272,10 +274,10 @@ export function PerformanceDashboard({
         impact: 'high',
         effort: 'high',
         action: 'Implement memory pooling',
-        priority: 2
+        priority: 2,
       });
     }
-    
+
     // Response time suggestions
     if (metrics.application.responseTime > 500) {
       newSuggestions.push({
@@ -286,10 +288,10 @@ export function PerformanceDashboard({
         impact: 'medium',
         effort: 'low',
         action: 'Implement Redis caching',
-        priority: 3
+        priority: 3,
       });
     }
-    
+
     setSuggestions(newSuggestions);
   }, []);
 
@@ -297,29 +299,31 @@ export function PerformanceDashboard({
   useEffect(() => {
     fetchMetrics();
     const interval = setInterval(fetchMetrics, refreshInterval);
-    
+
     return () => clearInterval(interval);
   }, [fetchMetrics, refreshInterval]);
 
   // Get current metrics
   const currentMetrics = metrics[metrics.length - 1];
-  
+
   // Prepare chart data
-  const chartData = metrics.map(m => ({
+  const chartData = metrics.map((m) => ({
     time: new Date(m.timestamp).toLocaleTimeString(),
     cpu: m.cpu.usage,
     memory: (m.memory.used / m.memory.total) * 100,
     responseTime: m.application.responseTime,
     throughput: m.application.throughput,
-    errorRate: m.application.errorRate
+    errorRate: m.application.errorRate,
   }));
 
   // Memory usage data for pie chart
-  const memoryData = currentMetrics ? [
-    { name: 'Used', value: currentMetrics.memory.used, color: '#3B82F6' },
-    { name: 'Available', value: currentMetrics.memory.available, color: '#10B981' },
-    { name: 'Swap', value: currentMetrics.memory.swap, color: '#F59E0B' }
-  ] : [];
+  const memoryData = currentMetrics
+    ? [
+        { name: 'Used', value: currentMetrics.memory.used, color: '#3B82F6' },
+        { name: 'Available', value: currentMetrics.memory.available, color: '#10B981' },
+        { name: 'Swap', value: currentMetrics.memory.swap, color: '#F59E0B' },
+      ]
+    : [];
 
   return (
     <div className="performance-dashboard">
@@ -329,11 +333,7 @@ export function PerformanceDashboard({
           Performance Dashboard
         </h2>
         <div className="dashboard-controls">
-          <button 
-            className="refresh-button"
-            onClick={fetchMetrics}
-            disabled={isLoading}
-          >
+          <button className="refresh-button" onClick={fetchMetrics} disabled={isLoading}>
             {isLoading ? 'Refreshing...' : 'Refresh'}
           </button>
         </div>
@@ -352,8 +352,16 @@ export function PerformanceDashboard({
           title="Memory Usage"
           value={`${currentMetrics ? ((currentMetrics.memory.used / currentMetrics.memory.total) * 100).toFixed(1) : 0}%`}
           icon={<Activity />}
-          trend={currentMetrics && (currentMetrics.memory.used / currentMetrics.memory.total) > 0.8 ? 'up' : 'down'}
-          color={currentMetrics && (currentMetrics.memory.used / currentMetrics.memory.total) > 0.85 ? 'error' : 'success'}
+          trend={
+            currentMetrics && currentMetrics.memory.used / currentMetrics.memory.total > 0.8
+              ? 'up'
+              : 'down'
+          }
+          color={
+            currentMetrics && currentMetrics.memory.used / currentMetrics.memory.total > 0.85
+              ? 'error'
+              : 'success'
+          }
         />
         <MetricCard
           title="Response Time"
@@ -384,7 +392,12 @@ export function PerformanceDashboard({
               <Legend />
               <Line type="monotone" dataKey="cpu" stroke="#3B82F6" name="CPU %" />
               <Line type="monotone" dataKey="memory" stroke="#10B981" name="Memory %" />
-              <Line type="monotone" dataKey="responseTime" stroke="#F59E0B" name="Response Time (ms)" />
+              <Line
+                type="monotone"
+                dataKey="responseTime"
+                stroke="#F59E0B"
+                name="Response Time (ms)"
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -420,7 +433,7 @@ export function PerformanceDashboard({
           </h3>
           <div className="alerts-list">
             <AnimatePresence>
-              {alerts.slice(0, 5).map(alert => (
+              {alerts.slice(0, 5).map((alert) => (
                 <motion.div
                   key={alert.id}
                   initial={{ opacity: 0, y: -20 }}
@@ -449,7 +462,7 @@ export function PerformanceDashboard({
             Optimization Suggestions
           </h3>
           <div className="suggestions-list">
-            {suggestions.map(suggestion => (
+            {suggestions.map((suggestion) => (
               <div key={suggestion.id} className="suggestion-item">
                 <div className="suggestion-header">
                   <h4>{suggestion.title}</h4>
@@ -503,4 +516,4 @@ function MetricCard({ title, value, icon, trend, color }: MetricCardProps) {
       </div>
     </motion.div>
   );
-} 
+}

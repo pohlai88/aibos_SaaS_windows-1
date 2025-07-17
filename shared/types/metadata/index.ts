@@ -1,9 +1,9 @@
 /**
  * Metadata module exports for the AI-BOS platform
- * 
+ *
  * This module provides comprehensive metadata types, enums, and utilities
  * for managing dynamic schemas and metadata across the platform.
- * 
+ *
  * Core Components:
  * - Enums: All metadata-related enums and constants
  * - Types: Core metadata interfaces and type definitions
@@ -305,25 +305,25 @@ export function createMetadataSystemConfig() {
  */
 export function validateMetadataSystemConfig(config: any): { valid: boolean; errors?: string[] } {
   const errors: string[] = [];
-  
+
   // Validate query configuration
   if (config.query?.maxResults > 10000) {
     errors.push('Query maxResults cannot exceed 10000');
   }
-  
+
   // Validate cache configuration
   if (config.cache?.maxSize > 10000000) {
     errors.push('Cache maxSize cannot exceed 10MB');
   }
-  
+
   // Validate migration configuration
   if (config.migration?.maxBatchSize > 100000) {
     errors.push('Migration maxBatchSize cannot exceed 100000');
   }
-  
+
   return {
     valid: errors.length === 0,
-    errors: errors.length > 0 ? errors : undefined
+    errors: errors.length > 0 ? errors : undefined,
   };
 }
 
@@ -355,6 +355,6 @@ export function checkMetadataSystemHealth(): {
       migration: { available: true, version: '1.0.0' },
       testing: { available: true, version: '1.0.0' },
       errors: { available: true, version: '1.0.0' },
-    }
+    },
   };
-} 
+}

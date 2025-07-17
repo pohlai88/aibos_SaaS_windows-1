@@ -1,6 +1,6 @@
 /**
  * Enterprise-grade metadata enums for the AI-BOS platform
- * 
+ *
  * This module provides comprehensive enums for metadata field types,
  * validation rules, and metadata management operations.
  */
@@ -11,12 +11,12 @@
 
 /**
  * Core metadata field types supported by the system
- * 
+ *
  * @example
  * ```ts
  * const fieldType: MetadataFieldType = MetadataFieldType.STRING;
  * ```
- * 
+ *
  * @remarks
  * - STRING: Text values with length constraints and pattern validation
  * - NUMBER: Numeric values (integer or float) with range validation
@@ -62,66 +62,66 @@
  */
 export const MetadataFieldType = {
   // Basic types
-  STRING: "string",
-  NUMBER: "number",
-  BOOLEAN: "boolean",
-  INTEGER: "integer",
-  FLOAT: "float",
-  DECIMAL: "decimal",
-  
+  STRING: 'string',
+  NUMBER: 'number',
+  BOOLEAN: 'boolean',
+  INTEGER: 'integer',
+  FLOAT: 'float',
+  DECIMAL: 'decimal',
+
   // Date and time types
-  DATE: "date",
-  DATETIME: "datetime",
-  TIME: "time",
-  TIMESTAMP: "timestamp",
-  DURATION: "duration",
-  
+  DATE: 'date',
+  DATETIME: 'datetime',
+  TIME: 'time',
+  TIMESTAMP: 'timestamp',
+  DURATION: 'duration',
+
   // Complex types
-  ENUM: "enum",
-  JSON: "json",
-  ARRAY: "array",
-  OBJECT: "object",
-  
+  ENUM: 'enum',
+  JSON: 'json',
+  ARRAY: 'array',
+  OBJECT: 'object',
+
   // Reference types
-  RELATION: "relation",
-  REFERENCE: "reference",
-  FOREIGN_KEY: "foreign_key",
-  
+  RELATION: 'relation',
+  REFERENCE: 'reference',
+  FOREIGN_KEY: 'foreign_key',
+
   // Specialized types
-  EMAIL: "email",
-  URL: "url",
-  PHONE: "phone",
-  UUID: "uuid",
-  IP_ADDRESS: "ip_address",
-  GEO_LOCATION: "geo_location",
-  CURRENCY: "currency",
-  PERCENTAGE: "percentage",
-  
+  EMAIL: 'email',
+  URL: 'url',
+  PHONE: 'phone',
+  UUID: 'uuid',
+  IP_ADDRESS: 'ip_address',
+  GEO_LOCATION: 'geo_location',
+  CURRENCY: 'currency',
+  PERCENTAGE: 'percentage',
+
   // Binary types
-  BINARY: "binary",
-  BASE64: "base64",
-  BLOB: "blob",
-  
+  BINARY: 'binary',
+  BASE64: 'base64',
+  BLOB: 'blob',
+
   // Text types
-  TEXT: "text",
-  RICH_TEXT: "rich_text",
-  MARKDOWN: "markdown",
-  HTML: "html",
-  
+  TEXT: 'text',
+  RICH_TEXT: 'rich_text',
+  MARKDOWN: 'markdown',
+  HTML: 'html',
+
   // File types
-  FILE: "file",
-  IMAGE: "image",
-  DOCUMENT: "document",
-  VIDEO: "video",
-  AUDIO: "audio",
-  
+  FILE: 'file',
+  IMAGE: 'image',
+  DOCUMENT: 'document',
+  VIDEO: 'video',
+  AUDIO: 'audio',
+
   // Custom types
-  CUSTOM: "custom",
-  COMPUTED: "computed",
-  VIRTUAL: "virtual",
+  CUSTOM: 'custom',
+  COMPUTED: 'computed',
+  VIRTUAL: 'virtual',
 } as const;
 
-export type MetadataFieldType = typeof MetadataFieldType[keyof typeof MetadataFieldType];
+export type MetadataFieldType = (typeof MetadataFieldType)[keyof typeof MetadataFieldType];
 
 // ============================================================================
 // METADATA VALIDATION RULES
@@ -129,12 +129,12 @@ export type MetadataFieldType = typeof MetadataFieldType[keyof typeof MetadataFi
 
 /**
  * Validation rule types for metadata field validation
- * 
+ *
  * @example
  * ```ts
  * const validationRule: MetadataValidationRule = MetadataValidationRule.REQUIRED;
  * ```
- * 
+ *
  * @remarks
  * - REQUIRED: Field must have a value (not null, undefined, or empty)
  * - MIN_LENGTH: String must have minimum character length
@@ -173,55 +173,56 @@ export type MetadataFieldType = typeof MetadataFieldType[keyof typeof MetadataFi
  */
 export const MetadataValidationRule = {
   // String validation
-  REQUIRED: "required",
-  MIN_LENGTH: "min_length",
-  MAX_LENGTH: "max_length",
-  PATTERN: "pattern",
-  EMAIL: "email",
-  URL: "url",
-  UUID: "uuid",
-  PHONE: "phone",
-  
+  REQUIRED: 'required',
+  MIN_LENGTH: 'min_length',
+  MAX_LENGTH: 'max_length',
+  PATTERN: 'pattern',
+  EMAIL: 'email',
+  URL: 'url',
+  UUID: 'uuid',
+  PHONE: 'phone',
+
   // Numeric validation
-  MIN_VALUE: "min_value",
-  MAX_VALUE: "max_value",
-  RANGE: "range",
-  POSITIVE: "positive",
-  NEGATIVE: "negative",
-  INTEGER: "integer",
-  DECIMAL_PLACES: "decimal_places",
-  
+  MIN_VALUE: 'min_value',
+  MAX_VALUE: 'max_value',
+  RANGE: 'range',
+  POSITIVE: 'positive',
+  NEGATIVE: 'negative',
+  INTEGER: 'integer',
+  DECIMAL_PLACES: 'decimal_places',
+
   // Date validation
-  MIN_DATE: "min_date",
-  MAX_DATE: "max_date",
-  DATE_RANGE: "date_range",
-  FUTURE_ONLY: "future_only",
-  PAST_ONLY: "past_only",
-  
+  MIN_DATE: 'min_date',
+  MAX_DATE: 'max_date',
+  DATE_RANGE: 'date_range',
+  FUTURE_ONLY: 'future_only',
+  PAST_ONLY: 'past_only',
+
   // Array validation
-  MIN_ITEMS: "min_items",
-  MAX_ITEMS: "max_items",
-  UNIQUE_ITEMS: "unique_items",
-  ITEM_TYPE: "item_type",
-  
+  MIN_ITEMS: 'min_items',
+  MAX_ITEMS: 'max_items',
+  UNIQUE_ITEMS: 'unique_items',
+  ITEM_TYPE: 'item_type',
+
   // Object validation
-  REQUIRED_PROPERTIES: "required_properties",
-  FORBIDDEN_PROPERTIES: "forbidden_properties",
-  PROPERTY_TYPES: "property_types",
-  
+  REQUIRED_PROPERTIES: 'required_properties',
+  FORBIDDEN_PROPERTIES: 'forbidden_properties',
+  PROPERTY_TYPES: 'property_types',
+
   // Custom validation
-  CUSTOM_FUNCTION: "custom_function",
-  CONDITIONAL: "conditional",
-  DEPENDENT: "dependent",
-  
+  CUSTOM_FUNCTION: 'custom_function',
+  CONDITIONAL: 'conditional',
+  DEPENDENT: 'dependent',
+
   // Business logic validation
-  UNIQUE: "unique",
-  EXISTS: "exists",
-  NOT_EXISTS: "not_exists",
-  REFERENCE_VALID: "reference_valid",
+  UNIQUE: 'unique',
+  EXISTS: 'exists',
+  NOT_EXISTS: 'not_exists',
+  REFERENCE_VALID: 'reference_valid',
 } as const;
 
-export type MetadataValidationRule = typeof MetadataValidationRule[keyof typeof MetadataValidationRule];
+export type MetadataValidationRule =
+  (typeof MetadataValidationRule)[keyof typeof MetadataValidationRule];
 
 // ============================================================================
 // METADATA OPERATIONS
@@ -229,12 +230,12 @@ export type MetadataValidationRule = typeof MetadataValidationRule[keyof typeof 
 
 /**
  * Metadata operations for CRUD and schema management
- * 
+ *
  * @example
  * ```ts
  * const operation: MetadataOperation = MetadataOperation.CREATE;
  * ```
- * 
+ *
  * @remarks
  * - CREATE: Create new metadata record
  * - READ: Read existing metadata record
@@ -258,36 +259,36 @@ export type MetadataValidationRule = typeof MetadataValidationRule[keyof typeof 
  */
 export const MetadataOperation = {
   // CRUD operations
-  CREATE: "create",
-  READ: "read",
-  UPDATE: "update",
-  DELETE: "delete",
-  
+  CREATE: 'create',
+  READ: 'read',
+  UPDATE: 'update',
+  DELETE: 'delete',
+
   // Field operations
-  ADD_FIELD: "add_field",
-  REMOVE_FIELD: "remove_field",
-  MODIFY_FIELD: "modify_field",
-  RENAME_FIELD: "rename_field",
-  
+  ADD_FIELD: 'add_field',
+  REMOVE_FIELD: 'remove_field',
+  MODIFY_FIELD: 'modify_field',
+  RENAME_FIELD: 'rename_field',
+
   // Schema operations
-  CREATE_SCHEMA: "create_schema",
-  UPDATE_SCHEMA: "update_schema",
-  DELETE_SCHEMA: "delete_schema",
-  VALIDATE_SCHEMA: "validate_schema",
-  
+  CREATE_SCHEMA: 'create_schema',
+  UPDATE_SCHEMA: 'update_schema',
+  DELETE_SCHEMA: 'delete_schema',
+  VALIDATE_SCHEMA: 'validate_schema',
+
   // Migration operations
-  MIGRATE: "migrate",
-  ROLLBACK: "rollback",
-  VALIDATE_MIGRATION: "validate_migration",
-  
+  MIGRATE: 'migrate',
+  ROLLBACK: 'rollback',
+  VALIDATE_MIGRATION: 'validate_migration',
+
   // Import/Export operations
-  IMPORT: "import",
-  EXPORT: "export",
-  BACKUP: "backup",
-  RESTORE: "restore",
+  IMPORT: 'import',
+  EXPORT: 'export',
+  BACKUP: 'backup',
+  RESTORE: 'restore',
 } as const;
 
-export type MetadataOperation = typeof MetadataOperation[keyof typeof MetadataOperation];
+export type MetadataOperation = (typeof MetadataOperation)[keyof typeof MetadataOperation];
 
 // ============================================================================
 // METADATA PERMISSIONS
@@ -295,12 +296,12 @@ export type MetadataOperation = typeof MetadataOperation[keyof typeof MetadataOp
 
 /**
  * Metadata permissions for access control and security
- * 
+ *
  * @example
  * ```ts
  * const permission: MetadataPermission = MetadataPermission.VIEW_SCHEMA;
  * ```
- * 
+ *
  * @remarks
  * - VIEW_SCHEMA: View schema definition and configuration
  * - CREATE_SCHEMA: Create new metadata schemas
@@ -324,36 +325,36 @@ export type MetadataOperation = typeof MetadataOperation[keyof typeof MetadataOp
  */
 export const MetadataPermission = {
   // Schema permissions
-  VIEW_SCHEMA: "view_schema",
-  CREATE_SCHEMA: "create_schema",
-  MODIFY_SCHEMA: "modify_schema",
-  DELETE_SCHEMA: "delete_schema",
-  
+  VIEW_SCHEMA: 'view_schema',
+  CREATE_SCHEMA: 'create_schema',
+  MODIFY_SCHEMA: 'modify_schema',
+  DELETE_SCHEMA: 'delete_schema',
+
   // Field permissions
-  VIEW_FIELDS: "view_fields",
-  CREATE_FIELDS: "create_fields",
-  MODIFY_FIELDS: "modify_fields",
-  DELETE_FIELDS: "delete_fields",
-  
+  VIEW_FIELDS: 'view_fields',
+  CREATE_FIELDS: 'create_fields',
+  MODIFY_FIELDS: 'modify_fields',
+  DELETE_FIELDS: 'delete_fields',
+
   // Data permissions
-  VIEW_DATA: "view_data",
-  CREATE_DATA: "create_data",
-  MODIFY_DATA: "modify_data",
-  DELETE_DATA: "delete_data",
-  
+  VIEW_DATA: 'view_data',
+  CREATE_DATA: 'create_data',
+  MODIFY_DATA: 'modify_data',
+  DELETE_DATA: 'delete_data',
+
   // Validation permissions
-  VIEW_VALIDATION: "view_validation",
-  CREATE_VALIDATION: "create_validation",
-  MODIFY_VALIDATION: "modify_validation",
-  DELETE_VALIDATION: "delete_validation",
-  
+  VIEW_VALIDATION: 'view_validation',
+  CREATE_VALIDATION: 'create_validation',
+  MODIFY_VALIDATION: 'modify_validation',
+  DELETE_VALIDATION: 'delete_validation',
+
   // Admin permissions
-  MANAGE_METADATA: "manage_metadata",
-  MANAGE_PERMISSIONS: "manage_permissions",
-  MANAGE_VERSIONS: "manage_versions",
+  MANAGE_METADATA: 'manage_metadata',
+  MANAGE_PERMISSIONS: 'manage_permissions',
+  MANAGE_VERSIONS: 'manage_versions',
 } as const;
 
-export type MetadataPermission = typeof MetadataPermission[keyof typeof MetadataPermission];
+export type MetadataPermission = (typeof MetadataPermission)[keyof typeof MetadataPermission];
 
 // ============================================================================
 // METADATA STATUS
@@ -361,12 +362,12 @@ export type MetadataPermission = typeof MetadataPermission[keyof typeof Metadata
 
 /**
  * Metadata status for lifecycle and workflow management
- * 
+ *
  * @example
  * ```ts
  * const status: MetadataStatus = MetadataStatus.ACTIVE;
  * ```
- * 
+ *
  * @remarks
  * - DRAFT: Initial draft state, not yet active
  * - ACTIVE: Currently active and in use
@@ -388,32 +389,32 @@ export type MetadataPermission = typeof MetadataPermission[keyof typeof Metadata
  */
 export const MetadataStatus = {
   // Lifecycle status
-  DRAFT: "draft",
-  ACTIVE: "active",
-  INACTIVE: "inactive",
-  DEPRECATED: "deprecated",
-  ARCHIVED: "archived",
-  
+  DRAFT: 'draft',
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  DEPRECATED: 'deprecated',
+  ARCHIVED: 'archived',
+
   // Validation status
-  VALID: "valid",
-  INVALID: "invalid",
-  PENDING_VALIDATION: "pending_validation",
-  VALIDATION_ERROR: "validation_error",
-  
+  VALID: 'valid',
+  INVALID: 'invalid',
+  PENDING_VALIDATION: 'pending_validation',
+  VALIDATION_ERROR: 'validation_error',
+
   // Version status
-  CURRENT: "current",
-  OUTDATED: "outdated",
-  PENDING_UPDATE: "pending_update",
-  MIGRATION_REQUIRED: "migration_required",
-  
+  CURRENT: 'current',
+  OUTDATED: 'outdated',
+  PENDING_UPDATE: 'pending_update',
+  MIGRATION_REQUIRED: 'migration_required',
+
   // Sync status
-  SYNCED: "synced",
-  OUT_OF_SYNC: "out_of_sync",
-  SYNCING: "syncing",
-  SYNC_ERROR: "sync_error",
+  SYNCED: 'synced',
+  OUT_OF_SYNC: 'out_of_sync',
+  SYNCING: 'syncing',
+  SYNC_ERROR: 'sync_error',
 } as const;
 
-export type MetadataStatus = typeof MetadataStatus[keyof typeof MetadataStatus];
+export type MetadataStatus = (typeof MetadataStatus)[keyof typeof MetadataStatus];
 
 // ============================================================================
 // METADATA SOURCES
@@ -421,12 +422,12 @@ export type MetadataStatus = typeof MetadataStatus[keyof typeof MetadataStatus];
 
 /**
  * Metadata sources for tracking origin and ownership
- * 
+ *
  * @example
  * ```ts
  * const source: MetadataSource = MetadataSource.USER_DEFINED;
  * ```
- * 
+ *
  * @remarks
  * - SYSTEM: Built-in system metadata
  * - BUILT_IN: Pre-configured system defaults
@@ -445,29 +446,29 @@ export type MetadataStatus = typeof MetadataStatus[keyof typeof MetadataStatus];
  */
 export const MetadataSource = {
   // System sources
-  SYSTEM: "system",
-  BUILT_IN: "built_in",
-  DEFAULT: "default",
-  
+  SYSTEM: 'system',
+  BUILT_IN: 'built_in',
+  DEFAULT: 'default',
+
   // User sources
-  USER_DEFINED: "user_defined",
-  CUSTOM: "custom",
-  TEMPLATE: "template",
-  
+  USER_DEFINED: 'user_defined',
+  CUSTOM: 'custom',
+  TEMPLATE: 'template',
+
   // External sources
-  IMPORTED: "imported",
-  API: "api",
-  INTEGRATION: "integration",
-  PLUGIN: "plugin",
-  
+  IMPORTED: 'imported',
+  API: 'api',
+  INTEGRATION: 'integration',
+  PLUGIN: 'plugin',
+
   // Generated sources
-  COMPUTED: "computed",
-  DERIVED: "derived",
-  INFERRED: "inferred",
-  AUTO_GENERATED: "auto_generated",
+  COMPUTED: 'computed',
+  DERIVED: 'derived',
+  INFERRED: 'inferred',
+  AUTO_GENERATED: 'auto_generated',
 } as const;
 
-export type MetadataSource = typeof MetadataSource[keyof typeof MetadataSource];
+export type MetadataSource = (typeof MetadataSource)[keyof typeof MetadataSource];
 
 // ============================================================================
 // METADATA CATEGORIES
@@ -475,12 +476,12 @@ export type MetadataSource = typeof MetadataSource[keyof typeof MetadataSource];
 
 /**
  * Metadata categories for organization and classification
- * 
+ *
  * @example
  * ```ts
  * const category: MetadataCategory = MetadataCategory.BUSINESS;
  * ```
- * 
+ *
  * @remarks
  * - CORE: Essential system metadata
  * - SYSTEM: System-level configurations and settings
@@ -504,36 +505,36 @@ export type MetadataSource = typeof MetadataSource[keyof typeof MetadataSource];
  */
 export const MetadataCategory = {
   // Core categories
-  CORE: "core",
-  SYSTEM: "system",
-  USER: "user",
-  
+  CORE: 'core',
+  SYSTEM: 'system',
+  USER: 'user',
+
   // Business categories
-  BUSINESS: "business",
-  FINANCIAL: "financial",
-  OPERATIONAL: "operational",
-  ANALYTICAL: "analytical",
-  
+  BUSINESS: 'business',
+  FINANCIAL: 'financial',
+  OPERATIONAL: 'operational',
+  ANALYTICAL: 'analytical',
+
   // Technical categories
-  TECHNICAL: "technical",
-  SECURITY: "security",
-  PERFORMANCE: "performance",
-  MONITORING: "monitoring",
-  
+  TECHNICAL: 'technical',
+  SECURITY: 'security',
+  PERFORMANCE: 'performance',
+  MONITORING: 'monitoring',
+
   // Content categories
-  CONTENT: "content",
-  MEDIA: "media",
-  DOCUMENT: "document",
-  ASSET: "asset",
-  
+  CONTENT: 'content',
+  MEDIA: 'media',
+  DOCUMENT: 'document',
+  ASSET: 'asset',
+
   // Relationship categories
-  RELATIONSHIP: "relationship",
-  HIERARCHY: "hierarchy",
-  NETWORK: "network",
-  GRAPH: "graph",
+  RELATIONSHIP: 'relationship',
+  HIERARCHY: 'hierarchy',
+  NETWORK: 'network',
+  GRAPH: 'graph',
 } as const;
 
-export type MetadataCategory = typeof MetadataCategory[keyof typeof MetadataCategory];
+export type MetadataCategory = (typeof MetadataCategory)[keyof typeof MetadataCategory];
 
 // ============================================================================
 // METADATA ENCRYPTION
@@ -541,12 +542,12 @@ export type MetadataCategory = typeof MetadataCategory[keyof typeof MetadataCate
 
 /**
  * Metadata encryption levels for data security
- * 
+ *
  * @example
  * ```ts
  * const encryptionLevel: MetadataEncryptionLevel = MetadataEncryptionLevel.STANDARD;
  * ```
- * 
+ *
  * @remarks
  * - NONE: No encryption applied
  * - BASIC: Basic encryption (AES-128)
@@ -556,15 +557,16 @@ export type MetadataCategory = typeof MetadataCategory[keyof typeof MetadataCate
  * - MILITARY: Military-grade encryption (FIPS 140-2 compliant)
  */
 export const MetadataEncryptionLevel = {
-  NONE: "none",
-  BASIC: "basic",
-  STANDARD: "standard",
-  HIGH: "high",
-  ENTERPRISE: "enterprise",
-  MILITARY: "military",
+  NONE: 'none',
+  BASIC: 'basic',
+  STANDARD: 'standard',
+  HIGH: 'high',
+  ENTERPRISE: 'enterprise',
+  MILITARY: 'military',
 } as const;
 
-export type MetadataEncryptionLevel = typeof MetadataEncryptionLevel[keyof typeof MetadataEncryptionLevel];
+export type MetadataEncryptionLevel =
+  (typeof MetadataEncryptionLevel)[keyof typeof MetadataEncryptionLevel];
 
 // ============================================================================
 // METADATA COMPRESSION
@@ -574,12 +576,12 @@ export type MetadataEncryptionLevel = typeof MetadataEncryptionLevel[keyof typeo
  * Enum representing metadata compression types
  */
 export enum MetadataCompressionType {
-  NONE = "none",
-  GZIP = "gzip",
-  BROTLI = "brotli",
-  LZ4 = "lz4",
-  ZSTD = "zstd",
-  CUSTOM = "custom",
+  NONE = 'none',
+  GZIP = 'gzip',
+  BROTLI = 'brotli',
+  LZ4 = 'lz4',
+  ZSTD = 'zstd',
+  CUSTOM = 'custom',
 }
 
 // ============================================================================
@@ -590,14 +592,14 @@ export enum MetadataCompressionType {
  * Enum representing metadata indexing types
  */
 export enum MetadataIndexType {
-  NONE = "none",
-  BTREE = "btree",
-  HASH = "hash",
-  FULLTEXT = "fulltext",
-  SPATIAL = "spatial",
-  COMPOSITE = "composite",
-  UNIQUE = "unique",
-  PARTIAL = "partial",
+  NONE = 'none',
+  BTREE = 'btree',
+  HASH = 'hash',
+  FULLTEXT = 'fulltext',
+  SPATIAL = 'spatial',
+  COMPOSITE = 'composite',
+  UNIQUE = 'unique',
+  PARTIAL = 'partial',
 }
 
 // ============================================================================
@@ -608,12 +610,12 @@ export enum MetadataIndexType {
  * Enum representing metadata caching strategies
  */
 export enum MetadataCacheStrategy {
-  NONE = "none",
-  MEMORY = "memory",
-  REDIS = "redis",
-  DATABASE = "database",
-  CDN = "cdn",
-  HYBRID = "hybrid",
+  NONE = 'none',
+  MEMORY = 'memory',
+  REDIS = 'redis',
+  DATABASE = 'database',
+  CDN = 'cdn',
+  HYBRID = 'hybrid',
 }
 
 // ============================================================================
@@ -624,12 +626,12 @@ export enum MetadataCacheStrategy {
  * Enum representing metadata versioning strategies
  */
 export enum MetadataVersioningStrategy {
-  NONE = "none",
-  TIMESTAMP = "timestamp",
-  SEQUENTIAL = "sequential",
-  SEMANTIC = "semantic",
-  BRANCHED = "branched",
-  IMMUTABLE = "immutable",
+  NONE = 'none',
+  TIMESTAMP = 'timestamp',
+  SEQUENTIAL = 'sequential',
+  SEMANTIC = 'semantic',
+  BRANCHED = 'branched',
+  IMMUTABLE = 'immutable',
 }
 
 // ============================================================================
@@ -641,39 +643,39 @@ export enum MetadataVersioningStrategy {
  */
 export enum MetadataAuditEvent {
   // CRUD events
-  CREATED = "created",
-  READ = "read",
-  UPDATED = "updated",
-  DELETED = "deleted",
-  
+  CREATED = 'created',
+  READ = 'read',
+  UPDATED = 'updated',
+  DELETED = 'deleted',
+
   // Schema events
-  SCHEMA_CREATED = "schema_created",
-  SCHEMA_UPDATED = "schema_updated",
-  SCHEMA_DELETED = "schema_deleted",
-  
+  SCHEMA_CREATED = 'schema_created',
+  SCHEMA_UPDATED = 'schema_updated',
+  SCHEMA_DELETED = 'schema_deleted',
+
   // Field events
-  FIELD_ADDED = "field_added",
-  FIELD_MODIFIED = "field_modified",
-  FIELD_REMOVED = "field_removed",
-  
+  FIELD_ADDED = 'field_added',
+  FIELD_MODIFIED = 'field_modified',
+  FIELD_REMOVED = 'field_removed',
+
   // Validation events
-  VALIDATION_PASSED = "validation_passed",
-  VALIDATION_FAILED = "validation_failed",
-  VALIDATION_RULE_ADDED = "validation_rule_added",
-  VALIDATION_RULE_REMOVED = "validation_rule_removed",
-  
+  VALIDATION_PASSED = 'validation_passed',
+  VALIDATION_FAILED = 'validation_failed',
+  VALIDATION_RULE_ADDED = 'validation_rule_added',
+  VALIDATION_RULE_REMOVED = 'validation_rule_removed',
+
   // Permission events
-  PERMISSION_GRANTED = "permission_granted",
-  PERMISSION_REVOKED = "permission_revoked",
-  ROLE_ASSIGNED = "role_assigned",
-  ROLE_REMOVED = "role_removed",
-  
+  PERMISSION_GRANTED = 'permission_granted',
+  PERMISSION_REVOKED = 'permission_revoked',
+  ROLE_ASSIGNED = 'role_assigned',
+  ROLE_REMOVED = 'role_removed',
+
   // Migration events
-  MIGRATION_STARTED = "migration_started",
-  MIGRATION_COMPLETED = "migration_completed",
-  MIGRATION_FAILED = "migration_failed",
-  ROLLBACK_STARTED = "rollback_started",
-  ROLLBACK_COMPLETED = "rollback_completed",
+  MIGRATION_STARTED = 'migration_started',
+  MIGRATION_COMPLETED = 'migration_completed',
+  MIGRATION_FAILED = 'migration_failed',
+  ROLLBACK_STARTED = 'rollback_started',
+  ROLLBACK_COMPLETED = 'rollback_completed',
 }
 
 // ============================================================================
@@ -685,39 +687,39 @@ export enum MetadataAuditEvent {
  */
 export enum MetadataErrorType {
   // Validation errors
-  VALIDATION_ERROR = "validation_error",
-  REQUIRED_FIELD_MISSING = "required_field_missing",
-  INVALID_FIELD_TYPE = "invalid_field_type",
-  FIELD_VALUE_OUT_OF_RANGE = "field_value_out_of_range",
-  FIELD_PATTERN_MISMATCH = "field_pattern_mismatch",
-  
+  VALIDATION_ERROR = 'validation_error',
+  REQUIRED_FIELD_MISSING = 'required_field_missing',
+  INVALID_FIELD_TYPE = 'invalid_field_type',
+  FIELD_VALUE_OUT_OF_RANGE = 'field_value_out_of_range',
+  FIELD_PATTERN_MISMATCH = 'field_pattern_mismatch',
+
   // Schema errors
-  SCHEMA_ERROR = "schema_error",
-  SCHEMA_NOT_FOUND = "schema_not_found",
-  SCHEMA_ALREADY_EXISTS = "schema_already_exists",
-  SCHEMA_INVALID = "schema_invalid",
-  
+  SCHEMA_ERROR = 'schema_error',
+  SCHEMA_NOT_FOUND = 'schema_not_found',
+  SCHEMA_ALREADY_EXISTS = 'schema_already_exists',
+  SCHEMA_INVALID = 'schema_invalid',
+
   // Permission errors
-  PERMISSION_ERROR = "permission_error",
-  INSUFFICIENT_PERMISSIONS = "insufficient_permissions",
-  ACCESS_DENIED = "access_denied",
-  UNAUTHORIZED = "unauthorized",
-  
+  PERMISSION_ERROR = 'permission_error',
+  INSUFFICIENT_PERMISSIONS = 'insufficient_permissions',
+  ACCESS_DENIED = 'access_denied',
+  UNAUTHORIZED = 'unauthorized',
+
   // Data errors
-  DATA_ERROR = "data_error",
-  DATA_NOT_FOUND = "data_not_found",
-  DATA_ALREADY_EXISTS = "data_already_exists",
-  DATA_CORRUPTED = "data_corrupted",
-  
+  DATA_ERROR = 'data_error',
+  DATA_NOT_FOUND = 'data_not_found',
+  DATA_ALREADY_EXISTS = 'data_already_exists',
+  DATA_CORRUPTED = 'data_corrupted',
+
   // System errors
-  SYSTEM_ERROR = "system_error",
-  DATABASE_ERROR = "database_error",
-  NETWORK_ERROR = "network_error",
-  TIMEOUT_ERROR = "timeout_error",
-  
+  SYSTEM_ERROR = 'system_error',
+  DATABASE_ERROR = 'database_error',
+  NETWORK_ERROR = 'network_error',
+  TIMEOUT_ERROR = 'timeout_error',
+
   // Migration errors
-  MIGRATION_ERROR = "migration_error",
-  MIGRATION_FAILED = "migration_failed",
-  ROLLBACK_FAILED = "rollback_failed",
-  VERSION_CONFLICT = "version_conflict",
-} 
+  MIGRATION_ERROR = 'migration_error',
+  MIGRATION_FAILED = 'migration_failed',
+  ROLLBACK_FAILED = 'rollback_failed',
+  VERSION_CONFLICT = 'version_conflict',
+}

@@ -2,27 +2,27 @@
  * System subscription plans with detailed metadata
  */
 export enum SubscriptionPlan {
-  FREE = "free",
-  PRO = "pro",
-  ENTERPRISE = "enterprise",
+  FREE = 'free',
+  PRO = 'pro',
+  ENTERPRISE = 'enterprise',
 }
 
 /**
  * Billing intervals with conversion utilities
  */
 export enum BillingInterval {
-  MONTHLY = "monthly",
-  YEARLY = "yearly",
+  MONTHLY = 'monthly',
+  YEARLY = 'yearly',
 }
 
 /**
  * Plan feature flags and limitations
  */
 export enum PlanFeature {
-  MULTI_TEAM = "multi-team",
-  ADVANCED_ANALYTICS = "advanced-analytics",
-  PRIORITY_SUPPORT = "priority-support",
-  API_ACCESS = "api-access",
+  MULTI_TEAM = 'multi-team',
+  ADVANCED_ANALYTICS = 'advanced-analytics',
+  PRIORITY_SUPPORT = 'priority-support',
+  API_ACCESS = 'api-access',
 }
 
 /**
@@ -43,8 +43,8 @@ export interface PlanMetadata {
 
 export const PlanMetadataMap: Record<SubscriptionPlan, PlanMetadata> = {
   [SubscriptionPlan.FREE]: {
-    displayName: "Free Tier",
-    description: "Basic access with limited features",
+    displayName: 'Free Tier',
+    description: 'Basic access with limited features',
     basePrice: 0,
     features: [PlanFeature.API_ACCESS],
     limits: {
@@ -55,13 +55,10 @@ export const PlanMetadataMap: Record<SubscriptionPlan, PlanMetadata> = {
     upgradeableTo: [SubscriptionPlan.PRO, SubscriptionPlan.ENTERPRISE],
   },
   [SubscriptionPlan.PRO]: {
-    displayName: "Professional",
-    description: "For power users and small teams",
+    displayName: 'Professional',
+    description: 'For power users and small teams',
     basePrice: 15,
-    features: [
-      PlanFeature.API_ACCESS,
-      PlanFeature.ADVANCED_ANALYTICS,
-    ],
+    features: [PlanFeature.API_ACCESS, PlanFeature.ADVANCED_ANALYTICS],
     limits: {
       seats: 5,
       storageGB: 50,
@@ -70,8 +67,8 @@ export const PlanMetadataMap: Record<SubscriptionPlan, PlanMetadata> = {
     upgradeableTo: [SubscriptionPlan.ENTERPRISE],
   },
   [SubscriptionPlan.ENTERPRISE]: {
-    displayName: "Enterprise",
-    description: "Unlimited access for organizations",
+    displayName: 'Enterprise',
+    description: 'Unlimited access for organizations',
     basePrice: 50,
     features: Object.values(PlanFeature),
     limits: {
@@ -108,20 +105,14 @@ export function getPlanMetadata(plan: SubscriptionPlan): PlanMetadata {
 /**
  * Checks if a plan includes a specific feature
  */
-export function planHasFeature(
-  plan: SubscriptionPlan,
-  feature: PlanFeature
-): boolean {
+export function planHasFeature(plan: SubscriptionPlan, feature: PlanFeature): boolean {
   return PlanMetadataMap[plan].features.includes(feature);
 }
 
 /**
  * Calculates renewal date based on billing interval
  */
-export function calculateRenewalDate(
-  interval: BillingInterval,
-  fromDate: Date = new Date()
-): Date {
+export function calculateRenewalDate(interval: BillingInterval, fromDate: Date = new Date()): Date {
   const date = new Date(fromDate);
   if (interval === BillingInterval.YEARLY) {
     date.setFullYear(date.getFullYear() + 1);
@@ -129,4 +120,4 @@ export function calculateRenewalDate(
     date.setMonth(date.getMonth() + 1);
   }
   return date;
-} 
+}

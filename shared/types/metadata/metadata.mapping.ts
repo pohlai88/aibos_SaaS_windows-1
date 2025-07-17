@@ -1,31 +1,31 @@
 /**
  * Enterprise-grade metadata type mapping system for the AI-BOS platform
- * 
+ *
  * This module provides comprehensive type mappings between metadata field types
  * and actual TypeScript types, along with type guards and utility functions.
  */
 
-import { 
+import {
   MetadataFieldType,
   MetadataValidationRule,
   MetadataOperation,
   MetadataStatus,
   MetadataSource,
-  MetadataCategory
+  MetadataCategory,
 } from './metadata.enums';
-import { 
-  UUID, 
-  Email, 
-  URL, 
-  PhoneNumber, 
-  IPAddress, 
-  HexColor, 
-  Base64, 
-  JWT, 
-  SHA256, 
+import {
+  UUID,
+  Email,
+  URL,
+  PhoneNumber,
+  IPAddress,
+  HexColor,
+  Base64,
+  JWT,
+  SHA256,
   MD5,
-  JsonValue, 
-  JsonObject, 
+  JsonValue,
+  JsonObject,
   JsonArray,
   ISODate,
   UnixTimestamp,
@@ -43,7 +43,7 @@ import {
   Locale,
   HttpMethod,
   HttpStatus,
-  ContentType
+  ContentType,
 } from '../primitives';
 
 // ============================================================================
@@ -62,25 +62,25 @@ export type MetadataFieldTypeMap = {
   [MetadataFieldType.INTEGER]: Integer;
   [MetadataFieldType.FLOAT]: Float;
   [MetadataFieldType.DECIMAL]: number;
-  
+
   // Date and time types
   [MetadataFieldType.DATE]: Date;
   [MetadataFieldType.DATETIME]: Date;
   [MetadataFieldType.TIME]: string;
   [MetadataFieldType.TIMESTAMP]: UnixTimestamp;
   [MetadataFieldType.DURATION]: number;
-  
+
   // Complex types
   [MetadataFieldType.ENUM]: string;
   [MetadataFieldType.JSON]: JsonValue;
   [MetadataFieldType.ARRAY]: unknown[];
   [MetadataFieldType.OBJECT]: JsonObject;
-  
+
   // Reference types
   [MetadataFieldType.RELATION]: UUID;
   [MetadataFieldType.REFERENCE]: UUID;
   [MetadataFieldType.FOREIGN_KEY]: UUID;
-  
+
   // Specialized types
   [MetadataFieldType.EMAIL]: Email;
   [MetadataFieldType.URL]: URL;
@@ -90,25 +90,25 @@ export type MetadataFieldTypeMap = {
   [MetadataFieldType.GEO_LOCATION]: { latitude: number; longitude: number };
   [MetadataFieldType.CURRENCY]: CurrencyAmount;
   [MetadataFieldType.PERCENTAGE]: Percentage;
-  
+
   // Binary types
   [MetadataFieldType.BINARY]: Uint8Array;
   [MetadataFieldType.BASE64]: Base64;
   [MetadataFieldType.BLOB]: Blob;
-  
+
   // Text types
   [MetadataFieldType.TEXT]: string;
   [MetadataFieldType.RICH_TEXT]: string;
   [MetadataFieldType.MARKDOWN]: string;
   [MetadataFieldType.HTML]: string;
-  
+
   // File types
   [MetadataFieldType.FILE]: File;
   [MetadataFieldType.IMAGE]: File;
   [MetadataFieldType.DOCUMENT]: File;
   [MetadataFieldType.VIDEO]: File;
   [MetadataFieldType.AUDIO]: File;
-  
+
   // Custom types
   [MetadataFieldType.CUSTOM]: unknown;
   [MetadataFieldType.COMPUTED]: unknown;
@@ -302,7 +302,7 @@ export function isMetadataCategory(value: unknown): value is MetadataCategory {
  */
 export function validateFieldTypeValue<T extends MetadataFieldType>(
   fieldType: T,
-  value: unknown
+  value: unknown,
 ): value is FieldTypeToTS<T> {
   switch (fieldType) {
     case MetadataFieldType.STRING:
@@ -311,96 +311,106 @@ export function validateFieldTypeValue<T extends MetadataFieldType>(
     case MetadataFieldType.MARKDOWN:
     case MetadataFieldType.HTML:
       return typeof value === 'string';
-    
+
     case MetadataFieldType.NUMBER:
     case MetadataFieldType.FLOAT:
     case MetadataFieldType.DECIMAL:
       return typeof value === 'number' && !isNaN(value);
-    
+
     case MetadataFieldType.INTEGER:
       return Number.isInteger(value);
-    
+
     case MetadataFieldType.BOOLEAN:
       return typeof value === 'boolean';
-    
+
     case MetadataFieldType.DATE:
     case MetadataFieldType.DATETIME:
       return value instanceof Date;
-    
+
     case MetadataFieldType.TIME:
       return typeof value === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(value);
-    
+
     case MetadataFieldType.TIMESTAMP:
       return typeof value === 'number' && value > 0;
-    
+
     case MetadataFieldType.DURATION:
       return typeof value === 'number' && value >= 0;
-    
+
     case MetadataFieldType.ENUM:
       return typeof value === 'string';
-    
+
     case MetadataFieldType.JSON:
       return value !== undefined && value !== null;
-    
+
     case MetadataFieldType.ARRAY:
       return Array.isArray(value);
-    
+
     case MetadataFieldType.OBJECT:
       return typeof value === 'object' && value !== null && !Array.isArray(value);
-    
+
     case MetadataFieldType.RELATION:
     case MetadataFieldType.REFERENCE:
     case MetadataFieldType.FOREIGN_KEY:
     case MetadataFieldType.UUID:
-      return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
-    
+      return (
+        typeof value === 'string' &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+      );
+
     case MetadataFieldType.EMAIL:
       return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    
+
     case MetadataFieldType.URL:
       return typeof value === 'string' && /^https?:\/\/.+/.test(value);
-    
+
     case MetadataFieldType.PHONE:
       return typeof value === 'string' && /^\+[\d\s\-\(\)]+$/.test(value);
-    
+
     case MetadataFieldType.IP_ADDRESS:
-      return typeof value === 'string' && /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value);
-    
+      return (
+        typeof value === 'string' &&
+        /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+          value,
+        )
+      );
+
     case MetadataFieldType.GEO_LOCATION:
-      return typeof value === 'object' && 
-             value !== null && 
-             'latitude' in value && 
-             'longitude' in value &&
-             typeof (value as any).latitude === 'number' &&
-             typeof (value as any).longitude === 'number';
-    
+      return (
+        typeof value === 'object' &&
+        value !== null &&
+        'latitude' in value &&
+        'longitude' in value &&
+        typeof (value as any).latitude === 'number' &&
+        typeof (value as any).longitude === 'number'
+      );
+
     case MetadataFieldType.CURRENCY:
       return typeof value === 'number' && value >= 0;
-    
+
     case MetadataFieldType.PERCENTAGE:
       return typeof value === 'number' && value >= 0 && value <= 100;
-    
+
     case MetadataFieldType.BINARY:
       return value instanceof Uint8Array;
-    
+
     case MetadataFieldType.BASE64:
       return typeof value === 'string' && /^[A-Za-z0-9+/]*={0,2}$/.test(value);
-    
+
     case MetadataFieldType.BLOB:
       return value instanceof Blob;
-    
+
     case MetadataFieldType.FILE:
     case MetadataFieldType.IMAGE:
     case MetadataFieldType.DOCUMENT:
     case MetadataFieldType.VIDEO:
     case MetadataFieldType.AUDIO:
       return value instanceof File;
-    
+
     case MetadataFieldType.CUSTOM:
     case MetadataFieldType.COMPUTED:
     case MetadataFieldType.VIRTUAL:
       return true; // Custom types can be anything
-    
+
     default:
       return false;
   }
@@ -414,7 +424,7 @@ export function validateFieldTypeValue<T extends MetadataFieldType>(
  * Gets the default value for a given field type
  */
 export function getDefaultValueForFieldType<T extends MetadataFieldType>(
-  fieldType: T
+  fieldType: T,
 ): FieldTypeToTS<T> {
   switch (fieldType) {
     case MetadataFieldType.STRING:
@@ -430,7 +440,7 @@ export function getDefaultValueForFieldType<T extends MetadataFieldType>(
     case MetadataFieldType.TIME:
     case MetadataFieldType.ENUM:
       return '' as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.NUMBER:
     case MetadataFieldType.INTEGER:
     case MetadataFieldType.FLOAT:
@@ -439,38 +449,38 @@ export function getDefaultValueForFieldType<T extends MetadataFieldType>(
     case MetadataFieldType.PERCENTAGE:
     case MetadataFieldType.DURATION:
       return 0 as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.BOOLEAN:
       return false as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.DATE:
     case MetadataFieldType.DATETIME:
       return new Date() as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.TIMESTAMP:
       return Date.now() as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.JSON:
       return null as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.ARRAY:
       return [] as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.OBJECT:
       return {} as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.GEO_LOCATION:
       return { latitude: 0, longitude: 0 } as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.BINARY:
       return new Uint8Array() as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.RELATION:
     case MetadataFieldType.REFERENCE:
     case MetadataFieldType.FOREIGN_KEY:
     case MetadataFieldType.UUID:
       return '' as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.BLOB:
     case MetadataFieldType.FILE:
     case MetadataFieldType.IMAGE:
@@ -478,12 +488,12 @@ export function getDefaultValueForFieldType<T extends MetadataFieldType>(
     case MetadataFieldType.VIDEO:
     case MetadataFieldType.AUDIO:
       return null as FieldTypeToTS<T>;
-    
+
     case MetadataFieldType.CUSTOM:
     case MetadataFieldType.COMPUTED:
     case MetadataFieldType.VIRTUAL:
       return null as FieldTypeToTS<T>;
-    
+
     default:
       return null as FieldTypeToTS<T>;
   }
@@ -494,7 +504,7 @@ export function getDefaultValueForFieldType<T extends MetadataFieldType>(
  */
 export function convertValueToFieldType<T extends MetadataFieldType>(
   value: unknown,
-  fieldType: T
+  fieldType: T,
 ): FieldTypeToTS<T> | null {
   try {
     switch (fieldType) {
@@ -504,17 +514,17 @@ export function convertValueToFieldType<T extends MetadataFieldType>(
       case MetadataFieldType.MARKDOWN:
       case MetadataFieldType.HTML:
         return String(value) as FieldTypeToTS<T>;
-      
+
       case MetadataFieldType.NUMBER:
       case MetadataFieldType.FLOAT:
       case MetadataFieldType.DECIMAL:
         const num = Number(value);
-        return isNaN(num) ? null : num as FieldTypeToTS<T>;
-      
+        return isNaN(num) ? null : (num as FieldTypeToTS<T>);
+
       case MetadataFieldType.INTEGER:
         const int = parseInt(String(value), 10);
-        return isNaN(int) ? null : int as FieldTypeToTS<T>;
-      
+        return isNaN(int) ? null : (int as FieldTypeToTS<T>);
+
       case MetadataFieldType.BOOLEAN:
         if (typeof value === 'boolean') return value as FieldTypeToTS<T>;
         if (typeof value === 'string') {
@@ -523,25 +533,25 @@ export function convertValueToFieldType<T extends MetadataFieldType>(
         }
         if (typeof value === 'number') return (value !== 0) as FieldTypeToTS<T>;
         return false as FieldTypeToTS<T>;
-      
+
       case MetadataFieldType.DATE:
       case MetadataFieldType.DATETIME:
         if (value instanceof Date) return value as FieldTypeToTS<T>;
         if (typeof value === 'string' || typeof value === 'number') {
           const date = new Date(value);
-          return isNaN(date.getTime()) ? null : date as FieldTypeToTS<T>;
+          return isNaN(date.getTime()) ? null : (date as FieldTypeToTS<T>);
         }
         return null;
-      
+
       case MetadataFieldType.TIMESTAMP:
         if (typeof value === 'number') return value as FieldTypeToTS<T>;
         if (typeof value === 'string') {
           const timestamp = parseInt(value, 10);
-          return isNaN(timestamp) ? null : timestamp as FieldTypeToTS<T>;
+          return isNaN(timestamp) ? null : (timestamp as FieldTypeToTS<T>);
         }
         if (value instanceof Date) return value.getTime() as FieldTypeToTS<T>;
         return null;
-      
+
       case MetadataFieldType.JSON:
         if (typeof value === 'string') {
           try {
@@ -551,11 +561,11 @@ export function convertValueToFieldType<T extends MetadataFieldType>(
           }
         }
         return value as FieldTypeToTS<T>;
-      
+
       case MetadataFieldType.ARRAY:
         if (Array.isArray(value)) return value as FieldTypeToTS<T>;
         return [value] as FieldTypeToTS<T>;
-      
+
       case MetadataFieldType.OBJECT:
         if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
           return value as FieldTypeToTS<T>;
@@ -563,13 +573,15 @@ export function convertValueToFieldType<T extends MetadataFieldType>(
         if (typeof value === 'string') {
           try {
             const parsed = JSON.parse(value);
-            return typeof parsed === 'object' && parsed !== null ? parsed as FieldTypeToTS<T> : null;
+            return typeof parsed === 'object' && parsed !== null
+              ? (parsed as FieldTypeToTS<T>)
+              : null;
           } catch {
             return null;
           }
         }
         return null;
-      
+
       default:
         return value as FieldTypeToTS<T>;
     }
@@ -588,7 +600,7 @@ export function convertValueToFieldType<T extends MetadataFieldType>(
  */
 export function coerceToType<T extends MetadataFieldType>(
   value: unknown,
-  type: T
+  type: T,
 ): FieldTypeToTS<T> | null {
   try {
     switch (type) {
@@ -600,25 +612,25 @@ export function coerceToType<T extends MetadataFieldType>(
       case MetadataFieldType.TIME:
       case MetadataFieldType.ENUM:
         return String(value) as FieldTypeToTS<T>;
-      
+
       case MetadataFieldType.NUMBER:
       case MetadataFieldType.FLOAT:
       case MetadataFieldType.DECIMAL:
         const num = Number(value);
         return isNaN(num) ? null : (num as FieldTypeToTS<T>);
-      
+
       case MetadataFieldType.INTEGER:
         const int = parseInt(String(value), 10);
         return isNaN(int) ? null : (int as FieldTypeToTS<T>);
-      
+
       case MetadataFieldType.BOOLEAN:
-        return (!!value) as FieldTypeToTS<T>;
-      
+        return !!value as FieldTypeToTS<T>;
+
       case MetadataFieldType.DATE:
       case MetadataFieldType.DATETIME:
         const date = new Date(value as string);
         return isNaN(date.getTime()) ? null : (date as FieldTypeToTS<T>);
-      
+
       case MetadataFieldType.TIMESTAMP:
         if (typeof value === 'number') return value as FieldTypeToTS<T>;
         if (typeof value === 'string') {
@@ -627,23 +639,23 @@ export function coerceToType<T extends MetadataFieldType>(
         }
         if (value instanceof Date) return value.getTime() as FieldTypeToTS<T>;
         return null;
-      
+
       case MetadataFieldType.DURATION:
         const duration = Number(value);
         return isNaN(duration) || duration < 0 ? null : (duration as FieldTypeToTS<T>);
-      
+
       case MetadataFieldType.JSON:
         try {
-          return typeof value === 'string' 
-            ? (JSON.parse(value) as FieldTypeToTS<T>) 
+          return typeof value === 'string'
+            ? (JSON.parse(value) as FieldTypeToTS<T>)
             : (value as FieldTypeToTS<T>);
         } catch {
           return null;
         }
-      
+
       case MetadataFieldType.ARRAY:
         return Array.isArray(value) ? (value as FieldTypeToTS<T>) : ([value] as FieldTypeToTS<T>);
-      
+
       case MetadataFieldType.OBJECT:
         if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
           return value as FieldTypeToTS<T>;
@@ -651,63 +663,71 @@ export function coerceToType<T extends MetadataFieldType>(
         if (typeof value === 'string') {
           try {
             const parsed = JSON.parse(value);
-            return typeof parsed === 'object' && parsed !== null ? (parsed as FieldTypeToTS<T>) : null;
+            return typeof parsed === 'object' && parsed !== null
+              ? (parsed as FieldTypeToTS<T>)
+              : null;
           } catch {
             return null;
           }
         }
         return null;
-      
+
       case MetadataFieldType.RELATION:
       case MetadataFieldType.REFERENCE:
       case MetadataFieldType.FOREIGN_KEY:
       case MetadataFieldType.UUID:
         const uuid = String(value);
-        return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid) 
-          ? (uuid as FieldTypeToTS<T>) 
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid)
+          ? (uuid as FieldTypeToTS<T>)
           : null;
-      
+
       case MetadataFieldType.EMAIL:
         const email = String(value);
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) 
-          ? (email as FieldTypeToTS<T>) 
-          : null;
-      
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? (email as FieldTypeToTS<T>) : null;
+
       case MetadataFieldType.URL:
         const url = String(value);
-        return /^https?:\/\/.+/.test(url) 
-          ? (url as FieldTypeToTS<T>) 
-          : null;
-      
+        return /^https?:\/\/.+/.test(url) ? (url as FieldTypeToTS<T>) : null;
+
       case MetadataFieldType.PHONE:
         const phone = String(value);
-        return /^\+[\d\s\-\(\)]+$/.test(phone) 
-          ? (phone as FieldTypeToTS<T>) 
-          : null;
-      
+        return /^\+[\d\s\-\(\)]+$/.test(phone) ? (phone as FieldTypeToTS<T>) : null;
+
       case MetadataFieldType.IP_ADDRESS:
         const ip = String(value);
-        return /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip) 
-          ? (ip as FieldTypeToTS<T>) 
+        return /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+          ip,
+        )
+          ? (ip as FieldTypeToTS<T>)
           : null;
-      
+
       case MetadataFieldType.GEO_LOCATION:
-        if (typeof value === 'object' && value !== null && 'latitude' in value && 'longitude' in value) {
+        if (
+          typeof value === 'object' &&
+          value !== null &&
+          'latitude' in value &&
+          'longitude' in value
+        ) {
           const geo = value as { latitude: number; longitude: number };
-          return (geo.latitude >= -90 && geo.latitude <= 90 && geo.longitude >= -180 && geo.longitude <= 180)
+          return geo.latitude >= -90 &&
+            geo.latitude <= 90 &&
+            geo.longitude >= -180 &&
+            geo.longitude <= 180
             ? (geo as FieldTypeToTS<T>)
             : null;
         }
         return null;
-      
+
       case MetadataFieldType.CURRENCY:
         const currency = Number(value);
         return isNaN(currency) || currency < 0 ? null : (currency as FieldTypeToTS<T>);
-      
+
       case MetadataFieldType.PERCENTAGE:
         const percentage = Number(value);
-        return isNaN(percentage) || percentage < 0 || percentage > 100 ? null : (percentage as FieldTypeToTS<T>);
-      
+        return isNaN(percentage) || percentage < 0 || percentage > 100
+          ? null
+          : (percentage as FieldTypeToTS<T>);
+
       case MetadataFieldType.BINARY:
         if (value instanceof Uint8Array) return value as FieldTypeToTS<T>;
         if (typeof value === 'string') {
@@ -718,17 +738,15 @@ export function coerceToType<T extends MetadataFieldType>(
           }
         }
         return null;
-      
+
       case MetadataFieldType.BASE64:
         const base64 = String(value);
-        return /^[A-Za-z0-9+/]*={0,2}$/.test(base64) 
-          ? (base64 as FieldTypeToTS<T>) 
-          : null;
-      
+        return /^[A-Za-z0-9+/]*={0,2}$/.test(base64) ? (base64 as FieldTypeToTS<T>) : null;
+
       case MetadataFieldType.BLOB:
         if (value instanceof Blob) return value as FieldTypeToTS<T>;
         return null;
-      
+
       case MetadataFieldType.FILE:
       case MetadataFieldType.IMAGE:
       case MetadataFieldType.DOCUMENT:
@@ -736,12 +754,12 @@ export function coerceToType<T extends MetadataFieldType>(
       case MetadataFieldType.AUDIO:
         if (value instanceof File) return value as FieldTypeToTS<T>;
         return null;
-      
+
       case MetadataFieldType.CUSTOM:
       case MetadataFieldType.COMPUTED:
       case MetadataFieldType.VIRTUAL:
         return value as FieldTypeToTS<T>;
-      
+
       default:
         return value as FieldTypeToTS<T>;
     }
@@ -755,14 +773,14 @@ export function coerceToType<T extends MetadataFieldType>(
  */
 export function coerceMultipleToTypes<T extends Record<string, MetadataFieldType>>(
   values: Record<string, unknown>,
-  types: T
+  types: T,
 ): { [K in keyof T]: FieldTypeToTS<T[K]> | null } {
   const result = {} as { [K in keyof T]: FieldTypeToTS<T[K]> | null };
-  
+
   for (const [key, type] of Object.entries(types)) {
     result[key as keyof T] = coerceToType(values[key], type);
   }
-  
+
   return result;
 }
 
@@ -772,7 +790,7 @@ export function coerceMultipleToTypes<T extends Record<string, MetadataFieldType
 export function coerceToTypeWithFallback<T extends MetadataFieldType>(
   value: unknown,
   type: T,
-  fallback: FieldTypeToTS<T>
+  fallback: FieldTypeToTS<T>,
 ): FieldTypeToTS<T> {
   const coerced = coerceToType(value, type);
   return coerced !== null ? coerced : fallback;
@@ -784,15 +802,15 @@ export function coerceToTypeWithFallback<T extends MetadataFieldType>(
 export function coerceToTypeWithValidation<T extends MetadataFieldType>(
   value: unknown,
   type: T,
-  validator?: (value: FieldTypeToTS<T>) => boolean
+  validator?: (value: FieldTypeToTS<T>) => boolean,
 ): FieldTypeToTS<T> | null {
   const coerced = coerceToType(value, type);
   if (coerced === null) return null;
-  
+
   if (validator && !validator(coerced)) {
     return null;
   }
-  
+
   return coerced;
 }
 
@@ -818,7 +836,7 @@ export const FIELD_TYPE_GROUPS = {
     MetadataFieldType.TIME,
     MetadataFieldType.ENUM,
   ] as const,
-  
+
   NUMERIC_TYPES: [
     MetadataFieldType.NUMBER,
     MetadataFieldType.INTEGER,
@@ -829,19 +847,16 @@ export const FIELD_TYPE_GROUPS = {
     MetadataFieldType.DURATION,
     MetadataFieldType.TIMESTAMP,
   ] as const,
-  
-  DATE_TYPES: [
-    MetadataFieldType.DATE,
-    MetadataFieldType.DATETIME,
-  ] as const,
-  
+
+  DATE_TYPES: [MetadataFieldType.DATE, MetadataFieldType.DATETIME] as const,
+
   REFERENCE_TYPES: [
     MetadataFieldType.RELATION,
     MetadataFieldType.REFERENCE,
     MetadataFieldType.FOREIGN_KEY,
     MetadataFieldType.UUID,
   ] as const,
-  
+
   FILE_TYPES: [
     MetadataFieldType.FILE,
     MetadataFieldType.IMAGE,
@@ -850,11 +865,11 @@ export const FIELD_TYPE_GROUPS = {
     MetadataFieldType.AUDIO,
     MetadataFieldType.BLOB,
   ] as const,
-  
+
   COMPLEX_TYPES: [
     MetadataFieldType.JSON,
     MetadataFieldType.ARRAY,
     MetadataFieldType.OBJECT,
     MetadataFieldType.GEO_LOCATION,
   ] as const,
-} as const; 
+} as const;

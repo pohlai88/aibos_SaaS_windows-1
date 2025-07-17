@@ -7,12 +7,14 @@ This guide outlines the **state-of-the-art migration strategy** for integrating 
 ## 🎯 **Migration Strategy: Selective Integration**
 
 ### **✅ What We're Migrating**
+
 - **Security Audit Framework** (Python → TypeScript)
 - **Compliance Standards** (ISO27001, SOC2, PCI-DSS, GDPR, Malaysian compliance)
 - **Policy Enforcement Engine**
 - **Risk Scoring Algorithms**
 
 ### **❌ What We're NOT Migrating**
+
 - **CLI tools** (already have better ones)
 - **UI components** (already have modern ones)
 - **Basic utilities** (already have TypeScript versions)
@@ -21,18 +23,21 @@ This guide outlines the **state-of-the-art migration strategy** for integrating 
 ## 🚀 **Migration Phases**
 
 ### **Phase 1: Core Migration (COMPLETED)**
+
 ✅ **Security Audit Service** - Migrated to TypeScript
 ✅ **Compliance Standards** - All standards preserved
 ✅ **Type Definitions** - Full TypeScript coverage
 ✅ **Integration Points** - Connected to shared architecture
 
 ### **Phase 2: Conflict Resolution (NEXT)**
+
 🔄 **Database Schema** - Align with existing patterns
 🔄 **Event System** - Integrate with existing events
 🔄 **Caching Layer** - Optimize for performance
 🔄 **API Endpoints** - Create RESTful interfaces
 
 ### **Phase 3: Optimization (FUTURE)**
+
 📋 **Performance Tuning** - Optimize for scale
 📋 **Advanced Features** - Add AI-powered insights
 📋 **Integration Testing** - Comprehensive test coverage
@@ -66,7 +71,7 @@ interface SecurityFinding {
 
 ```typescript
 // BEFORE (Legacy)
-self.emit('audit:created', audit)
+self.emit('audit:created', audit);
 
 // AFTER (TypeScript - Integrated)
 import { EventEmitter } from 'events';
@@ -97,7 +102,7 @@ class SecurityAuditService {
   async getAudit(auditId: string): Promise<SecurityAudit> {
     const cached = await cache.get(`audit:${auditId}`);
     if (cached) return cached;
-    
+
     const audit = await this.loadAudit(auditId);
     await cache.set(`audit:${auditId}`, audit, 3600); // 1 hour
     return audit;
@@ -118,13 +123,14 @@ export const securityAuditRoutes = {
   'GET /api/security/audits/:id': 'Get specific audit',
   'POST /api/security/audits/:id/run': 'Run automated audit',
   'GET /api/security/compliance/:tenantId': 'Get compliance report',
-  'POST /api/security/findings/:id/resolve': 'Resolve finding'
+  'POST /api/security/findings/:id/resolve': 'Resolve finding',
 };
 ```
 
 ## 📊 **Migration Benefits**
 
 ### **Before Migration**
+
 - ❌ Python/TypeScript language barrier
 - ❌ No integration with shared architecture
 - ❌ Manual compliance checking
@@ -132,6 +138,7 @@ export const securityAuditRoutes = {
 - ❌ Limited scalability
 
 ### **After Migration**
+
 - ✅ **Unified TypeScript codebase**
 - ✅ **Integrated with shared architecture**
 - ✅ **Automated compliance monitoring**
@@ -141,11 +148,13 @@ export const securityAuditRoutes = {
 ## 🛠️ **Implementation Steps**
 
 ### **Step 1: Install Dependencies**
+
 ```bash
 npm install uuid @types/uuid
 ```
 
 ### **Step 2: Update TypeScript Config**
+
 ```json
 {
   "compilerOptions": {
@@ -157,6 +166,7 @@ npm install uuid @types/uuid
 ```
 
 ### **Step 3: Integration Testing**
+
 ```typescript
 import { SecurityAuditService } from '@aibos/shared/security';
 
@@ -166,7 +176,7 @@ const auditService = new SecurityAuditService();
 const audit = await auditService.createSecurityAudit(
   'tenant-123',
   'automated',
-  [ComplianceStandard.GDPR, ComplianceStandard.ISO27001]
+  [ComplianceStandard.GDPR, ComplianceStandard.ISO27001],
 );
 
 const result = await auditService.runAutomatedAudit(audit.id);
@@ -174,6 +184,7 @@ console.log('Risk Score:', result.riskScore);
 ```
 
 ### **Step 4: Database Migration**
+
 ```sql
 -- Create security audit tables
 CREATE TABLE security_audits (
@@ -200,12 +211,14 @@ CREATE TABLE security_findings (
 ## 🎯 **Quality Assurance**
 
 ### **Code Quality**
+
 - ✅ **TypeScript coverage**: 100%
 - ✅ **Zod validation**: All schemas validated
 - ✅ **Error handling**: Comprehensive error management
 - ✅ **Performance**: Optimized for enterprise scale
 
 ### **Compliance Coverage**
+
 - ✅ **ISO27001**: Information security management
 - ✅ **SOC2**: Service organization controls
 - ✅ **PCI-DSS**: Payment card industry standards
@@ -217,6 +230,7 @@ CREATE TABLE security_findings (
 - ✅ **LHDN**: Malaysian tax authority
 
 ### **Enterprise Features**
+
 - ✅ **Multi-tenant support**: Isolated per tenant
 - ✅ **Real-time monitoring**: Live security insights
 - ✅ **Policy enforcement**: Automated compliance
@@ -226,12 +240,14 @@ CREATE TABLE security_findings (
 ## 🚀 **Next Steps**
 
 ### **Immediate Actions**
+
 1. **Test the migration** with existing tenants
 2. **Validate compliance** with real data
 3. **Performance testing** under load
 4. **Security review** of the implementation
 
 ### **Future Enhancements**
+
 1. **AI-powered insights** for security recommendations
 2. **Advanced threat detection** using machine learning
 3. **Compliance automation** for new regulations
@@ -240,12 +256,14 @@ CREATE TABLE security_findings (
 ## 🎉 **Success Metrics**
 
 ### **Technical Metrics**
+
 - **Migration completion**: 100%
 - **Type safety**: 100%
 - **Test coverage**: >90%
 - **Performance**: <100ms audit execution
 
 ### **Business Metrics**
+
 - **Compliance coverage**: 9 standards supported
 - **Automation level**: 95% automated
 - **Risk reduction**: 80% faster threat detection
@@ -254,12 +272,14 @@ CREATE TABLE security_findings (
 ## 📞 **Support & Maintenance**
 
 ### **Documentation**
+
 - ✅ **API documentation**: Complete
 - ✅ **Integration guide**: This document
 - ✅ **Compliance guide**: Standards documentation
 - ✅ **Troubleshooting**: Common issues and solutions
 
 ### **Monitoring**
+
 - ✅ **Health checks**: Service monitoring
 - ✅ **Performance metrics**: Real-time dashboards
 - ✅ **Error tracking**: Comprehensive logging
@@ -267,4 +287,4 @@ CREATE TABLE security_findings (
 
 ---
 
-**🎯 Result**: You now have a **world-class, enterprise-grade security audit system** that's fully integrated with your modern TypeScript architecture, providing comprehensive compliance coverage for both international and Malaysian regulations. 
+**🎯 Result**: You now have a **world-class, enterprise-grade security audit system** that's fully integrated with your modern TypeScript architecture, providing comprehensive compliance coverage for both international and Malaysian regulations.

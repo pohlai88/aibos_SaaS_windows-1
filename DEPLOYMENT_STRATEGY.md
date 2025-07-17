@@ -3,6 +3,7 @@
 ## 🏗️ **Shared Library Deployment Strategy**
 
 ### **Problem Statement**
+
 - **Backend**: Deployed on Railway (Node.js)
 - **Frontend**: Deployed on Vercel (Next.js)
 - **Shared Library**: Contains common utilities, types, and business logic
@@ -15,6 +16,7 @@
 ### **Option 1: Private NPM Package (Production)**
 
 #### **Step 1: Publish Shared Library to NPM**
+
 ```bash
 # In shared/ directory
 cd shared
@@ -23,6 +25,7 @@ npm publish --access public
 ```
 
 #### **Step 2: Update Dependencies**
+
 ```json
 // railway-1/backend/package.json
 {
@@ -40,6 +43,7 @@ npm publish --access public
 ```
 
 #### **Step 3: Deploy**
+
 ```bash
 # Backend (Railway)
 cd railway-1/backend
@@ -59,6 +63,7 @@ vercel --prod
 ### **Option 2: Git Submodules (Development)**
 
 #### **Setup Git Submodules**
+
 ```bash
 # In root directory
 git submodule add https://github.com/pohlai88/aibos_SaaS_windows-1.git shared
@@ -66,6 +71,7 @@ git submodule update --init --recursive
 ```
 
 #### **Update Package.json**
+
 ```json
 // railway-1/backend/package.json
 {
@@ -78,15 +84,12 @@ git submodule update --init --recursive
 ### **Option 3: Monorepo with Workspaces**
 
 #### **Root Package.json**
+
 ```json
 {
   "name": "aibos-platform",
   "private": true,
-  "workspaces": [
-    "shared",
-    "railway-1/backend",
-    "railway-1/frontend"
-  ]
+  "workspaces": ["shared", "railway-1/backend", "railway-1/frontend"]
 }
 ```
 
@@ -95,6 +98,7 @@ git submodule update --init --recursive
 ## 🚀 **Production Deployment Workflow**
 
 ### **1. Shared Library Development**
+
 ```bash
 cd shared
 npm run build
@@ -104,6 +108,7 @@ npm publish
 ```
 
 ### **2. Backend Deployment (Railway)**
+
 ```bash
 cd railway-1/backend
 npm install @aibos/shared@latest
@@ -112,6 +117,7 @@ railway up
 ```
 
 ### **3. Frontend Deployment (Vercel)**
+
 ```bash
 cd railway-1/frontend
 npm install @aibos/shared@latest
@@ -124,6 +130,7 @@ vercel --prod
 ## 📦 **Package Structure**
 
 ### **Shared Library Exports**
+
 ```typescript
 // shared/index.ts
 export * from './lib/cache';
@@ -138,15 +145,10 @@ export * from './validation';
 ```
 
 ### **Usage in Backend**
+
 ```typescript
 // railway-1/backend/src/index.js
-import { 
-  logger, 
-  security, 
-  monitoring, 
-  databaseManager,
-  queueManager 
-} from '@aibos/shared';
+import { logger, security, monitoring, databaseManager, queueManager } from '@aibos/shared';
 
 // Initialize shared services
 logger.info('Backend starting...');
@@ -155,14 +157,10 @@ monitoring.start();
 ```
 
 ### **Usage in Frontend**
+
 ```typescript
 // railway-1/frontend/src/lib/api.ts
-import { 
-  apiFetcher, 
-  ApiError,
-  billingTypes,
-  subscriptionUtils 
-} from '@aibos/shared';
+import { apiFetcher, ApiError, billingTypes, subscriptionUtils } from '@aibos/shared';
 
 // Use shared utilities
 export const fetchUserData = async (userId: string) => {
@@ -175,6 +173,7 @@ export const fetchUserData = async (userId: string) => {
 ## 🔄 **CI/CD Pipeline Integration**
 
 ### **GitHub Actions Workflow**
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy AI-BOS Platform
@@ -238,6 +237,7 @@ jobs:
 ## 🛠️ **Development Workflow**
 
 ### **Local Development Setup**
+
 ```bash
 # Clone repository
 git clone https://github.com/pohlai88/aibos_SaaS_windows-1.git
@@ -267,6 +267,7 @@ npm run dev
 ```
 
 ### **Shared Library Development**
+
 ```bash
 cd shared
 npm run dev  # Watch mode for TypeScript compilation
@@ -279,6 +280,7 @@ npm run lint # Lint code
 ## 📋 **Environment Variables**
 
 ### **Backend (Railway)**
+
 ```env
 # Database
 DATABASE_URL=postgresql://...
@@ -291,6 +293,7 @@ ENABLE_METRICS=true
 ```
 
 ### **Frontend (Vercel)**
+
 ```env
 # API
 NEXT_PUBLIC_API_URL=https://your-backend.railway.app
@@ -305,6 +308,7 @@ NEXT_PUBLIC_ENABLE_LOGGING=true
 ## 🔍 **Monitoring & Debugging**
 
 ### **Shared Library Version Tracking**
+
 ```typescript
 // Check shared library version
 import { version } from '@aibos/shared/package.json';
@@ -312,6 +316,7 @@ console.log('Shared Library Version:', version);
 ```
 
 ### **Health Checks**
+
 ```typescript
 // Backend health check
 app.get('/health', (req, res) => {
@@ -319,7 +324,7 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
     sharedLibrary: sharedVersion,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 ```
@@ -338,4 +343,4 @@ app.get('/health', (req, res) => {
 ✅ **Security**: Private packages available
 ✅ **Performance**: Optimized builds and caching
 
-This approach ensures **consistency**, **maintainability**, and **scalability** across your Railway and Vercel deployments. 
+This approach ensures **consistency**, **maintainability**, and **scalability** across your Railway and Vercel deployments.

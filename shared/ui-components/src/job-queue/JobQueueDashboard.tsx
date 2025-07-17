@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Clock, 
-  Play, 
-  Pause, 
-  CheckCircle, 
-  XCircle, 
-  AlertCircle, 
+import {
+  Clock,
+  Play,
+  Pause,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
   RefreshCw,
   Trash2,
   Filter,
@@ -14,10 +14,17 @@ import {
   Download,
   Settings,
   Eye,
-  EyeOff
+  EyeOff,
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
-import { JobStatus, JobPriority, Job, JOB_STATUS_CONFIG, JOB_PRIORITY_CONFIG, comparePriorities } from './types';
+import {
+  JobStatus,
+  JobPriority,
+  Job,
+  JOB_STATUS_CONFIG,
+  JOB_PRIORITY_CONFIG,
+  comparePriorities,
+} from './types';
 
 export interface JobQueueDashboardProps {
   className?: string;
@@ -49,38 +56,38 @@ const statusConfig = {
     label: 'Pending',
     color: 'bg-yellow-500',
     icon: Clock,
-    textColor: 'text-yellow-700'
+    textColor: 'text-yellow-700',
   },
   [JobStatus.RUNNING]: {
     label: 'Running',
     color: 'bg-blue-500',
     icon: Play,
-    textColor: 'text-blue-700'
+    textColor: 'text-blue-700',
   },
   [JobStatus.COMPLETED]: {
     label: 'Completed',
     color: 'bg-green-500',
     icon: CheckCircle,
-    textColor: 'text-green-700'
+    textColor: 'text-green-700',
   },
   [JobStatus.FAILED]: {
     label: 'Failed',
     color: 'bg-red-500',
     icon: XCircle,
-    textColor: 'text-red-700'
+    textColor: 'text-red-700',
   },
   [JobStatus.CANCELLED]: {
     label: 'Cancelled',
     color: 'bg-gray-500',
     icon: XCircle,
-    textColor: 'text-gray-700'
+    textColor: 'text-gray-700',
   },
   [JobStatus.RETRY]: {
     label: 'Retry',
     color: 'bg-orange-500',
     icon: RefreshCw,
-    textColor: 'text-orange-700'
-  }
+    textColor: 'text-orange-700',
+  },
 };
 
 const priorityConfig = {
@@ -88,7 +95,7 @@ const priorityConfig = {
   [JobPriority.NORMAL]: { label: 'Normal', color: 'bg-blue-100 text-blue-800' },
   [JobPriority.HIGH]: { label: 'High', color: 'bg-orange-100 text-orange-800' },
   [JobPriority.URGENT]: { label: 'Urgent', color: 'bg-red-100 text-red-800' },
-  [JobPriority.CRITICAL]: { label: 'Critical', color: 'bg-purple-100 text-purple-800' }
+  [JobPriority.CRITICAL]: { label: 'Critical', color: 'bg-purple-100 text-purple-800' },
 };
 
 export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
@@ -102,7 +109,7 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
   onRefresh,
   jobs = [],
   isLoading = false,
-  error = null
+  error = null,
 }) => {
   const [filter, setFilter] = useState<JobFilter>({});
   const [showFiltersPanel, setShowFiltersPanel] = useState(false);
@@ -128,24 +135,22 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
 
     // Apply status filter
     if (filter.status && filter.status.length > 0) {
-      filtered = filtered.filter(job => filter.status!.includes(job.status));
+      filtered = filtered.filter((job) => filter.status!.includes(job.status));
     }
 
     // Apply priority filter
     if (filter.priority && filter.priority.length > 0) {
-      filtered = filtered.filter(job => filter.priority!.includes(job.priority));
+      filtered = filtered.filter((job) => filter.priority!.includes(job.priority));
     }
 
     // Apply tags filter
     if (filter.tags && filter.tags.length > 0) {
-      filtered = filtered.filter(job => 
-        filter.tags!.some(tag => job.tags.includes(tag))
-      );
+      filtered = filtered.filter((job) => filter.tags!.some((tag) => job.tags.includes(tag)));
     }
 
     // Apply date range filter
     if (filter.dateRange) {
-      filtered = filtered.filter(job => {
+      filtered = filtered.filter((job) => {
         const jobDate = new Date(job.createdAt);
         return jobDate >= filter.dateRange!.start && jobDate <= filter.dateRange!.end;
       });
@@ -154,17 +159,18 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
     // Apply search filter
     if (filter.search) {
       const searchLower = filter.search.toLowerCase();
-      filtered = filtered.filter(job => 
-        job.name.toLowerCase().includes(searchLower) ||
-        job.id.toLowerCase().includes(searchLower) ||
-        job.tags.some(tag => tag.toLowerCase().includes(searchLower))
+      filtered = filtered.filter(
+        (job) =>
+          job.name.toLowerCase().includes(searchLower) ||
+          job.id.toLowerCase().includes(searchLower) ||
+          job.tags.some((tag) => tag.toLowerCase().includes(searchLower)),
       );
     }
 
     // Sort jobs
     filtered.sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
         case 'createdAt':
           comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
@@ -188,12 +194,12 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
     const allJobs = filteredJobs();
     return {
       total: allJobs.length,
-      pending: allJobs.filter(job => job.status === JobStatus.PENDING).length,
-      running: allJobs.filter(job => job.status === JobStatus.RUNNING).length,
-      completed: allJobs.filter(job => job.status === JobStatus.COMPLETED).length,
-      failed: allJobs.filter(job => job.status === JobStatus.FAILED).length,
-      retry: allJobs.filter(job => job.status === JobStatus.RETRYING).length,
-      cancelled: allJobs.filter(job => job.status === JobStatus.CANCELLED).length
+      pending: allJobs.filter((job) => job.status === JobStatus.PENDING).length,
+      running: allJobs.filter((job) => job.status === JobStatus.RUNNING).length,
+      completed: allJobs.filter((job) => job.status === JobStatus.COMPLETED).length,
+      failed: allJobs.filter((job) => job.status === JobStatus.FAILED).length,
+      retry: allJobs.filter((job) => job.status === JobStatus.RETRYING).length,
+      cancelled: allJobs.filter((job) => job.status === JobStatus.CANCELLED).length,
     };
   }, [filteredJobs]);
 
@@ -205,19 +211,19 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
     if (selectedJobs.size === filteredJobs().length) {
       setSelectedJobs(new Set());
     } else {
-      setSelectedJobs(new Set(filteredJobs().map(job => job.id)));
+      setSelectedJobs(new Set(filteredJobs().map((job) => job.id)));
     }
   };
 
   const handleBulkAction = (action: 'retry' | 'cancel' | 'delete') => {
-    selectedJobs.forEach(jobId => {
+    selectedJobs.forEach((jobId) => {
       handleJobAction(jobId, action);
     });
     setSelectedJobs(new Set());
   };
 
   const exportJobs = () => {
-    const data = filteredJobs().map(job => ({
+    const data = filteredJobs().map((job) => ({
       id: job.id,
       name: job.name,
       status: job.status,
@@ -227,12 +233,16 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
       completedAt: job.completedAt,
       retries: job.retries,
       tags: job.tags.join(', '),
-      error: job.error
+      error: job.error,
     }));
 
     const csv = [
       data[0] ? Object.keys(data[0]).join(',') : '',
-      ...data.map(row => Object.values(row).map(v => `"${v}"`).join(','))
+      ...data.map((row) =>
+        Object.values(row)
+          .map((v) => `"${v}"`)
+          .join(','),
+      ),
     ].join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -278,41 +288,13 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
 
       {/* Statistics */}
       <div className="grid grid-cols-2 md:grid-cols-7 gap-4 p-6 bg-gray-50 border-b">
-        <StatCard
-          label="Total"
-          value={currentStats.total}
-          color="bg-gray-500"
-        />
-        <StatCard
-          label="Pending"
-          value={currentStats.pending}
-          color="bg-yellow-500"
-        />
-        <StatCard
-          label="Running"
-          value={currentStats.running}
-          color="bg-blue-500"
-        />
-        <StatCard
-          label="Completed"
-          value={currentStats.completed}
-          color="bg-green-500"
-        />
-        <StatCard
-          label="Failed"
-          value={currentStats.failed}
-          color="bg-red-500"
-        />
-        <StatCard
-          label="Retry"
-          value={currentStats.retry}
-          color="bg-orange-500"
-        />
-        <StatCard
-          label="Cancelled"
-          value={currentStats.cancelled}
-          color="bg-gray-400"
-        />
+        <StatCard label="Total" value={currentStats.total} color="bg-gray-500" />
+        <StatCard label="Pending" value={currentStats.pending} color="bg-yellow-500" />
+        <StatCard label="Running" value={currentStats.running} color="bg-blue-500" />
+        <StatCard label="Completed" value={currentStats.completed} color="bg-green-500" />
+        <StatCard label="Failed" value={currentStats.failed} color="bg-red-500" />
+        <StatCard label="Retry" value={currentStats.retry} color="bg-orange-500" />
+        <StatCard label="Cancelled" value={currentStats.cancelled} color="bg-gray-400" />
       </div>
 
       {/* Filters and Actions */}
@@ -334,7 +316,7 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
                 type="text"
                 placeholder="Search jobs..."
                 value={filter.search || ''}
-                onChange={(e) => setFilter(prev => ({ ...prev, search: e.target.value }))}
+                onChange={(e) => setFilter((prev) => ({ ...prev, search: e.target.value }))}
                 className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -387,14 +369,14 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
                           onChange={(e) => {
                             const currentStatuses = filter.status || [];
                             if (e.target.checked) {
-                              setFilter(prev => ({ 
-                                ...prev, 
-                                status: [...currentStatuses, status as JobStatus] 
+                              setFilter((prev) => ({
+                                ...prev,
+                                status: [...currentStatuses, status as JobStatus],
                               }));
                             } else {
-                              setFilter(prev => ({ 
-                                ...prev, 
-                                status: currentStatuses.filter(s => s !== status) 
+                              setFilter((prev) => ({
+                                ...prev,
+                                status: currentStatuses.filter((s) => s !== status),
                               }));
                             }
                           }}
@@ -412,18 +394,18 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
                       <label key={priority} className="flex items-center">
                         <input
                           type="checkbox"
-                                                     checked={filter.priority?.includes(priority as JobPriority) || false}
+                          checked={filter.priority?.includes(priority as JobPriority) || false}
                           onChange={(e) => {
                             const currentPriorities = filter.priority || [];
                             if (e.target.checked) {
-                              setFilter(prev => ({ 
-                                ...prev, 
-                                priority: [...currentPriorities, priority as JobPriority] 
+                              setFilter((prev) => ({
+                                ...prev,
+                                priority: [...currentPriorities, priority as JobPriority],
                               }));
                             } else {
-                              setFilter(prev => ({ 
-                                ...prev, 
-                                priority: currentPriorities.filter(p => p !== priority) 
+                              setFilter((prev) => ({
+                                ...prev,
+                                priority: currentPriorities.filter((p) => p !== priority),
                               }));
                             }
                           }}
@@ -439,24 +421,32 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
                   <div className="space-y-2">
                     <input
                       type="date"
-                      value={filter.dateRange?.start ? format(filter.dateRange.start, 'yyyy-MM-dd') : ''}
+                      value={
+                        filter.dateRange?.start ? format(filter.dateRange.start, 'yyyy-MM-dd') : ''
+                      }
                       onChange={(e) => {
                         const start = e.target.value ? new Date(e.target.value) : undefined;
-                        setFilter(prev => ({
+                        setFilter((prev) => ({
                           ...prev,
-                          dateRange: start ? { start, end: prev.dateRange?.end || new Date() } : undefined
+                          dateRange: start
+                            ? { start, end: prev.dateRange?.end || new Date() }
+                            : undefined,
                         }));
                       }}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
                     />
                     <input
                       type="date"
-                      value={filter.dateRange?.end ? format(filter.dateRange.end, 'yyyy-MM-dd') : ''}
+                      value={
+                        filter.dateRange?.end ? format(filter.dateRange.end, 'yyyy-MM-dd') : ''
+                      }
                       onChange={(e) => {
                         const end = e.target.value ? new Date(e.target.value) : undefined;
-                        setFilter(prev => ({
+                        setFilter((prev) => ({
                           ...prev,
-                          dateRange: end ? { start: prev.dateRange?.start || new Date(), end } : undefined
+                          dateRange: end
+                            ? { start: prev.dateRange?.start || new Date(), end }
+                            : undefined,
                         }));
                       }}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
@@ -470,8 +460,11 @@ export const JobQueueDashboard: React.FC<JobQueueDashboardProps> = ({
                     placeholder="Enter tags (comma-separated)"
                     value={filter.tags?.join(', ') || ''}
                     onChange={(e) => {
-                      const tags = e.target.value.split(',').map(tag => tag.trim()).filter(Boolean);
-                      setFilter(prev => ({ ...prev, tags: tags.length > 0 ? tags : undefined }));
+                      const tags = e.target.value
+                        .split(',')
+                        .map((tag) => tag.trim())
+                        .filter(Boolean);
+                      setFilter((prev) => ({ ...prev, tags: tags.length > 0 ? tags : undefined }));
                     }}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
                   />
@@ -615,7 +608,7 @@ const JobCard: React.FC<{
               className="mt-1"
             />
           )}
-          
+
           <div className="flex-1">
             <div className="flex items-center space-x-3 mb-2">
               <div className={`w-2 h-2 rounded-full ${status.color}`} />
@@ -624,13 +617,14 @@ const JobCard: React.FC<{
                 {priority.label}
               </span>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-3">
               <div>
                 <span className="font-medium">ID:</span> {job.id}
               </div>
               <div>
-                <span className="font-medium">Created:</span> {formatDistanceToNow(new Date(job.createdAt))} ago
+                <span className="font-medium">Created:</span>{' '}
+                {formatDistanceToNow(new Date(job.createdAt))} ago
               </div>
               <div>
                 <span className="font-medium">Retries:</span> {job.retries}/{job.maxRetries}
@@ -683,14 +677,10 @@ const JobCard: React.FC<{
                 <span>{status.label}</span>
               </div>
               {job.startedAt && (
-                <div>
-                  Started: {formatDistanceToNow(new Date(job.startedAt))} ago
-                </div>
+                <div>Started: {formatDistanceToNow(new Date(job.startedAt))} ago</div>
               )}
               {job.completedAt && (
-                <div>
-                  Completed: {formatDistanceToNow(new Date(job.completedAt))} ago
-                </div>
+                <div>Completed: {formatDistanceToNow(new Date(job.completedAt))} ago</div>
               )}
             </div>
           </div>
@@ -728,4 +718,4 @@ const JobCard: React.FC<{
       </div>
     </motion.div>
   );
-}; 
+};

@@ -24,9 +24,9 @@ export const useMemoryManager = (): MemoryManager => {
 
   const cleanup = useCallback(() => {
     if (isDisposed.current) return;
-    
+
     isDisposed.current = true;
-    
+
     // Execute all cleanup functions in reverse order
     for (let i = cleanupFunctions.current.length - 1; i >= 0; i--) {
       try {
@@ -35,7 +35,7 @@ export const useMemoryManager = (): MemoryManager => {
         console.warn('Error during cleanup:', error);
       }
     }
-    
+
     cleanupFunctions.current = [];
   }, []);
 
@@ -58,7 +58,7 @@ export const useSafeEventListener = (
   target: EventTarget | null,
   eventType: string,
   handler: EventListener,
-  options?: AddEventListenerOptions
+  options?: AddEventListenerOptions,
 ) => {
   const memoryManager = useMemoryManager();
   const handlerRef = useRef(handler);
@@ -78,7 +78,7 @@ export const useSafeEventListener = (
     };
 
     target.addEventListener(eventType, wrappedHandler, options);
-    
+
     memoryManager.addCleanup(() => {
       target.removeEventListener(eventType, wrappedHandler, options);
     });
@@ -92,19 +92,22 @@ export const useSafeTimeout = () => {
   const memoryManager = useMemoryManager();
   const timeoutRefs = useRef<Set<number>>(new Set());
 
-  const setTimeout = useCallback((callback: () => void, delay: number): number => {
-    if (memoryManager.isDisposed) return -1;
+  const setTimeout = useCallback(
+    (callback: () => void, delay: number): number => {
+      if (memoryManager.isDisposed) return -1;
 
-    const timeoutId = window.setTimeout(() => {
-      if (!memoryManager.isDisposed) {
-        callback();
-      }
-      timeoutRefs.current.delete(timeoutId);
-    }, delay);
+      const timeoutId = window.setTimeout(() => {
+        if (!memoryManager.isDisposed) {
+          callback();
+        }
+        timeoutRefs.current.delete(timeoutId);
+      }, delay);
 
-    timeoutRefs.current.add(timeoutId);
-    return timeoutId;
-  }, [memoryManager]);
+      timeoutRefs.current.add(timeoutId);
+      return timeoutId;
+    },
+    [memoryManager],
+  );
 
   const clearTimeout = useCallback((timeoutId: number) => {
     window.clearTimeout(timeoutId);
@@ -113,7 +116,7 @@ export const useSafeTimeout = () => {
 
   // Cleanup all timeouts on unmount
   memoryManager.addCleanup(() => {
-    timeoutRefs.current.forEach(timeoutId => {
+    timeoutRefs.current.forEach((timeoutId) => {
       window.clearTimeout(timeoutId);
     });
     timeoutRefs.current.clear();
@@ -127,21 +130,24 @@ export const useSafeInterval = () => {
   const memoryManager = useMemoryManager();
   const intervalRefs = useRef<Set<number>>(new Set());
 
-  const setInterval = useCallback((callback: () => void, delay: number): number => {
-    if (memoryManager.isDisposed) return -1;
+  const setInterval = useCallback(
+    (callback: () => void, delay: number): number => {
+      if (memoryManager.isDisposed) return -1;
 
-    const intervalId = window.setInterval(() => {
-      if (!memoryManager.isDisposed) {
-        callback();
-      } else {
-        window.clearInterval(intervalId);
-        intervalRefs.current.delete(intervalId);
-      }
-    }, delay);
+      const intervalId = window.setInterval(() => {
+        if (!memoryManager.isDisposed) {
+          callback();
+        } else {
+          window.clearInterval(intervalId);
+          intervalRefs.current.delete(intervalId);
+        }
+      }, delay);
 
-    intervalRefs.current.add(intervalId);
-    return intervalId;
-  }, [memoryManager]);
+      intervalRefs.current.add(intervalId);
+      return intervalId;
+    },
+    [memoryManager],
+  );
 
   const clearInterval = useCallback((intervalId: number) => {
     window.clearInterval(intervalId);
@@ -150,7 +156,7 @@ export const useSafeInterval = () => {
 
   // Cleanup all intervals on unmount
   memoryManager.addCleanup(() => {
-    intervalRefs.current.forEach(intervalId => {
+    intervalRefs.current.forEach((intervalId) => {
       window.clearInterval(intervalId);
     });
     intervalRefs.current.clear();
@@ -164,19 +170,22 @@ export const useSafeAnimationFrame = () => {
   const memoryManager = useMemoryManager();
   const animationFrameRefs = useRef<Set<number>>(new Set());
 
-  const requestAnimationFrame = useCallback((callback: FrameRequestCallback): number => {
-    if (memoryManager.isDisposed) return -1;
+  const requestAnimationFrame = useCallback(
+    (callback: FrameRequestCallback): number => {
+      if (memoryManager.isDisposed) return -1;
 
-    const animationFrameId = window.requestAnimationFrame((timestamp) => {
-      if (!memoryManager.isDisposed) {
-        callback(timestamp);
-      }
-      animationFrameRefs.current.delete(animationFrameId);
-    });
+      const animationFrameId = window.requestAnimationFrame((timestamp) => {
+        if (!memoryManager.isDisposed) {
+          callback(timestamp);
+        }
+        animationFrameRefs.current.delete(animationFrameId);
+      });
 
-    animationFrameRefs.current.add(animationFrameId);
-    return animationFrameId;
-  }, [memoryManager]);
+      animationFrameRefs.current.add(animationFrameId);
+      return animationFrameId;
+    },
+    [memoryManager],
+  );
 
   const cancelAnimationFrame = useCallback((animationFrameId: number) => {
     window.cancelAnimationFrame(animationFrameId);
@@ -185,7 +194,7 @@ export const useSafeAnimationFrame = () => {
 
   // Cleanup all animation frames on unmount
   memoryManager.addCleanup(() => {
-    animationFrameRefs.current.forEach(animationFrameId => {
+    animationFrameRefs.current.forEach((animationFrameId) => {
       window.cancelAnimationFrame(animationFrameId);
     });
     animationFrameRefs.current.clear();
@@ -195,15 +204,13 @@ export const useSafeAnimationFrame = () => {
 };
 
 // Safe observer management
-export const useSafeObserver = <T extends { disconnect(): void }>(
-  createObserver: () => T
-) => {
+export const useSafeObserver = <T extends { disconnect(): void }>(createObserver: () => T) => {
   const memoryManager = useMemoryManager();
   const observerRef = useRef<T | null>(null);
 
   useEffect(() => {
     observerRef.current = createObserver();
-    
+
     memoryManager.addCleanup(() => {
       if (observerRef.current) {
         observerRef.current.disconnect();
@@ -218,22 +225,20 @@ export const useSafeObserver = <T extends { disconnect(): void }>(
 // Safe intersection observer
 export const useSafeIntersectionObserver = (
   callback: IntersectionObserverCallback,
-  options?: IntersectionObserverInit
+  options?: IntersectionObserverInit,
 ) => {
   return useSafeObserver(() => new IntersectionObserver(callback, options));
 };
 
 // Safe resize observer
-export const useSafeResizeObserver = (
-  callback: ResizeObserverCallback
-) => {
+export const useSafeResizeObserver = (callback: ResizeObserverCallback) => {
   return useSafeObserver(() => new ResizeObserver(callback));
 };
 
 // Safe mutation observer
 export const useSafeMutationObserver = (
   callback: MutationObserverCallback,
-  options?: MutationObserverInit
+  options?: MutationObserverInit,
 ) => {
   return useSafeObserver(() => new MutationObserver(callback, options));
 };
@@ -245,7 +250,7 @@ export const useSafePortal = (containerId: string) => {
 
   useEffect(() => {
     let container = document.getElementById(containerId) as HTMLElement;
-    
+
     if (!container) {
       container = document.createElement('div');
       container.id = containerId;
@@ -272,45 +277,48 @@ export const useSafeFocusTrap = (enabled: boolean = true) => {
   const containerRef = useRef<HTMLElement | null>(null);
   const focusableElementsRef = useRef<HTMLElement[]>([]);
 
-  const setupFocusTrap = useCallback((container: HTMLElement) => {
-    if (!enabled) return;
+  const setupFocusTrap = useCallback(
+    (container: HTMLElement) => {
+      if (!enabled) return;
 
-    const focusableElements = Array.from(
-      container.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-    ) as HTMLElement[];
+      const focusableElements = Array.from(
+        container.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      ) as HTMLElement[];
 
-    focusableElementsRef.current = focusableElements;
+      focusableElementsRef.current = focusableElements;
 
-    if (focusableElements.length === 0) return;
+      if (focusableElements.length === 0) return;
 
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Tab') {
-        if (event.shiftKey) {
-          if (document.activeElement === firstElement) {
-            event.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            event.preventDefault();
-            firstElement.focus();
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Tab') {
+          if (event.shiftKey) {
+            if (document.activeElement === firstElement) {
+              event.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              event.preventDefault();
+              firstElement.focus();
+            }
           }
         }
-      }
-    };
+      };
 
-    container.addEventListener('keydown', handleKeyDown);
-    
-    memoryManager.addCleanup(() => {
-      container.removeEventListener('keydown', handleKeyDown);
-      focusableElementsRef.current = [];
-    });
-  }, [enabled, memoryManager]);
+      container.addEventListener('keydown', handleKeyDown);
+
+      memoryManager.addCleanup(() => {
+        container.removeEventListener('keydown', handleKeyDown);
+        focusableElementsRef.current = [];
+      });
+    },
+    [enabled, memoryManager],
+  );
 
   return { containerRef, setupFocusTrap };
 };
@@ -353,7 +361,7 @@ export const useSafeScrollLock = (enabled: boolean = true) => {
 export const useSafeGlobalEventListener = (
   eventType: string,
   handler: EventListener,
-  options?: AddEventListenerOptions
+  options?: AddEventListenerOptions,
 ) => {
   return useSafeEventListener(window, eventType, handler, options);
 };
@@ -362,7 +370,7 @@ export const useSafeGlobalEventListener = (
 export const useSafeDocumentEventListener = (
   eventType: string,
   handler: EventListener,
-  options?: AddEventListenerOptions
+  options?: AddEventListenerOptions,
 ) => {
   return useSafeEventListener(document, eventType, handler, options);
 };
@@ -383,7 +391,7 @@ export const useSafeMediaQuery = (query: string) => {
     };
 
     mediaQuery.addEventListener('change', handleChange);
-    
+
     memoryManager.addCleanup(() => {
       mediaQuery.removeEventListener('change', handleChange);
     });
@@ -403,10 +411,7 @@ export const useSafeVisibilityChangeListener = (callback: () => void) => {
 };
 
 // Safe online/offline listeners
-export const useSafeNetworkListeners = (
-  onOnline?: () => void,
-  onOffline?: () => void
-) => {
+export const useSafeNetworkListeners = (onOnline?: () => void, onOffline?: () => void) => {
   if (onOnline) {
     useSafeGlobalEventListener('online', onOnline as EventListener);
   }
@@ -428,7 +433,7 @@ export const useSafeScrollListener = (callback: () => void, target?: Element) =>
 // Safe click outside listener
 export const useSafeClickOutsideListener = (
   ref: React.RefObject<HTMLElement>,
-  callback: (event: MouseEvent) => void
+  callback: (event: MouseEvent) => void,
 ) => {
   const memoryManager = useMemoryManager();
 
@@ -440,7 +445,7 @@ export const useSafeClickOutsideListener = (
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    
+
     memoryManager.addCleanup(() => {
       document.removeEventListener('mousedown', handleClickOutside);
     });
@@ -459,7 +464,7 @@ export const useSafeEscapeKeyListener = (callback: () => void) => {
     };
 
     document.addEventListener('keydown', handleEscape);
-    
+
     memoryManager.addCleanup(() => {
       document.removeEventListener('keydown', handleEscape);
     });
@@ -473,7 +478,7 @@ export const useMemoryLeakDetection = (componentName: string) => {
   if (process.env.NODE_ENV === 'development') {
     useEffect(() => {
       console.log(`[Memory] ${componentName} mounted`);
-      
+
       memoryManager.addCleanup(() => {
         console.log(`[Memory] ${componentName} cleaned up`);
       });
@@ -490,15 +495,18 @@ export const useMemoryMonitoring = (componentName: string) => {
   useEffect(() => {
     if (process.env.NODE_ENV === 'development' && 'memory' in performance) {
       const startMemory = (performance as any).memory.usedJSHeapSize;
-      
+
       memoryManager.addCleanup(() => {
         const endMemory = (performance as any).memory.usedJSHeapSize;
         const memoryDiff = endMemory - startMemory;
-        
-        if (memoryDiff > 1024 * 1024) { // 1MB threshold
-          console.warn(`[Memory] ${componentName} may have memory leak: ${(memoryDiff / 1024 / 1024).toFixed(2)}MB`);
+
+        if (memoryDiff > 1024 * 1024) {
+          // 1MB threshold
+          console.warn(
+            `[Memory] ${componentName} may have memory leak: ${(memoryDiff / 1024 / 1024).toFixed(2)}MB`,
+          );
         }
       });
     }
   }, [componentName, memoryManager]);
-}; 
+};

@@ -1,6 +1,6 @@
 /**
  * Analytics UI Components
- * 
+ *
  * Advanced data visualization and real-time analytics components for AI-BOS platform.
  * Provides comprehensive analytics dashboards, charts, and metrics visualization.
  */
@@ -42,41 +42,50 @@ export interface AnalyticsFilter {
 
 // Utility functions for chart data generation
 export const generateChartData = (data: any[], xKey: string, yKey: string): ChartData[] => {
-  return data.map(item => ({
+  return data.map((item) => ({
     name: item[xKey],
-    value: item[yKey]
+    value: item[yKey],
   }));
 };
 
-export const aggregateData = (data: any[], groupBy: string, aggregateBy: string, operation: 'sum' | 'avg' | 'count' | 'max' | 'min'): ChartData[] => {
-  const grouped = data.reduce((acc, item) => {
-    const key = item[groupBy];
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-    acc[key].push(item[aggregateBy]);
-    return acc;
-  }, {} as Record<string, number[]>);
+export const aggregateData = (
+  data: any[],
+  groupBy: string,
+  aggregateBy: string,
+  operation: 'sum' | 'avg' | 'count' | 'max' | 'min',
+): ChartData[] => {
+  const grouped = data.reduce(
+    (acc, item) => {
+      const key = item[groupBy];
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(item[aggregateBy]);
+      return acc;
+    },
+    {} as Record<string, number[]>,
+  );
 
   return Object.entries(grouped).map(([name, values]) => {
     let value: number;
     const numValues = values as number[];
-    
+
     switch (operation) {
       case 'sum':
         value = numValues.reduce((sum: number, val: number) => sum + (val || 0), 0);
         break;
       case 'avg':
-        value = numValues.reduce((sum: number, val: number) => sum + (val || 0), 0) / numValues.length;
+        value =
+          numValues.reduce((sum: number, val: number) => sum + (val || 0), 0) / numValues.length;
         break;
       case 'count':
         value = numValues.length;
         break;
       case 'max':
-        value = Math.max(...numValues.map(val => val || 0));
+        value = Math.max(...numValues.map((val) => val || 0));
         break;
       case 'min':
-        value = Math.min(...numValues.map(val => val || 0));
+        value = Math.min(...numValues.map((val) => val || 0));
         break;
       default:
         value = 0;
@@ -110,17 +119,17 @@ export const generateTimeSeriesData = (
   data: any[],
   timeKey: string,
   valueKey: string,
-  interval: 'hour' | 'day' | 'week' | 'month' = 'day'
+  interval: 'hour' | 'day' | 'week' | 'month' = 'day',
 ): ChartData[] => {
-  return data.map(item => ({
+  return data.map((item) => ({
     name: new Date(item[timeKey]).toLocaleDateString(),
-    value: item[valueKey]
+    value: item[valueKey],
   }));
 };
 
 // Component Registry Entry
 export const ANALYTICS_REGISTRY = {
-  AnalyticsDashboard: () => import('./AnalyticsDashboard')
+  AnalyticsDashboard: () => import('./AnalyticsDashboard'),
 } as const;
 
 // Utility Functions
@@ -149,14 +158,22 @@ export const formatCurrency = (value: number, currency: string = 'USD'): string 
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(value);
 };
 
 // Chart color utilities
 export const CHART_COLORS = [
-  '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6',
-  '#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6366F1'
+  '#3B82F6',
+  '#EF4444',
+  '#10B981',
+  '#F59E0B',
+  '#8B5CF6',
+  '#06B6D4',
+  '#84CC16',
+  '#F97316',
+  '#EC4899',
+  '#6366F1',
 ];
 
 export const getChartColor = (index: number): string => {
@@ -186,11 +203,13 @@ export const detectAnomalies = (data: number[], threshold: number = 2): number[]
   const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
   const variance = data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length;
   const stdDev = Math.sqrt(variance);
-  
-  return data.map((value, index) => {
-    const zScore = Math.abs((value - mean) / stdDev);
-    return zScore > threshold ? index : -1;
-  }).filter(index => index !== -1);
+
+  return data
+    .map((value, index) => {
+      const zScore = Math.abs((value - mean) / stdDev);
+      return zScore > threshold ? index : -1;
+    })
+    .filter((index) => index !== -1);
 };
 
 // Performance monitoring utilities
@@ -203,7 +222,7 @@ export const measurePerformance = <T>(fn: () => T): { result: T; duration: numbe
 
 export const debounce = <T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): ((...args: Parameters<T>) => void) => {
   let timeout: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
@@ -214,14 +233,14 @@ export const debounce = <T extends (...args: any[]) => any>(
 
 export const throttle = <T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): ((...args: Parameters<T>) => void) => {
   let inThrottle: boolean;
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       func(...args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 };
@@ -257,4 +276,4 @@ export const validateChartData = (data: any[]): { isValid: boolean; errors: stri
   });
 
   return { isValid: errors.length === 0, errors };
-}; 
+};

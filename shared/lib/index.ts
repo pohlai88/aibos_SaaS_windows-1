@@ -1,6 +1,6 @@
 /**
  * AI-BOS Shared Library - Main Exports
- * 
+ *
  * Enterprise-grade shared components for the AI-BOS micro-app platform.
  */
 
@@ -17,7 +17,7 @@ export {
   createEventSchema,
   event,
   EventBuilder,
-  CommonEventSchemas
+  CommonEventSchemas,
 } from './events';
 
 export type {
@@ -33,7 +33,7 @@ export type {
   DeadLetterQueueConfig,
   EventBusConfig,
   EventSchema,
-  EventStats
+  EventStats,
 } from './events';
 
 // Manifest System
@@ -42,7 +42,7 @@ export {
   ManifestProcessor,
   ManifestBuilder,
   createManifest,
-  createEntity
+  createEntity,
 } from './manifests';
 
 export type {
@@ -61,15 +61,11 @@ export type {
   SecurityCheck,
   FieldValidation,
   EntityIndex,
-  EntityConstraint
+  EntityConstraint,
 } from './manifests';
 
 // Entity Management System
-export {
-  EntityManager,
-  EntityValidator,
-  createEntityFilter
-} from './entities';
+export { EntityManager, EntityValidator, createEntityFilter } from './entities';
 
 export type {
   EntityInstance,
@@ -92,7 +88,7 @@ export type {
   EntityPermission,
   EntityRelationship,
   ValidationError as EntityValidationError,
-  ValidationWarning as EntityValidationWarning
+  ValidationWarning as EntityValidationWarning,
 } from './entities';
 
 // ============================================================================
@@ -123,21 +119,21 @@ export type {
   EventEnvelope,
   EventMetadata,
   EventHandler,
-  
+
   // Manifest types
   AppManifest,
   ManifestEntity,
   ManifestEvent,
-  
+
   // Entity types
   EntityInstance,
   EntityMetadata,
   EntityFilter,
   EntityOperationResult,
-  
+
   // Common types
   ValidationError,
-  ValidationWarning
+  ValidationWarning,
 } from './types';
 
 // ============================================================================
@@ -169,20 +165,20 @@ export function initializeAibosSystems(config?: {
       enablePersistence: true,
       enableMetrics: true,
       enableAudit: true,
-      ...config?.events
+      ...config?.events,
     },
     manifests: {
       enableValidation: true,
       enableCompliance: true,
       enableSecurity: true,
-      ...config?.manifests
+      ...config?.manifests,
     },
     entities: {
       enableCaching: true,
       enableAudit: true,
       enableValidation: true,
-      ...config?.entities
-    }
+      ...config?.entities,
+    },
   };
 
   // Initialize event bus
@@ -190,10 +186,10 @@ export function initializeAibosSystems(config?: {
     name: 'aibos-event-bus',
     persistence: {
       enabled: defaultConfig.events.enablePersistence,
-      provider: 'memory'
+      provider: 'memory',
     },
     enableMetrics: defaultConfig.events.enableMetrics,
-    enableAudit: defaultConfig.events.enableAudit
+    enableAudit: defaultConfig.events.enableAudit,
   });
 
   // Initialize manifest validator
@@ -206,7 +202,7 @@ export function initializeAibosSystems(config?: {
     maxManifestSize: 1024 * 1024, // 1MB
     maxEntities: 100,
     maxEvents: 50,
-    maxUIComponents: 50
+    maxUIComponents: 50,
   });
 
   // Initialize manifest processor
@@ -216,19 +212,23 @@ export function initializeAibosSystems(config?: {
   const entityValidator = new EntityValidator();
 
   // Initialize entity manager
-  const entityManager = new EntityManager({
-    enableCaching: defaultConfig.entities.enableCaching,
-    enableAudit: defaultConfig.entities.enableAudit,
-    enableValidation: defaultConfig.entities.enableValidation,
-    enableRelationships: true,
-    maxQueryLimit: 1000,
-    defaultTimeout: 30000,
-    cacheTTL: 300, // 5 minutes
-    auditRetention: 365 * 24 * 60 * 60 * 1000 // 1 year
-  }, entityValidator, eventBus);
+  const entityManager = new EntityManager(
+    {
+      enableCaching: defaultConfig.entities.enableCaching,
+      enableAudit: defaultConfig.entities.enableAudit,
+      enableValidation: defaultConfig.entities.enableValidation,
+      enableRelationships: true,
+      maxQueryLimit: 1000,
+      defaultTimeout: 30000,
+      cacheTTL: 300, // 5 minutes
+      auditRetention: 365 * 24 * 60 * 60 * 1000, // 1 year
+    },
+    entityValidator,
+    eventBus,
+  );
 
   // Register common event schemas
-  Object.values(CommonEventSchemas).forEach(schema => {
+  Object.values(CommonEventSchemas).forEach((schema) => {
     eventBus.registerSchema(schema);
   });
 
@@ -237,7 +237,7 @@ export function initializeAibosSystems(config?: {
     manifestValidator,
     manifestProcessor,
     entityValidator,
-    entityManager
+    entityManager,
   };
 }
 
@@ -246,7 +246,7 @@ export function initializeAibosSystems(config?: {
  */
 export function createAibosApp(name: string, version: string) {
   const systems = initializeAibosSystems();
-  
+
   // Create default manifest
   const manifest = createManifest()
     .name(name)
@@ -256,18 +256,18 @@ export function createAibosApp(name: string, version: string) {
       gdpr: true,
       soc2: true,
       dataRetention: 365 * 24 * 60 * 60 * 1000, // 1 year
-      dataClassification: 'internal'
+      dataClassification: 'internal',
     })
     .security({
       encryptionLevel: 'standard',
       auditTrail: true,
-      accessControl: 'role-based'
+      accessControl: 'role-based',
     })
     .build();
 
   return {
     ...systems,
-    manifest
+    manifest,
   };
 }
 
@@ -278,7 +278,7 @@ export const VERSION = {
   major: 1,
   minor: 0,
   patch: 0,
-  toString: () => '1.0.0'
+  toString: () => '1.0.0',
 };
 
 /**
@@ -295,6 +295,6 @@ export const LIBRARY_INFO = {
     'Billing & Subscriptions',
     'Security & Monitoring',
     'Caching & Performance',
-    'Audit & Compliance'
-  ]
-}; 
+    'Audit & Compliance',
+  ],
+};

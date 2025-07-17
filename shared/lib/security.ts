@@ -41,7 +41,7 @@ export class RateLimiter {
       statusCode: 429,
       skipSuccessfulRequests: false,
       skipFailedRequests: false,
-      ...config
+      ...config,
     };
   }
 
@@ -56,12 +56,12 @@ export class RateLimiter {
       // First request or window expired
       this.requests.set(identifier, {
         count: 1,
-        resetTime: now + this.config.windowMs
+        resetTime: now + this.config.windowMs,
       });
       return {
         allowed: true,
         remaining: this.config.maxRequests - 1,
-        resetTime: now + this.config.windowMs
+        resetTime: now + this.config.windowMs,
       };
     }
 
@@ -69,7 +69,7 @@ export class RateLimiter {
       return {
         allowed: false,
         remaining: 0,
-        resetTime: record.resetTime
+        resetTime: record.resetTime,
       };
     }
 
@@ -80,7 +80,7 @@ export class RateLimiter {
     return {
       allowed: true,
       remaining: this.config.maxRequests - record.count,
-      resetTime: record.resetTime
+      resetTime: record.resetTime,
     };
   }
 
@@ -102,9 +102,13 @@ export class RateLimiter {
  */
 export const ValidationSchemas = {
   email: z.string().email('Invalid email format'),
-  password: z.string()
+  password: z
+    .string()
     .min(8, 'Password must be at least 8 characters')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain uppercase, lowercase, and number'),
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      'Password must contain uppercase, lowercase, and number',
+    ),
   uuid: z.string().uuid('Invalid UUID format'),
   url: z.string().url('Invalid URL format'),
   phone: z.string().regex(/^\+?[\d\s\-\(\)]+$/, 'Invalid phone number format'),
@@ -112,10 +116,11 @@ export const ValidationSchemas = {
   integer: z.number().int('Must be an integer'),
   positiveNumber: z.number().positive('Must be a positive number'),
   nonEmptyString: z.string().min(1, 'String cannot be empty'),
-  safeString: z.string()
+  safeString: z
+    .string()
     .min(1, 'String cannot be empty')
     .max(1000, 'String too long')
-    .regex(/^[a-zA-Z0-9\s\-_.,!?@#$%^&*()+=:;'"`~<>[\]{}|\\/]+$/, 'Contains unsafe characters')
+    .regex(/^[a-zA-Z0-9\s\-_.,!?@#$%^&*()+=:;'"`~<>[\]{}|\\/]+$/, 'Contains unsafe characters'),
 };
 
 /**
@@ -152,7 +157,7 @@ export class SecurityUtils {
   static validatePassword(password: string): { valid: boolean; error?: string; score: number } {
     try {
       ValidationSchemas.password.parse(password);
-      
+
       // Calculate password strength score (0-100)
       let score = 0;
       if (password.length >= 8) score += 20;
@@ -164,10 +169,10 @@ export class SecurityUtils {
 
       return { valid: true, score };
     } catch (error) {
-      return { 
-        valid: false, 
+      return {
+        valid: false,
         error: error instanceof Error ? error.message : 'Invalid password',
-        score: 0
+        score: 0,
       };
     }
   }
@@ -180,11 +185,11 @@ export class SecurityUtils {
     let result = '';
     const randomArray = new Uint8Array(length);
     crypto.getRandomValues(randomArray);
-    
+
     for (let i = 0; i < length; i++) {
       result += chars.charAt(randomArray[i] % chars.length);
     }
-    
+
     return result;
   }
 
@@ -197,7 +202,7 @@ export class SecurityUtils {
     const data = encoder.encode(password);
     const hash = await crypto.subtle.digest('SHA-256', data);
     return Array.from(new Uint8Array(hash))
-      .map(b => b.toString(16).padStart(2, '0'))
+      .map((b) => b.toString(16).padStart(2, '0'))
       .join('');
   }
 
@@ -214,42 +219,42 @@ export class SecurityUtils {
    */
   static detectSecurityIssues(input: string): string[] {
     const issues: string[] = [];
-    
+
     // SQL Injection patterns
     const sqlPatterns = [
       /(\b(union|select|insert|update|delete|drop|create|alter)\b)/i,
       /(--|\/\*|\*\/|;)/,
-      /(\b(exec|execute|xp_|sp_)\b)/i
+      /(\b(exec|execute|xp_|sp_)\b)/i,
     ];
-    
+
     // XSS patterns
     const xssPatterns = [
       /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
       /javascript:/gi,
       /on\w+\s*=/gi,
-      /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi
+      /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi,
     ];
-    
+
     // Command injection patterns
     const cmdPatterns = [
       /(\b(cmd|powershell|bash|sh|exec|system)\b)/i,
       /[;&|`$()]/,
-      /(\b(rm|del|format|mkfs)\b)/i
+      /(\b(rm|del|format|mkfs)\b)/i,
     ];
 
-    sqlPatterns.forEach(pattern => {
+    sqlPatterns.forEach((pattern) => {
       if (pattern.test(input)) {
         issues.push('Potential SQL injection detected');
       }
     });
 
-    xssPatterns.forEach(pattern => {
+    xssPatterns.forEach((pattern) => {
       if (pattern.test(input)) {
         issues.push('Potential XSS attack detected');
       }
     });
 
-    cmdPatterns.forEach(pattern => {
+    cmdPatterns.forEach((pattern) => {
       if (pattern.test(input)) {
         issues.push('Potential command injection detected');
       }
@@ -273,9 +278,10 @@ export class SecurityMiddleware {
       'X-Content-Type-Options': 'nosniff',
       'X-XSS-Protection': '1; mode=block',
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:; frame-ancestors 'none';",
+      'Content-Security-Policy':
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:; frame-ancestors 'none';",
       'Referrer-Policy': 'strict-origin-when-cross-origin',
-      'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+      'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
     };
   }
 
@@ -291,24 +297,24 @@ export class SecurityMiddleware {
         logger.warn('Rate limit exceeded', {
           ip: identifier,
           userAgent: req.headers['user-agent'],
-          url: req.url
+          url: req.url,
         });
 
         res.set({
           'X-RateLimit-Limit': this.rateLimiter.config.maxRequests,
           'X-RateLimit-Remaining': result.remaining,
-          'X-RateLimit-Reset': result.resetTime
+          'X-RateLimit-Reset': result.resetTime,
         });
 
         return res.status(this.rateLimiter.config.statusCode).json({
-          error: this.rateLimiter.config.message
+          error: this.rateLimiter.config.message,
         });
       }
 
       res.set({
         'X-RateLimit-Limit': this.rateLimiter.config.maxRequests,
         'X-RateLimit-Remaining': result.remaining,
-        'X-RateLimit-Reset': result.resetTime
+        'X-RateLimit-Reset': result.resetTime,
       });
 
       next();
@@ -342,12 +348,12 @@ export class SecurityMiddleware {
             field,
             errors: error.errors,
             ip: req.ip,
-            url: req.url
+            url: req.url,
           });
 
           return res.status(400).json({
             error: 'Validation failed',
-            details: error.errors
+            details: error.errors,
           });
         }
         next(error);
@@ -360,7 +366,8 @@ export class SecurityMiddleware {
    */
   securityScan() {
     return (req: any, res: any, next: any) => {
-      const input = JSON.stringify(req.body) + JSON.stringify(req.query) + JSON.stringify(req.params);
+      const input =
+        JSON.stringify(req.body) + JSON.stringify(req.query) + JSON.stringify(req.params);
       const issues = SecurityUtils.detectSecurityIssues(input);
 
       if (issues.length > 0) {
@@ -369,12 +376,12 @@ export class SecurityMiddleware {
           ip: req.ip,
           userAgent: req.headers['user-agent'],
           url: req.url,
-          body: req.body
+          body: req.body,
         });
 
         return res.status(400).json({
           error: 'Security validation failed',
-          message: 'Request contains potentially unsafe content'
+          message: 'Request contains potentially unsafe content',
         });
       }
 
@@ -397,7 +404,7 @@ export class SecurityMiddleware {
       res.set({
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-        'Access-Control-Allow-Credentials': 'true'
+        'Access-Control-Allow-Credentials': 'true',
       });
 
       if (req.method === 'OPTIONS') {
@@ -419,4 +426,4 @@ export const security = new SecurityMiddleware();
  */
 setInterval(() => {
   security.rateLimiter.cleanup();
-}, 60000); // Clean up every minute 
+}, 60000); // Clean up every minute

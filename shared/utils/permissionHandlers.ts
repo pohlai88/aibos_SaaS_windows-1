@@ -1,7 +1,7 @@
-import { hasPermission, canPerformAction } from "./permissionUtils";
-import { Permission, PermissionCheck } from "../types/roles/permissions";
-import { UserRole } from "../types/roles/roles.enums";
-import { logger } from "./logger";
+import { hasPermission, canPerformAction } from './permissionUtils';
+import { Permission, PermissionCheck } from '../types/roles/permissions';
+import { UserRole } from '../types/roles/roles.enums';
+import { logger } from './logger';
 
 /**
  * User interface for permission checking
@@ -41,7 +41,7 @@ const DEFAULT_OPTIONS: PermissionHandlerOptions = {
   logDenials: true,
   logErrors: true,
   throwOnError: false,
-  context: {}
+  context: {},
 };
 
 /**
@@ -54,7 +54,7 @@ const DEFAULT_OPTIONS: PermissionHandlerOptions = {
 export function checkPermission(
   user: PermissionUser | null | undefined,
   permission: PermissionCheck,
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ): PermissionResult {
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const timestamp = new Date();
@@ -66,14 +66,14 @@ export function checkPermission(
         allowed: false,
         permission,
         userRole: UserRole.GUEST,
-        reason: "No user provided",
-        timestamp
+        reason: 'No user provided',
+        timestamp,
       };
 
       if (opts.logDenials) {
-        logger.warn("Permission check failed: No user provided", {
+        logger.warn('Permission check failed: No user provided', {
           permission,
-          context: opts.context
+          context: opts.context,
         });
       }
 
@@ -85,14 +85,14 @@ export function checkPermission(
         allowed: false,
         permission,
         userRole: user.role,
-        reason: "No permission specified",
-        timestamp
+        reason: 'No permission specified',
+        timestamp,
       };
 
       if (opts.logDenials) {
-        logger.warn("Permission check failed: No permission specified", {
+        logger.warn('Permission check failed: No permission specified', {
           userRole: user.role,
-          context: opts.context
+          context: opts.context,
         });
       }
 
@@ -106,7 +106,7 @@ export function checkPermission(
       allowed,
       permission,
       userRole: user.role,
-      timestamp
+      timestamp,
     };
 
     // Log results based on options
@@ -115,28 +115,27 @@ export function checkPermission(
         permission,
         userRole: user.role,
         userId: user.id,
-        context: opts.context
+        context: opts.context,
       });
     }
 
     return result;
-
   } catch (error) {
     const result: PermissionResult = {
       allowed: false,
       permission,
       userRole: user?.role || UserRole.GUEST,
       reason: `Permission check error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      timestamp
+      timestamp,
     };
 
     if (opts.logErrors) {
-      logger.error("Permission check failed", {
+      logger.error('Permission check failed', {
         error,
         permission,
         userRole: user?.role,
         userId: user?.id,
-        context: opts.context
+        context: opts.context,
       });
     }
 
@@ -160,7 +159,7 @@ export function handleFeatureByPermission(
   user: PermissionUser | null | undefined,
   permission: PermissionCheck,
   callback: () => void,
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ): boolean {
   const result = checkPermission(user, permission, options);
 
@@ -170,11 +169,11 @@ export function handleFeatureByPermission(
       return true;
     } catch (error) {
       if (options.logErrors) {
-        logger.error("Feature callback execution failed", {
+        logger.error('Feature callback execution failed', {
           error,
           permission,
           userRole: result.userRole,
-          context: options.context
+          context: options.context,
         });
       }
       return false;
@@ -198,7 +197,7 @@ export function getValueByPermission<T>(
   permission: PermissionCheck,
   allowedValue: T,
   deniedValue: T,
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ): T {
   const result = checkPermission(user, permission, options);
   return result.allowed ? allowedValue : deniedValue;
@@ -218,7 +217,7 @@ export function handlePermissionWithCallbacks(
   permission: PermissionCheck,
   onAllowed: () => void,
   onDenied: () => void,
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ): boolean {
   const result = checkPermission(user, permission, options);
 
@@ -232,12 +231,12 @@ export function handlePermissionWithCallbacks(
     }
   } catch (error) {
     if (options.logErrors) {
-      logger.error("Permission callback execution failed", {
+      logger.error('Permission callback execution failed', {
         error,
         permission,
         userRole: result.userRole,
         allowed: result.allowed,
-        context: options.context
+        context: options.context,
       });
     }
     return false;
@@ -256,7 +255,7 @@ export function checkActionPermission(
   user: PermissionUser | null | undefined,
   action: 'view' | 'create' | 'edit' | 'delete' | 'manage',
   resource: string,
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ): PermissionResult {
   const permissionKey = `${resource.toUpperCase()}_${action.toUpperCase()}` as Permission;
   return checkPermission(user, permissionKey, options);
@@ -270,7 +269,7 @@ export function checkActionPermission(
  */
 export function createPermissionGuard(
   permission: PermissionCheck,
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ) {
   return (user: PermissionUser | null | undefined): PermissionResult => {
     return checkPermission(user, permission, options);
@@ -287,7 +286,7 @@ export function createPermissionGuard(
 export function createActionGuard(
   action: 'view' | 'create' | 'edit' | 'delete' | 'manage',
   resource: string,
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ) {
   return (user: PermissionUser | null | undefined): PermissionResult => {
     return checkActionPermission(user, action, resource, options);
@@ -304,11 +303,9 @@ export function createActionGuard(
 export function checkMultiplePermissions(
   user: PermissionUser | null | undefined,
   permissions: PermissionCheck[],
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ): PermissionResult[] {
-  return permissions.map(permission => 
-    checkPermission(user, permission, options)
-  );
+  return permissions.map((permission) => checkPermission(user, permission, options));
 }
 
 /**
@@ -321,10 +318,10 @@ export function checkMultiplePermissions(
 export function hasAllPermissions(
   user: PermissionUser | null | undefined,
   permissions: PermissionCheck[],
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ): boolean {
   const results = checkMultiplePermissions(user, permissions, options);
-  return results.every(result => result.allowed);
+  return results.every((result) => result.allowed);
 }
 
 /**
@@ -337,8 +334,8 @@ export function hasAllPermissions(
 export function hasAnyPermission(
   user: PermissionUser | null | undefined,
   permissions: PermissionCheck[],
-  options: PermissionHandlerOptions = {}
+  options: PermissionHandlerOptions = {},
 ): boolean {
   const results = checkMultiplePermissions(user, permissions, options);
-  return results.some(result => result.allowed);
-} 
+  return results.some((result) => result.allowed);
+}

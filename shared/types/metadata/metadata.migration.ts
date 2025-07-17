@@ -1,18 +1,18 @@
 import { z } from 'zod';
 import { UUID, ISODate, UserID, TenantID } from '../primitives';
-import { 
+import {
   MetadataMigrationType,
   MetadataMigrationTypes,
   MetadataMigrationStatus,
   MetadataMigrationStatuses,
   MetadataMigrationStrategy,
-  MetadataMigrationStrategies
+  MetadataMigrationStrategies,
 } from './metadata.enums';
-import { 
-  MetadataSchema, 
-  MetadataField, 
+import {
+  MetadataSchema,
+  MetadataField,
   MetadataEntity,
-  MetadataConstraint
+  MetadataConstraint,
 } from './metadata.types';
 
 // ============================================================================
@@ -21,29 +21,32 @@ import {
 
 export const MetadataMigrationDirection = {
   UP: 'up',
-  DOWN: 'down'
+  DOWN: 'down',
 } as const;
 
-export type MetadataMigrationDirection = typeof MetadataMigrationDirection[keyof typeof MetadataMigrationDirection];
+export type MetadataMigrationDirection =
+  (typeof MetadataMigrationDirection)[keyof typeof MetadataMigrationDirection];
 
 export const MetadataMigrationPhase = {
   VALIDATION: 'validation',
   BACKUP: 'backup',
   MIGRATION: 'migration',
   VERIFICATION: 'verification',
-  CLEANUP: 'cleanup'
+  CLEANUP: 'cleanup',
 } as const;
 
-export type MetadataMigrationPhase = typeof MetadataMigrationPhase[keyof typeof MetadataMigrationPhase];
+export type MetadataMigrationPhase =
+  (typeof MetadataMigrationPhase)[keyof typeof MetadataMigrationPhase];
 
 export const MetadataMigrationRollbackStrategy = {
   AUTOMATIC: 'automatic',
   MANUAL: 'manual',
   SEMI_AUTOMATIC: 'semi_automatic',
-  NONE: 'none'
+  NONE: 'none',
 } as const;
 
-export type MetadataMigrationRollbackStrategy = typeof MetadataMigrationRollbackStrategy[keyof typeof MetadataMigrationRollbackStrategy];
+export type MetadataMigrationRollbackStrategy =
+  (typeof MetadataMigrationRollbackStrategy)[keyof typeof MetadataMigrationRollbackStrategy];
 
 // ============================================================================
 // MIGRATION INTERFACES
@@ -56,7 +59,7 @@ export interface MetadataMigration {
   version: string;
   type: MetadataMigrationType;
   direction: MetadataMigrationDirection;
-  
+
   // Schema changes
   schemaChanges?: {
     added?: MetadataField[];
@@ -71,7 +74,7 @@ export interface MetadataMigration {
       newOrder: number;
     }>;
   };
-  
+
   // Data transformations
   dataTransformations?: Array<{
     field: string;
@@ -79,14 +82,14 @@ export interface MetadataMigration {
     script: string;
     options?: Record<string, any>;
   }>;
-  
+
   // Dependencies
   dependencies?: {
     migrations?: string[];
     schemas?: UUID[];
     constraints?: UUID[];
   };
-  
+
   // Configuration
   config: {
     strategy: MetadataMigrationStrategy;
@@ -98,12 +101,12 @@ export interface MetadataMigration {
     backup: boolean;
     verification: boolean;
   };
-  
+
   // Scripts
   upScript: string;
   downScript?: string;
   verificationScript?: string;
-  
+
   // Metadata
   tenantId: TenantID;
   createdBy: UserID;
@@ -120,12 +123,12 @@ export interface MetadataMigrationExecution {
   version: string;
   status: MetadataMigrationStatus;
   direction: MetadataMigrationDirection;
-  
+
   // Execution details
   startedAt: ISODate;
   completedAt?: ISODate;
   duration?: number;
-  
+
   // Progress tracking
   progress: {
     phase: MetadataMigrationPhase;
@@ -133,7 +136,7 @@ export interface MetadataMigrationExecution {
     total: number;
     percentage: number;
   };
-  
+
   // Results
   results: {
     success: boolean;
@@ -151,7 +154,7 @@ export interface MetadataMigrationExecution {
       details?: Record<string, any>;
     }>;
   };
-  
+
   // Rollback information
   rollback?: {
     attempted: boolean;
@@ -164,7 +167,7 @@ export interface MetadataMigrationExecution {
       details?: Record<string, any>;
     }>;
   };
-  
+
   // Context
   context: {
     tenantId: TenantID;
@@ -179,7 +182,7 @@ export interface MetadataMigrationPlan {
   id: UUID;
   name: string;
   description?: string;
-  
+
   // Migration sequence
   migrations: Array<{
     migration: MetadataMigration;
@@ -188,7 +191,7 @@ export interface MetadataMigrationPlan {
     estimatedDuration: number;
     risk: 'low' | 'medium' | 'high';
   }>;
-  
+
   // Execution strategy
   strategy: {
     parallel: boolean;
@@ -197,18 +200,18 @@ export interface MetadataMigrationPlan {
     continueOnError: boolean;
     validationOnly: boolean;
   };
-  
+
   // Scheduling
   schedule?: {
     startAt: ISODate;
     endAt?: ISODate;
     timeWindow: {
       start: string; // HH:MM
-      end: string;   // HH:MM
+      end: string; // HH:MM
       timezone: string;
     };
   };
-  
+
   // Notifications
   notifications?: {
     onStart: string[];
@@ -216,7 +219,7 @@ export interface MetadataMigrationPlan {
     onError: string[];
     onRollback: string[];
   };
-  
+
   // Metadata
   tenantId: TenantID;
   createdBy: UserID;
@@ -230,13 +233,13 @@ export interface MetadataMigrationBackup {
   id: UUID;
   migrationId: UUID;
   executionId: UUID;
-  
+
   // Backup details
   type: 'full' | 'incremental' | 'schema_only';
   location: string;
   size: number;
   checksum: string;
-  
+
   // Backup data
   data: {
     schemas: MetadataSchema[];
@@ -244,7 +247,7 @@ export interface MetadataMigrationBackup {
     constraints: MetadataConstraint[];
     metadata?: Record<string, any>;
   };
-  
+
   // Metadata
   createdAt: ISODate;
   createdBy: UserID;
@@ -260,7 +263,7 @@ export interface MetadataMigrationBackup {
 export interface MetadataMigrationValidation {
   id: UUID;
   migrationId: UUID;
-  
+
   // Validation results
   isValid: boolean;
   errors: Array<{
@@ -270,7 +273,7 @@ export interface MetadataMigrationValidation {
     severity: 'error' | 'warning' | 'info';
     details?: Record<string, any>;
   }>;
-  
+
   // Schema validation
   schemaValidation: {
     isValid: boolean;
@@ -282,7 +285,7 @@ export interface MetadataMigrationValidation {
     missingDependencies: string[];
     circularDependencies: string[];
   };
-  
+
   // Data validation
   dataValidation: {
     isValid: boolean;
@@ -293,7 +296,7 @@ export interface MetadataMigrationValidation {
       description: string;
     }>;
   };
-  
+
   // Performance validation
   performanceValidation: {
     estimatedDuration: number;
@@ -302,7 +305,7 @@ export interface MetadataMigrationValidation {
     bottlenecks: string[];
     recommendations: string[];
   };
-  
+
   // Metadata
   validatedAt: ISODate;
   validatedBy: UserID;
@@ -314,7 +317,9 @@ export interface MetadataMigrationValidation {
 
 export interface MetadataMigrationManager {
   // Migration CRUD
-  createMigration(migration: Omit<MetadataMigration, 'id' | 'createdAt'>): Promise<MetadataMigration>;
+  createMigration(
+    migration: Omit<MetadataMigration, 'id' | 'createdAt'>,
+  ): Promise<MetadataMigration>;
   updateMigration(id: UUID, updates: Partial<MetadataMigration>): Promise<MetadataMigration>;
   deleteMigration(id: UUID): Promise<void>;
   getMigration(id: UUID): Promise<MetadataMigration | null>;
@@ -324,55 +329,66 @@ export interface MetadataMigrationManager {
     status?: MetadataMigrationStatus;
     version?: string;
   }): Promise<MetadataMigration[]>;
-  
+
   // Migration execution
-  executeMigration(migrationId: UUID, options?: {
-    direction?: MetadataMigrationDirection;
-    dryRun?: boolean;
-    force?: boolean;
-    context?: Record<string, any>;
-  }): Promise<MetadataMigrationExecution>;
-  
-  executeMigrationPlan(planId: UUID, options?: {
-    dryRun?: boolean;
-    force?: boolean;
-    context?: Record<string, any>;
-  }): Promise<MetadataMigrationExecution[]>;
-  
+  executeMigration(
+    migrationId: UUID,
+    options?: {
+      direction?: MetadataMigrationDirection;
+      dryRun?: boolean;
+      force?: boolean;
+      context?: Record<string, any>;
+    },
+  ): Promise<MetadataMigrationExecution>;
+
+  executeMigrationPlan(
+    planId: UUID,
+    options?: {
+      dryRun?: boolean;
+      force?: boolean;
+      context?: Record<string, any>;
+    },
+  ): Promise<MetadataMigrationExecution[]>;
+
   // Migration status
   getMigrationStatus(migrationId: UUID): Promise<MetadataMigrationStatus>;
   getExecutionHistory(migrationId: UUID): Promise<MetadataMigrationExecution[]>;
-  
+
   // Rollback
-  rollbackMigration(migrationId: UUID, options?: {
-    force?: boolean;
-    context?: Record<string, any>;
-  }): Promise<MetadataMigrationExecution>;
-  
+  rollbackMigration(
+    migrationId: UUID,
+    options?: {
+      force?: boolean;
+      context?: Record<string, any>;
+    },
+  ): Promise<MetadataMigrationExecution>;
+
   // Validation
   validateMigration(migrationId: UUID): Promise<MetadataMigrationValidation>;
   validateMigrationPlan(planId: UUID): Promise<MetadataMigrationValidation[]>;
-  
+
   // Backup and restore
   createBackup(migrationId: UUID, executionId: UUID): Promise<MetadataMigrationBackup>;
   restoreFromBackup(backupId: UUID): Promise<void>;
   listBackups(migrationId?: UUID): Promise<MetadataMigrationBackup[]>;
-  
+
   // Version management
   getCurrentVersion(): Promise<string>;
-  getVersionHistory(): Promise<Array<{
-    version: string;
-    appliedAt: ISODate;
-    migrationId: UUID;
-  }>>;
-  
+  getVersionHistory(): Promise<
+    Array<{
+      version: string;
+      appliedAt: ISODate;
+      migrationId: UUID;
+    }>
+  >;
+
   // Dependency management
   resolveDependencies(migrationId: UUID): Promise<{
     dependencies: MetadataMigration[];
     dependents: MetadataMigration[];
     conflicts: string[];
   }>;
-  
+
   // Utilities
   generateMigrationScript(schemaChanges: any): Promise<string>;
   estimateMigrationImpact(migrationId: UUID): Promise<{
@@ -388,17 +404,23 @@ export interface MetadataMigrationManager {
 
 export interface MetadataMigrationExecutor {
   // Execution
-  execute(migration: MetadataMigration, context: Record<string, any>): Promise<MetadataMigrationExecution>;
+  execute(
+    migration: MetadataMigration,
+    context: Record<string, any>,
+  ): Promise<MetadataMigrationExecution>;
   rollback(execution: MetadataMigrationExecution): Promise<MetadataMigrationExecution>;
-  
+
   // Validation
   validate(migration: MetadataMigration): Promise<MetadataMigrationValidation>;
   validateExecution(execution: MetadataMigrationExecution): Promise<boolean>;
-  
+
   // Backup
-  createBackup(migration: MetadataMigration, execution: MetadataMigrationExecution): Promise<MetadataMigrationBackup>;
+  createBackup(
+    migration: MetadataMigration,
+    execution: MetadataMigrationExecution,
+  ): Promise<MetadataMigrationBackup>;
   restoreBackup(backup: MetadataMigrationBackup): Promise<void>;
-  
+
   // Utilities
   estimateDuration(migration: MetadataMigration): Promise<number>;
   checkDependencies(migration: MetadataMigration): Promise<{
@@ -418,30 +440,46 @@ export const MetadataMigrationSchema = z.object({
   version: z.string().regex(/^\d+\.\d+\.\d+$/),
   type: z.nativeEnum(MetadataMigrationTypes),
   direction: z.nativeEnum(MetadataMigrationDirection),
-  schemaChanges: z.object({
-    added: z.array(z.any()).optional(),
-    modified: z.array(z.object({
-      field: z.any(),
-      changes: z.record(z.any())
-    })).optional(),
-    removed: z.array(z.string().uuid()).optional(),
-    reordered: z.array(z.object({
-      fieldId: z.string().uuid(),
-      oldOrder: z.number().int(),
-      newOrder: z.number().int()
-    })).optional()
-  }).optional(),
-  dataTransformations: z.array(z.object({
-    field: z.string(),
-    operation: z.enum(['transform', 'migrate', 'clean', 'validate']),
-    script: z.string(),
-    options: z.record(z.any()).optional()
-  })).optional(),
-  dependencies: z.object({
-    migrations: z.array(z.string()).optional(),
-    schemas: z.array(z.string().uuid()).optional(),
-    constraints: z.array(z.string().uuid()).optional()
-  }).optional(),
+  schemaChanges: z
+    .object({
+      added: z.array(z.any()).optional(),
+      modified: z
+        .array(
+          z.object({
+            field: z.any(),
+            changes: z.record(z.any()),
+          }),
+        )
+        .optional(),
+      removed: z.array(z.string().uuid()).optional(),
+      reordered: z
+        .array(
+          z.object({
+            fieldId: z.string().uuid(),
+            oldOrder: z.number().int(),
+            newOrder: z.number().int(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
+  dataTransformations: z
+    .array(
+      z.object({
+        field: z.string(),
+        operation: z.enum(['transform', 'migrate', 'clean', 'validate']),
+        script: z.string(),
+        options: z.record(z.any()).optional(),
+      }),
+    )
+    .optional(),
+  dependencies: z
+    .object({
+      migrations: z.array(z.string()).optional(),
+      schemas: z.array(z.string().uuid()).optional(),
+      constraints: z.array(z.string().uuid()).optional(),
+    })
+    .optional(),
   config: z.object({
     strategy: z.nativeEnum(MetadataMigrationStrategies),
     rollbackStrategy: z.nativeEnum(MetadataMigrationRollbackStrategy),
@@ -450,7 +488,7 @@ export const MetadataMigrationSchema = z.object({
     parallel: z.boolean(),
     dryRun: z.boolean(),
     backup: z.boolean(),
-    verification: z.boolean()
+    verification: z.boolean(),
   }),
   upScript: z.string(),
   downScript: z.string().optional(),
@@ -461,7 +499,7 @@ export const MetadataMigrationSchema = z.object({
   updatedBy: z.string().uuid().optional(),
   updatedAt: z.string().datetime().optional(),
   isActive: z.boolean(),
-  priority: z.number().int().min(0)
+  priority: z.number().int().min(0),
 });
 
 export const MetadataMigrationExecutionSchema = z.object({
@@ -477,42 +515,52 @@ export const MetadataMigrationExecutionSchema = z.object({
     phase: z.nativeEnum(MetadataMigrationPhase),
     current: z.number().nonnegative(),
     total: z.number().nonnegative(),
-    percentage: z.number().min(0).max(100)
+    percentage: z.number().min(0).max(100),
   }),
   results: z.object({
     success: z.boolean(),
     recordsProcessed: z.number().nonnegative(),
     recordsSkipped: z.number().nonnegative(),
     recordsFailed: z.number().nonnegative(),
-    errors: z.array(z.object({
-      code: z.string(),
-      message: z.string(),
-      details: z.record(z.any()).optional()
-    })),
-    warnings: z.array(z.object({
-      code: z.string(),
-      message: z.string(),
-      details: z.record(z.any()).optional()
-    }))
+    errors: z.array(
+      z.object({
+        code: z.string(),
+        message: z.string(),
+        details: z.record(z.any()).optional(),
+      }),
+    ),
+    warnings: z.array(
+      z.object({
+        code: z.string(),
+        message: z.string(),
+        details: z.record(z.any()).optional(),
+      }),
+    ),
   }),
-  rollback: z.object({
-    attempted: z.boolean(),
-    successful: z.boolean(),
-    rollbackAt: z.string().datetime().optional(),
-    rollbackDuration: z.number().nonnegative().optional(),
-    rollbackErrors: z.array(z.object({
-      code: z.string(),
-      message: z.string(),
-      details: z.record(z.any()).optional()
-    })).optional()
-  }).optional(),
+  rollback: z
+    .object({
+      attempted: z.boolean(),
+      successful: z.boolean(),
+      rollbackAt: z.string().datetime().optional(),
+      rollbackDuration: z.number().nonnegative().optional(),
+      rollbackErrors: z
+        .array(
+          z.object({
+            code: z.string(),
+            message: z.string(),
+            details: z.record(z.any()).optional(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
   context: z.object({
     tenantId: z.string().uuid(),
     executedBy: z.string().uuid(),
     environment: z.string(),
     sessionId: z.string().optional(),
-    metadata: z.record(z.any()).optional()
-  })
+    metadata: z.record(z.any()).optional(),
+  }),
 });
 
 // ============================================================================
@@ -529,7 +577,7 @@ export class MetadataMigrationUtils {
     type: MetadataMigrationType,
     tenantId: TenantID,
     createdBy: UserID,
-    options?: Partial<MetadataMigration>
+    options?: Partial<MetadataMigration>,
   ): MetadataMigration {
     return {
       id: crypto.randomUUID() as UUID,
@@ -545,7 +593,7 @@ export class MetadataMigrationUtils {
         parallel: false,
         dryRun: false,
         backup: true,
-        verification: true
+        verification: true,
       },
       upScript: '',
       tenantId,
@@ -553,7 +601,7 @@ export class MetadataMigrationUtils {
       createdAt: new Date().toISOString() as ISODate,
       isActive: true,
       priority: 0,
-      ...options
+      ...options,
     };
   }
 
@@ -568,7 +616,7 @@ export class MetadataMigrationUtils {
       if (error instanceof z.ZodError) {
         return {
           valid: false,
-          errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          errors: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
         };
       }
       return { valid: false, errors: ['Unknown validation error'] };
@@ -581,15 +629,15 @@ export class MetadataMigrationUtils {
   static compareVersions(version1: string, version2: string): number {
     const v1Parts = version1.split('.').map(Number);
     const v2Parts = version2.split('.').map(Number);
-    
+
     for (let i = 0; i < Math.max(v1Parts.length, v2Parts.length); i++) {
       const v1 = v1Parts[i] || 0;
       const v2 = v2Parts[i] || 0;
-      
+
       if (v1 < v2) return -1;
       if (v1 > v2) return 1;
     }
-    
+
     return 0;
   }
 
@@ -605,7 +653,7 @@ export class MetadataMigrationUtils {
    */
   static incrementVersion(version: string, type: 'major' | 'minor' | 'patch'): string {
     const parts = version.split('.').map(Number);
-    
+
     switch (type) {
       case 'major':
         return `${parts[0] + 1}.0.0`;
@@ -623,28 +671,28 @@ export class MetadataMigrationUtils {
    */
   static generateMigrationScript(schemaChanges: any): string {
     let script = '';
-    
+
     if (schemaChanges.added) {
       script += '// Add new fields\n';
       schemaChanges.added.forEach((field: any) => {
         script += `ADD_FIELD('${field.name}', '${field.type}', ${JSON.stringify(field.config)});\n`;
       });
     }
-    
+
     if (schemaChanges.modified) {
       script += '// Modify existing fields\n';
       schemaChanges.modified.forEach((change: any) => {
         script += `MODIFY_FIELD('${change.field.name}', ${JSON.stringify(change.changes)});\n`;
       });
     }
-    
+
     if (schemaChanges.removed) {
       script += '// Remove fields\n';
       schemaChanges.removed.forEach((fieldId: string) => {
         script += `REMOVE_FIELD('${fieldId}');\n`;
       });
     }
-    
+
     return script;
   }
 
@@ -659,7 +707,7 @@ export class MetadataMigrationUtils {
     let affectedRecords = 0;
     let estimatedDuration = 0;
     const risks: string[] = [];
-    
+
     // Estimate based on migration type
     switch (migration.type) {
       case 'schema_change':
@@ -683,20 +731,20 @@ export class MetadataMigrationUtils {
         risks.push('System downtime');
         break;
     }
-    
+
     // Adjust based on configuration
     if (migration.config.parallel) {
       estimatedDuration = Math.max(estimatedDuration * 0.5, 60); // 50% faster, minimum 1 minute
     }
-    
+
     if (migration.config.batchSize > 1000) {
       estimatedDuration = Math.max(estimatedDuration * 0.8, 60); // 20% faster
     }
-    
+
     return {
       affectedRecords,
       estimatedDuration,
-      risks
+      risks,
     };
   }
 
@@ -710,12 +758,12 @@ export class MetadataMigrationUtils {
     encryption: boolean;
   } {
     const isHighRisk = migration.type === 'data_migration' || migration.type === 'bulk_operation';
-    
+
     return {
       type: isHighRisk ? 'full' : 'incremental',
       location: `backups/migrations/${migration.id}`,
       compression: true,
-      encryption: isHighRisk
+      encryption: isHighRisk,
     };
   }
 
@@ -724,7 +772,7 @@ export class MetadataMigrationUtils {
    */
   static validateDependencies(
     migration: MetadataMigration,
-    existingMigrations: MetadataMigration[]
+    existingMigrations: MetadataMigration[],
   ): {
     satisfied: boolean;
     missing: string[];
@@ -732,10 +780,10 @@ export class MetadataMigrationUtils {
   } {
     const missing: string[] = [];
     const conflicts: string[] = [];
-    
+
     if (migration.dependencies?.migrations) {
-      migration.dependencies.migrations.forEach(depVersion => {
-        const depMigration = existingMigrations.find(m => m.version === depVersion);
+      migration.dependencies.migrations.forEach((depVersion) => {
+        const depMigration = existingMigrations.find((m) => m.version === depVersion);
         if (!depMigration) {
           missing.push(depVersion);
         } else if (!depMigration.isActive) {
@@ -743,11 +791,11 @@ export class MetadataMigrationUtils {
         }
       });
     }
-    
+
     return {
       satisfied: missing.length === 0 && conflicts.length === 0,
       missing,
-      conflicts
+      conflicts,
     };
   }
 
@@ -762,20 +810,20 @@ export class MetadataMigrationUtils {
     const canRollback = !!migration.downScript;
     const rollbackSteps: string[] = [];
     const risks: string[] = [];
-    
+
     if (canRollback) {
       rollbackSteps.push('Execute down script');
-      
+
       if (migration.schemaChanges?.added) {
         rollbackSteps.push('Remove added fields');
         risks.push('Data loss for added fields');
       }
-      
+
       if (migration.schemaChanges?.modified) {
         rollbackSteps.push('Revert field modifications');
         risks.push('Data corruption for modified fields');
       }
-      
+
       if (migration.dataTransformations) {
         rollbackSteps.push('Revert data transformations');
         risks.push('Data inconsistency');
@@ -783,11 +831,11 @@ export class MetadataMigrationUtils {
     } else {
       risks.push('No rollback script available');
     }
-    
+
     return {
       canRollback,
       rollbackSteps,
-      risks
+      risks,
     };
   }
 
@@ -801,9 +849,9 @@ export class MetadataMigrationUtils {
       'Records Processed': execution.results.recordsProcessed.toString(),
       'Records Skipped': execution.results.recordsSkipped.toString(),
       'Records Failed': execution.results.recordsFailed.toString(),
-      'Success Rate': `${((execution.results.recordsProcessed - execution.results.recordsFailed) / execution.results.recordsProcessed * 100).toFixed(2)}%`,
+      'Success Rate': `${(((execution.results.recordsProcessed - execution.results.recordsFailed) / execution.results.recordsProcessed) * 100).toFixed(2)}%`,
       'Errors': execution.results.errors.length.toString(),
-      'Warnings': execution.results.warnings.length.toString()
+      'Warnings': execution.results.warnings.length.toString(),
     };
   }
 
@@ -814,21 +862,19 @@ export class MetadataMigrationUtils {
     migrations: MetadataMigration[],
     tenantId: TenantID,
     createdBy: UserID,
-    options?: Partial<MetadataMigrationPlan>
+    options?: Partial<MetadataMigrationPlan>,
   ): MetadataMigrationPlan {
     // Sort migrations by version
-    const sortedMigrations = migrations.sort((a, b) => 
-      this.compareVersions(a.version, b.version)
-    );
-    
+    const sortedMigrations = migrations.sort((a, b) => this.compareVersions(a.version, b.version));
+
     const planMigrations = sortedMigrations.map((migration, index) => ({
       migration,
       order: index + 1,
       dependencies: migration.dependencies?.migrations || [],
       estimatedDuration: this.estimateMigrationImpact(migration).estimatedDuration,
-      risk: this.assessMigrationRisk(migration)
+      risk: this.assessMigrationRisk(migration),
     }));
-    
+
     return {
       id: crypto.randomUUID() as UUID,
       name: `Migration Plan ${new Date().toISOString().split('T')[0]}`,
@@ -838,13 +884,13 @@ export class MetadataMigrationUtils {
         maxConcurrent: 1,
         rollbackOnFailure: true,
         continueOnError: false,
-        validationOnly: false
+        validationOnly: false,
       },
       tenantId,
       createdBy,
       createdAt: new Date().toISOString() as ISODate,
       isActive: true,
-      ...options
+      ...options,
     };
   }
 
@@ -853,7 +899,7 @@ export class MetadataMigrationUtils {
    */
   static assessMigrationRisk(migration: MetadataMigration): 'low' | 'medium' | 'high' {
     let riskScore = 0;
-    
+
     // Type-based risk
     switch (migration.type) {
       case 'schema_change':
@@ -869,16 +915,16 @@ export class MetadataMigrationUtils {
         riskScore += 2;
         break;
     }
-    
+
     // Configuration-based risk
     if (!migration.config.backup) riskScore += 2;
     if (!migration.downScript) riskScore += 2;
     if (migration.config.parallel) riskScore += 1;
     if (migration.config.batchSize > 10000) riskScore += 1;
-    
+
     // Dependencies-based risk
     if (migration.dependencies?.migrations?.length) riskScore += 1;
-    
+
     if (riskScore <= 2) return 'low';
     if (riskScore <= 4) return 'medium';
     return 'high';
@@ -889,33 +935,33 @@ export class MetadataMigrationUtils {
    */
   static generateMigrationReport(execution: MetadataMigrationExecution): string {
     const results = this.formatExecutionResults(execution);
-    
+
     let report = `# Migration Execution Report\n\n`;
     report += `**Migration ID:** ${execution.migrationId}\n`;
     report += `**Version:** ${execution.version}\n`;
     report += `**Status:** ${execution.status}\n`;
     report += `**Started:** ${execution.startedAt}\n`;
     report += `**Completed:** ${execution.completedAt || 'N/A'}\n\n`;
-    
+
     report += `## Results\n\n`;
     Object.entries(results).forEach(([key, value]) => {
       report += `- **${key}:** ${value}\n`;
     });
-    
+
     if (execution.results.errors.length > 0) {
       report += `\n## Errors\n\n`;
-      execution.results.errors.forEach(error => {
+      execution.results.errors.forEach((error) => {
         report += `- **${error.code}:** ${error.message}\n`;
       });
     }
-    
+
     if (execution.results.warnings.length > 0) {
       report += `\n## Warnings\n\n`;
-      execution.results.warnings.forEach(warning => {
+      execution.results.warnings.forEach((warning) => {
         report += `- **${warning.code}:** ${warning.message}\n`;
       });
     }
-    
+
     return report;
   }
 }
@@ -931,7 +977,7 @@ export type {
   MetadataMigrationBackup,
   MetadataMigrationValidation,
   MetadataMigrationManager,
-  MetadataMigrationExecutor
+  MetadataMigrationExecutor,
 };
 
 export {
@@ -940,5 +986,5 @@ export {
   MetadataMigrationRollbackStrategy,
   MetadataMigrationSchema,
   MetadataMigrationExecutionSchema,
-  MetadataMigrationUtils
-}; 
+  MetadataMigrationUtils,
+};

@@ -53,32 +53,32 @@ export type DataTableProps<T> = {
   data: T[];
   loading?: boolean;
   error?: string;
-  
+
   // Sorting
   sortConfig?: SortConfig;
   onSortChange?: (sortConfig: SortConfig) => void;
-  
+
   // Pagination
   pagination?: PaginationConfig;
-  
+
   // Selection
   selection?: SelectionConfig<T>;
-  
+
   // Expandable rows
   expandable?: ExpandableConfig<T>;
-  
+
   // Styling
   variant?: 'default' | 'striped' | 'bordered' | 'minimal';
   size?: 'sm' | 'default' | 'lg';
   className?: string;
-  
+
   // Row styling
   getRowClassName?: (row: T, index: number) => string;
   onRowClick?: (row: T, index: number) => void;
-  
+
   // Empty state
   emptyMessage?: string;
-  
+
   // Virtual scrolling
   virtualScrolling?: boolean;
   rowHeight?: number;
@@ -100,156 +100,167 @@ const DataTable = <T,>({
   className = '',
   getRowClassName,
   onRowClick,
-  emptyMessage = 'No data available'
+  emptyMessage = 'No data available',
 }: DataTableProps<T>) => {
   const [internalSortConfig, setInternalSortConfig] = useState<SortConfig | undefined>();
-  
+
   const currentSortConfig = sortConfig || internalSortConfig;
-  
-  const handleSort = useCallback((key: string) => {
-    const newSortConfig: SortConfig = {
-      key,
-      direction: currentSortConfig?.key === key && currentSortConfig.direction === 'asc' ? 'desc' : 'asc'
-    };
-    
-    if (onSortChange) {
-      onSortChange(newSortConfig);
-    } else {
-      setInternalSortConfig(newSortConfig);
-    }
-  }, [currentSortConfig, onSortChange]);
-  
+
+  const handleSort = useCallback(
+    (key: string) => {
+      const newSortConfig: SortConfig = {
+        key,
+        direction:
+          currentSortConfig?.key === key && currentSortConfig.direction === 'asc' ? 'desc' : 'asc',
+      };
+
+      if (onSortChange) {
+        onSortChange(newSortConfig);
+      } else {
+        setInternalSortConfig(newSortConfig);
+      }
+    },
+    [currentSortConfig, onSortChange],
+  );
+
   const sortedData = useMemo(() => {
     if (!currentSortConfig) return data;
-    
+
     return [...data].sort((a, b) => {
       const aValue = a[currentSortConfig.key as keyof T];
       const bValue = b[currentSortConfig.key as keyof T];
-      
+
       if (aValue < bValue) return currentSortConfig.direction === 'asc' ? -1 : 1;
       if (aValue > bValue) return currentSortConfig.direction === 'asc' ? 1 : -1;
       return 0;
     });
   }, [data, currentSortConfig]);
-  
+
   const getTableClasses = () => {
-    const baseClasses = "w-full";
-    
+    const baseClasses = 'w-full';
+
     const variantClasses = {
-      default: "border border-gray-200 rounded-lg overflow-hidden",
-      striped: "border border-gray-200 rounded-lg overflow-hidden",
-      bordered: "border-2 border-gray-300 rounded-lg overflow-hidden",
-      minimal: "border-0"
+      default: 'border border-gray-200 rounded-lg overflow-hidden',
+      striped: 'border border-gray-200 rounded-lg overflow-hidden',
+      bordered: 'border-2 border-gray-300 rounded-lg overflow-hidden',
+      minimal: 'border-0',
     };
-    
+
     return `${baseClasses} ${variantClasses[variant]} ${className}`;
   };
-  
+
   const getHeaderClasses = () => {
-    const baseClasses = "bg-gray-50 border-b border-gray-200";
-    
+    const baseClasses = 'bg-gray-50 border-b border-gray-200';
+
     const sizeClasses = {
-      sm: "px-2 py-2 text-sm",
-      default: "px-4 py-3",
-      lg: "px-6 py-4"
+      sm: 'px-2 py-2 text-sm',
+      default: 'px-4 py-3',
+      lg: 'px-6 py-4',
     };
-    
+
     return `${baseClasses} ${sizeClasses[size]}`;
   };
-  
+
   const getCellClasses = (column: Column<T>) => {
-    const baseClasses = "border-b border-gray-200 transition-colors";
-    
+    const baseClasses = 'border-b border-gray-200 transition-colors';
+
     const sizeClasses = {
-      sm: "px-2 py-2 text-sm",
-      default: "px-4 py-3",
-      lg: "px-6 py-4"
+      sm: 'px-2 py-2 text-sm',
+      default: 'px-4 py-3',
+      lg: 'px-6 py-4',
     };
-    
+
     const alignClasses = {
-      left: "text-left",
-      center: "text-center",
-      right: "text-right"
+      left: 'text-left',
+      center: 'text-center',
+      right: 'text-right',
     };
-    
+
     return `${baseClasses} ${sizeClasses[size]} ${alignClasses[column.align || 'left']}`;
   };
-  
+
   const getRowClasses = (row: T, index: number) => {
-    const baseClasses = "hover:bg-gray-50 transition-colors";
-    
+    const baseClasses = 'hover:bg-gray-50 transition-colors';
+
     const variantClasses = {
-      default: "",
-      striped: index % 2 === 0 ? "bg-white" : "bg-gray-50",
-      bordered: "border-b border-gray-200",
-      minimal: ""
+      default: '',
+      striped: index % 2 === 0 ? 'bg-white' : 'bg-gray-50',
+      bordered: 'border-b border-gray-200',
+      minimal: '',
     };
-    
-    const clickableClasses = onRowClick ? "cursor-pointer hover:bg-blue-50" : "";
-    const customClasses = getRowClassName ? getRowClassName(row, index) : "";
-    
+
+    const clickableClasses = onRowClick ? 'cursor-pointer hover:bg-blue-50' : '';
+    const customClasses = getRowClassName ? getRowClassName(row, index) : '';
+
     return `${baseClasses} ${variantClasses[variant]} ${clickableClasses} ${customClasses}`;
   };
-  
+
   const handleRowClick = (row: T, index: number) => {
     if (onRowClick) {
       onRowClick(row, index);
     }
   };
-  
+
   const handleSelectAll = (checked: boolean) => {
     if (selection?.onSelectAllChange) {
       selection.onSelectAllChange(checked);
     }
   };
-  
+
   const handleRowSelect = (rowKey: string, checked: boolean) => {
     if (selection?.onSelectionChange) {
       const currentSelected = selection.selectedRows || [];
       const newSelected = checked
         ? [...currentSelected, rowKey]
-        : currentSelected.filter(key => key !== rowKey);
+        : currentSelected.filter((key) => key !== rowKey);
       selection.onSelectionChange(newSelected);
     }
   };
-  
+
   const handleRowExpand = (rowKey: string) => {
     if (expandable?.onExpandedChange) {
       const currentExpanded = expandable.expandedRows || [];
       const isExpanded = currentExpanded.includes(rowKey);
       const newExpanded = isExpanded
-        ? currentExpanded.filter(key => key !== rowKey)
+        ? currentExpanded.filter((key) => key !== rowKey)
         : [...currentExpanded, rowKey];
       expandable.onExpandedChange(newExpanded);
     }
   };
-  
+
   const renderSortIcon = (column: Column<T>) => {
     if (!column.sortable) return null;
-    
+
     const isSorted = currentSortConfig?.key === column.key;
     const direction = currentSortConfig?.direction;
-    
+
     return (
       <span className="ml-2 inline-flex flex-col">
-        <ChevronUp 
-          className={`w-3 h-3 -mb-1 ${isSorted && direction === 'asc' ? 'text-blue-600' : 'text-gray-400'}`} 
+        <ChevronUp
+          className={`w-3 h-3 -mb-1 ${isSorted && direction === 'asc' ? 'text-blue-600' : 'text-gray-400'}`}
         />
-        <ChevronDown 
-          className={`w-3 h-3 -mt-1 ${isSorted && direction === 'desc' ? 'text-blue-600' : 'text-gray-400'}`} 
+        <ChevronDown
+          className={`w-3 h-3 -mt-1 ${isSorted && direction === 'desc' ? 'text-blue-600' : 'text-gray-400'}`}
         />
       </span>
     );
   };
-  
+
   const renderPagination = () => {
     if (!pagination) return null;
-    
-    const { page, pageSize, total, pageSizeOptions = [10, 25, 50, 100], onPageChange, onPageSizeChange } = pagination;
+
+    const {
+      page,
+      pageSize,
+      total,
+      pageSizeOptions = [10, 25, 50, 100],
+      onPageChange,
+      onPageSizeChange,
+    } = pagination;
     const totalPages = Math.ceil(total / pageSize);
     const startItem = (page - 1) * pageSize + 1;
     const endItem = Math.min(page * pageSize, total);
-    
+
     return (
       <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
         <div className="flex items-center space-x-2">
@@ -261,14 +272,14 @@ const DataTable = <T,>({
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
             className="ml-2 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            {pageSizeOptions.map(size => (
+            {pageSizeOptions.map((size) => (
               <option key={size} value={size}>
                 {size} per page
               </option>
             ))}
           </select>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <button
             onClick={() => onPageChange(page - 1)}
@@ -277,11 +288,11 @@ const DataTable = <T,>({
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          
+
           <span className="text-sm text-gray-700">
             Page {page} of {totalPages}
           </span>
-          
+
           <button
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages}
@@ -293,9 +304,9 @@ const DataTable = <T,>({
       </div>
     );
   };
-  
-  const visibleColumns = columns.filter(col => !col.hidden);
-  
+
+  const visibleColumns = columns.filter((col) => !col.hidden);
+
   if (loading) {
     return (
       <div className={getTableClasses()}>
@@ -306,7 +317,7 @@ const DataTable = <T,>({
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className={getTableClasses()}>
@@ -316,7 +327,7 @@ const DataTable = <T,>({
       </div>
     );
   }
-  
+
   if (data.length === 0) {
     return (
       <div className={getTableClasses()}>
@@ -326,7 +337,7 @@ const DataTable = <T,>({
       </div>
     );
   }
-  
+
   return (
     <div className={getTableClasses()}>
       <table className="w-full">
@@ -342,9 +353,7 @@ const DataTable = <T,>({
                 />
               </th>
             )}
-            {expandable && (
-              <th className={`${getHeaderClasses()} w-12`}></th>
-            )}
+            {expandable && <th className={`${getHeaderClasses()} w-12`}></th>}
             {visibleColumns.map((column) => (
               <th
                 key={String(column.key)}
@@ -353,7 +362,7 @@ const DataTable = <T,>({
                 style={{
                   width: column.width,
                   minWidth: column.minWidth,
-                  maxWidth: column.maxWidth
+                  maxWidth: column.maxWidth,
                 }}
               >
                 <div className="flex items-center">
@@ -369,10 +378,13 @@ const DataTable = <T,>({
             const rowKey = selection?.getRowKey(row) || String(index);
             const isSelected = selection?.selectedRows?.includes(rowKey) || false;
             const isExpanded = expandable?.expandedRows?.includes(rowKey) || false;
-            
+
             return (
               <React.Fragment key={rowKey}>
-                <tr className={getRowClasses(row, index)} onClick={() => handleRowClick(row, index)}>
+                <tr
+                  className={getRowClasses(row, index)}
+                  onClick={() => handleRowClick(row, index)}
+                >
                   {selection && (
                     <td className={getCellClasses(visibleColumns[0])}>
                       <input
@@ -407,7 +419,10 @@ const DataTable = <T,>({
                 </tr>
                 {expandable && isExpanded && expandable.renderExpandedContent && (
                   <tr>
-                    <td colSpan={visibleColumns.length + (selection ? 1 : 0) + (expandable ? 1 : 0)} className="bg-gray-50">
+                    <td
+                      colSpan={visibleColumns.length + (selection ? 1 : 0) + (expandable ? 1 : 0)}
+                      className="bg-gray-50"
+                    >
                       {expandable.renderExpandedContent(row)}
                     </td>
                   </tr>
@@ -422,4 +437,4 @@ const DataTable = <T,>({
   );
 };
 
-export default DataTable; 
+export default DataTable;

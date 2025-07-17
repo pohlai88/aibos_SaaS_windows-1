@@ -1,54 +1,62 @@
-import React, { useState, useEffect, useRef, ReactNode, useCallback, createContext, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  ReactNode,
+  useCallback,
+  createContext,
+  useContext,
+} from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
 import { Badge } from '../primitives/Badge';
 import { Tooltip } from '../primitives/Tooltip';
-import { 
-  X, 
-  Plus, 
-  MoreHorizontal, 
-  Settings, 
+import {
+  X,
+  Plus,
+  MoreHorizontal,
+  Settings,
   History,
   Star,
   Clock,
   TrendingUp,
   Zap,
-  Brain
+  Brain,
 } from 'lucide-react';
 
-const tabsVariants = cva(
-  'flex items-center border-b border-border',
-  {
-    variants: {
-      variant: {
-        default: '',
-        pills: 'space-x-1 p-1 bg-muted rounded-lg',
-        underline: 'border-b-2 border-border',
-        cards: 'space-x-2',
-      },
-      size: {
-        sm: 'text-sm',
-        md: 'text-base',
-        lg: 'text-lg',
-      },
+const tabsVariants = cva('flex items-center border-b border-border', {
+  variants: {
+    variant: {
+      default: '',
+      pills: 'space-x-1 p-1 bg-muted rounded-lg',
+      underline: 'border-b-2 border-border',
+      cards: 'space-x-2',
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'md',
+    size: {
+      sm: 'text-sm',
+      md: 'text-base',
+      lg: 'text-lg',
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+    size: 'md',
+  },
+});
 
 const tabVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
-        pills: 'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
+        default:
+          'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
+        pills:
+          'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
         underline: 'data-[state=active]:border-primary data-[state=active]:text-primary',
-        cards: 'data-[state=active]:bg-card data-[state=active]:text-card-foreground data-[state=active]:border-border',
+        cards:
+          'data-[state=active]:bg-card data-[state=active]:text-card-foreground data-[state=active]:border-border',
       },
       size: {
         sm: 'px-2 py-1 text-xs',
@@ -60,7 +68,7 @@ const tabVariants = cva(
       variant: 'default',
       size: 'md',
     },
-  }
+  },
 );
 
 export interface TabItem {
@@ -153,7 +161,9 @@ export const Tabs: React.FC<TabsProps> = ({
 }) => {
   const [tabs, setTabs] = useState<TabItem[]>(initialTabs);
   const [activeTab, setActiveTab] = useState(defaultActiveTab || initialTabs[0]?.id || '');
-  const [usageStats, setUsageStats] = useState<Record<string, { count: number; lastAccessed: Date }>>({});
+  const [usageStats, setUsageStats] = useState<
+    Record<string, { count: number; lastAccessed: Date }>
+  >({});
   const [dragState, setDragState] = useState<{ isDragging: boolean; draggedId: string | null }>({
     isDragging: false,
     draggedId: null,
@@ -167,19 +177,19 @@ export const Tabs: React.FC<TabsProps> = ({
       const sortedTabs = [...tabs].sort((a, b) => {
         const aStats = usageStats[a.id];
         const bStats = usageStats[b.id];
-        
+
         if (!aStats && !bStats) return 0;
         if (!aStats) return 1;
         if (!bStats) return -1;
-        
+
         // Sort by access count, then by last accessed time
         if (aStats.count !== bStats.count) {
           return bStats.count - aStats.count;
         }
         return bStats.lastAccessed.getTime() - aStats.lastAccessed.getTime();
       });
-      
-      if (JSON.stringify(sortedTabs.map(t => t.id)) !== JSON.stringify(tabs.map(t => t.id))) {
+
+      if (JSON.stringify(sortedTabs.map((t) => t.id)) !== JSON.stringify(tabs.map((t) => t.id))) {
         setTabs(sortedTabs);
       }
     }
@@ -189,17 +199,17 @@ export const Tabs: React.FC<TabsProps> = ({
   useEffect(() => {
     if (aiFeatures.autoClose && tabs.length > maxTabs) {
       const unusedTabs = tabs
-        .filter(tab => !usageStats[tab.id] || usageStats[tab.id].count < 2)
+        .filter((tab) => !usageStats[tab.id] || usageStats[tab.id].count < 2)
         .slice(0, tabs.length - maxTabs);
-      
-      unusedTabs.forEach(tab => {
+
+      unusedTabs.forEach((tab) => {
         removeTab(tab.id);
       });
     }
   }, [tabs.length, maxTabs, aiFeatures.autoClose, usageStats]);
 
   const updateUsageStats = useCallback((tabId: string) => {
-    setUsageStats(prev => ({
+    setUsageStats((prev) => ({
       ...prev,
       [tabId]: {
         count: (prev[tabId]?.count || 0) + 1,
@@ -208,43 +218,50 @@ export const Tabs: React.FC<TabsProps> = ({
     }));
   }, []);
 
-  const handleTabClick = useCallback((tabId: string) => {
-    setActiveTab(tabId);
-    onTabChange?.(tabId);
-    
-    if (aiFeatures.usageTracking) {
-      updateUsageStats(tabId);
-    }
-  }, [onTabChange, aiFeatures.usageTracking, updateUsageStats]);
+  const handleTabClick = useCallback(
+    (tabId: string) => {
+      setActiveTab(tabId);
+      onTabChange?.(tabId);
 
-  const addTab = useCallback((tab: Omit<TabItem, 'id'>) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    const newTab: TabItem = { ...tab, id };
-    setTabs(prev => [...prev, newTab]);
-    onTabAdd?.(newTab);
-    return id;
-  }, [onTabAdd]);
-
-  const removeTab = useCallback((tabId: string) => {
-    setTabs(prev => {
-      const newTabs = prev.filter(tab => tab.id !== tabId);
-      if (activeTab === tabId && newTabs.length > 0) {
-        setActiveTab(newTabs[0].id);
-        onTabChange?.(newTabs[0].id);
+      if (aiFeatures.usageTracking) {
+        updateUsageStats(tabId);
       }
-      return newTabs;
-    });
-    onTabRemove?.(tabId);
-  }, [activeTab, onTabChange, onTabRemove]);
+    },
+    [onTabChange, aiFeatures.usageTracking, updateUsageStats],
+  );
+
+  const addTab = useCallback(
+    (tab: Omit<TabItem, 'id'>) => {
+      const id = Math.random().toString(36).substr(2, 9);
+      const newTab: TabItem = { ...tab, id };
+      setTabs((prev) => [...prev, newTab]);
+      onTabAdd?.(newTab);
+      return id;
+    },
+    [onTabAdd],
+  );
+
+  const removeTab = useCallback(
+    (tabId: string) => {
+      setTabs((prev) => {
+        const newTabs = prev.filter((tab) => tab.id !== tabId);
+        if (activeTab === tabId && newTabs.length > 0) {
+          setActiveTab(newTabs[0].id);
+          onTabChange?.(newTabs[0].id);
+        }
+        return newTabs;
+      });
+      onTabRemove?.(tabId);
+    },
+    [activeTab, onTabChange, onTabRemove],
+  );
 
   const updateTab = useCallback((tabId: string, updates: Partial<TabItem>) => {
-    setTabs(prev => prev.map(tab => 
-      tab.id === tabId ? { ...tab, ...updates } : tab
-    ));
+    setTabs((prev) => prev.map((tab) => (tab.id === tabId ? { ...tab, ...updates } : tab)));
   }, []);
 
   const reorderTabs = useCallback((fromIndex: number, toIndex: number) => {
-    setTabs(prev => {
+    setTabs((prev) => {
       const newTabs = [...prev];
       const [movedTab] = newTabs.splice(fromIndex, 1);
       newTabs.splice(toIndex, 0, movedTab);
@@ -253,31 +270,40 @@ export const Tabs: React.FC<TabsProps> = ({
   }, []);
 
   // Drag and drop functionality
-  const handleDragStart = useCallback((e: React.DragEvent, tabId: string) => {
-    if (!draggable) return;
-    setDragState({ isDragging: true, draggedId: tabId });
-    e.dataTransfer.effectAllowed = 'move';
-  }, [draggable]);
+  const handleDragStart = useCallback(
+    (e: React.DragEvent, tabId: string) => {
+      if (!draggable) return;
+      setDragState({ isDragging: true, draggedId: tabId });
+      e.dataTransfer.effectAllowed = 'move';
+    },
+    [draggable],
+  );
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    if (!draggable || !dragState.isDragging) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  }, [draggable, dragState.isDragging]);
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      if (!draggable || !dragState.isDragging) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    },
+    [draggable, dragState.isDragging],
+  );
 
-  const handleDrop = useCallback((e: React.DragEvent, targetTabId: string) => {
-    if (!draggable || !dragState.draggedId) return;
-    e.preventDefault();
-    
-    const fromIndex = tabs.findIndex(tab => tab.id === dragState.draggedId);
-    const toIndex = tabs.findIndex(tab => tab.id === targetTabId);
-    
-    if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
-      reorderTabs(fromIndex, toIndex);
-    }
-    
-    setDragState({ isDragging: false, draggedId: null });
-  }, [draggable, dragState.draggedId, tabs, reorderTabs]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent, targetTabId: string) => {
+      if (!draggable || !dragState.draggedId) return;
+      e.preventDefault();
+
+      const fromIndex = tabs.findIndex((tab) => tab.id === dragState.draggedId);
+      const toIndex = tabs.findIndex((tab) => tab.id === targetTabId);
+
+      if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
+        reorderTabs(fromIndex, toIndex);
+      }
+
+      setDragState({ isDragging: false, draggedId: null });
+    },
+    [draggable, dragState.draggedId, tabs, reorderTabs],
+  );
 
   const contextValue: TabsContextType = {
     activeTab,
@@ -295,7 +321,7 @@ export const Tabs: React.FC<TabsProps> = ({
     },
   };
 
-  const activeTabContent = tabs.find(tab => tab.id === activeTab)?.content;
+  const activeTabContent = tabs.find((tab) => tab.id === activeTab)?.content;
 
   return (
     <TabsContext.Provider value={contextValue}>
@@ -310,16 +336,13 @@ export const Tabs: React.FC<TabsProps> = ({
                 onDragStart={(e) => handleDragStart(e, tab.id)}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, tab.id)}
-                className={cn(
-                  'relative',
-                  dragState.draggedId === tab.id && 'opacity-50'
-                )}
+                className={cn('relative', dragState.draggedId === tab.id && 'opacity-50')}
               >
                 <button
                   className={cn(
                     tabVariants({ variant, size }),
                     'relative',
-                    tab.disabled && 'opacity-50 cursor-not-allowed'
+                    tab.disabled && 'opacity-50 cursor-not-allowed',
                   )}
                   data-state={activeTab === tab.id ? 'active' : 'inactive'}
                   onClick={() => !tab.disabled && handleTabClick(tab.id)}
@@ -332,16 +355,14 @@ export const Tabs: React.FC<TabsProps> = ({
                       {tab.badge}
                     </Badge>
                   )}
-                  {tab.pinned && (
-                    <Star className="ml-2 h-3 w-3 text-yellow-500" />
-                  )}
+                  {tab.pinned && <Star className="ml-2 h-3 w-3 text-yellow-500" />}
                   {aiFeatures.usageAnalytics && usageStats[tab.id] && (
                     <Tooltip content={`Accessed ${usageStats[tab.id].count} times`}>
                       <TrendingUp className="ml-1 h-3 w-3 text-muted-foreground" />
                     </Tooltip>
                   )}
                 </button>
-                
+
                 {showCloseButtons && tab.closable && (
                   <Button
                     variant="ghost"
@@ -358,7 +379,7 @@ export const Tabs: React.FC<TabsProps> = ({
               </div>
             ))}
           </div>
-          
+
           <div className="flex items-center gap-1 ml-auto">
             {showAddButton && (
               <Button
@@ -369,13 +390,13 @@ export const Tabs: React.FC<TabsProps> = ({
                 <Plus className="h-4 w-4" />
               </Button>
             )}
-            
+
             {showMoreMenu && (
               <Button variant="ghost" size="icon-sm">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             )}
-            
+
             {aiFeatures.usageAnalytics && (
               <Tooltip content="AI Usage Analytics">
                 <Button variant="ghost" size="icon-sm">
@@ -387,18 +408,16 @@ export const Tabs: React.FC<TabsProps> = ({
         </div>
 
         {/* Tab Content */}
-        <div className={cn('mt-4', contentClassName)}>
-          {activeTabContent}
-        </div>
+        <div className={cn('mt-4', contentClassName)}>{activeTabContent}</div>
       </div>
     </TabsContext.Provider>
   );
 };
 
 // AI-Powered Tab Analytics Component
-export const TabAnalytics: React.FC<{ usageStats: Record<string, { count: number; lastAccessed: Date }> }> = ({
-  usageStats,
-}) => {
+export const TabAnalytics: React.FC<{
+  usageStats: Record<string, { count: number; lastAccessed: Date }>;
+}> = ({ usageStats }) => {
   const sortedStats = Object.entries(usageStats)
     .sort(([, a], [, b]) => b.count - a.count)
     .slice(0, 5);
@@ -422,37 +441,47 @@ export const TabAnalytics: React.FC<{ usageStats: Record<string, { count: number
 };
 
 // AI-Powered Tab Hook
-export const useAITabs = (options: {
-  smartOrdering?: boolean;
-  usageTracking?: boolean;
-  contextAware?: boolean;
-  autoClose?: boolean;
-  maxTabs?: number;
-} = {}) => {
+export const useAITabs = (
+  options: {
+    smartOrdering?: boolean;
+    usageTracking?: boolean;
+    contextAware?: boolean;
+    autoClose?: boolean;
+    maxTabs?: number;
+  } = {},
+) => {
   const [tabs, setTabs] = useState<TabItem[]>([]);
   const [activeTab, setActiveTab] = useState<string>('');
-  const [usageStats, setUsageStats] = useState<Record<string, { count: number; lastAccessed: Date }>>({});
+  const [usageStats, setUsageStats] = useState<
+    Record<string, { count: number; lastAccessed: Date }>
+  >({});
 
-  const addTab = useCallback((tab: Omit<TabItem, 'id'>) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    const newTab: TabItem = { ...tab, id };
-    setTabs(prev => [...prev, newTab]);
-    if (!activeTab) setActiveTab(id);
-    return id;
-  }, [activeTab]);
+  const addTab = useCallback(
+    (tab: Omit<TabItem, 'id'>) => {
+      const id = Math.random().toString(36).substr(2, 9);
+      const newTab: TabItem = { ...tab, id };
+      setTabs((prev) => [...prev, newTab]);
+      if (!activeTab) setActiveTab(id);
+      return id;
+    },
+    [activeTab],
+  );
 
-  const removeTab = useCallback((tabId: string) => {
-    setTabs(prev => {
-      const newTabs = prev.filter(tab => tab.id !== tabId);
-      if (activeTab === tabId && newTabs.length > 0) {
-        setActiveTab(newTabs[0].id);
-      }
-      return newTabs;
-    });
-  }, [activeTab]);
+  const removeTab = useCallback(
+    (tabId: string) => {
+      setTabs((prev) => {
+        const newTabs = prev.filter((tab) => tab.id !== tabId);
+        if (activeTab === tabId && newTabs.length > 0) {
+          setActiveTab(newTabs[0].id);
+        }
+        return newTabs;
+      });
+    },
+    [activeTab],
+  );
 
   const updateUsage = useCallback((tabId: string) => {
-    setUsageStats(prev => ({
+    setUsageStats((prev) => ({
       ...prev,
       [tabId]: {
         count: (prev[tabId]?.count || 0) + 1,
@@ -474,4 +503,4 @@ export const useAITabs = (options: {
       }
     },
   };
-}; 
+};

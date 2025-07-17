@@ -1,6 +1,6 @@
 /**
  * AI-BOS Entity Management System
- * 
+ *
  * Enterprise-grade entity CRUD operations, relationships, validation, and real-time sync
  * for the AI-BOS micro-app platform.
  */
@@ -311,20 +311,22 @@ export class EntityValidator {
     if (!schema) {
       return {
         valid: false,
-        errors: [{
-          field: 'type',
-          message: `Unknown entity type: ${entityType}`,
-          code: 'UNKNOWN_ENTITY_TYPE',
-          severity: 'error'
-        }],
-        warnings: []
+        errors: [
+          {
+            field: 'type',
+            message: `Unknown entity type: ${entityType}`,
+            code: 'UNKNOWN_ENTITY_TYPE',
+            severity: 'error',
+          },
+        ],
+        warnings: [],
       };
     }
 
     const result: EntityValidationResult = {
       valid: true,
       errors: [],
-      warnings: []
+      warnings: [],
     };
 
     // Validate required fields
@@ -334,7 +336,7 @@ export class EntityValidator {
           field: field.name,
           message: `Field '${field.name}' is required`,
           code: 'REQUIRED_FIELD_MISSING',
-          severity: 'error'
+          severity: 'error',
         });
         result.valid = false;
       }
@@ -361,7 +363,7 @@ export class EntityValidator {
           field: 'custom',
           message: `Custom validation failed: ${(error as Error).message}`,
           code: 'CUSTOM_VALIDATION_ERROR',
-          severity: 'error'
+          severity: 'error',
         });
         result.valid = false;
       }
@@ -377,7 +379,7 @@ export class EntityValidator {
     const result: EntityValidationResult = {
       valid: true,
       errors: [],
-      warnings: []
+      warnings: [],
     };
 
     // Type validation
@@ -387,7 +389,7 @@ export class EntityValidator {
         field: field.name,
         message: `Field '${field.name}' must be of type '${field.type}'`,
         code: 'INVALID_FIELD_TYPE',
-        severity: 'error'
+        severity: 'error',
       });
       result.valid = false;
     }
@@ -434,11 +436,16 @@ export class EntityValidator {
   /**
    * Validate field rule
    */
-  private validateFieldRule(field: EntityField, rule: any, value: any, data: any): EntityValidationResult {
+  private validateFieldRule(
+    field: EntityField,
+    rule: any,
+    value: any,
+    data: any,
+  ): EntityValidationResult {
     const result: EntityValidationResult = {
       valid: true,
       errors: [],
-      warnings: []
+      warnings: [],
     };
 
     switch (rule.type) {
@@ -448,7 +455,7 @@ export class EntityValidator {
             field: field.name,
             message: `Field '${field.name}' must be at least ${rule.value} characters long`,
             code: 'MIN_LENGTH_VIOLATION',
-            severity: 'error'
+            severity: 'error',
           });
           result.valid = false;
         }
@@ -460,7 +467,7 @@ export class EntityValidator {
             field: field.name,
             message: `Field '${field.name}' must be at most ${rule.value} characters long`,
             code: 'MAX_LENGTH_VIOLATION',
-            severity: 'error'
+            severity: 'error',
           });
           result.valid = false;
         }
@@ -472,7 +479,7 @@ export class EntityValidator {
             field: field.name,
             message: `Field '${field.name}' does not match required pattern`,
             code: 'PATTERN_VIOLATION',
-            severity: 'error'
+            severity: 'error',
           });
           result.valid = false;
         }
@@ -484,7 +491,7 @@ export class EntityValidator {
             field: field.name,
             message: `Field '${field.name}' must be a valid email address`,
             code: 'INVALID_EMAIL',
-            severity: 'error'
+            severity: 'error',
           });
           result.valid = false;
         }
@@ -496,7 +503,7 @@ export class EntityValidator {
             field: field.name,
             message: `Field '${field.name}' must be a valid URL`,
             code: 'INVALID_URL',
-            severity: 'error'
+            severity: 'error',
           });
           result.valid = false;
         }
@@ -508,7 +515,7 @@ export class EntityValidator {
             field: field.name,
             message: rule.message || `Field '${field.name}' failed custom validation`,
             code: 'CUSTOM_VALIDATION_FAILED',
-            severity: 'error'
+            severity: 'error',
           });
           result.valid = false;
         }
@@ -568,7 +575,7 @@ export class EntityManager {
   async create<T>(
     entityType: string,
     data: T,
-    context: EntityContext
+    context: EntityContext,
   ): Promise<EntityOperationResult<T>> {
     const startTime = Date.now();
 
@@ -578,7 +585,7 @@ export class EntityManager {
       if (!schema) {
         return {
           success: false,
-          error: `Unknown entity type: ${entityType}`
+          error: `Unknown entity type: ${entityType}`,
         };
       }
 
@@ -588,8 +595,8 @@ export class EntityManager {
         if (!validation.valid) {
           return {
             success: false,
-            error: `Validation failed: ${validation.errors.map(e => e.message).join(', ')}`,
-            warnings: validation.warnings.map(w => w.message)
+            error: `Validation failed: ${validation.errors.map((e) => e.message).join(', ')}`,
+            warnings: validation.warnings.map((w) => w.message),
           };
         }
       }
@@ -611,11 +618,11 @@ export class EntityManager {
           tags: {},
           audit: [],
           permissions: [],
-          relationships: []
+          relationships: [],
         },
         version: 1,
         createdAt: Date.now(),
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       };
 
       // Add audit trail
@@ -625,7 +632,7 @@ export class EntityManager {
           action: 'create',
           userId: context.userId,
           ipAddress: context.ipAddress,
-          userAgent: context.userAgent
+          userAgent: context.userAgent,
         });
       }
 
@@ -638,16 +645,20 @@ export class EntityManager {
       }
 
       // Emit event
-      await this.eventBus.emit('EntityCreated', {
-        entityId: entity.id,
-        entityType: entity.type,
-        data: entity.data,
-        tenantId: entity.tenantId
-      }, {
-        tenantId: context.tenantId,
-        userId: context.userId,
-        correlationId: entity.id
-      });
+      await this.eventBus.emit(
+        'EntityCreated',
+        {
+          entityId: entity.id,
+          entityType: entity.type,
+          data: entity.data,
+          tenantId: entity.tenantId,
+        },
+        {
+          tenantId: context.tenantId,
+          userId: context.userId,
+          correlationId: entity.id,
+        },
+      );
 
       // Run after hook
       if (schema.hooks?.afterCreate) {
@@ -657,32 +668,31 @@ export class EntityManager {
       const latency = Date.now() - startTime;
       monitoring.recordCustomMetric('entity_create_latency', latency, {
         entityType,
-        tenantId: context.tenantId
+        tenantId: context.tenantId,
       });
 
       logger.info('Entity created successfully', {
         entityId: entity.id,
         entityType,
         tenantId: context.tenantId,
-        latency
+        latency,
       });
 
       return {
         success: true,
         entity,
-        auditTrail: entity.metadata.audit?.[0]
+        auditTrail: entity.metadata.audit?.[0],
       };
-
     } catch (error) {
       logger.error('Entity creation failed', {
         entityType,
         tenantId: context.tenantId,
-        error: (error as Error).message
+        error: (error as Error).message,
       });
 
       return {
         success: false,
-        error: (error as Error).message
+        error: (error as Error).message,
       };
     }
   }
@@ -705,7 +715,7 @@ export class EntityManager {
       if (!entity) {
         return {
           success: false,
-          error: `Entity not found: ${entityId}`
+          error: `Entity not found: ${entityId}`,
         };
       }
 
@@ -713,7 +723,7 @@ export class EntityManager {
       if (!this.hasPermission(entity, 'read', context)) {
         return {
           success: false,
-          error: 'Insufficient permissions to read entity'
+          error: 'Insufficient permissions to read entity',
         };
       }
 
@@ -723,11 +733,10 @@ export class EntityManager {
       }
 
       return { success: true, entity };
-
     } catch (error) {
       return {
         success: false,
-        error: (error as Error).message
+        error: (error as Error).message,
       };
     }
   }
@@ -738,7 +747,7 @@ export class EntityManager {
   async update<T>(
     entityId: string,
     changes: Partial<T>,
-    context: EntityContext
+    context: EntityContext,
   ): Promise<EntityOperationResult<T>> {
     const startTime = Date.now();
 
@@ -748,7 +757,7 @@ export class EntityManager {
       if (!existing) {
         return {
           success: false,
-          error: `Entity not found: ${entityId}`
+          error: `Entity not found: ${entityId}`,
         };
       }
 
@@ -756,7 +765,7 @@ export class EntityManager {
       if (!this.hasPermission(existing, 'update', context)) {
         return {
           success: false,
-          error: 'Insufficient permissions to update entity'
+          error: 'Insufficient permissions to update entity',
         };
       }
 
@@ -765,7 +774,7 @@ export class EntityManager {
       if (!schema) {
         return {
           success: false,
-          error: `Schema not found for entity type: ${existing.type}`
+          error: `Schema not found for entity type: ${existing.type}`,
         };
       }
 
@@ -782,8 +791,8 @@ export class EntityManager {
         if (!validation.valid) {
           return {
             success: false,
-            error: `Validation failed: ${validation.errors.map(e => e.message).join(', ')}`,
-            warnings: validation.warnings.map(w => w.message)
+            error: `Validation failed: ${validation.errors.map((e) => e.message).join(', ')}`,
+            warnings: validation.warnings.map((w) => w.message),
           };
         }
       }
@@ -796,8 +805,8 @@ export class EntityManager {
         updatedAt: Date.now(),
         metadata: {
           ...existing.metadata,
-          updatedBy: context.userId
-        }
+          updatedBy: context.userId,
+        },
       };
 
       // Add audit trail
@@ -808,7 +817,7 @@ export class EntityManager {
           userId: context.userId,
           changes: this.calculateChanges(existing.data, updatedEntity.data),
           ipAddress: context.ipAddress,
-          userAgent: context.userAgent
+          userAgent: context.userAgent,
         };
         updatedEntity.metadata.audit!.push(auditEntry);
       }
@@ -822,16 +831,20 @@ export class EntityManager {
       }
 
       // Emit event
-      await this.eventBus.emit('EntityUpdated', {
-        entityId: updatedEntity.id,
-        entityType: updatedEntity.type,
-        changes: processedChanges,
-        tenantId: updatedEntity.tenantId
-      }, {
-        tenantId: context.tenantId,
-        userId: context.userId,
-        correlationId: entityId
-      });
+      await this.eventBus.emit(
+        'EntityUpdated',
+        {
+          entityId: updatedEntity.id,
+          entityType: updatedEntity.type,
+          changes: processedChanges,
+          tenantId: updatedEntity.tenantId,
+        },
+        {
+          tenantId: context.tenantId,
+          userId: context.userId,
+          correlationId: entityId,
+        },
+      );
 
       // Run after hook
       if (schema.hooks?.afterUpdate) {
@@ -841,32 +854,31 @@ export class EntityManager {
       const latency = Date.now() - startTime;
       monitoring.recordCustomMetric('entity_update_latency', latency, {
         entityType: existing.type,
-        tenantId: context.tenantId
+        tenantId: context.tenantId,
       });
 
       logger.info('Entity updated successfully', {
         entityId,
         entityType: existing.type,
         tenantId: context.tenantId,
-        latency
+        latency,
       });
 
       return {
         success: true,
         entity: updatedEntity,
-        auditTrail: updatedEntity.metadata.audit?.[updatedEntity.metadata.audit.length - 1]
+        auditTrail: updatedEntity.metadata.audit?.[updatedEntity.metadata.audit.length - 1],
       };
-
     } catch (error) {
       logger.error('Entity update failed', {
         entityId,
         tenantId: context.tenantId,
-        error: (error as Error).message
+        error: (error as Error).message,
       });
 
       return {
         success: false,
-        error: (error as Error).message
+        error: (error as Error).message,
       };
     }
   }
@@ -883,7 +895,7 @@ export class EntityManager {
       if (!existing) {
         return {
           success: false,
-          error: `Entity not found: ${entityId}`
+          error: `Entity not found: ${entityId}`,
         };
       }
 
@@ -891,7 +903,7 @@ export class EntityManager {
       if (!this.hasPermission(existing, 'delete', context)) {
         return {
           success: false,
-          error: 'Insufficient permissions to delete entity'
+          error: 'Insufficient permissions to delete entity',
         };
       }
 
@@ -900,7 +912,7 @@ export class EntityManager {
       if (!schema) {
         return {
           success: false,
-          error: `Schema not found for entity type: ${existing.type}`
+          error: `Schema not found for entity type: ${existing.type}`,
         };
       }
 
@@ -910,7 +922,7 @@ export class EntityManager {
         if (!shouldDelete) {
           return {
             success: false,
-            error: 'Delete operation cancelled by hook'
+            error: 'Delete operation cancelled by hook',
           };
         }
       }
@@ -921,8 +933,8 @@ export class EntityManager {
         deletedAt: Date.now(),
         metadata: {
           ...existing.metadata,
-          deletedBy: context.userId
-        }
+          deletedBy: context.userId,
+        },
       };
 
       // Add audit trail
@@ -932,7 +944,7 @@ export class EntityManager {
           action: 'delete',
           userId: context.userId,
           ipAddress: context.ipAddress,
-          userAgent: context.userAgent
+          userAgent: context.userAgent,
         };
         deletedEntity.metadata.audit!.push(auditEntry);
       }
@@ -946,15 +958,19 @@ export class EntityManager {
       }
 
       // Emit event
-      await this.eventBus.emit('EntityDeleted', {
-        entityId: deletedEntity.id,
-        entityType: deletedEntity.type,
-        tenantId: deletedEntity.tenantId
-      }, {
-        tenantId: context.tenantId,
-        userId: context.userId,
-        correlationId: entityId
-      });
+      await this.eventBus.emit(
+        'EntityDeleted',
+        {
+          entityId: deletedEntity.id,
+          entityType: deletedEntity.type,
+          tenantId: deletedEntity.tenantId,
+        },
+        {
+          tenantId: context.tenantId,
+          userId: context.userId,
+          correlationId: entityId,
+        },
+      );
 
       // Run after hook
       if (schema.hooks?.afterDelete) {
@@ -964,31 +980,30 @@ export class EntityManager {
       const latency = Date.now() - startTime;
       monitoring.recordCustomMetric('entity_delete_latency', latency, {
         entityType: existing.type,
-        tenantId: context.tenantId
+        tenantId: context.tenantId,
       });
 
       logger.info('Entity deleted successfully', {
         entityId,
         entityType: existing.type,
         tenantId: context.tenantId,
-        latency
+        latency,
       });
 
       return {
         success: true,
-        auditTrail: deletedEntity.metadata.audit?.[deletedEntity.metadata.audit.length - 1]
+        auditTrail: deletedEntity.metadata.audit?.[deletedEntity.metadata.audit.length - 1],
       };
-
     } catch (error) {
       logger.error('Entity deletion failed', {
         entityId,
         tenantId: context.tenantId,
-        error: (error as Error).message
+        error: (error as Error).message,
       });
 
       return {
         success: false,
-        error: (error as Error).message
+        error: (error as Error).message,
       };
     }
   }
@@ -998,7 +1013,7 @@ export class EntityManager {
    */
   async query<T>(
     filter: EntityFilter,
-    options: EntityQueryOptions = {}
+    options: EntityQueryOptions = {},
   ): Promise<EntityQueryResult<T>> {
     const startTime = Date.now();
 
@@ -1013,7 +1028,7 @@ export class EntityManager {
         entities.sort((a, b) => {
           const aValue = this.getNestedValue(a, options.sortBy!);
           const bValue = this.getNestedValue(b, options.sortBy!);
-          
+
           if (options.sortOrder === 'desc') {
             return bValue > aValue ? 1 : -1;
           }
@@ -1025,45 +1040,44 @@ export class EntityManager {
       const total = entities.length;
       const limit = options.limit || this.config.maxQueryLimit;
       const offset = options.offset || 0;
-      
+
       entities = entities.slice(offset, offset + limit);
 
       // Remove metadata if not requested
       if (!options.includeMetadata) {
-        entities = entities.map(entity => ({
+        entities = entities.map((entity) => ({
           ...entity,
           metadata: {
             ...entity.metadata,
             audit: undefined,
-            permissions: undefined
-          }
+            permissions: undefined,
+          },
         }));
       }
 
       const latency = Date.now() - startTime;
       monitoring.recordCustomMetric('entity_query_latency', latency, {
         filterType: Object.keys(filter).join(','),
-        resultCount: entities.length
+        resultCount: entities.length,
       });
 
       return {
         entities,
         total,
         hasMore: offset + limit < total,
-        cursor: offset + limit < total ? (offset + limit).toString() : undefined
+        cursor: offset + limit < total ? (offset + limit).toString() : undefined,
       };
-
     } catch (error) {
       logger.error('Entity query failed', {
         filter,
         options,
-        error: (error as Error).message
+        error: (error as Error).message,
       });
 
       return {
         entities: [],
         total: 0,
-        hasMore: false
+        hasMore: false,
       };
     }
   }
@@ -1071,8 +1085,11 @@ export class EntityManager {
   /**
    * Apply filters to entities
    */
-  private applyFilters<T>(entities: EntityInstance<T>[], filter: EntityFilter): EntityInstance<T>[] {
-    return entities.filter(entity => {
+  private applyFilters<T>(
+    entities: EntityInstance<T>[],
+    filter: EntityFilter,
+  ): EntityInstance<T>[] {
+    return entities.filter((entity) => {
       // Type filter
       if (filter.type && entity.type !== filter.type) return false;
 
@@ -1113,8 +1130,13 @@ export class EntityManager {
       if (filter.deletedAt === null) {
         if (entity.deletedAt) return false;
       } else if (filter.deletedAt) {
-        if (filter.deletedAt.from && (!entity.deletedAt || entity.deletedAt < filter.deletedAt.from)) return false;
-        if (filter.deletedAt.to && (!entity.deletedAt || entity.deletedAt > filter.deletedAt.to)) return false;
+        if (
+          filter.deletedAt.from &&
+          (!entity.deletedAt || entity.deletedAt < filter.deletedAt.from)
+        )
+          return false;
+        if (filter.deletedAt.to && (!entity.deletedAt || entity.deletedAt > filter.deletedAt.to))
+          return false;
       }
 
       return true;
@@ -1138,7 +1160,7 @@ export class EntityManager {
       if (oldData[key] !== newData[key]) {
         changes[key] = {
           from: oldData[key],
-          to: newData[key]
+          to: newData[key],
         };
       }
     }
@@ -1166,7 +1188,7 @@ export class EntityManager {
     const stats = {
       totalEntities: this.entities.size,
       entitiesByType: {} as Record<string, number>,
-      entitiesByTenant: {} as Record<string, number>
+      entitiesByTenant: {} as Record<string, number>,
     };
 
     for (const entity of this.entities.values()) {
@@ -1248,7 +1270,7 @@ export function createEntityFilter(): {
       filter.deletedAt = null;
       return this;
     },
-    build: () => filter
+    build: () => filter,
   };
 }
 
@@ -1256,11 +1278,7 @@ export function createEntityFilter(): {
 // EXPORTS
 // ============================================================================
 
-export {
-  EntityManager,
-  EntityValidator,
-  createEntityFilter
-};
+export { EntityManager, EntityValidator, createEntityFilter };
 
 export type {
   EntityInstance,
@@ -1283,5 +1301,5 @@ export type {
   EntityPermission,
   EntityRelationship,
   ValidationError,
-  ValidationWarning
-}; 
+  ValidationWarning,
+};

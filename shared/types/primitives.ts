@@ -1,6 +1,6 @@
 /**
  * Enterprise-grade primitive types for the AI-BOS platform
- * 
+ *
  * This module provides strongly-typed primitives with validation,
  * ensuring type safety across the entire application stack.
  */
@@ -189,19 +189,75 @@ export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 
 /**
  * HTTP status codes
  */
-export type HttpStatus = 
-  | 100 | 101 | 102 | 103
-  | 200 | 201 | 202 | 203 | 204 | 205 | 206 | 207 | 208 | 226
-  | 300 | 301 | 302 | 303 | 304 | 305 | 306 | 307 | 308
-  | 400 | 401 | 402 | 403 | 404 | 405 | 406 | 407 | 408 | 409
-  | 410 | 411 | 412 | 413 | 414 | 415 | 416 | 417 | 418 | 421
-  | 422 | 423 | 424 | 425 | 426 | 428 | 429 | 431 | 451
-  | 500 | 501 | 502 | 503 | 504 | 505 | 506 | 507 | 508 | 510 | 511;
+export type HttpStatus =
+  | 100
+  | 101
+  | 102
+  | 103
+  | 200
+  | 201
+  | 202
+  | 203
+  | 204
+  | 205
+  | 206
+  | 207
+  | 208
+  | 226
+  | 300
+  | 301
+  | 302
+  | 303
+  | 304
+  | 305
+  | 306
+  | 307
+  | 308
+  | 400
+  | 401
+  | 402
+  | 403
+  | 404
+  | 405
+  | 406
+  | 407
+  | 408
+  | 409
+  | 410
+  | 411
+  | 412
+  | 413
+  | 414
+  | 415
+  | 416
+  | 417
+  | 418
+  | 421
+  | 422
+  | 423
+  | 424
+  | 425
+  | 426
+  | 428
+  | 429
+  | 431
+  | 451
+  | 500
+  | 501
+  | 502
+  | 503
+  | 504
+  | 505
+  | 506
+  | 507
+  | 508
+  | 510
+  | 511;
 
 /**
  * Content types
  */
-export type ContentType = 
+export type ContentType =
   | 'application/json'
   | 'application/xml'
   | 'text/plain'
@@ -219,7 +275,7 @@ export type ContentType =
 /**
  * Time zones (IANA format)
  */
-export type TimeZone = 
+export type TimeZone =
   | 'UTC'
   | 'America/New_York'
   | 'America/Los_Angeles'
@@ -232,7 +288,7 @@ export type TimeZone =
 /**
  * Locale codes (ISO 639-1 + ISO 3166-1)
  */
-export type Locale = 
+export type Locale =
   | 'en-US'
   | 'en-GB'
   | 'en-CA'
@@ -330,9 +386,7 @@ export type Maybe<T> = T | null | undefined;
 /**
  * Result type for API responses with success/error handling
  */
-export type Result<T, E = Error> = 
-  | { success: true; data: T }
-  | { success: false; error: E };
+export type Result<T, E = Error> = { success: true; data: T } | { success: false; error: E };
 
 /**
  * Async result type for asynchronous operations
@@ -658,7 +712,9 @@ export function isBigInt(value: unknown): value is bigint {
 /**
  * Type guard for checking if a value is a primitive
  */
-export function isPrimitive(value: unknown): value is string | number | boolean | null | undefined | symbol | bigint {
+export function isPrimitive(
+  value: unknown,
+): value is string | number | boolean | null | undefined | symbol | bigint {
   return (
     typeof value === 'string' ||
     typeof value === 'number' ||
@@ -719,4 +775,4 @@ export function isNonEmptyArray<T>(value: unknown): value is T[] {
  */
 export function isNonEmptyObject(value: unknown): value is Record<string, unknown> {
   return isPlainObject(value) && Object.keys(value).length > 0;
-} 
+}

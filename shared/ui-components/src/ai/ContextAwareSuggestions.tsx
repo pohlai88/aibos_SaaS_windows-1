@@ -128,7 +128,7 @@ class PrivacySafeSuggestionEngine {
       },
     ];
 
-    baseSuggestions.forEach(suggestion => {
+    baseSuggestions.forEach((suggestion) => {
       this.suggestions.set(suggestion.id, suggestion);
     });
   }
@@ -141,7 +141,7 @@ class PrivacySafeSuggestionEngine {
 
     const now = Date.now();
     const availableSuggestions = Array.from(this.suggestions.values())
-      .filter(suggestion => {
+      .filter((suggestion) => {
         // Check if suggestion is not dismissed
         if (this.dismissedSuggestions.has(suggestion.id)) {
           return false;
@@ -165,7 +165,7 @@ class PrivacySafeSuggestionEngine {
 
         return true;
       })
-      .map(suggestion => ({
+      .map((suggestion) => ({
         ...suggestion,
         relevance: this.calculateRelevance(suggestion),
       }))
@@ -174,7 +174,7 @@ class PrivacySafeSuggestionEngine {
 
     // Apply frequency controls
     const filteredSuggestions = this.applyFrequencyControls(availableSuggestions);
-    
+
     return filteredSuggestions;
   }
 
@@ -183,8 +183,8 @@ class PrivacySafeSuggestionEngine {
     let relevance = suggestion.relevance;
 
     // Context matching
-    const contextMatch = this.context.userActions.some(action =>
-      suggestion.context.some(ctx => action.toLowerCase().includes(ctx))
+    const contextMatch = this.context.userActions.some((action) =>
+      suggestion.context.some((ctx) => action.toLowerCase().includes(ctx)),
     );
     if (contextMatch) relevance += 0.2;
 
@@ -219,7 +219,7 @@ class PrivacySafeSuggestionEngine {
   // Apply frequency controls based on user preferences
   private applyFrequencyControls(suggestions: Suggestion[]): Suggestion[] {
     const { suggestionFrequency } = this.context.userPreferences;
-    
+
     switch (suggestionFrequency) {
       case 'low':
         return suggestions.slice(0, 1);
@@ -237,7 +237,7 @@ class PrivacySafeSuggestionEngine {
     if (!suggestion.privacySafe) return false;
 
     const { privacyLevel } = this.context.userPreferences;
-    
+
     switch (privacyLevel) {
       case 'minimal':
         return suggestion.type === 'shortcut' || suggestion.type === 'tip';
@@ -261,11 +261,11 @@ class PrivacySafeSuggestionEngine {
   // Dismiss suggestion
   dismissSuggestion(suggestionId: string, reason?: string) {
     this.dismissedSuggestions.add(suggestionId);
-    
+
     // Set cooldown (don't show again for 24 hours)
     const cooldown = Date.now() + 24 * 60 * 60 * 1000;
     this.suggestionCooldowns.set(suggestionId, cooldown);
-    
+
     // Update suggestion feedback
     const suggestion = this.suggestions.get(suggestionId);
     if (suggestion) {
@@ -283,7 +283,7 @@ class PrivacySafeSuggestionEngine {
       if (!suggestion.userFeedback) {
         suggestion.userFeedback = { helpful: 0, notHelpful: 0, dismissed: 0 };
       }
-      
+
       if (helpful) {
         suggestion.userFeedback.helpful++;
       } else {
@@ -318,21 +318,18 @@ export interface ContextAwareSuggestionsProps extends VariantProps<typeof sugges
   onSuggestionFeedback?: (suggestionId: string, helpful: boolean) => void;
 }
 
-const suggestionsVariants = cva(
-  'space-y-2',
-  {
-    variants: {
-      variant: {
-        default: '',
-        compact: 'space-y-1',
-        expanded: 'space-y-3',
-      },
+const suggestionsVariants = cva('space-y-2', {
+  variants: {
+    variant: {
+      default: '',
+      compact: 'space-y-1',
+      expanded: 'space-y-3',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 export const ContextAwareSuggestions: React.FC<ContextAwareSuggestionsProps> = ({
   context,
@@ -346,7 +343,7 @@ export const ContextAwareSuggestions: React.FC<ContextAwareSuggestionsProps> = (
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [feedbackGiven, setFeedbackGiven] = useState<Set<string>>(new Set());
-  
+
   const engineRef = useRef<PrivacySafeSuggestionEngine>();
   const lastUpdateRef = useRef<number>(0);
 
@@ -360,7 +357,8 @@ export const ContextAwareSuggestions: React.FC<ContextAwareSuggestionsProps> = (
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
-      if (now - lastUpdateRef.current > 30000) { // Update every 30 seconds
+      if (now - lastUpdateRef.current > 30000) {
+        // Update every 30 seconds
         updateSuggestions();
         lastUpdateRef.current = now;
       }
@@ -376,32 +374,41 @@ export const ContextAwareSuggestions: React.FC<ContextAwareSuggestionsProps> = (
     }
   }, [maxSuggestions]);
 
-  const handleSuggestionClick = useCallback((suggestion: Suggestion) => {
-    onSuggestionClick?.(suggestion);
-    
-    // Record positive interaction
-    if (engineRef.current) {
-      engineRef.current.provideFeedback(suggestion.id, true);
-    }
-  }, [onSuggestionClick]);
+  const handleSuggestionClick = useCallback(
+    (suggestion: Suggestion) => {
+      onSuggestionClick?.(suggestion);
 
-  const handleSuggestionDismiss = useCallback((suggestionId: string) => {
-    if (engineRef.current) {
-      engineRef.current.dismissSuggestion(suggestionId);
-    }
-    
-    setSuggestions(prev => prev.filter(s => s.id !== suggestionId));
-    onSuggestionDismiss?.(suggestionId);
-  }, [onSuggestionDismiss]);
+      // Record positive interaction
+      if (engineRef.current) {
+        engineRef.current.provideFeedback(suggestion.id, true);
+      }
+    },
+    [onSuggestionClick],
+  );
 
-  const handleFeedback = useCallback((suggestionId: string, helpful: boolean) => {
-    if (engineRef.current) {
-      engineRef.current.provideFeedback(suggestionId, helpful);
-    }
-    
-    setFeedbackGiven(prev => new Set(prev).add(suggestionId));
-    onSuggestionFeedback?.(suggestionId, helpful);
-  }, [onSuggestionFeedback]);
+  const handleSuggestionDismiss = useCallback(
+    (suggestionId: string) => {
+      if (engineRef.current) {
+        engineRef.current.dismissSuggestion(suggestionId);
+      }
+
+      setSuggestions((prev) => prev.filter((s) => s.id !== suggestionId));
+      onSuggestionDismiss?.(suggestionId);
+    },
+    [onSuggestionDismiss],
+  );
+
+  const handleFeedback = useCallback(
+    (suggestionId: string, helpful: boolean) => {
+      if (engineRef.current) {
+        engineRef.current.provideFeedback(suggestionId, helpful);
+      }
+
+      setFeedbackGiven((prev) => new Set(prev).add(suggestionId));
+      onSuggestionFeedback?.(suggestionId, helpful);
+    },
+    [onSuggestionFeedback],
+  );
 
   if (!showSuggestions || suggestions.length === 0) {
     return null;
@@ -410,9 +417,7 @@ export const ContextAwareSuggestions: React.FC<ContextAwareSuggestionsProps> = (
   return (
     <div className={cn(suggestionsVariants({ variant }), className)}>
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          Suggestions
-        </h3>
+        <h3 className="text-sm font-medium text-muted-foreground">Suggestions</h3>
         <button
           onClick={() => setShowSuggestions(false)}
           className="text-xs text-muted-foreground hover:text-foreground"
@@ -441,13 +446,15 @@ export const ContextAwareSuggestions: React.FC<ContextAwareSuggestionsProps> = (
               <div className="flex-1">
                 <p className="text-sm font-medium">{suggestion.text}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className={cn(
-                    'px-2 py-1 rounded-full text-xs',
-                    suggestion.type === 'shortcut' && 'bg-blue-100 text-blue-800',
-                    suggestion.type === 'tip' && 'bg-green-100 text-green-800',
-                    suggestion.type === 'feature' && 'bg-purple-100 text-purple-800',
-                    suggestion.type === 'action' && 'bg-orange-100 text-orange-800',
-                  )}>
+                  <span
+                    className={cn(
+                      'px-2 py-1 rounded-full text-xs',
+                      suggestion.type === 'shortcut' && 'bg-blue-100 text-blue-800',
+                      suggestion.type === 'tip' && 'bg-green-100 text-green-800',
+                      suggestion.type === 'feature' && 'bg-purple-100 text-purple-800',
+                      suggestion.type === 'action' && 'bg-orange-100 text-orange-800',
+                    )}
+                  >
                     {suggestion.type}
                   </span>
                   {suggestion.priority === 'high' && (
@@ -455,7 +462,7 @@ export const ContextAwareSuggestions: React.FC<ContextAwareSuggestionsProps> = (
                   )}
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-1 ml-2">
                 {!feedbackGiven.has(suggestion.id) && (
                   <>
@@ -481,7 +488,7 @@ export const ContextAwareSuggestions: React.FC<ContextAwareSuggestionsProps> = (
                     </button>
                   </>
                 )}
-                
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -516,18 +523,20 @@ export const PrivacyControls: React.FC<PrivacyControlsProps> = ({
   return (
     <div className={cn('space-y-4', className)}>
       <h3 className="font-medium">Suggestion Preferences</h3>
-      
+
       <div className="space-y-3">
         <div>
           <label className="text-sm font-medium">Suggestion Frequency</label>
           <select
             value={context.userPreferences.suggestionFrequency}
-            onChange={(e) => onContextUpdate({
-              userPreferences: {
-                ...context.userPreferences,
-                suggestionFrequency: e.target.value as any,
-              }
-            })}
+            onChange={(e) =>
+              onContextUpdate({
+                userPreferences: {
+                  ...context.userPreferences,
+                  suggestionFrequency: e.target.value as any,
+                },
+              })
+            }
             className="mt-1 w-full p-2 border border-border rounded"
           >
             <option value="low">Low (1 suggestion)</option>
@@ -540,12 +549,14 @@ export const PrivacyControls: React.FC<PrivacyControlsProps> = ({
           <label className="text-sm font-medium">Privacy Level</label>
           <select
             value={context.userPreferences.privacyLevel}
-            onChange={(e) => onContextUpdate({
-              userPreferences: {
-                ...context.userPreferences,
-                privacyLevel: e.target.value as any,
-              }
-            })}
+            onChange={(e) =>
+              onContextUpdate({
+                userPreferences: {
+                  ...context.userPreferences,
+                  privacyLevel: e.target.value as any,
+                },
+              })
+            }
             className="mt-1 w-full p-2 border border-border rounded"
           >
             <option value="minimal">Minimal (shortcuts & tips only)</option>
@@ -557,7 +568,7 @@ export const PrivacyControls: React.FC<PrivacyControlsProps> = ({
         <div>
           <label className="text-sm font-medium">Suggestion Types</label>
           <div className="mt-2 space-y-2">
-            {['shortcut', 'tip', 'feature', 'action', 'optimization'].map(type => (
+            {['shortcut', 'tip', 'feature', 'action', 'optimization'].map((type) => (
               <label key={type} className="flex items-center">
                 <input
                   type="checkbox"
@@ -565,13 +576,13 @@ export const PrivacyControls: React.FC<PrivacyControlsProps> = ({
                   onChange={(e) => {
                     const types = e.target.checked
                       ? [...context.userPreferences.suggestionTypes, type]
-                      : context.userPreferences.suggestionTypes.filter(t => t !== type);
-                    
+                      : context.userPreferences.suggestionTypes.filter((t) => t !== type);
+
                     onContextUpdate({
                       userPreferences: {
                         ...context.userPreferences,
                         suggestionTypes: types,
-                      }
+                      },
                     });
                   }}
                   className="mr-2"
@@ -604,11 +615,11 @@ export const ContextAwareSuggestionsTest: React.FC = () => {
   });
 
   const handleContextUpdate = (updates: Partial<SuggestionContext>) => {
-    setContext(prev => ({ ...prev, ...updates }));
+    setContext((prev) => ({ ...prev, ...updates }));
   };
 
   const simulateUserAction = (action: string) => {
-    setContext(prev => ({
+    setContext((prev) => ({
       ...prev,
       userActions: [...prev.userActions, action],
     }));
@@ -644,17 +655,14 @@ export const ContextAwareSuggestionsTest: React.FC = () => {
 
         <div>
           <h3 className="text-lg font-semibold mb-4">Privacy Controls</h3>
-          <PrivacyControls
-            context={context}
-            onContextUpdate={handleContextUpdate}
-          />
+          <PrivacyControls context={context} onContextUpdate={handleContextUpdate} />
         </div>
       </div>
 
       <div>
         <h3 className="text-lg font-semibold mb-4">Simulate User Actions</h3>
         <div className="flex flex-wrap gap-2">
-          {['data_export', 'search', 'bulk_edit', 'settings', 'help'].map(action => (
+          {['data_export', 'search', 'bulk_edit', 'settings', 'help'].map((action) => (
             <button
               key={action}
               onClick={() => simulateUserAction(action)}
@@ -667,4 +675,4 @@ export const ContextAwareSuggestionsTest: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};

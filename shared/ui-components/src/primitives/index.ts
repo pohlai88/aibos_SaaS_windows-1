@@ -14,4 +14,4 @@ export type { ModalProps } from './Modal';
 export type { TooltipProps } from './Tooltip';
 export type { SkeletonProps } from './Skeleton';
 export type { ProgressProps } from './Progress';
-export type { InputProps } from './Input'; 
+export type { InputProps } from './Input';

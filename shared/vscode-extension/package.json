@@ -156,7 +156,13 @@
         "aibos.defaultTemplate": {
           "type": "string",
           "default": "minimal",
-          "enum": ["minimal", "ecommerce", "crm", "project-management", "analytics"],
+          "enum": [
+            "minimal",
+            "ecommerce",
+            "crm",
+            "project-management",
+            "analytics"
+          ],
           "description": "Default template for new AI-BOS projects"
         },
         "aibos.autoValidate": {
@@ -172,19 +178,32 @@
         "aibos.testFramework": {
           "type": "string",
           "default": "jest",
-          "enum": ["jest", "vitest", "mocha"],
+          "enum": [
+            "jest",
+            "vitest",
+            "mocha"
+          ],
           "description": "Default test framework"
         },
         "aibos.database": {
           "type": "string",
           "default": "postgresql",
-          "enum": ["postgresql", "mysql", "sqlite", "mongodb"],
+          "enum": [
+            "postgresql",
+            "mysql",
+            "sqlite",
+            "mongodb"
+          ],
           "description": "Default database type"
         },
         "aibos.cache": {
           "type": "string",
           "default": "redis",
-          "enum": ["redis", "memory", "none"],
+          "enum": [
+            "redis",
+            "memory",
+            "none"
+          ],
           "description": "Default cache type"
         }
       }
@@ -239,7 +258,9 @@
     "taskDefinitions": [
       {
         "type": "aibos",
-        "required": ["command"],
+        "required": [
+          "command"
+        ],
         "properties": {
           "command": {
             "type": "string",
@@ -300,4 +321,4 @@
   },
   "homepage": "https://github.com/aibos/shared#readme",
   "license": "MIT"
-} 
+}

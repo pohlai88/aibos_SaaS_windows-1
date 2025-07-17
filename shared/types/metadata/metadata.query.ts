@@ -1,19 +1,19 @@
 import { z } from 'zod';
-import { 
-  MetadataFieldType, 
-  MetadataFieldTypes, 
+import {
+  MetadataFieldType,
+  MetadataFieldTypes,
   MetadataOperationType,
   MetadataOperationTypes,
   MetadataValidationRule,
-  MetadataValidationRules
+  MetadataValidationRules,
 } from './metadata.enums';
-import { 
-  MetadataField, 
-  MetadataEntity, 
+import {
+  MetadataField,
+  MetadataEntity,
   MetadataValue,
   MetadataFieldConfig,
   MetadataConstraint,
-  MetadataComputedField
+  MetadataComputedField,
 } from './metadata.types';
 
 // ============================================================================
@@ -28,7 +28,7 @@ export const MetadataQueryOperator = {
   GREATER_THAN_EQUAL: 'greater_than_equal',
   LESS_THAN: 'less_than',
   LESS_THAN_EQUAL: 'less_than_equal',
-  
+
   // String operators
   CONTAINS: 'contains',
   NOT_CONTAINS: 'not_contains',
@@ -37,18 +37,18 @@ export const MetadataQueryOperator = {
   REGEX: 'regex',
   LIKE: 'like',
   ILIKE: 'ilike',
-  
+
   // Array operators
   IN: 'in',
   NOT_IN: 'not_in',
   ARRAY_CONTAINS: 'array_contains',
   ARRAY_CONTAINS_ALL: 'array_contains_all',
   ARRAY_CONTAINS_ANY: 'array_contains_any',
-  
+
   // Null operators
   IS_NULL: 'is_null',
   IS_NOT_NULL: 'is_not_null',
-  
+
   // Date/Time operators
   BETWEEN: 'between',
   NOT_BETWEEN: 'not_between',
@@ -56,25 +56,26 @@ export const MetadataQueryOperator = {
   THIS_WEEK: 'this_week',
   THIS_MONTH: 'this_month',
   THIS_YEAR: 'this_year',
-  
+
   // Geo operators
   NEAR: 'near',
   WITHIN: 'within',
   INTERSECTS: 'intersects',
-  
+
   // JSON operators
   JSON_PATH: 'json_path',
   JSON_CONTAINS: 'json_contains',
-  
+
   // Full-text search
   FULL_TEXT: 'full_text',
   FULL_TEXT_RANKED: 'full_text_ranked',
-  
+
   // Custom operators
-  CUSTOM: 'custom'
+  CUSTOM: 'custom',
 } as const;
 
-export type MetadataQueryOperator = typeof MetadataQueryOperator[keyof typeof MetadataQueryOperator];
+export type MetadataQueryOperator =
+  (typeof MetadataQueryOperator)[keyof typeof MetadataQueryOperator];
 
 // ============================================================================
 // QUERY CONDITIONS
@@ -106,10 +107,10 @@ export type MetadataQueryFilter = MetadataQueryCondition | MetadataQueryConditio
 
 export const MetadataSortOrder = {
   ASC: 'asc',
-  DESC: 'desc'
+  DESC: 'desc',
 } as const;
 
-export type MetadataSortOrder = typeof MetadataSortOrder[keyof typeof MetadataSortOrder];
+export type MetadataSortOrder = (typeof MetadataSortOrder)[keyof typeof MetadataSortOrder];
 
 export interface MetadataSortField {
   field: string;
@@ -155,10 +156,11 @@ export const MetadataAggregationType = {
   GROUP_BY: 'group_by',
   HISTOGRAM: 'histogram',
   PERCENTILES: 'percentiles',
-  STATS: 'stats'
+  STATS: 'stats',
 } as const;
 
-export type MetadataAggregationType = typeof MetadataAggregationType[keyof typeof MetadataAggregationType];
+export type MetadataAggregationType =
+  (typeof MetadataAggregationType)[keyof typeof MetadataAggregationType];
 
 export interface MetadataAggregation {
   type: MetadataAggregationType;
@@ -181,19 +183,19 @@ export interface MetadataQuery {
   filter?: MetadataQueryFilter;
   sort?: MetadataSortField[];
   pagination?: MetadataPagination;
-  
+
   // Advanced features
   aggregations?: MetadataAggregation[];
   select?: string[];
   exclude?: string[];
-  
+
   // Performance
   cache?: {
     ttl?: number;
     key?: string;
     invalidateOn?: string[];
   };
-  
+
   // Options
   options?: {
     explain?: boolean;
@@ -239,7 +241,7 @@ export class MetadataQueryBuilder {
     } else {
       this.query.filter = {
         operator: 'AND',
-        conditions: [this.query.filter, { field, operator, value, options }]
+        conditions: [this.query.filter, { field, operator, value, options }],
       };
     }
     return this;
@@ -256,7 +258,7 @@ export class MetadataQueryBuilder {
     } else {
       this.query.filter = {
         operator: 'OR',
-        conditions: [this.query.filter, condition]
+        conditions: [this.query.filter, condition],
       };
     }
     return this;
@@ -359,7 +361,7 @@ export class MetadataQueryBuilder {
     this.query.aggregations.push({
       type: MetadataAggregationType.COUNT,
       field,
-      alias: alias || 'count'
+      alias: alias || 'count',
     });
     return this;
   }
@@ -371,7 +373,7 @@ export class MetadataQueryBuilder {
     this.query.aggregations.push({
       type: MetadataAggregationType.SUM,
       field,
-      alias: alias || `sum_${field}`
+      alias: alias || `sum_${field}`,
     });
     return this;
   }
@@ -383,7 +385,7 @@ export class MetadataQueryBuilder {
     this.query.aggregations.push({
       type: MetadataAggregationType.AVG,
       field,
-      alias: alias || `avg_${field}`
+      alias: alias || `avg_${field}`,
     });
     return this;
   }
@@ -394,7 +396,7 @@ export class MetadataQueryBuilder {
     }
     this.query.aggregations.push({
       type: MetadataAggregationType.GROUP_BY,
-      options: { groupByFields: fields }
+      options: { groupByFields: fields },
     });
     return this;
   }
@@ -455,58 +457,74 @@ export class MetadataQueryBuilder {
 // ============================================================================
 
 export const MetadataQuerySchema = z.object({
-  filter: z.union([
-    z.object({
-      field: z.string(),
-      operator: z.nativeEnum(MetadataQueryOperator),
-      value: z.any().optional(),
-      options: z.record(z.any()).optional()
-    }),
-    z.object({
-      operator: z.enum(['AND', 'OR', 'NOT']),
-      conditions: z.array(z.lazy(() => MetadataQuerySchema.shape.filter))
+  filter: z
+    .union([
+      z.object({
+        field: z.string(),
+        operator: z.nativeEnum(MetadataQueryOperator),
+        value: z.any().optional(),
+        options: z.record(z.any()).optional(),
+      }),
+      z.object({
+        operator: z.enum(['AND', 'OR', 'NOT']),
+        conditions: z.array(z.lazy(() => MetadataQuerySchema.shape.filter)),
+      }),
+    ])
+    .optional(),
+
+  sort: z
+    .array(
+      z.object({
+        field: z.string(),
+        order: z.nativeEnum(MetadataSortOrder),
+        nullsFirst: z.boolean().optional(),
+        collation: z.string().optional(),
+      }),
+    )
+    .optional(),
+
+  pagination: z
+    .object({
+      page: z.number().positive().optional(),
+      limit: z.number().positive().max(1000).optional(),
+      offset: z.number().nonnegative().optional(),
+      cursor: z.string().optional(),
+      cursorField: z.string().optional(),
     })
-  ]).optional(),
-  
-  sort: z.array(z.object({
-    field: z.string(),
-    order: z.nativeEnum(MetadataSortOrder),
-    nullsFirst: z.boolean().optional(),
-    collation: z.string().optional()
-  })).optional(),
-  
-  pagination: z.object({
-    page: z.number().positive().optional(),
-    limit: z.number().positive().max(1000).optional(),
-    offset: z.number().nonnegative().optional(),
-    cursor: z.string().optional(),
-    cursorField: z.string().optional()
-  }).optional(),
-  
-  aggregations: z.array(z.object({
-    type: z.nativeEnum(MetadataAggregationType),
-    field: z.string().optional(),
-    alias: z.string().optional(),
-    options: z.record(z.any()).optional()
-  })).optional(),
-  
+    .optional(),
+
+  aggregations: z
+    .array(
+      z.object({
+        type: z.nativeEnum(MetadataAggregationType),
+        field: z.string().optional(),
+        alias: z.string().optional(),
+        options: z.record(z.any()).optional(),
+      }),
+    )
+    .optional(),
+
   select: z.array(z.string()).optional(),
   exclude: z.array(z.string()).optional(),
-  
-  cache: z.object({
-    ttl: z.number().positive().optional(),
-    key: z.string().optional(),
-    invalidateOn: z.array(z.string()).optional()
-  }).optional(),
-  
-  options: z.object({
-    explain: z.boolean().optional(),
-    timeout: z.number().positive().optional(),
-    maxResults: z.number().positive().optional(),
-    includeDeleted: z.boolean().optional(),
-    includeArchived: z.boolean().optional(),
-    version: z.string().optional()
-  }).optional()
+
+  cache: z
+    .object({
+      ttl: z.number().positive().optional(),
+      key: z.string().optional(),
+      invalidateOn: z.array(z.string()).optional(),
+    })
+    .optional(),
+
+  options: z
+    .object({
+      explain: z.boolean().optional(),
+      timeout: z.number().positive().optional(),
+      maxResults: z.number().positive().optional(),
+      includeDeleted: z.boolean().optional(),
+      includeArchived: z.boolean().optional(),
+      version: z.string().optional(),
+    })
+    .optional(),
 });
 
 // ============================================================================
@@ -525,7 +543,7 @@ export class MetadataQueryUtils {
       if (error instanceof z.ZodError) {
         return {
           valid: false,
-          errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          errors: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
         };
       }
       return { valid: false, errors: ['Unknown validation error'] };
@@ -553,7 +571,7 @@ export class MetadataQueryUtils {
       select: override.select || base.select,
       exclude: override.exclude || base.exclude,
       cache: override.cache || base.cache,
-      options: { ...base.options, ...override.options }
+      options: { ...base.options, ...override.options },
     };
   }
 
@@ -562,15 +580,17 @@ export class MetadataQueryUtils {
    */
   static extractFields(filter: MetadataQueryFilter): string[] {
     const fields: string[] = [];
-    
-    const extractFromCondition = (condition: MetadataQueryCondition | MetadataQueryConditionGroup) => {
+
+    const extractFromCondition = (
+      condition: MetadataQueryCondition | MetadataQueryConditionGroup,
+    ) => {
       if ('field' in condition) {
         fields.push(condition.field);
       } else {
         condition.conditions.forEach(extractFromCondition);
       }
     };
-    
+
     extractFromCondition(filter);
     return [...new Set(fields)];
   }
@@ -593,12 +613,13 @@ export class MetadataQueryUtils {
    * Checks if a query has pagination
    */
   static hasPagination(query: MetadataQuery): boolean {
-    return !!(query.pagination && (
-      query.pagination.page !== undefined ||
-      query.pagination.limit !== undefined ||
-      query.pagination.offset !== undefined ||
-      query.pagination.cursor !== undefined
-    ));
+    return !!(
+      query.pagination &&
+      (query.pagination.page !== undefined ||
+        query.pagination.limit !== undefined ||
+        query.pagination.offset !== undefined ||
+        query.pagination.cursor !== undefined)
+    );
   }
 
   /**
@@ -613,7 +634,9 @@ export class MetadataQueryUtils {
    */
   static generateCacheKey(query: MetadataQuery, prefix?: string): string {
     const queryStr = JSON.stringify(query);
-    const hash = Buffer.from(queryStr).toString('base64').replace(/[^a-zA-Z0-9]/g, '');
+    const hash = Buffer.from(queryStr)
+      .toString('base64')
+      .replace(/[^a-zA-Z0-9]/g, '');
     return `${prefix || 'metadata'}:query:${hash}`;
   }
 
@@ -622,27 +645,27 @@ export class MetadataQueryUtils {
    */
   static normalizeQuery(query: MetadataQuery): MetadataQuery {
     const normalized = { ...query };
-    
+
     // Remove undefined values
-    Object.keys(normalized).forEach(key => {
+    Object.keys(normalized).forEach((key) => {
       if (normalized[key as keyof MetadataQuery] === undefined) {
         delete normalized[key as keyof MetadataQuery];
       }
     });
-    
+
     // Sort arrays for consistent cache keys
     if (normalized.sort) {
       normalized.sort.sort((a, b) => a.field.localeCompare(b.field));
     }
-    
+
     if (normalized.select) {
       normalized.select.sort();
     }
-    
+
     if (normalized.exclude) {
       normalized.exclude.sort();
     }
-    
+
     return normalized;
   }
 }
@@ -660,7 +683,7 @@ export type {
   MetadataPaginationResult,
   MetadataAggregation,
   MetadataQuery,
-  MetadataQueryResult
+  MetadataQueryResult,
 };
 
 export {
@@ -669,5 +692,5 @@ export {
   MetadataAggregationType,
   MetadataQueryBuilder,
   MetadataQuerySchema,
-  MetadataQueryUtils
-}; 
+  MetadataQueryUtils,
+};

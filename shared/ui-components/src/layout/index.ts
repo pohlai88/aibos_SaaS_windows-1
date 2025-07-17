@@ -10,4 +10,4 @@ export type { TabsProps, TabItem } from './Tabs';
 
 // AI-Powered Breadcrumb Navigation
 export { Breadcrumb, BreadcrumbBuilder, useAIBreadcrumb } from './Breadcrumb';
-export type { BreadcrumbProps, BreadcrumbItem } from './Breadcrumb'; 
+export type { BreadcrumbProps, BreadcrumbItem } from './Breadcrumb';

@@ -10,7 +10,7 @@ export enum JobStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
-  RETRY = 'retry'
+  RETRY = 'retry',
 }
 
 /**
@@ -21,7 +21,7 @@ export enum JobPriority {
   NORMAL = 2,
   HIGH = 3,
   URGENT = 4,
-  CRITICAL = 5
+  CRITICAL = 5,
 }
 
 /**
@@ -131,7 +131,7 @@ export class MemoryQueue {
       defaultRetryDelay: 5000,
       defaultTimeout: 30000,
       enableMetrics: true,
-      ...config
+      ...config,
     };
 
     this.stats = {
@@ -143,7 +143,7 @@ export class MemoryQueue {
       retry: 0,
       totalProcessed: 0,
       averageProcessingTime: 0,
-      throughput: 0
+      throughput: 0,
     };
 
     this.startProcessing();
@@ -163,7 +163,7 @@ export class MemoryQueue {
       retries: 0,
       maxRetries: jobConfig.retries || this.config.defaultRetries!,
       tags: jobConfig.tags || [],
-      metadata: jobConfig.metadata || {}
+      metadata: jobConfig.metadata || {},
     };
 
     // Add delay if specified
@@ -177,11 +177,11 @@ export class MemoryQueue {
 
     this.jobs.set(job.id, job);
     this.stats.pending++;
-    
+
     logger.info(`Job added to queue: ${job.id}`, {
       queue: this.name,
       jobName: job.name,
-      priority: job.priority
+      priority: job.priority,
     });
 
     return job;
@@ -214,7 +214,7 @@ export class MemoryQueue {
    */
   getJobs(status?: JobStatus): Job[] {
     const jobs = Array.from(this.jobs.values());
-    return status ? jobs.filter(job => job.status === status) : jobs;
+    return status ? jobs.filter((job) => job.status === status) : jobs;
   }
 
   /**
@@ -249,8 +249,10 @@ export class MemoryQueue {
     let cleared = 0;
 
     for (const [id, job] of this.jobs.entries()) {
-      if ((job.status === JobStatus.COMPLETED || job.status === JobStatus.FAILED) &&
-          (!cutoff || job.completedAt!.getTime() < cutoff)) {
+      if (
+        (job.status === JobStatus.COMPLETED || job.status === JobStatus.FAILED) &&
+        (!cutoff || job.completedAt!.getTime() < cutoff)
+      ) {
         this.jobs.delete(id);
         cleared++;
       }
@@ -265,8 +267,8 @@ export class MemoryQueue {
    */
   private addToPendingQueue(job: Job): void {
     // Insert based on priority (higher priority first)
-    const insertIndex = this.pendingJobs.findIndex(pendingJob => 
-      pendingJob.priority < job.priority
+    const insertIndex = this.pendingJobs.findIndex(
+      (pendingJob) => pendingJob.priority < job.priority,
     );
 
     if (insertIndex === -1) {
@@ -280,7 +282,7 @@ export class MemoryQueue {
    * Remove job from pending queue
    */
   private removeFromPendingQueue(job: Job): void {
-    const index = this.pendingJobs.findIndex(pendingJob => pendingJob.id === job.id);
+    const index = this.pendingJobs.findIndex((pendingJob) => pendingJob.id === job.id);
     if (index !== -1) {
       this.pendingJobs.splice(index, 1);
     }
@@ -371,9 +373,8 @@ export class MemoryQueue {
       logger.info(`Job completed: ${job.id}`, {
         queue: this.name,
         processingTime,
-        result
+        result,
       });
-
     } catch (error) {
       await this.handleJobError(job, error as Error, startTime);
     }
@@ -404,7 +405,7 @@ export class MemoryQueue {
         queue: this.name,
         retry: job.retries,
         maxRetries: job.maxRetries,
-        retryDelay
+        retryDelay,
       });
     } else {
       // Job failed permanently
@@ -429,7 +430,7 @@ export class MemoryQueue {
     logger.error(`Job failed: ${job.id}`, {
       queue: this.name,
       error: error.message,
-      processingTime
+      processingTime,
     });
   }
 
@@ -438,7 +439,7 @@ export class MemoryQueue {
    */
   private updateStats(processingTime: number, success: boolean): void {
     this.stats.totalProcessed++;
-    
+
     if (success) {
       this.stats.completed++;
     } else {
@@ -446,14 +447,15 @@ export class MemoryQueue {
     }
 
     // Update average processing time
-    const totalTime = this.stats.averageProcessingTime * (this.stats.totalProcessed - 1) + processingTime;
+    const totalTime =
+      this.stats.averageProcessingTime * (this.stats.totalProcessed - 1) + processingTime;
     this.stats.averageProcessingTime = totalTime / this.stats.totalProcessed;
 
     // Update throughput (jobs per minute)
     const now = Date.now();
     const oneMinuteAgo = now - 60000;
-    const recentJobs = Array.from(this.jobs.values()).filter(job => 
-      job.completedAt && job.completedAt.getTime() > oneMinuteAgo
+    const recentJobs = Array.from(this.jobs.values()).filter(
+      (job) => job.completedAt && job.completedAt.getTime() > oneMinuteAgo,
     );
     this.stats.throughput = recentJobs.length;
 
@@ -508,7 +510,7 @@ export class RedisQueue {
       defaultRetryDelay: 5000,
       defaultTimeout: 30000,
       enableMetrics: true,
-      ...config
+      ...config,
     };
 
     if (config.redisUrl) {
@@ -522,10 +524,10 @@ export class RedisQueue {
   private async connect(): Promise<void> {
     try {
       const { createClient } = await import('redis');
-      
+
       this.redis = createClient({
         url: this.config.redisUrl,
-        ...this.config.redisOptions
+        ...this.config.redisOptions,
       });
 
       this.redis.on('error', (err: Error) => {
@@ -564,7 +566,7 @@ export class RedisQueue {
       retries: 0,
       maxRetries: jobConfig.retries || this.config.defaultRetries!,
       tags: jobConfig.tags || [],
-      metadata: jobConfig.metadata || {}
+      metadata: jobConfig.metadata || {},
     };
 
     const jobData = JSON.stringify(job);
@@ -575,14 +577,14 @@ export class RedisQueue {
     try {
       // Store job data
       await this.redis.set(key, jobData);
-      
+
       // Add to pending queue with priority
       await this.redis.zadd(pendingKey, score, job.id);
 
       logger.info(`Job added to Redis queue: ${job.id}`, {
         queue: this.name,
         jobName: job.name,
-        priority: job.priority
+        priority: job.priority,
       });
 
       return job;
@@ -639,7 +641,7 @@ export class RedisQueue {
         retry: 0,
         totalProcessed: 0,
         averageProcessingTime: 0,
-        throughput: 0
+        throughput: 0,
       };
     }
 
@@ -653,7 +655,7 @@ export class RedisQueue {
         this.redis.zcard(pendingKey),
         this.redis.scard(runningKey),
         this.redis.zcard(completedKey),
-        this.redis.zcard(failedKey)
+        this.redis.zcard(failedKey),
       ]);
 
       return {
@@ -665,7 +667,7 @@ export class RedisQueue {
         retry: 0, // Would need additional tracking
         totalProcessed: (completed || 0) + (failed || 0),
         averageProcessingTime: 0, // Would need additional tracking
-        throughput: 0 // Would need additional tracking
+        throughput: 0, // Would need additional tracking
       };
     } catch (error) {
       logger.error('Failed to get Redis queue stats', { error });
@@ -678,7 +680,7 @@ export class RedisQueue {
         retry: 0,
         totalProcessed: 0,
         averageProcessingTime: 0,
-        throughput: 0
+        throughput: 0,
       };
     }
   }
@@ -725,16 +727,12 @@ export class RedisQueue {
       this.isProcessing = true;
 
       // Move job to running set
-      await Promise.all([
-        this.redis.zrem(pendingKey, jobId),
-        this.redis.sadd(runningKey, jobId)
-      ]);
+      await Promise.all([this.redis.zrem(pendingKey, jobId), this.redis.sadd(runningKey, jobId)]);
 
       // Process job in background
       this.processJob(job).finally(() => {
         this.isProcessing = false;
       });
-
     } catch (error) {
       logger.error('Error processing Redis queue jobs', { error });
       this.isProcessing = false;
@@ -776,9 +774,8 @@ export class RedisQueue {
 
       logger.info(`Redis job completed: ${job.id}`, {
         queue: this.name,
-        processingTime: Date.now() - startTime
+        processingTime: Date.now() - startTime,
       });
-
     } catch (error) {
       await this.handleJobError(job, error as Error, startTime);
     }
@@ -814,11 +811,11 @@ export class RedisQueue {
   private async completeJob(job: Job): Promise<void> {
     const runningKey = `queue:${this.name}:running`;
     const completedKey = `queue:${this.name}:completed`;
-    
+
     await Promise.all([
       this.redis.srem(runningKey, job.id),
       this.redis.zadd(completedKey, Date.now(), job.id),
-      this.updateJob(job)
+      this.updateJob(job),
     ]);
   }
 
@@ -828,14 +825,14 @@ export class RedisQueue {
   private async retryJob(job: Job, error: Error): Promise<void> {
     const runningKey = `queue:${this.name}:running`;
     const pendingKey = `queue:${this.name}:pending`;
-    
+
     const retryDelay = this.config.defaultRetryDelay! * Math.pow(2, job.retries - 1);
     const score = job.priority * 1000000 + (Date.now() + retryDelay);
 
     await Promise.all([
       this.redis.srem(runningKey, job.id),
       this.redis.zadd(pendingKey, score, job.id),
-      this.updateJob(job)
+      this.updateJob(job),
     ]);
 
     this.eventHandlers.onRetry?.(job, error);
@@ -843,7 +840,7 @@ export class RedisQueue {
     logger.warn(`Redis job retry scheduled: ${job.id}`, {
       queue: this.name,
       retry: job.retries,
-      retryDelay
+      retryDelay,
     });
   }
 
@@ -857,11 +854,11 @@ export class RedisQueue {
 
     const runningKey = `queue:${this.name}:running`;
     const failedKey = `queue:${this.name}:failed`;
-    
+
     await Promise.all([
       this.redis.srem(runningKey, job.id),
       this.redis.zadd(failedKey, Date.now(), job.id),
-      this.updateJob(job)
+      this.updateJob(job),
     ]);
 
     this.eventHandlers.onFail?.(job, error);
@@ -869,7 +866,7 @@ export class RedisQueue {
     logger.error(`Redis job failed: ${job.id}`, {
       queue: this.name,
       error: error.message,
-      processingTime: startTime ? Date.now() - startTime : 0
+      processingTime: startTime ? Date.now() - startTime : 0,
     });
   }
 
@@ -913,11 +910,7 @@ export class JobScheduler {
   /**
    * Schedule a job to run at a specific time
    */
-  schedule(
-    queueName: string,
-    jobConfig: JobConfig,
-    runAt: Date
-  ): string {
+  schedule(queueName: string, jobConfig: JobConfig, runAt: Date): string {
     const queue = this.queues.get(queueName);
     if (!queue) {
       throw new Error(`Queue not found: ${queueName}`);
@@ -937,7 +930,7 @@ export class JobScheduler {
 
     logger.info(`Job scheduled: ${jobConfig.id}`, {
       queue: queueName,
-      runAt: runAt.toISOString()
+      runAt: runAt.toISOString(),
     });
 
     return jobConfig.id;
@@ -950,7 +943,7 @@ export class JobScheduler {
     queueName: string,
     jobConfig: JobConfig,
     interval: number, // milliseconds
-    startAt?: Date
+    startAt?: Date,
   ): string {
     const queue = this.queues.get(queueName);
     if (!queue) {
@@ -960,19 +953,22 @@ export class JobScheduler {
     const startTime = startAt || new Date();
     const delay = startTime.getTime() - Date.now();
 
-    const timeoutId = setTimeout(async () => {
-      await queue.add(jobConfig);
-      
-      // Schedule next occurrence
-      this.scheduleRecurring(queueName, jobConfig, interval);
-    }, Math.max(0, delay));
+    const timeoutId = setTimeout(
+      async () => {
+        await queue.add(jobConfig);
+
+        // Schedule next occurrence
+        this.scheduleRecurring(queueName, jobConfig, interval);
+      },
+      Math.max(0, delay),
+    );
 
     this.scheduledJobs.set(jobConfig.id, timeoutId);
 
     logger.info(`Recurring job scheduled: ${jobConfig.id}`, {
       queue: queueName,
       interval,
-      startAt: startTime.toISOString()
+      startAt: startTime.toISOString(),
     });
 
     return jobConfig.id;
@@ -1050,7 +1046,7 @@ export const queueManager = {
    */
   async getAllStats(): Promise<Record<string, QueueStats>> {
     const stats: Record<string, QueueStats> = {};
-    
+
     for (const [name, queue] of this.queues.entries()) {
       if (queue instanceof MemoryQueue) {
         stats[name] = queue.getStats();
@@ -1088,5 +1084,5 @@ export const queueManager = {
       logger.info(`Queue destroyed: ${name}`);
     }
     this.queues.clear();
-  }
-}; 
+  },
+};

@@ -12,15 +12,17 @@ const toastVariants = cva(
       variant: {
         default: 'border bg-background text-foreground',
         destructive: 'destructive border-destructive bg-destructive text-destructive-foreground',
-        success: 'border-green-200 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-900/20 dark:text-green-100',
-        warning: 'border-yellow-200 bg-yellow-50 text-yellow-900 dark:border-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-100',
+        success:
+          'border-green-200 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-900/20 dark:text-green-100',
+        warning:
+          'border-yellow-200 bg-yellow-50 text-yellow-900 dark:border-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-100',
         info: 'border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-100',
       },
     },
     defaultVariants: {
       variant: 'default',
     },
-  }
+  },
 );
 
 const icons = {
@@ -85,33 +87,26 @@ const ToastItem: React.FC<ToastProps> = ({
 
   return (
     <div
-      className={cn(
-        toastVariants({ variant }),
-        'max-w-sm'
-      )}
+      className={cn(toastVariants({ variant }), 'max-w-sm')}
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
     >
       <div className="flex items-start space-x-3">
-        <Icon className={cn(
-          'h-5 w-5 flex-shrink-0',
-          loading && 'animate-spin',
-          variant === 'success' && 'text-green-600',
-          variant === 'warning' && 'text-yellow-600',
-          variant === 'info' && 'text-blue-600',
-          variant === 'destructive' && 'text-red-600'
-        )} />
+        <Icon
+          className={cn(
+            'h-5 w-5 flex-shrink-0',
+            loading && 'animate-spin',
+            variant === 'success' && 'text-green-600',
+            variant === 'warning' && 'text-yellow-600',
+            variant === 'info' && 'text-blue-600',
+            variant === 'destructive' && 'text-red-600',
+          )}
+        />
         <div className="flex-1 space-y-1">
-          {title && (
-            <div className="text-sm font-semibold">{title}</div>
-          )}
-          {description && (
-            <div className="text-sm opacity-90">{description}</div>
-          )}
-          {action && (
-            <div className="mt-2">{action}</div>
-          )}
+          {title && <div className="text-sm font-semibold">{title}</div>}
+          {description && <div className="text-sm opacity-90">{description}</div>}
+          {action && <div className="mt-2">{action}</div>}
         </div>
       </div>
       <Button
@@ -145,7 +140,7 @@ const ToastContainer: React.FC = () => {
         <ToastItem key={toast.id} {...toast} />
       ))}
     </div>,
-    document.body
+    document.body,
   );
 };
 
@@ -197,4 +192,4 @@ export const toast = {
     const { addToast } = useToast();
     return addToast({ title, description, loading: true, duration: 0, ...options });
   },
-}; 
+};

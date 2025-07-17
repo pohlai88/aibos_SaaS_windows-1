@@ -2,30 +2,27 @@ import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
-const progressVariants = cva(
-  'relative w-full overflow-hidden rounded-full bg-secondary',
-  {
-    variants: {
-      size: {
-        sm: 'h-2',
-        md: 'h-3',
-        lg: 'h-4',
-        xl: 'h-6',
-      },
-      variant: {
-        default: 'bg-secondary',
-        success: 'bg-green-100 dark:bg-green-900/20',
-        warning: 'bg-yellow-100 dark:bg-yellow-900/20',
-        destructive: 'bg-red-100 dark:bg-red-900/20',
-        info: 'bg-blue-100 dark:bg-blue-900/20',
-      },
+const progressVariants = cva('relative w-full overflow-hidden rounded-full bg-secondary', {
+  variants: {
+    size: {
+      sm: 'h-2',
+      md: 'h-3',
+      lg: 'h-4',
+      xl: 'h-6',
     },
-    defaultVariants: {
-      size: 'md',
-      variant: 'default',
+    variant: {
+      default: 'bg-secondary',
+      success: 'bg-green-100 dark:bg-green-900/20',
+      warning: 'bg-yellow-100 dark:bg-yellow-900/20',
+      destructive: 'bg-red-100 dark:bg-red-900/20',
+      info: 'bg-blue-100 dark:bg-blue-900/20',
     },
-  }
-);
+  },
+  defaultVariants: {
+    size: 'md',
+    variant: 'default',
+  },
+});
 
 const progressIndicatorVariants = cva(
   'h-full w-full flex-1 bg-primary transition-all duration-300 ease-in-out',
@@ -47,7 +44,7 @@ const progressIndicatorVariants = cva(
       variant: 'default',
       animated: false,
     },
-  }
+  },
 );
 
 export interface ProgressProps extends VariantProps<typeof progressVariants> {
@@ -82,22 +79,17 @@ export const Progress: React.FC<ProgressProps> = ({
 
   const indicatorClasses = cn(
     progressIndicatorVariants({ variant, animated }),
-    striped && 'bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:20px_100%] animate-pulse',
-    indeterminate && 'animate-indeterminate'
+    striped &&
+      'bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:20px_100%] animate-pulse',
+    indeterminate && 'animate-indeterminate',
   );
 
   return (
     <div className={cn('w-full', className)}>
       {(showLabel || label) && (
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-foreground">
-            {label || 'Progress'}
-          </span>
-          {showValue && (
-            <span className="text-sm text-muted-foreground">
-              {displayValue}%
-            </span>
-          )}
+          <span className="text-sm font-medium text-foreground">{label || 'Progress'}</span>
+          {showValue && <span className="text-sm text-muted-foreground">{displayValue}%</span>}
         </div>
       )}
       <div
@@ -111,7 +103,7 @@ export const Progress: React.FC<ProgressProps> = ({
         <div
           className={cn(
             indicatorClasses,
-            !indeterminate && 'transition-all duration-300 ease-in-out'
+            !indeterminate && 'transition-all duration-300 ease-in-out',
           )}
           style={{
             width: indeterminate ? '100%' : `${percentage}%`,
@@ -192,15 +184,13 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
           strokeDashoffset={strokeDashoffset}
           className={cn(
             variantColors[variant || 'default'],
-            animated && 'transition-all duration-300 ease-in-out'
+            animated && 'transition-all duration-300 ease-in-out',
           )}
         />
       </svg>
       {showValue && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-sm font-medium text-foreground">
-            {Math.round(percentage)}%
-          </span>
+          <span className="text-sm font-medium text-foreground">{Math.round(percentage)}%</span>
         </div>
       )}
     </div>
@@ -268,33 +258,26 @@ export const MultiStepProgress: React.FC<MultiStepProgressProps> = ({
                   className={cn(
                     'flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium',
                     stepClasses[status],
-                    clickable && 'cursor-pointer hover:opacity-80'
+                    clickable && 'cursor-pointer hover:opacity-80',
                   )}
                   onClick={() => clickable && onStepClick?.(index)}
                 >
-                  {showStepNumbers ? index + 1 : (
-                    status === 'completed' ? '✓' : 
-                    status === 'error' ? '✕' : 
-                    status === 'current' ? '●' : '○'
-                  )}
+                  {showStepNumbers
+                    ? index + 1
+                    : status === 'completed'
+                      ? '✓'
+                      : status === 'error'
+                        ? '✕'
+                        : status === 'current'
+                          ? '●'
+                          : '○'}
                 </div>
-                {!isLast && (
-                  <div
-                    className={cn(
-                      'mt-2 h-8 w-0.5',
-                      connectorClasses[status]
-                    )}
-                  />
-                )}
+                {!isLast && <div className={cn('mt-2 h-8 w-0.5', connectorClasses[status])} />}
               </div>
               <div className="flex-1 pt-1">
-                <div className="text-sm font-medium text-foreground">
-                  {step.label}
-                </div>
+                <div className="text-sm font-medium text-foreground">{step.label}</div>
                 {step.description && (
-                  <div className="text-sm text-muted-foreground">
-                    {step.description}
-                  </div>
+                  <div className="text-sm text-muted-foreground">{step.description}</div>
                 )}
               </div>
             </div>
@@ -318,32 +301,27 @@ export const MultiStepProgress: React.FC<MultiStepProgressProps> = ({
                   className={cn(
                     'flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium',
                     stepClasses[status],
-                    clickable && 'cursor-pointer hover:opacity-80'
+                    clickable && 'cursor-pointer hover:opacity-80',
                   )}
                   onClick={() => clickable && onStepClick?.(index)}
                 >
-                  {showStepNumbers ? index + 1 : (
-                    status === 'completed' ? '✓' : 
-                    status === 'error' ? '✕' : 
-                    status === 'current' ? '●' : '○'
-                  )}
+                  {showStepNumbers
+                    ? index + 1
+                    : status === 'completed'
+                      ? '✓'
+                      : status === 'error'
+                        ? '✕'
+                        : status === 'current'
+                          ? '●'
+                          : '○'}
                 </div>
-                <div className="mt-2 text-xs font-medium text-foreground">
-                  {step.label}
-                </div>
+                <div className="mt-2 text-xs font-medium text-foreground">{step.label}</div>
               </div>
-              {!isLast && (
-                <div
-                  className={cn(
-                    'mx-4 h-0.5 flex-1',
-                    connectorClasses[status]
-                  )}
-                />
-              )}
+              {!isLast && <div className={cn('mx-4 h-0.5 flex-1', connectorClasses[status])} />}
             </div>
           );
         })}
       </div>
     </div>
   );
-}; 
+};

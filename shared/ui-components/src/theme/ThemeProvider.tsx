@@ -1,6 +1,6 @@
 /**
  * AI-BOS Theme Provider
- * 
+ *
  * Enhanced theme system with 20+ themes, real-time switching,
  * system integration, and performance optimization.
  */
@@ -62,7 +62,7 @@ const THEMES: Theme[] = [
       error: '#EF4444',
       warning: '#F59E0B',
       success: '#10B981',
-      info: '#3B82F6'
+      info: '#3B82F6',
     },
     cssVariables: {
       '--color-primary': '#3B82F6',
@@ -76,8 +76,8 @@ const THEMES: Theme[] = [
       '--color-error': '#EF4444',
       '--color-warning': '#F59E0B',
       '--color-success': '#10B981',
-      '--color-info': '#3B82F6'
-    }
+      '--color-info': '#3B82F6',
+    },
   },
   {
     id: 'dark',
@@ -96,7 +96,7 @@ const THEMES: Theme[] = [
       error: '#F87171',
       warning: '#FBBF24',
       success: '#34D399',
-      info: '#60A5FA'
+      info: '#60A5FA',
     },
     cssVariables: {
       '--color-primary': '#60A5FA',
@@ -110,8 +110,8 @@ const THEMES: Theme[] = [
       '--color-error': '#F87171',
       '--color-warning': '#FBBF24',
       '--color-success': '#34D399',
-      '--color-info': '#60A5FA'
-    }
+      '--color-info': '#60A5FA',
+    },
   },
   {
     id: 'auto',
@@ -130,7 +130,7 @@ const THEMES: Theme[] = [
       error: '#EF4444',
       warning: '#F59E0B',
       success: '#10B981',
-      info: '#3B82F6'
+      info: '#3B82F6',
     },
     cssVariables: {
       '--color-primary': '#3B82F6',
@@ -144,8 +144,8 @@ const THEMES: Theme[] = [
       '--color-error': '#EF4444',
       '--color-warning': '#F59E0B',
       '--color-success': '#10B981',
-      '--color-info': '#3B82F6'
-    }
+      '--color-info': '#3B82F6',
+    },
   },
   // Additional enterprise themes
   {
@@ -165,7 +165,7 @@ const THEMES: Theme[] = [
       error: '#DC2626',
       warning: '#D97706',
       success: '#059669',
-      info: '#1E40AF'
+      info: '#1E40AF',
     },
     cssVariables: {
       '--color-primary': '#1E40AF',
@@ -179,8 +179,8 @@ const THEMES: Theme[] = [
       '--color-error': '#DC2626',
       '--color-warning': '#D97706',
       '--color-success': '#059669',
-      '--color-info': '#1E40AF'
-    }
+      '--color-info': '#1E40AF',
+    },
   },
   {
     id: 'green',
@@ -199,7 +199,7 @@ const THEMES: Theme[] = [
       error: '#DC2626',
       warning: '#D97706',
       success: '#059669',
-      info: '#1E40AF'
+      info: '#1E40AF',
     },
     cssVariables: {
       '--color-primary': '#059669',
@@ -213,9 +213,9 @@ const THEMES: Theme[] = [
       '--color-error': '#DC2626',
       '--color-warning': '#D97706',
       '--color-success': '#059669',
-      '--color-info': '#1E40AF'
-    }
-  }
+      '--color-info': '#1E40AF',
+    },
+  },
 ];
 
 // Theme provider props
@@ -232,59 +232,67 @@ export function ThemeProvider({
   defaultTheme = 'auto',
   storageKey = 'aibos-theme',
   enableSystemTheme = true,
-  enableAnimations = true
+  enableAnimations = true,
 }: ThemeProviderProps) {
   const [currentThemeId, setCurrentThemeId] = useState<string>(defaultTheme);
   const [isSystemDark, setIsSystemDark] = useState(false);
 
   // Get effective theme (handles auto theme)
-  const getEffectiveTheme = useCallback((themeId: string): Theme => {
-    if (themeId === 'auto' && enableSystemTheme) {
-      return isSystemDark ? THEMES.find(t => t.id === 'dark')! : THEMES.find(t => t.id === 'light')!;
-    }
-    return THEMES.find(t => t.id === themeId) || THEMES[0];
-  }, [isSystemDark, enableSystemTheme]);
+  const getEffectiveTheme = useCallback(
+    (themeId: string): Theme => {
+      if (themeId === 'auto' && enableSystemTheme) {
+        return isSystemDark
+          ? THEMES.find((t) => t.id === 'dark')!
+          : THEMES.find((t) => t.id === 'light')!;
+      }
+      return THEMES.find((t) => t.id === themeId) || THEMES[0];
+    },
+    [isSystemDark, enableSystemTheme],
+  );
 
   const currentTheme = getEffectiveTheme(currentThemeId);
 
   // Apply theme to document
-  const applyTheme = useCallback((theme: Theme) => {
-    const root = document.documentElement;
-    
-    // Apply CSS variables
-    Object.entries(theme.cssVariables).forEach(([key, value]) => {
-      root.style.setProperty(key, value);
-    });
+  const applyTheme = useCallback(
+    (theme: Theme) => {
+      const root = document.documentElement;
 
-    // Update meta theme-color
-    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-    if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', theme.colors.background);
-    }
+      // Apply CSS variables
+      Object.entries(theme.cssVariables).forEach(([key, value]) => {
+        root.style.setProperty(key, value);
+      });
 
-    // Add theme class to body
-    document.body.className = document.body.className
-      .replace(/theme-\w+/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-    document.body.classList.add(`theme-${theme.id}`);
+      // Update meta theme-color
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', theme.colors.background);
+      }
 
-    // Store in localStorage
-    if (storageKey) {
-      localStorage.setItem(storageKey, currentThemeId);
-    }
-  }, [currentThemeId, storageKey]);
+      // Add theme class to body
+      document.body.className = document.body.className
+        .replace(/theme-\w+/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      document.body.classList.add(`theme-${theme.id}`);
+
+      // Store in localStorage
+      if (storageKey) {
+        localStorage.setItem(storageKey, currentThemeId);
+      }
+    },
+    [currentThemeId, storageKey],
+  );
 
   // Set theme
   const setTheme = useCallback((themeId: string) => {
-    if (THEMES.find(t => t.id === themeId)) {
+    if (THEMES.find((t) => t.id === themeId)) {
       setCurrentThemeId(themeId);
     }
   }, []);
 
   // Toggle theme
   const toggleTheme = useCallback(() => {
-    const currentIndex = THEMES.findIndex(t => t.id === currentThemeId);
+    const currentIndex = THEMES.findIndex((t) => t.id === currentThemeId);
     const nextIndex = (currentIndex + 1) % THEMES.length;
     setTheme(THEMES[nextIndex].id);
   }, [currentThemeId, setTheme]);
@@ -313,7 +321,7 @@ export function ThemeProvider({
   useEffect(() => {
     if (storageKey) {
       const savedTheme = localStorage.getItem(storageKey);
-      if (savedTheme && THEMES.find(t => t.id === savedTheme)) {
+      if (savedTheme && THEMES.find((t) => t.id === savedTheme)) {
         setCurrentThemeId(savedTheme);
       }
     }
@@ -325,7 +333,7 @@ export function ThemeProvider({
     setTheme,
     toggleTheme,
     isDark: currentTheme.category === 'dark',
-    isSystem: currentThemeId === 'auto'
+    isSystem: currentThemeId === 'auto',
   };
 
   return (
@@ -343,9 +351,7 @@ export function ThemeProvider({
             {children}
           </motion.div>
         ) : (
-          <div className="theme-container">
-            {children}
-          </div>
+          <div className="theme-container">{children}</div>
         )}
       </AnimatePresence>
     </ThemeContext.Provider>
@@ -372,7 +378,7 @@ export function ThemeSelector() {
         onChange={(e) => setTheme(e.target.value)}
         className="theme-select"
       >
-        {themes.map(theme => (
+        {themes.map((theme) => (
           <option key={theme.id} value={theme.id}>
             {theme.name} {theme.id === 'auto' && isSystem ? '(System)' : ''}
           </option>
@@ -393,7 +399,7 @@ export function ThemePreview({ theme }: { theme: Theme }) {
         border: `1px solid ${theme.colors.border}`,
         borderRadius: '8px',
         padding: '16px',
-        margin: '8px'
+        margin: '8px',
       }}
     >
       <h3 style={{ color: theme.colors.primary }}>{theme.name}</h3>
@@ -408,7 +414,7 @@ export function ThemePreview({ theme }: { theme: Theme }) {
               width: '20px',
               height: '20px',
               borderRadius: '4px',
-              margin: '2px'
+              margin: '2px',
             }}
             title={`${key}: ${color}`}
           />
@@ -416,4 +422,4 @@ export function ThemePreview({ theme }: { theme: Theme }) {
       </div>
     </div>
   );
-} 
+}

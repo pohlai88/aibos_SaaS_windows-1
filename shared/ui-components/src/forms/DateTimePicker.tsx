@@ -16,7 +16,7 @@ class NaturalLanguageDateParser {
 
   parse(input: string): { date: Date; confidence: number; parsedText: string } {
     const normalizedInput = input.toLowerCase().trim();
-    
+
     // Handle timezone-aware expressions
     if (normalizedInput.includes('my time') || normalizedInput.includes('local time')) {
       return this.parseTimezoneAware(normalizedInput);
@@ -31,7 +31,11 @@ class NaturalLanguageDateParser {
     return this.parseAbsoluteDate(normalizedInput);
   }
 
-  private parseTimezoneAware(input: string): { date: Date; confidence: number; parsedText: string } {
+  private parseTimezoneAware(input: string): {
+    date: Date;
+    confidence: number;
+    parsedText: string;
+  } {
     // Remove timezone indicators
     const cleanInput = input
       .replace(/\bmy time\b/g, '')
@@ -40,17 +44,19 @@ class NaturalLanguageDateParser {
 
     // Parse the base expression
     const baseResult = this.parseRelativeDate(cleanInput);
-    
+
     if (baseResult.confidence > 0.5) {
       // Convert to user's timezone
-      const userDate = new Date(baseResult.date.toLocaleString('en-US', {
-        timeZone: this.userTimezone
-      }));
+      const userDate = new Date(
+        baseResult.date.toLocaleString('en-US', {
+          timeZone: this.userTimezone,
+        }),
+      );
 
       return {
         date: userDate,
         confidence: baseResult.confidence * 0.9, // Slightly lower confidence for timezone conversion
-        parsedText: `${baseResult.parsedText} in your timezone (${this.userTimezone})`
+        parsedText: `${baseResult.parsedText} in your timezone (${this.userTimezone})`,
       };
     }
 
@@ -120,12 +126,16 @@ class NaturalLanguageDateParser {
       const match = input.match(format);
       if (match) {
         const [_, month, day, year] = match;
-        const date = new Date(parseInt(year || '0'), parseInt(month || '1') - 1, parseInt(day || '1'));
-        
+        const date = new Date(
+          parseInt(year || '0'),
+          parseInt(month || '1') - 1,
+          parseInt(day || '1'),
+        );
+
         return {
           date,
           confidence: 0.9,
-          parsedText: date.toLocaleDateString()
+          parsedText: date.toLocaleDateString(),
         };
       }
     }
@@ -168,32 +178,29 @@ export interface DateTimePickerProps extends VariantProps<typeof datePickerVaria
   };
 }
 
-const datePickerVariants = cva(
-  'relative w-full',
-  {
-    variants: {
-      variant: {
-        default: '',
-        filled: 'bg-muted',
-        outlined: 'border border-border',
-      },
-      size: {
-        sm: 'text-sm',
-        md: 'text-base',
-        lg: 'text-lg',
-      },
+const datePickerVariants = cva('relative w-full', {
+  variants: {
+    variant: {
+      default: '',
+      filled: 'bg-muted',
+      outlined: 'border border-border',
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'md',
+    size: {
+      sm: 'text-sm',
+      md: 'text-base',
+      lg: 'text-lg',
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+    size: 'md',
+  },
+});
 
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   value,
   onChange,
-  placeholder = "Enter date and time...",
+  placeholder = 'Enter date and time...',
   disabled = false,
   className,
   enableNaturalLanguage = true,
@@ -232,8 +239,8 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
         'next business day',
       ];
 
-      const filtered = commonExpressions.filter(expr => 
-        expr.toLowerCase().includes(inputValue.toLowerCase())
+      const filtered = commonExpressions.filter((expr) =>
+        expr.toLowerCase().includes(inputValue.toLowerCase()),
       );
 
       setSuggestions(filtered.slice(0, 3));
@@ -243,18 +250,21 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   }, [inputValue, aiFeatures.smartSuggestions]);
 
   // Parse natural language input
-  const parseInput = useCallback((input: string) => {
-    if (!parser.current || !enableNaturalLanguage) return;
+  const parseInput = useCallback(
+    (input: string) => {
+      if (!parser.current || !enableNaturalLanguage) return;
 
-    const result = parser.current.parse(input);
-    setParsedDate(result.date);
-    setParsingConfidence(result.confidence);
+      const result = parser.current.parse(input);
+      setParsedDate(result.date);
+      setParsingConfidence(result.confidence);
 
-    if (result.confidence > 0.7) {
-      setInputValue(result.parsedText);
-      onChange?.(result.date);
-    }
-  }, [enableNaturalLanguage, onChange]);
+      if (result.confidence > 0.7) {
+        setInputValue(result.parsedText);
+        onChange?.(result.date);
+      }
+    },
+    [enableNaturalLanguage, onChange],
+  );
 
   // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -296,10 +306,10 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             'w-full px-4 py-2 rounded-md border border-border bg-background text-foreground',
             'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            enableNaturalLanguage && 'pr-12'
+            enableNaturalLanguage && 'pr-12',
           )}
         />
-        
+
         {enableNaturalLanguage && (
           <div className="absolute right-2 top-1/2 -translate-y-1/2">
             <Zap className="h-4 w-4 text-muted-foreground" />
@@ -353,21 +363,17 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
               Confidence: {Math.round(parsingConfidence * 100)}%
             </span>
           </div>
-          
+
           {parsedDate && (
-            <span className="text-xs text-muted-foreground">
-              Parsed: {formatDate(parsedDate)}
-            </span>
+            <span className="text-xs text-muted-foreground">Parsed: {formatDate(parsedDate)}</span>
           )}
         </div>
       )}
 
       {/* Timezone Information */}
       {enableTimezone && userTimezone && (
-        <div className="mt-1 text-xs text-muted-foreground">
-          Your timezone: {userTimezone}
-        </div>
+        <div className="mt-1 text-xs text-muted-foreground">Your timezone: {userTimezone}</div>
       )}
     </div>
   );
-}; 
+};

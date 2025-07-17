@@ -10,19 +10,21 @@
 ✅ **Working frontend** (Vercel)  
 ✅ **Working database** (Supabase)  
 ✅ **Real apps** you can actually use  
-✅ **No errors** - guaranteed  
+✅ **No errors** - guaranteed
 
 ---
 
 ## 📋 **Step 1: Set Up Database (5 minutes)**
 
 ### 1.1 Create Supabase Account
+
 1. Go to [supabase.com](https://supabase.com)
 2. Click "Start your project"
 3. Sign up with GitHub
 4. Create new project
 
 ### 1.2 Set Up Database
+
 1. Copy this SQL and run it in Supabase SQL Editor:
 
 ```sql
@@ -84,6 +86,7 @@ ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 ```
 
 ### 1.3 Get Your Keys
+
 1. Go to Settings → API
 2. Copy:
    - **Project URL** (looks like: `https://abc123.supabase.co`)
@@ -94,11 +97,13 @@ ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 ## 📋 **Step 2: Deploy Backend (10 minutes)**
 
 ### 2.1 Install Railway CLI
+
 ```bash
 npm install -g @railway/cli
 ```
 
 ### 2.2 Deploy Backend
+
 ```bash
 cd railway-1/backend
 railway login
@@ -107,6 +112,7 @@ railway up
 ```
 
 ### 2.3 Set Environment Variables
+
 ```bash
 railway variables set SUPABASE_URL=YOUR_SUPABASE_URL
 railway variables set SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
@@ -115,9 +121,11 @@ railway variables set NODE_ENV=production
 ```
 
 ### 2.4 Get Your Backend URL
+
 ```bash
 railway status
 ```
+
 Copy the URL (looks like: `https://your-app.railway.app`)
 
 ---
@@ -125,17 +133,20 @@ Copy the URL (looks like: `https://your-app.railway.app`)
 ## 📋 **Step 3: Deploy Frontend (10 minutes)**
 
 ### 3.1 Install Vercel CLI
+
 ```bash
 npm install -g vercel
 ```
 
 ### 3.2 Deploy Frontend
+
 ```bash
 cd railway-1/frontend
 vercel
 ```
 
 ### 3.3 Set Environment Variables
+
 ```bash
 vercel env add NEXT_PUBLIC_API_URL
 # Enter your Railway backend URL
@@ -148,9 +159,11 @@ vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
 ```
 
 ### 3.4 Get Your Frontend URL
+
 ```bash
 vercel ls
 ```
+
 Copy the URL (looks like: `https://your-app.vercel.app`)
 
 ---
@@ -158,21 +171,24 @@ Copy the URL (looks like: `https://your-app.vercel.app`)
 ## 🎉 **Step 4: Test Your Deployment**
 
 ### 4.1 Open Your App
+
 1. Go to your Vercel URL
 2. You should see the AI-BOS shell
 3. Click "Login" → "Demo Login"
 
 ### 4.2 Test Features
+
 ✅ **Window Manager** - Drag windows around  
 ✅ **Dock** - Click apps to open  
 ✅ **Demo Apps** - Try Accounting, Tax Calculator  
-✅ **Real-time** - See live updates  
+✅ **Real-time** - See live updates
 
 ---
 
 ## 🚀 **Step 5: Create Your First App**
 
 ### 5.1 Simple App Example
+
 Create a file called `my-first-app.json`:
 
 ```json
@@ -184,10 +200,10 @@ Create a file called `my-first-app.json`:
     {
       "name": "Task",
       "fields": [
-        {"name": "id", "type": "uuid", "primary": true},
-        {"name": "title", "type": "string", "required": true},
-        {"name": "completed", "type": "boolean", "default": false},
-        {"name": "created_at", "type": "timestamp", "default": "now()"}
+        { "name": "id", "type": "uuid", "primary": true },
+        { "name": "title", "type": "string", "required": true },
+        { "name": "completed", "type": "boolean", "default": false },
+        { "name": "created_at", "type": "timestamp", "default": "now()" }
       ]
     }
   ],
@@ -211,6 +227,7 @@ Create a file called `my-first-app.json`:
 ```
 
 ### 5.2 Install Your App
+
 1. Go to your AI-BOS admin panel
 2. Click "Install App"
 3. Upload your JSON file
@@ -221,6 +238,7 @@ Create a file called `my-first-app.json`:
 ## 🔧 **Troubleshooting**
 
 ### ❌ **"Backend not responding"**
+
 ```bash
 # Check Railway logs
 railway logs
@@ -230,11 +248,13 @@ railway up
 ```
 
 ### ❌ **"Database connection failed"**
+
 1. Check Supabase URL and key
 2. Make sure you ran the SQL setup
 3. Check Railway environment variables
 
 ### ❌ **"Frontend not loading"**
+
 ```bash
 # Check Vercel logs
 vercel logs
@@ -244,6 +264,7 @@ vercel --prod
 ```
 
 ### ❌ **"Authentication failed"**
+
 1. Check JWT_SECRET in Railway
 2. Make sure Supabase auth is enabled
 3. Try demo login: `admin@demo.com` / any password
@@ -253,17 +274,20 @@ vercel --prod
 ## 📚 **Next Steps**
 
 ### Create More Apps
+
 - **CRM App** - Manage customers
 - **Inventory App** - Track products
 - **Invoice App** - Generate bills
 - **Dashboard App** - Show analytics
 
 ### Connect Apps
+
 - Apps automatically talk to each other
 - Events flow between apps
 - Data is shared securely
 
 ### Customize UI
+
 - Change colors and themes
 - Add your logo
 - Customize window layouts
@@ -277,13 +301,14 @@ vercel --prod
 ✅ **Frontend working** - Vercel deployed  
 ✅ **Apps loading** - Demo apps work  
 ✅ **Your app created** - Custom app installed  
-✅ **No errors** - Everything smooth  
+✅ **No errors** - Everything smooth
 
 ---
 
 ## 🚀 **You Did It!**
 
 **Congratulations!** You've successfully:
+
 - Deployed a full-stack SaaS platform
 - Created your first micro-app
 - Published without errors
@@ -296,13 +321,15 @@ vercel --prod
 ## 📞 **Need Help?**
 
 **Common Issues:**
+
 1. **Environment variables** - Double-check all URLs and keys
 2. **Database setup** - Make sure SQL ran successfully
 3. **Deployment** - Check logs for specific errors
 
 **Quick Fixes:**
+
 - Restart deployments: `railway up` and `vercel --prod`
 - Check logs: `railway logs` and `vercel logs`
 - Verify URLs: Test API endpoints directly
 
-**You're not alone** - This guide gets you from zero to published in 30 minutes! 🚀 
+**You're not alone** - This guide gets you from zero to published in 30 minutes! 🚀

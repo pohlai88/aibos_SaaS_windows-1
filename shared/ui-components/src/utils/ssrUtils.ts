@@ -9,11 +9,11 @@ export const isServer = !isClient;
 // Hook to detect if component has mounted (for SSR)
 export const useIsMounted = () => {
   const [isMounted, setIsMounted] = useState(false);
-  
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  
+
   return isMounted;
 };
 
@@ -21,13 +21,13 @@ export const useIsMounted = () => {
 export const useBrowserAPI = <T>(getValue: () => T, defaultValue: T): T => {
   const [value, setValue] = useState<T>(defaultValue);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (isMounted) {
       setValue(getValue());
     }
   }, [isMounted, getValue]);
-  
+
   return isMounted ? value : defaultValue;
 };
 
@@ -35,23 +35,23 @@ export const useBrowserAPI = <T>(getValue: () => T, defaultValue: T): T => {
 export const useWindowSize = () => {
   const [size, setSize] = useState({ width: 0, height: 0 });
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted) return;
-    
+
     const updateSize = () => {
       setSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
     };
-    
+
     updateSize();
     window.addEventListener('resize', updateSize);
-    
+
     return () => window.removeEventListener('resize', updateSize);
   }, [isMounted]);
-  
+
   return size;
 };
 
@@ -59,10 +59,10 @@ export const useWindowSize = () => {
 export const useLocalStorage = <T>(key: string, defaultValue: T) => {
   const [value, setValue] = useState<T>(defaultValue);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted) return;
-    
+
     try {
       const stored = localStorage.getItem(key);
       if (stored !== null) {
@@ -72,10 +72,10 @@ export const useLocalStorage = <T>(key: string, defaultValue: T) => {
       console.warn(`Failed to read localStorage key "${key}":`, error);
     }
   }, [key, isMounted]);
-  
+
   const setStoredValue = (newValue: T) => {
     if (!isMounted) return;
-    
+
     try {
       setValue(newValue);
       localStorage.setItem(key, JSON.stringify(newValue));
@@ -83,7 +83,7 @@ export const useLocalStorage = <T>(key: string, defaultValue: T) => {
       console.warn(`Failed to write localStorage key "${key}":`, error);
     }
   };
-  
+
   return [value, setStoredValue] as const;
 };
 
@@ -91,10 +91,10 @@ export const useLocalStorage = <T>(key: string, defaultValue: T) => {
 export const useSessionStorage = <T>(key: string, defaultValue: T) => {
   const [value, setValue] = useState<T>(defaultValue);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted) return;
-    
+
     try {
       const stored = sessionStorage.getItem(key);
       if (stored !== null) {
@@ -104,10 +104,10 @@ export const useSessionStorage = <T>(key: string, defaultValue: T) => {
       console.warn(`Failed to read sessionStorage key "${key}":`, error);
     }
   }, [key, isMounted]);
-  
+
   const setStoredValue = (newValue: T) => {
     if (!isMounted) return;
-    
+
     try {
       setValue(newValue);
       sessionStorage.setItem(key, JSON.stringify(newValue));
@@ -115,7 +115,7 @@ export const useSessionStorage = <T>(key: string, defaultValue: T) => {
       console.warn(`Failed to write sessionStorage key "${key}":`, error);
     }
   };
-  
+
   return [value, setStoredValue] as const;
 };
 
@@ -123,28 +123,28 @@ export const useSessionStorage = <T>(key: string, defaultValue: T) => {
 export const useMediaQuery = (query: string): boolean => {
   const [matches, setMatches] = useState(false);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted) return;
-    
+
     const mediaQuery = window.matchMedia(query);
     setMatches(mediaQuery.matches);
-    
+
     const handler = (event: MediaQueryListEvent) => {
       setMatches(event.matches);
     };
-    
+
     mediaQuery.addEventListener('change', handler);
     return () => mediaQuery.removeEventListener('change', handler);
   }, [query, isMounted]);
-  
+
   return matches;
 };
 
 // Safe document access
 export const useDocumentTitle = (title: string) => {
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (isMounted && document.title !== title) {
       document.title = title;
@@ -156,18 +156,18 @@ export const useDocumentTitle = (title: string) => {
 export const useFocusTrap = (enabled: boolean = true) => {
   const containerRef = useRef<HTMLElement>(null);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted || !enabled || !containerRef.current) return;
-    
+
     const container = containerRef.current;
     const focusableElements = container.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
-    
+
     const firstElement = focusableElements[0] as HTMLElement;
     const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-    
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Tab') {
         if (event.shiftKey) {
@@ -183,36 +183,34 @@ export const useFocusTrap = (enabled: boolean = true) => {
         }
       }
     };
-    
+
     container.addEventListener('keydown', handleKeyDown);
     return () => container.removeEventListener('keydown', handleKeyDown);
   }, [enabled, isMounted]);
-  
+
   return containerRef;
 };
 
 // Safe intersection observer
-export const useIntersectionObserver = (
-  options: IntersectionObserverInit = {}
-) => {
+export const useIntersectionObserver = (options: IntersectionObserverInit = {}) => {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [entry, setEntry] = useState<IntersectionObserverEntry | null>(null);
   const elementRef = useRef<HTMLElement>(null);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted || !elementRef.current) return;
-    
+
     const observer = new IntersectionObserver(([entry]) => {
       setIsIntersecting(entry.isIntersecting);
       setEntry(entry);
     }, options);
-    
+
     observer.observe(elementRef.current);
-    
+
     return () => observer.disconnect();
   }, [options, isMounted]);
-  
+
   return { elementRef, isIntersecting, entry };
 };
 
@@ -221,10 +219,10 @@ export const useResizeObserver = () => {
   const [size, setSize] = useState({ width: 0, height: 0 });
   const elementRef = useRef<HTMLElement>(null);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted || !elementRef.current) return;
-    
+
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setSize({
@@ -233,32 +231,32 @@ export const useResizeObserver = () => {
         });
       }
     });
-    
+
     observer.observe(elementRef.current);
-    
+
     return () => observer.disconnect();
   }, [isMounted]);
-  
+
   return { elementRef, size };
 };
 
 // Safe mutation observer
 export const useMutationObserver = (
   callback: (mutations: MutationRecord[]) => void,
-  options: MutationObserverInit = {}
+  options: MutationObserverInit = {},
 ) => {
   const elementRef = useRef<HTMLElement>(null);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted || !elementRef.current) return;
-    
+
     const observer = new MutationObserver(callback);
     observer.observe(elementRef.current, options);
-    
+
     return () => observer.disconnect();
   }, [callback, options, isMounted]);
-  
+
   return elementRef;
 };
 
@@ -266,10 +264,10 @@ export const useMutationObserver = (
 export const useClipboard = () => {
   const [copied, setCopied] = useState(false);
   const isMounted = useIsMounted();
-  
+
   const copyToClipboard = async (text: string) => {
     if (!isMounted) return false;
-    
+
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -280,7 +278,7 @@ export const useClipboard = () => {
       return false;
     }
   };
-  
+
   return { copied, copyToClipboard };
 };
 
@@ -289,19 +287,19 @@ export const useGeolocation = () => {
   const [location, setLocation] = useState<GeolocationPosition | null>(null);
   const [error, setError] = useState<string | null>(null);
   const isMounted = useIsMounted();
-  
+
   const getLocation = () => {
     if (!isMounted || !navigator.geolocation) {
       setError('Geolocation not supported');
       return;
     }
-    
+
     navigator.geolocation.getCurrentPosition(
       (position) => setLocation(position),
-      (error) => setError(error.message)
+      (error) => setError(error.message),
     );
   };
-  
+
   return { location, error, getLocation };
 };
 
@@ -309,18 +307,18 @@ export const useGeolocation = () => {
 export const useDeviceMotion = () => {
   const [motion, setMotion] = useState<DeviceMotionEvent | null>(null);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted) return;
-    
+
     const handleMotion = (event: DeviceMotionEvent) => {
       setMotion(event);
     };
-    
+
     window.addEventListener('devicemotion', handleMotion);
     return () => window.removeEventListener('devicemotion', handleMotion);
   }, [isMounted]);
-  
+
   return motion;
 };
 
@@ -328,18 +326,18 @@ export const useDeviceMotion = () => {
 export const useDeviceOrientation = () => {
   const [orientation, setOrientation] = useState<DeviceOrientationEvent | null>(null);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted) return;
-    
+
     const handleOrientation = (event: DeviceOrientationEvent) => {
       setOrientation(event);
     };
-    
+
     window.addEventListener('deviceorientation', handleOrientation);
     return () => window.removeEventListener('deviceorientation', handleOrientation);
   }, [isMounted]);
-  
+
   return orientation;
 };
 
@@ -348,10 +346,10 @@ export const useNetworkStatus = () => {
   const [isOnline, setIsOnline] = useState(true);
   const [effectiveType, setEffectiveType] = useState<string>('');
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted) return;
-    
+
     const updateNetworkStatus = () => {
       setIsOnline(navigator.onLine);
       if ('connection' in navigator) {
@@ -359,17 +357,17 @@ export const useNetworkStatus = () => {
         setEffectiveType(connection.effectiveType || '');
       }
     };
-    
+
     updateNetworkStatus();
-    
+
     window.addEventListener('online', updateNetworkStatus);
     window.addEventListener('offline', updateNetworkStatus);
-    
+
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
       connection.addEventListener('change', updateNetworkStatus);
     }
-    
+
     return () => {
       window.removeEventListener('online', updateNetworkStatus);
       window.removeEventListener('offline', updateNetworkStatus);
@@ -379,7 +377,7 @@ export const useNetworkStatus = () => {
       }
     };
   }, [isMounted]);
-  
+
   return { isOnline, effectiveType };
 };
 
@@ -387,27 +385,27 @@ export const useNetworkStatus = () => {
 export const useBatteryStatus = () => {
   const [battery, setBattery] = useState<BatteryManager | null>(null);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted || !('getBattery' in navigator)) return;
-    
+
     (navigator as any).getBattery().then((batteryManager: BatteryManager) => {
       setBattery(batteryManager);
-      
+
       const updateBatteryInfo = () => {
         setBattery(batteryManager);
       };
-      
+
       batteryManager.addEventListener('levelchange', updateBatteryInfo);
       batteryManager.addEventListener('chargingchange', updateBatteryInfo);
-      
+
       return () => {
         batteryManager.removeEventListener('levelchange', updateBatteryInfo);
         batteryManager.removeEventListener('chargingchange', updateBatteryInfo);
       };
     });
   }, [isMounted]);
-  
+
   return battery;
 };
 
@@ -415,13 +413,13 @@ export const useBatteryStatus = () => {
 export const useSSRSafeId = (prefix: string = 'id') => {
   const [id, setId] = useState<string>('');
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (isMounted) {
       setId(`${prefix}-${Math.random().toString(36).substr(2, 9)}`);
     }
   }, [prefix, isMounted]);
-  
+
   return id;
 };
 
@@ -429,14 +427,14 @@ export const useSSRSafeId = (prefix: string = 'id') => {
 export const useSSRPortal = () => {
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (isMounted) {
       const container = document.createElement('div');
       container.setAttribute('data-portal', 'true');
       document.body.appendChild(container);
       setPortalContainer(container);
-      
+
       return () => {
         if (container.parentNode) {
           container.parentNode.removeChild(container);
@@ -444,7 +442,7 @@ export const useSSRPortal = () => {
       };
     }
   }, [isMounted]);
-  
+
   return portalContainer;
 };
 
@@ -452,21 +450,21 @@ export const useSSRPortal = () => {
 export const useSSRTheme = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (!isMounted) return;
-    
+
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     setTheme(mediaQuery.matches ? 'dark' : 'light');
-    
+
     const handleChange = (event: MediaQueryListEvent) => {
       setTheme(event.matches ? 'dark' : 'light');
     };
-    
+
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [isMounted]);
-  
+
   return theme;
 };
 
@@ -474,13 +472,13 @@ export const useSSRTheme = () => {
 export const useSSRLanguage = () => {
   const [language, setLanguage] = useState<string>('en');
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (isMounted) {
       setLanguage(navigator.language || 'en');
     }
   }, [isMounted]);
-  
+
   return language;
 };
 
@@ -488,12 +486,12 @@ export const useSSRLanguage = () => {
 export const useSSRTimezone = () => {
   const [timezone, setTimezone] = useState<string>('UTC');
   const isMounted = useIsMounted();
-  
+
   useEffect(() => {
     if (isMounted) {
       setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
     }
   }, [isMounted]);
-  
+
   return timezone;
-}; 
+};

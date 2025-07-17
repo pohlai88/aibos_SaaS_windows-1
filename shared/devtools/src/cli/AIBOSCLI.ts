@@ -1,6 +1,6 @@
 /**
  * AI-BOS Advanced CLI
- * 
+ *
  * The ultimate command-line interface for AI-powered development.
  * Makes every developer's dream come true with intelligent automation.
  */
@@ -52,7 +52,7 @@ export class AIBOSCLI {
     this.codeGenerator = new AICodeGenerator();
     this.config = this.loadConfig();
     this.spinner = ora();
-    
+
     this.setupCommands();
   }
 
@@ -79,22 +79,22 @@ export class AIBOSCLI {
 
     // Project commands
     this.setupProjectCommands();
-    
+
     // Code generation commands
     this.setupCodeCommands();
-    
+
     // AI assistance commands
     this.setupAICommands();
-    
+
     // Development commands
     this.setupDevCommands();
-    
+
     // Analysis commands
     this.setupAnalysisCommands();
-    
+
     // Learning commands
     this.setupLearningCommands();
-    
+
     // Configuration commands
     this.setupConfigCommands();
   }
@@ -103,9 +103,7 @@ export class AIBOSCLI {
    * Setup project commands
    */
   private setupProjectCommands(): void {
-    const project = this.program
-      .command('project')
-      .description('Project management commands');
+    const project = this.program.command('project').description('Project management commands');
 
     project
       .command('init')
@@ -137,9 +135,7 @@ export class AIBOSCLI {
    * Setup code generation commands
    */
   private setupCodeCommands(): void {
-    const code = this.program
-      .command('code')
-      .description('Code generation commands');
+    const code = this.program.command('code').description('Code generation commands');
 
     code
       .command('generate')
@@ -175,12 +171,9 @@ export class AIBOSCLI {
    * Setup AI assistance commands
    */
   private setupAICommands(): void {
-    const ai = this.program
-      .command('ai')
-      .description('AI assistance commands');
+    const ai = this.program.command('ai').description('AI assistance commands');
 
-    ai
-      .command('ask')
+    ai.command('ask')
       .description('Ask AI for development help')
       .argument('<question>', 'Your question')
       .option('-c, --context <context>', 'Additional context')
@@ -188,8 +181,7 @@ export class AIBOSCLI {
         await this.askAI(question, options);
       });
 
-    ai
-      .command('explain')
+    ai.command('explain')
       .description('Explain code with AI')
       .option('-f, --file <file>', 'File to explain')
       .option('-c, --code <code>', 'Code snippet to explain')
@@ -197,8 +189,7 @@ export class AIBOSCLI {
         await this.explainCode(options);
       });
 
-    ai
-      .command('debug')
+    ai.command('debug')
       .description('Debug code with AI assistance')
       .option('-f, --file <file>', 'File to debug')
       .option('-e, --error <error>', 'Error message')
@@ -211,9 +202,7 @@ export class AIBOSCLI {
    * Setup development commands
    */
   private setupDevCommands(): void {
-    const dev = this.program
-      .command('dev')
-      .description('Development workflow commands');
+    const dev = this.program.command('dev').description('Development workflow commands');
 
     dev
       .command('start')
@@ -247,9 +236,7 @@ export class AIBOSCLI {
    * Setup analysis commands
    */
   private setupAnalysisCommands(): void {
-    const analyze = this.program
-      .command('analyze')
-      .description('Code analysis commands');
+    const analyze = this.program.command('analyze').description('Code analysis commands');
 
     analyze
       .command('security')
@@ -283,9 +270,7 @@ export class AIBOSCLI {
    * Setup learning commands
    */
   private setupLearningCommands(): void {
-    const learn = this.program
-      .command('learn')
-      .description('Learning and education commands');
+    const learn = this.program.command('learn').description('Learning and education commands');
 
     learn
       .command('topic')
@@ -319,9 +304,7 @@ export class AIBOSCLI {
    * Setup configuration commands
    */
   private setupConfigCommands(): void {
-    const config = this.program
-      .command('config')
-      .description('Configuration commands');
+    const config = this.program.command('config').description('Configuration commands');
 
     config
       .command('set')
@@ -355,7 +338,7 @@ export class AIBOSCLI {
     this.spinner.start('Initializing AI-BOS project...');
 
     try {
-      const template = options.template || await this.selectTemplate();
+      const template = options.template || (await this.selectTemplate());
       const language = options.language || this.config.defaultLanguage;
       const framework = options.framework || this.config.defaultFramework;
 
@@ -363,12 +346,11 @@ export class AIBOSCLI {
       await this.createProjectStructure(template, language, framework);
 
       this.spinner.succeed(chalk.green('✅ Project initialized successfully!'));
-      
+
       console.log(chalk.blue('\n🚀 Next steps:'));
       console.log(chalk.cyan('  cd your-project'));
       console.log(chalk.cyan('  aibos dev start'));
       console.log(chalk.cyan('  aibos ai ask "How do I get started?"'));
-      
     } catch (error) {
       this.spinner.fail(chalk.red('❌ Failed to initialize project'));
       console.error(error);
@@ -384,25 +366,25 @@ export class AIBOSCLI {
         type: 'input',
         name: 'name',
         message: 'What would you like to build?',
-        default: 'my-awesome-app'
+        default: 'my-awesome-app',
       },
       {
         type: 'list',
         name: 'type',
         message: 'What type of project?',
-        choices: ['frontend', 'backend', 'fullstack', 'mobile', 'desktop', 'cli']
+        choices: ['frontend', 'backend', 'fullstack', 'mobile', 'desktop', 'cli'],
       },
       {
         type: 'list',
         name: 'language',
         message: 'What programming language?',
-        choices: ['typescript', 'javascript', 'python', 'java', 'csharp', 'go', 'rust']
+        choices: ['typescript', 'javascript', 'python', 'java', 'csharp', 'go', 'rust'],
       },
       {
         type: 'input',
         name: 'description',
-        message: 'Describe your project:'
-      }
+        message: 'Describe your project:',
+      },
     ];
 
     const answers = await inquirer.prompt(questions);
@@ -411,24 +393,20 @@ export class AIBOSCLI {
 
     try {
       // Get AI recommendations
-      const response = await this.assistant.getArchitectureRecommendations(
-        answers.description,
-        {
-          projectType: answers.type as any,
-          language: answers.language
-        }
-      );
+      const response = await this.assistant.getArchitectureRecommendations(answers.description, {
+        projectType: answers.type as any,
+        language: answers.language,
+      });
 
       // Create project based on AI recommendations
       await this.createProjectFromAIRecommendations(answers, response);
 
       this.spinner.succeed(chalk.green('✅ Your dream project is ready!'));
-      
+
       console.log(chalk.blue('\n🎉 Project created successfully!'));
       console.log(chalk.cyan(`  Name: ${answers.name}`));
       console.log(chalk.cyan(`  Type: ${answers.type}`));
       console.log(chalk.cyan(`  Language: ${answers.language}`));
-      
     } catch (error) {
       this.spinner.fail(chalk.red('❌ Failed to create project'));
       console.error(error);
@@ -444,8 +422,8 @@ export class AIBOSCLI {
         {
           type: 'input',
           name: 'description',
-          message: 'Describe what you want to generate:'
-        }
+          message: 'Describe what you want to generate:',
+        },
       ]);
       options.description = description;
     }
@@ -460,8 +438,8 @@ export class AIBOSCLI {
         options: {
           includeTests: true,
           includeDocs: true,
-          includeTypes: true
-        }
+          includeTypes: true,
+        },
       });
 
       this.spinner.succeed(chalk.green('✅ Code generated successfully!'));
@@ -489,7 +467,6 @@ export class AIBOSCLI {
         await this.saveToFile(options.output, result.code);
         console.log(chalk.green(`\n💾 Code saved to ${options.output}`));
       }
-
     } catch (error) {
       this.spinner.fail(chalk.red('❌ Failed to generate code'));
       console.error(error);
@@ -508,12 +485,12 @@ export class AIBOSCLI {
         query: question,
         context: {
           projectType: 'fullstack',
-          language: this.config.defaultLanguage
+          language: this.config.defaultLanguage,
         },
         options: {
           explainReasoning: true,
-          suggestAlternatives: true
-        }
+          suggestAlternatives: true,
+        },
       });
 
       this.spinner.succeed(chalk.green('✅ AI assistance ready!'));
@@ -539,7 +516,6 @@ export class AIBOSCLI {
           console.log(chalk.green(`${index + 1}. ${step}`));
         });
       }
-
     } catch (error) {
       this.spinner.fail(chalk.red('❌ Failed to get AI assistance'));
       console.error(error);
@@ -555,13 +531,13 @@ export class AIBOSCLI {
         {
           type: 'input',
           name: 'file',
-          message: 'File to debug (optional):'
+          message: 'File to debug (optional):',
         },
         {
           type: 'input',
           name: 'error',
-          message: 'Error message:'
-        }
+          message: 'Error message:',
+        },
       ]);
       options.file = file;
       options.error = error;
@@ -573,14 +549,10 @@ export class AIBOSCLI {
       const code = options.file ? await this.readFile(options.file) : '';
       const error = options.error || 'Unknown error';
 
-      const debugSession = await this.assistant.debugCode(
-        error,
-        code,
-        {
-          projectType: 'fullstack',
-          language: this.config.defaultLanguage
-        }
-      );
+      const debugSession = await this.assistant.debugCode(error, code, {
+        projectType: 'fullstack',
+        language: this.config.defaultLanguage,
+      });
 
       this.spinner.succeed(chalk.green('✅ Debug analysis complete!'));
 
@@ -601,7 +573,6 @@ export class AIBOSCLI {
         console.log(debugSession.solution.code);
         console.log(chalk.gray('```'));
       }
-
     } catch (error) {
       this.spinner.fail(chalk.red('❌ Failed to debug code'));
       console.error(error);
@@ -616,15 +587,11 @@ export class AIBOSCLI {
 
     try {
       const difficulty = options.difficulty || 'intermediate';
-      
-      const learningSession = await this.assistant.getLearningContent(
-        topic,
-        difficulty as any,
-        {
-          projectType: 'fullstack',
-          language: this.config.defaultLanguage
-        }
-      );
+
+      const learningSession = await this.assistant.getLearningContent(topic, difficulty as any, {
+        projectType: 'fullstack',
+        language: this.config.defaultLanguage,
+      });
 
       this.spinner.succeed(chalk.green('✅ Learning content ready!'));
 
@@ -651,7 +618,6 @@ export class AIBOSCLI {
           });
         });
       }
-
     } catch (error) {
       this.spinner.fail(chalk.red('❌ Failed to create learning content'));
       console.error(error);
@@ -667,7 +633,7 @@ export class AIBOSCLI {
       enableAI: true,
       enableAnalytics: true,
       enableTelemetry: false,
-      defaultLanguage: 'typescript'
+      defaultLanguage: 'typescript',
     };
   }
 
@@ -678,11 +644,11 @@ export class AIBOSCLI {
         type: 'list',
         name: 'template',
         message: 'Select a project template:',
-        choices: templates.map(t => ({
+        choices: templates.map((t) => ({
           name: `${t.name} - ${t.description}`,
-          value: t.name
-        }))
-      }
+          value: t.name,
+        })),
+      },
     ]);
     return template;
   }
@@ -697,7 +663,7 @@ export class AIBOSCLI {
         framework: 'react',
         features: ['TypeScript', 'React', 'Tailwind CSS', 'Testing'],
         complexity: 'medium',
-        estimatedTime: 30
+        estimatedTime: 30,
       },
       {
         name: 'node-api',
@@ -707,7 +673,7 @@ export class AIBOSCLI {
         framework: 'express',
         features: ['TypeScript', 'Express', 'JWT Auth', 'Database'],
         complexity: 'medium',
-        estimatedTime: 45
+        estimatedTime: 45,
       },
       {
         name: 'fullstack-app',
@@ -717,12 +683,16 @@ export class AIBOSCLI {
         framework: 'next',
         features: ['Next.js', 'TypeScript', 'Database', 'Authentication'],
         complexity: 'complex',
-        estimatedTime: 90
-      }
+        estimatedTime: 90,
+      },
     ];
   }
 
-  private async createProjectStructure(template: string, language: string, framework?: string): Promise<void> {
+  private async createProjectStructure(
+    template: string,
+    language: string,
+    framework?: string,
+  ): Promise<void> {
     // Implementation for creating project structure
     console.log(`Creating ${template} project with ${language}...`);
   }
@@ -746,7 +716,7 @@ export class AIBOSCLI {
   private async listTemplates(): Promise<void> {
     const templates = await this.getAvailableTemplates();
     console.log(chalk.blue('\n📋 Available Templates:'));
-    templates.forEach(template => {
+    templates.forEach((template) => {
       console.log(chalk.cyan(`\n${template.name}`));
       console.log(chalk.gray(`  ${template.description}`));
       console.log(chalk.yellow(`  Type: ${template.type} | Language: ${template.language}`));
@@ -827,4 +797,4 @@ export class AIBOSCLI {
 }
 
 // Export CLI instance
-export const aibosCLI = new AIBOSCLI(); 
+export const aibosCLI = new AIBOSCLI();

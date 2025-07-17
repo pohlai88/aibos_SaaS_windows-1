@@ -1,6 +1,6 @@
-import { SubscriptionPlan, BillingInterval } from "../types/billing/billing.enums";
-import { Currency } from "../types/billing/currency.enums";
-import { Feature, PricingTableEntry } from "../types/billing/pricingTable.schema";
+import { SubscriptionPlan, BillingInterval } from '../types/billing/billing.enums';
+import { Currency } from '../types/billing/currency.enums';
+import { Feature, PricingTableEntry } from '../types/billing/pricingTable.schema';
 
 /**
  * Predefined features available across all plans
@@ -13,7 +13,7 @@ export const PREDEFINED_FEATURES: Record<string, Feature> = {
     description: 'Full REST API access with comprehensive endpoints',
     tooltip: 'Unlimited API calls with rate limiting',
     icon: 'api-icon',
-    isHighlighted: true
+    isHighlighted: true,
   },
   'analytics': {
     id: 'analytics',
@@ -21,14 +21,14 @@ export const PREDEFINED_FEATURES: Record<string, Feature> = {
     description: 'Detailed usage analytics and reporting',
     tooltip: 'Real-time insights and custom reports',
     icon: 'chart-icon',
-    isHighlighted: true
+    isHighlighted: true,
   },
   'multi-team': {
     id: 'multi-team',
     name: 'Multi-Team Support',
     description: 'Support for multiple teams and organizations',
     tooltip: 'Team management and collaboration features',
-    icon: 'team-icon'
+    icon: 'team-icon',
   },
   'priority-support': {
     id: 'priority-support',
@@ -36,65 +36,58 @@ export const PREDEFINED_FEATURES: Record<string, Feature> = {
     description: '24/7 priority customer support',
     tooltip: 'Dedicated support team with SLA guarantees',
     icon: 'support-icon',
-    isHighlighted: true
+    isHighlighted: true,
   },
   'custom-integrations': {
     id: 'custom-integrations',
     name: 'Custom Integrations',
     description: 'Custom integration development and support',
     tooltip: 'White-label solutions and custom development',
-    icon: 'integration-icon'
+    icon: 'integration-icon',
   },
   'data-export': {
     id: 'data-export',
     name: 'Data Export',
     description: 'Export data in multiple formats',
     tooltip: 'CSV, JSON, and API data export capabilities',
-    icon: 'export-icon'
+    icon: 'export-icon',
   },
   'audit-logs': {
     id: 'audit-logs',
     name: 'Audit Logs',
     description: 'Comprehensive audit trail and logging',
     tooltip: 'Complete activity tracking and compliance logs',
-    icon: 'audit-icon'
+    icon: 'audit-icon',
   },
   'sso': {
     id: 'sso',
     name: 'Single Sign-On (SSO)',
     description: 'Enterprise SSO integration',
     tooltip: 'SAML, OAuth, and LDAP integration',
-    icon: 'sso-icon'
+    icon: 'sso-icon',
   },
   'advanced-security': {
     id: 'advanced-security',
     name: 'Advanced Security',
     description: 'Enterprise-grade security features',
     tooltip: '2FA, encryption, and security compliance',
-    icon: 'security-icon'
+    icon: 'security-icon',
   },
   'custom-branding': {
     id: 'custom-branding',
     name: 'Custom Branding',
     description: 'White-label and custom branding options',
     tooltip: 'Remove our branding and use your own',
-    icon: 'branding-icon'
-  }
+    icon: 'branding-icon',
+  },
 };
 
 /**
  * Plan feature configurations
  */
 export const PLAN_FEATURES: Record<SubscriptionPlan, string[]> = {
-  [SubscriptionPlan.FREE]: [
-    'api-access'
-  ],
-  [SubscriptionPlan.PRO]: [
-    'api-access',
-    'analytics',
-    'multi-team',
-    'data-export'
-  ],
+  [SubscriptionPlan.FREE]: ['api-access'],
+  [SubscriptionPlan.PRO]: ['api-access', 'analytics', 'multi-team', 'data-export'],
   [SubscriptionPlan.ENTERPRISE]: [
     'api-access',
     'analytics',
@@ -105,8 +98,8 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, string[]> = {
     'audit-logs',
     'sso',
     'advanced-security',
-    'custom-branding'
-  ]
+    'custom-branding',
+  ],
 };
 
 /**
@@ -115,41 +108,44 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, string[]> = {
 export const DEFAULT_PRICING: Record<SubscriptionPlan, Record<BillingInterval, number>> = {
   [SubscriptionPlan.FREE]: {
     [BillingInterval.MONTHLY]: 0,
-    [BillingInterval.YEARLY]: 0
+    [BillingInterval.YEARLY]: 0,
   },
   [SubscriptionPlan.PRO]: {
     [BillingInterval.MONTHLY]: 29.99,
-    [BillingInterval.YEARLY]: 299.99
+    [BillingInterval.YEARLY]: 299.99,
   },
   [SubscriptionPlan.ENTERPRISE]: {
     [BillingInterval.MONTHLY]: 99.99,
-    [BillingInterval.YEARLY]: 999.99
-  }
+    [BillingInterval.YEARLY]: 999.99,
+  },
 };
 
 /**
  * Plan limits configuration
  */
-export const PLAN_LIMITS: Record<SubscriptionPlan, {
-  maxUsers: number;
-  storageGB: number;
-  apiCalls: number;
-}> = {
+export const PLAN_LIMITS: Record<
+  SubscriptionPlan,
+  {
+    maxUsers: number;
+    storageGB: number;
+    apiCalls: number;
+  }
+> = {
   [SubscriptionPlan.FREE]: {
     maxUsers: 1,
     storageGB: 5,
-    apiCalls: 1000
+    apiCalls: 1000,
   },
   [SubscriptionPlan.PRO]: {
     maxUsers: 10,
     storageGB: 100,
-    apiCalls: 10000
+    apiCalls: 10000,
   },
   [SubscriptionPlan.ENTERPRISE]: {
     maxUsers: Infinity,
     storageGB: Infinity,
-    apiCalls: Infinity
-  }
+    apiCalls: Infinity,
+  },
 };
 
 /**
@@ -158,7 +154,7 @@ export const PLAN_LIMITS: Record<SubscriptionPlan, {
 export const PLAN_DESCRIPTIONS: Record<SubscriptionPlan, string> = {
   [SubscriptionPlan.FREE]: 'Perfect for individuals and small projects',
   [SubscriptionPlan.PRO]: 'Ideal for growing teams and businesses',
-  [SubscriptionPlan.ENTERPRISE]: 'Complete solution for large organizations'
+  [SubscriptionPlan.ENTERPRISE]: 'Complete solution for large organizations',
 };
 
 /**
@@ -174,24 +170,24 @@ export interface PlanDisplayMetadata {
 
 export const PLAN_DISPLAY_METADATA: Record<SubscriptionPlan, PlanDisplayMetadata> = {
   [SubscriptionPlan.FREE]: {
-    name: "Free",
-    description: "Basic features",
-    color: "#64748b",
-    icon: "free"
+    name: 'Free',
+    description: 'Basic features',
+    color: '#64748b',
+    icon: 'free',
   },
   [SubscriptionPlan.PRO]: {
-    name: "Pro",
-    description: "Advanced features",
-    color: "#6366f1",
-    icon: "pro"
+    name: 'Pro',
+    description: 'Advanced features',
+    color: '#6366f1',
+    icon: 'pro',
   },
   [SubscriptionPlan.ENTERPRISE]: {
-    name: "Enterprise",
-    description: "Full features",
-    color: "#10b981",
-    icon: "enterprise",
-    badge: "Popular"
-  }
+    name: 'Enterprise',
+    description: 'Full features',
+    color: '#10b981',
+    icon: 'enterprise',
+    badge: 'Popular',
+  },
 };
 
 /**
@@ -201,12 +197,12 @@ export function createPricingTableEntry(
   plan: SubscriptionPlan,
   interval: BillingInterval,
   currency: Currency = Currency.USD,
-  customPrice?: number
+  customPrice?: number,
 ): PricingTableEntry {
   const price = customPrice ?? DEFAULT_PRICING[plan][interval];
-  const features = PLAN_FEATURES[plan].map(featureId => PREDEFINED_FEATURES[featureId]);
+  const features = PLAN_FEATURES[plan].map((featureId) => PREDEFINED_FEATURES[featureId]);
   const limits = PLAN_LIMITS[plan];
-  
+
   return {
     plan,
     interval,
@@ -221,9 +217,14 @@ export function createPricingTableEntry(
     displayOrder: getDisplayOrder(plan, interval),
     isPopular: plan === SubscriptionPlan.PRO && interval === BillingInterval.MONTHLY,
     monthlyEquivalent: interval === BillingInterval.YEARLY ? price / 12 : price,
-    savingsPercentage: interval === BillingInterval.YEARLY 
-      ? Math.round(((DEFAULT_PRICING[plan][BillingInterval.MONTHLY] * 12 - price) / (DEFAULT_PRICING[plan][BillingInterval.MONTHLY] * 12)) * 100)
-      : undefined
+    savingsPercentage:
+      interval === BillingInterval.YEARLY
+        ? Math.round(
+            ((DEFAULT_PRICING[plan][BillingInterval.MONTHLY] * 12 - price) /
+              (DEFAULT_PRICING[plan][BillingInterval.MONTHLY] * 12)) *
+              100,
+          )
+        : undefined,
   };
 }
 
@@ -234,14 +235,14 @@ function getDisplayOrder(plan: SubscriptionPlan, interval: BillingInterval): num
   const planOrder = {
     [SubscriptionPlan.FREE]: 1,
     [SubscriptionPlan.PRO]: 2,
-    [SubscriptionPlan.ENTERPRISE]: 3
+    [SubscriptionPlan.ENTERPRISE]: 3,
   };
-  
+
   const intervalOrder = {
     [BillingInterval.MONTHLY]: 0,
-    [BillingInterval.YEARLY]: 1
+    [BillingInterval.YEARLY]: 1,
   };
-  
+
   return planOrder[plan] * 10 + intervalOrder[interval];
 }
 
@@ -251,9 +252,9 @@ function getDisplayOrder(plan: SubscriptionPlan, interval: BillingInterval): num
 export function createPricingTable(currency: Currency = Currency.USD): PricingTableEntry[] {
   const plans = Object.values(SubscriptionPlan);
   const intervals = Object.values(BillingInterval);
-  
-  return plans.flatMap(plan =>
-    intervals.map(interval => createPricingTableEntry(plan, interval, currency))
+
+  return plans.flatMap((plan) =>
+    intervals.map((interval) => createPricingTableEntry(plan, interval, currency)),
   );
 }
 
@@ -261,7 +262,7 @@ export function createPricingTable(currency: Currency = Currency.USD): PricingTa
  * Gets features for a specific plan
  */
 export function getPlanFeatures(plan: SubscriptionPlan): Feature[] {
-  return PLAN_FEATURES[plan].map(featureId => PREDEFINED_FEATURES[featureId]);
+  return PLAN_FEATURES[plan].map((featureId) => PREDEFINED_FEATURES[featureId]);
 }
 
 /**
@@ -330,16 +331,28 @@ export const SAMPLE_PRICING_TABLE: PricingTableEntry[] = [
     price: 0,
     currency: Currency.USD,
     features: [
-      { id: "basic-features", name: "Basic Features", description: "Essential functionality for getting started" },
-      { id: "limited-usage", name: "Limited Usage", description: "Up to 1,000 API calls per month" },
-      { id: "community-support", name: "Community Support", description: "Support via community forums" }
+      {
+        id: 'basic-features',
+        name: 'Basic Features',
+        description: 'Essential functionality for getting started',
+      },
+      {
+        id: 'limited-usage',
+        name: 'Limited Usage',
+        description: 'Up to 1,000 API calls per month',
+      },
+      {
+        id: 'community-support',
+        name: 'Community Support',
+        description: 'Support via community forums',
+      },
     ],
-    description: "Perfect for individuals and small projects",
+    description: 'Perfect for individuals and small projects',
     maxUsers: 1,
     storageGB: 5,
     apiCalls: 1000,
     isActive: true,
-    displayOrder: 1
+    displayOrder: 1,
   },
   {
     plan: SubscriptionPlan.FREE,
@@ -347,16 +360,28 @@ export const SAMPLE_PRICING_TABLE: PricingTableEntry[] = [
     price: 0,
     currency: Currency.USD,
     features: [
-      { id: "basic-features", name: "Basic Features", description: "Essential functionality for getting started" },
-      { id: "limited-usage", name: "Limited Usage", description: "Up to 1,000 API calls per month" },
-      { id: "community-support", name: "Community Support", description: "Support via community forums" }
+      {
+        id: 'basic-features',
+        name: 'Basic Features',
+        description: 'Essential functionality for getting started',
+      },
+      {
+        id: 'limited-usage',
+        name: 'Limited Usage',
+        description: 'Up to 1,000 API calls per month',
+      },
+      {
+        id: 'community-support',
+        name: 'Community Support',
+        description: 'Support via community forums',
+      },
     ],
-    description: "Perfect for individuals and small projects",
+    description: 'Perfect for individuals and small projects',
     maxUsers: 1,
     storageGB: 5,
     apiCalls: 1000,
     isActive: true,
-    displayOrder: 2
+    displayOrder: 2,
   },
   {
     plan: SubscriptionPlan.PRO,
@@ -364,20 +389,32 @@ export const SAMPLE_PRICING_TABLE: PricingTableEntry[] = [
     price: 29.99,
     currency: Currency.USD,
     features: [
-      { id: "advanced-features", name: "Advanced Features", description: "Enhanced functionality for power users" },
-      { id: "priority-support", name: "Priority Support", description: "24/7 priority customer support" },
-      { id: "analytics", name: "Advanced Analytics", description: "Detailed usage analytics and reporting" },
-      { id: "multi-team", name: "Multi-Team Support", description: "Support for multiple teams" },
-      { id: "data-export", name: "Data Export", description: "Export data in multiple formats" }
+      {
+        id: 'advanced-features',
+        name: 'Advanced Features',
+        description: 'Enhanced functionality for power users',
+      },
+      {
+        id: 'priority-support',
+        name: 'Priority Support',
+        description: '24/7 priority customer support',
+      },
+      {
+        id: 'analytics',
+        name: 'Advanced Analytics',
+        description: 'Detailed usage analytics and reporting',
+      },
+      { id: 'multi-team', name: 'Multi-Team Support', description: 'Support for multiple teams' },
+      { id: 'data-export', name: 'Data Export', description: 'Export data in multiple formats' },
     ],
-    description: "Ideal for growing teams and businesses",
+    description: 'Ideal for growing teams and businesses',
     maxUsers: 10,
     storageGB: 100,
     apiCalls: 10000,
     isPopular: true,
     isActive: true,
     displayOrder: 3,
-    monthlyEquivalent: 29.99
+    monthlyEquivalent: 29.99,
   },
   {
     plan: SubscriptionPlan.PRO,
@@ -385,20 +422,32 @@ export const SAMPLE_PRICING_TABLE: PricingTableEntry[] = [
     price: 299.99,
     currency: Currency.USD,
     features: [
-      { id: "advanced-features", name: "Advanced Features", description: "Enhanced functionality for power users" },
-      { id: "priority-support", name: "Priority Support", description: "24/7 priority customer support" },
-      { id: "analytics", name: "Advanced Analytics", description: "Detailed usage analytics and reporting" },
-      { id: "multi-team", name: "Multi-Team Support", description: "Support for multiple teams" },
-      { id: "data-export", name: "Data Export", description: "Export data in multiple formats" }
+      {
+        id: 'advanced-features',
+        name: 'Advanced Features',
+        description: 'Enhanced functionality for power users',
+      },
+      {
+        id: 'priority-support',
+        name: 'Priority Support',
+        description: '24/7 priority customer support',
+      },
+      {
+        id: 'analytics',
+        name: 'Advanced Analytics',
+        description: 'Detailed usage analytics and reporting',
+      },
+      { id: 'multi-team', name: 'Multi-Team Support', description: 'Support for multiple teams' },
+      { id: 'data-export', name: 'Data Export', description: 'Export data in multiple formats' },
     ],
-    description: "Ideal for growing teams and businesses",
+    description: 'Ideal for growing teams and businesses',
     maxUsers: 10,
     storageGB: 100,
     apiCalls: 10000,
     isActive: true,
     displayOrder: 4,
     monthlyEquivalent: 24.99,
-    savingsPercentage: 17
+    savingsPercentage: 17,
   },
   {
     plan: SubscriptionPlan.ENTERPRISE,
@@ -406,21 +455,37 @@ export const SAMPLE_PRICING_TABLE: PricingTableEntry[] = [
     price: 99.99,
     currency: Currency.USD,
     features: [
-      { id: "enterprise-features", name: "Enterprise Features", description: "Complete enterprise solution" },
-      { id: "dedicated-support", name: "Dedicated Support", description: "Dedicated account manager" },
-      { id: "custom-integrations", name: "Custom Integrations", description: "Custom integration development" },
-      { id: "audit-logs", name: "Audit Logs", description: "Comprehensive audit trail" },
-      { id: "sso", name: "Single Sign-On (SSO)", description: "Enterprise SSO integration" },
-      { id: "advanced-security", name: "Advanced Security", description: "Enterprise-grade security" },
-      { id: "custom-branding", name: "Custom Branding", description: "White-label solutions" }
+      {
+        id: 'enterprise-features',
+        name: 'Enterprise Features',
+        description: 'Complete enterprise solution',
+      },
+      {
+        id: 'dedicated-support',
+        name: 'Dedicated Support',
+        description: 'Dedicated account manager',
+      },
+      {
+        id: 'custom-integrations',
+        name: 'Custom Integrations',
+        description: 'Custom integration development',
+      },
+      { id: 'audit-logs', name: 'Audit Logs', description: 'Comprehensive audit trail' },
+      { id: 'sso', name: 'Single Sign-On (SSO)', description: 'Enterprise SSO integration' },
+      {
+        id: 'advanced-security',
+        name: 'Advanced Security',
+        description: 'Enterprise-grade security',
+      },
+      { id: 'custom-branding', name: 'Custom Branding', description: 'White-label solutions' },
     ],
-    description: "Complete solution for large organizations",
+    description: 'Complete solution for large organizations',
     maxUsers: Infinity,
     storageGB: Infinity,
     apiCalls: Infinity,
     isActive: true,
     displayOrder: 5,
-    monthlyEquivalent: 99.99
+    monthlyEquivalent: 99.99,
   },
   {
     plan: SubscriptionPlan.ENTERPRISE,
@@ -428,21 +493,37 @@ export const SAMPLE_PRICING_TABLE: PricingTableEntry[] = [
     price: 999.99,
     currency: Currency.USD,
     features: [
-      { id: "enterprise-features", name: "Enterprise Features", description: "Complete enterprise solution" },
-      { id: "dedicated-support", name: "Dedicated Support", description: "Dedicated account manager" },
-      { id: "custom-integrations", name: "Custom Integrations", description: "Custom integration development" },
-      { id: "audit-logs", name: "Audit Logs", description: "Comprehensive audit trail" },
-      { id: "sso", name: "Single Sign-On (SSO)", description: "Enterprise SSO integration" },
-      { id: "advanced-security", name: "Advanced Security", description: "Enterprise-grade security" },
-      { id: "custom-branding", name: "Custom Branding", description: "White-label solutions" }
+      {
+        id: 'enterprise-features',
+        name: 'Enterprise Features',
+        description: 'Complete enterprise solution',
+      },
+      {
+        id: 'dedicated-support',
+        name: 'Dedicated Support',
+        description: 'Dedicated account manager',
+      },
+      {
+        id: 'custom-integrations',
+        name: 'Custom Integrations',
+        description: 'Custom integration development',
+      },
+      { id: 'audit-logs', name: 'Audit Logs', description: 'Comprehensive audit trail' },
+      { id: 'sso', name: 'Single Sign-On (SSO)', description: 'Enterprise SSO integration' },
+      {
+        id: 'advanced-security',
+        name: 'Advanced Security',
+        description: 'Enterprise-grade security',
+      },
+      { id: 'custom-branding', name: 'Custom Branding', description: 'White-label solutions' },
     ],
-    description: "Complete solution for large organizations",
+    description: 'Complete solution for large organizations',
     maxUsers: Infinity,
     storageGB: Infinity,
     apiCalls: Infinity,
     isActive: true,
     displayOrder: 6,
     monthlyEquivalent: 83.33,
-    savingsPercentage: 17
-  }
-]; 
+    savingsPercentage: 17,
+  },
+];

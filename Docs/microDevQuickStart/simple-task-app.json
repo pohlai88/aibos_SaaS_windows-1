@@ -5,7 +5,7 @@
   "author": "AI-BOS",
   "icon": "📝",
   "color": "#3B82F6",
-  
+
   "entities": [
     {
       "name": "Task",
@@ -133,7 +133,7 @@
             "renderer": "badge",
             "colors": {
               "low": "green",
-              "medium": "yellow", 
+              "medium": "yellow",
               "high": "red"
             }
           },
@@ -180,9 +180,9 @@
             "type": "select",
             "label": "Status",
             "options": [
-              {"value": "", "label": "All"},
-              {"value": "false", "label": "Pending"},
-              {"value": "true", "label": "Completed"}
+              { "value": "", "label": "All" },
+              { "value": "false", "label": "Pending" },
+              { "value": "true", "label": "Completed" }
             ]
           },
           {
@@ -190,10 +190,10 @@
             "type": "select",
             "label": "Priority",
             "options": [
-              {"value": "", "label": "All"},
-              {"value": "low", "label": "Low"},
-              {"value": "medium", "label": "Medium"},
-              {"value": "high", "label": "High"}
+              { "value": "", "label": "All" },
+              { "value": "low", "label": "Low" },
+              { "value": "medium", "label": "Medium" },
+              { "value": "high", "label": "High" }
             ]
           }
         ],
@@ -244,9 +244,9 @@
             "label": "Priority",
             "required": true,
             "options": [
-              {"value": "low", "label": "Low"},
-              {"value": "medium", "label": "Medium"},
-              {"value": "high", "label": "High"}
+              { "value": "low", "label": "Low" },
+              { "value": "medium", "label": "Medium" },
+              { "value": "high", "label": "High" }
             ]
           },
           {
@@ -296,9 +296,9 @@
             "label": "Priority",
             "required": true,
             "options": [
-              {"value": "low", "label": "Low"},
-              {"value": "medium", "label": "Medium"},
-              {"value": "high", "label": "High"}
+              { "value": "low", "label": "Low" },
+              { "value": "medium", "label": "Medium" },
+              { "value": "high", "label": "High" }
             ]
           },
           {
@@ -433,4 +433,4 @@
       }
     ]
   }
-} 
+}

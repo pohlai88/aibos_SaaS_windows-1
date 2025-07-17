@@ -1,6 +1,6 @@
 /**
  * AI-BOS Advanced AI Engine
- * 
+ *
  * Market-leading AI integration engine with multi-provider support,
  * real-time learning, and enterprise-grade capabilities.
  */
@@ -19,14 +19,22 @@ import { logger } from '../../../lib/logger';
 export type AIProvider = 'openai' | 'anthropic' | 'local' | 'custom';
 
 // AI Model types
-export type AIModel = 
-  | 'gpt-4' | 'gpt-4-turbo' | 'gpt-3.5-turbo' | 'gpt-4o'
-  | 'claude-3-opus' | 'claude-3-sonnet' | 'claude-3-haiku'
-  | 'llama-2' | 'llama-3' | 'mistral' | 'gemini'
+export type AIModel =
+  | 'gpt-4'
+  | 'gpt-4-turbo'
+  | 'gpt-3.5-turbo'
+  | 'gpt-4o'
+  | 'claude-3-opus'
+  | 'claude-3-sonnet'
+  | 'claude-3-haiku'
+  | 'llama-2'
+  | 'llama-3'
+  | 'mistral'
+  | 'gemini'
   | 'custom';
 
 // AI Task types
-export type AITask = 
+export type AITask =
   | 'text-generation'
   | 'text-completion'
   | 'text-classification'
@@ -178,10 +186,10 @@ export interface ProviderHealth {
 
 // Circuit Breaker Configuration
 export interface CircuitBreakerConfig {
-  failureThreshold: number;      // Number of failures before opening circuit
-  recoveryTimeout: number;       // Time to wait before trying again (ms)
-  successThreshold: number;      // Number of successes to close circuit
-  timeout: number;               // Request timeout (ms)
+  failureThreshold: number; // Number of failures before opening circuit
+  recoveryTimeout: number; // Time to wait before trying again (ms)
+  successThreshold: number; // Number of successes to close circuit
+  timeout: number; // Request timeout (ms)
 }
 
 // Local Model Configuration
@@ -351,7 +359,7 @@ export interface AIEngineConfig {
   costOptimization: boolean;
   performanceMonitoring: boolean;
   circuitBreaker: CircuitBreakerConfig;
-  fallbackChain: AIProvider[];   // Provider fallback order
+  fallbackChain: AIProvider[]; // Provider fallback order
   enableGracefulDegradation: boolean;
   localModels: {
     enabled: boolean;
@@ -386,7 +394,7 @@ export interface AIEngineConfig {
 
 /**
  * Market-leading AI Engine with multi-provider support and circuit breaker pattern
- * 
+ *
  * This engine has been optimized for:
  * - High performance and low latency
  * - Cost optimization and budget management
@@ -401,9 +409,13 @@ export class AIEngine {
   private cache: MultiLevelCache | MemoryCache;
   private learningData: AILearningData[];
   private performanceMetrics: AIPerformanceMetrics[];
-  private requestQueue: Array<{ request: AIRequest; resolve: (value: AIResponse) => void; reject: (reason: any) => void }>;
+  private requestQueue: Array<{
+    request: AIRequest;
+    resolve: (value: AIResponse) => void;
+    reject: (reason: any) => void;
+  }>;
   private isProcessing: boolean;
-  
+
   // Circuit Breaker and Health Monitoring
   private providerHealth: Map<AIProvider, ProviderHealth>;
   private circuitBreakers: Map<AIProvider, CircuitBreakerState>;
@@ -429,7 +441,12 @@ export class AIEngine {
   private performanceData: PerformanceMetrics;
   private performanceTrends: PerformanceTrend[];
   private performanceAlerts: PerformanceAlert[];
-  private requestSamples: Array<{ request: AIRequest; response: AIResponse; metrics: any; timestamp: number }>;
+  private requestSamples: Array<{
+    request: AIRequest;
+    response: AIResponse;
+    metrics: any;
+    timestamp: number;
+  }>;
   private alertCooldowns: Map<string, number>;
 
   constructor(config: Partial<AIEngineConfig> = {}) {
@@ -452,7 +469,7 @@ export class AIEngine {
           timeout: 30000,
           retries: 3,
           cache: true,
-          streaming: false
+          streaming: false,
         },
         anthropic: {
           provider: 'anthropic',
@@ -462,8 +479,8 @@ export class AIEngine {
           timeout: 30000,
           retries: 3,
           cache: true,
-          streaming: false
-        }
+          streaming: false,
+        },
       },
       defaultProvider: 'openai',
       defaultModel: 'gpt-4',
@@ -479,7 +496,7 @@ export class AIEngine {
         failureThreshold: 5,
         recoveryTimeout: 60000,
         successThreshold: 3,
-        timeout: 30000
+        timeout: 30000,
       },
       fallbackChain: ['openai', 'anthropic', 'local'],
       enableGracefulDegradation: true,
@@ -497,8 +514,8 @@ export class AIEngine {
           'summarization',
           'translation',
           'anomaly-detection',
-          'recommendation'
-        ]
+          'recommendation',
+        ],
       },
       promptEngineering: {
         enabled: true,
@@ -507,18 +524,18 @@ export class AIEngine {
         enableStructuredOutput: true,
         enableFewShotLearning: true,
         maxExamples: 3,
-        defaultTemplates: this.getDefaultTemplates()
+        defaultTemplates: this.getDefaultTemplates(),
       },
       costManagement: {
         enabled: true,
         budget: {
           monthly: 1000,
           daily: 33.33,
-          perRequest: 0.10,
+          perRequest: 0.1,
           alerts: {
             warningThreshold: 80,
-            criticalThreshold: 95
-          }
+            criticalThreshold: 95,
+          },
         },
         optimization: {
           enabled: true,
@@ -527,25 +544,25 @@ export class AIEngine {
             providerRouting: true,
             tokenOptimization: true,
             caching: true,
-            localModels: true
+            localModels: true,
           },
           thresholds: {
-            maxCostPerRequest: 0.50,
+            maxCostPerRequest: 0.5,
             maxTokensPerRequest: 2000,
-            preferredProviders: ['local', 'anthropic', 'openai']
-          }
+            preferredProviders: ['local', 'anthropic', 'openai'],
+          },
         },
         tracking: {
           enabled: true,
           retentionDays: 90,
-          realTimeAlerts: true
-        }
+          realTimeAlerts: true,
+        },
       },
       performanceMonitoring: {
         enabled: true,
         sampling: {
           rate: 10,
-          maxSamples: 1000
+          maxSamples: 1000,
         },
         alerting: {
           enabled: true,
@@ -553,16 +570,16 @@ export class AIEngine {
             errorRate: 5,
             responseTime: 5000,
             throughput: 10,
-            costPerRequest: 0.50
+            costPerRequest: 0.5,
           },
-          cooldown: 5
+          cooldown: 5,
         },
         retention: {
           trends: 30,
           alerts: 7,
-          samples: 1
-        }
-      }
+          samples: 1,
+        },
+      },
     };
 
     return this.mergeConfigs(defaultConfig, userConfig);
@@ -575,7 +592,8 @@ export class AIEngine {
     return {
       'text-generation': 'Generate high-quality, engaging content about {topic}.',
       'text-completion': 'Complete the following text naturally: {text}',
-      'text-classification': 'Classify the following text into the most appropriate category: {text}',
+      'text-classification':
+        'Classify the following text into the most appropriate category: {text}',
       'sentiment-analysis': 'Analyze the sentiment of the following text: {text}',
       'entity-extraction': 'Extract all named entities from the following text: {text}',
       'summarization': 'Summarize the following text concisely: {text}',
@@ -590,14 +608,17 @@ export class AIEngine {
       'prediction': 'Make a prediction based on: {context}',
       'anomaly-detection': 'Detect anomalies in: {data}',
       'recommendation': 'Provide recommendations for: {context}',
-      'automation': 'Create automation for: {task}'
+      'automation': 'Create automation for: {task}',
     };
   }
 
   /**
    * Merge configurations with deep merge
    */
-  private mergeConfigs(defaultConfig: AIEngineConfig, userConfig: Partial<AIEngineConfig>): AIEngineConfig {
+  private mergeConfigs(
+    defaultConfig: AIEngineConfig,
+    userConfig: Partial<AIEngineConfig>,
+  ): AIEngineConfig {
     return {
       ...defaultConfig,
       ...userConfig,
@@ -607,8 +628,8 @@ export class AIEngine {
         ...userConfig.promptEngineering,
         defaultTemplates: {
           ...defaultConfig.promptEngineering.defaultTemplates,
-          ...userConfig.promptEngineering?.defaultTemplates
-        }
+          ...userConfig.promptEngineering?.defaultTemplates,
+        },
       },
       costManagement: {
         ...defaultConfig.costManagement,
@@ -619,27 +640,30 @@ export class AIEngine {
           ...userConfig.costManagement?.optimization,
           strategies: {
             ...defaultConfig.costManagement.optimization.strategies,
-            ...userConfig.costManagement?.optimization?.strategies
+            ...userConfig.costManagement?.optimization?.strategies,
           },
           thresholds: {
             ...defaultConfig.costManagement.optimization.thresholds,
-            ...userConfig.costManagement?.optimization?.thresholds
-          }
-        }
+            ...userConfig.costManagement?.optimization?.thresholds,
+          },
+        },
       },
       performanceMonitoring: {
         ...defaultConfig.performanceMonitoring,
         ...userConfig.performanceMonitoring,
-        sampling: { ...defaultConfig.performanceMonitoring.sampling, ...userConfig.performanceMonitoring?.sampling },
+        sampling: {
+          ...defaultConfig.performanceMonitoring.sampling,
+          ...userConfig.performanceMonitoring?.sampling,
+        },
         alerting: {
           ...defaultConfig.performanceMonitoring.alerting,
           ...userConfig.performanceMonitoring?.alerting,
           thresholds: {
             ...defaultConfig.performanceMonitoring.alerting.thresholds,
-            ...userConfig.performanceMonitoring?.alerting?.thresholds
-          }
-        }
-      }
+            ...userConfig.performanceMonitoring?.alerting?.thresholds,
+          },
+        },
+      },
     };
   }
 
@@ -664,7 +688,7 @@ export class AIEngine {
       maxSize: 1000,
       cleanupInterval: 60 * 1000,
       enableStats: true,
-      redisUrl: process.env.REDIS_URL || undefined
+      redisUrl: process.env.REDIS_URL || undefined,
     };
 
     try {
@@ -729,7 +753,7 @@ export class AIEngine {
    * Initialize provider health tracking
    */
   private initializeProviderHealth(): void {
-    Object.keys(this.config.providers).forEach(provider => {
+    Object.keys(this.config.providers).forEach((provider) => {
       this.providerHealth.set(provider as AIProvider, {
         provider: provider as AIProvider,
         successCount: 0,
@@ -739,7 +763,7 @@ export class AIEngine {
         circuitBreakerState: 'CLOSED',
         isHealthy: true,
         costPerRequest: 0,
-        totalCost: 0
+        totalCost: 0,
       });
       this.circuitBreakers.set(provider as AIProvider, 'CLOSED');
     });
@@ -753,7 +777,7 @@ export class AIEngine {
     if (this.config.providers.openai?.apiKey) {
       const openai = new OpenAI({
         apiKey: this.config.providers.openai.apiKey,
-        baseURL: this.config.providers.openai.baseURL
+        baseURL: this.config.providers.openai.baseURL,
       });
       this.providers.set('openai', openai);
     }
@@ -762,7 +786,7 @@ export class AIEngine {
     if (this.config.providers.anthropic?.apiKey) {
       const anthropic = new Anthropic({
         apiKey: this.config.providers.anthropic.apiKey,
-        baseURL: this.config.providers.anthropic.baseURL
+        baseURL: this.config.providers.anthropic.baseURL,
       });
       this.providers.set('anthropic', anthropic);
     }
@@ -784,14 +808,14 @@ export class AIEngine {
       // Initialize TensorFlow.js
       await tf.ready();
       logger?.info?.('TensorFlow.js initialized');
-      
+
       // Load pre-trained models
       await this.loadLocalModels();
-      
+
       this.providers.set('local', {
         type: 'local',
         models: this.localModelRegistry,
-        isInitialized: true
+        isInitialized: true,
       });
 
       this.isLocalModelsInitialized = true;
@@ -814,7 +838,7 @@ export class AIEngine {
         maxInputLength: 512,
         batchSize: 32,
         cacheModel: this.config.localModels.enableModelCaching,
-        fallbackToCloud: this.config.localModels.fallbackToCloud
+        fallbackToCloud: this.config.localModels.fallbackToCloud,
       },
       'sentiment-analysis': {
         modelPath: `${this.config.localModels.modelsPath}/sentiment-analysis`,
@@ -823,7 +847,7 @@ export class AIEngine {
         maxInputLength: 256,
         batchSize: 64,
         cacheModel: this.config.localModels.enableModelCaching,
-        fallbackToCloud: this.config.localModels.fallbackToCloud
+        fallbackToCloud: this.config.localModels.fallbackToCloud,
       },
       'entity-extraction': {
         modelPath: `${this.config.localModels.modelsPath}/entity-extraction`,
@@ -832,7 +856,7 @@ export class AIEngine {
         maxInputLength: 512,
         batchSize: 16,
         cacheModel: this.config.localModels.enableModelCaching,
-        fallbackToCloud: this.config.localModels.fallbackToCloud
+        fallbackToCloud: this.config.localModels.fallbackToCloud,
       },
       'summarization': {
         modelPath: `${this.config.localModels.modelsPath}/summarization`,
@@ -841,7 +865,7 @@ export class AIEngine {
         maxInputLength: 1024,
         batchSize: 8,
         cacheModel: this.config.localModels.enableModelCaching,
-        fallbackToCloud: this.config.localModels.fallbackToCloud
+        fallbackToCloud: this.config.localModels.fallbackToCloud,
       },
       'translation': {
         modelPath: `${this.config.localModels.modelsPath}/translation`,
@@ -850,7 +874,7 @@ export class AIEngine {
         maxInputLength: 512,
         batchSize: 16,
         cacheModel: this.config.localModels.enableModelCaching,
-        fallbackToCloud: this.config.localModels.fallbackToCloud
+        fallbackToCloud: this.config.localModels.fallbackToCloud,
       },
       'anomaly-detection': {
         modelPath: `${this.config.localModels.modelsPath}/anomaly-detection`,
@@ -859,7 +883,7 @@ export class AIEngine {
         maxInputLength: 256,
         batchSize: 32,
         cacheModel: this.config.localModels.enableModelCaching,
-        fallbackToCloud: this.config.localModels.fallbackToCloud
+        fallbackToCloud: this.config.localModels.fallbackToCloud,
       },
       'recommendation': {
         modelPath: `${this.config.localModels.modelsPath}/recommendation`,
@@ -868,8 +892,8 @@ export class AIEngine {
         maxInputLength: 128,
         batchSize: 64,
         cacheModel: this.config.localModels.enableModelCaching,
-        fallbackToCloud: this.config.localModels.fallbackToCloud
-      }
+        fallbackToCloud: this.config.localModels.fallbackToCloud,
+      },
     };
 
     // Load models for supported tasks
@@ -900,8 +924,8 @@ export class AIEngine {
           performance: {
             averageResponseTime: 0,
             successCount: 0,
-            failureCount: 0
-          }
+            failureCount: 0,
+          },
         };
         logger?.info?.(`Model for task ${task} loaded from cache`);
         return;
@@ -909,7 +933,7 @@ export class AIEngine {
 
       // Load model from file system or remote
       const model = await this.loadModelFromSource(task, config);
-      
+
       // Apply quantization if enabled
       if (config.quantization) {
         await this.quantizeModel(model);
@@ -928,8 +952,8 @@ export class AIEngine {
         performance: {
           averageResponseTime: 0,
           successCount: 0,
-          failureCount: 0
-        }
+          failureCount: 0,
+        },
       };
 
       logger?.info?.(`Model for task ${task} loaded successfully`);
@@ -956,60 +980,60 @@ export class AIEngine {
       predict: async (input: string) => {
         // Simulate model prediction with realistic delays
         await this.delay(50 + Math.random() * 100);
-        
+
         switch (task) {
           case 'text-classification':
             return {
               label: 'general',
               confidence: 0.85,
-              alternatives: ['business', 'technology', 'sports']
+              alternatives: ['business', 'technology', 'sports'],
             };
           case 'sentiment-analysis':
             return {
               sentiment: 'positive',
               confidence: 0.78,
-              score: 0.7
+              score: 0.7,
             };
           case 'entity-extraction':
             return {
               entities: [
                 { text: 'example', type: 'PERSON', confidence: 0.9 },
-                { text: 'company', type: 'ORG', confidence: 0.8 }
-              ]
+                { text: 'company', type: 'ORG', confidence: 0.8 },
+              ],
             };
           case 'summarization':
             return {
               summary: 'This is a generated summary of the input text.',
               confidence: 0.75,
-              length: 50
+              length: 50,
             };
           case 'translation':
             return {
               translated: 'This is the translated text.',
               confidence: 0.82,
               sourceLanguage: 'en',
-              targetLanguage: 'es'
+              targetLanguage: 'es',
             };
           case 'anomaly-detection':
             return {
               isAnomaly: false,
               confidence: 0.88,
-              score: 0.12
+              score: 0.12,
             };
           case 'recommendation':
             return {
               recommendations: ['item1', 'item2', 'item3'],
               confidence: 0.79,
-              scores: [0.9, 0.7, 0.6]
+              scores: [0.9, 0.7, 0.6],
             };
           default:
             return {
               result: 'Default response',
-              confidence: 0.5
+              confidence: 0.5,
             };
         }
       },
-      config
+      config,
     };
   }
 
@@ -1027,7 +1051,7 @@ export class AIEngine {
    */
   async process(request: AIRequest): Promise<AIResponse> {
     const startTime = Date.now();
-    
+
     try {
       // Step 1: Check cache
       const cachedResponse = await this.getCachedResponse(request);
@@ -1079,11 +1103,11 @@ export class AIEngine {
    */
   private optimizeTokens(request: AIRequest): AIRequest {
     const maxTokens = this.config.costManagement.optimization.thresholds.maxTokensPerRequest;
-    
+
     if (request.prompt.length > maxTokens) {
       return {
         ...request,
-        prompt: request.prompt.substring(0, maxTokens)
+        prompt: request.prompt.substring(0, maxTokens),
       };
     }
 
@@ -1100,7 +1124,9 @@ export class AIEngine {
     const maxCost = this.config.costManagement.optimization.thresholds.maxCostPerRequest;
 
     if (estimatedCost > maxCost) {
-      throw new Error(`Estimated cost $${estimatedCost.toFixed(4)} exceeds maximum allowed cost $${maxCost}`);
+      throw new Error(
+        `Estimated cost $${estimatedCost.toFixed(4)} exceeds maximum allowed cost $${maxCost}`,
+      );
     }
   }
 
@@ -1109,7 +1135,7 @@ export class AIEngine {
    */
   private async processWithProviders(request: AIRequest, startTime: number): Promise<AIResponse> {
     const healthyProviders = this.getHealthyProviders();
-    
+
     if (healthyProviders.length === 0) {
       return await this.handleGracefulDegradation(request);
     }
@@ -1122,13 +1148,13 @@ export class AIEngine {
       } catch (error) {
         this.updatePerformanceMetrics(request, {} as AIResponse, startTime, false, error);
         this.recordProviderFailure(provider, error);
-        
+
         logger?.warn?.('Provider failed, trying next in fallback chain', {
           provider,
           error: error.message,
-          remainingProviders: healthyProviders.slice(healthyProviders.indexOf(provider) + 1)
+          remainingProviders: healthyProviders.slice(healthyProviders.indexOf(provider) + 1),
         });
-        
+
         continue;
       }
     }
@@ -1139,14 +1165,18 @@ export class AIEngine {
   /**
    * Finalize request processing
    */
-  private async finalizeRequest(request: AIRequest, response: AIResponse, startTime: number): Promise<void> {
+  private async finalizeRequest(
+    request: AIRequest,
+    response: AIResponse,
+    startTime: number,
+  ): Promise<void> {
     // Update cost metrics
     const cost = this.calculateCost(response, request);
     this.updateCostMetrics(response, request, cost);
-    
+
     // Record success
     this.recordProviderSuccess(response.provider, Date.now() - startTime);
-    
+
     // Cache response
     if (this.config.enableCaching) {
       await this.cacheResponse(request, response);
@@ -1176,18 +1206,18 @@ export class AIEngine {
    */
   private async processNext(): Promise<void> {
     if (this.isProcessing || this.requestQueue.length === 0) return;
-    
+
     this.isProcessing = true;
     const batch = this.requestQueue.splice(0, this.config.maxConcurrentRequests);
-    
+
     // Process batch concurrently
     const promises = batch.map(({ request, resolve, reject }) =>
-      this.executeRequest(request).then(resolve).catch(reject)
+      this.executeRequest(request).then(resolve).catch(reject),
     );
-    
+
     await Promise.allSettled(promises);
     this.isProcessing = false;
-    
+
     // Schedule next batch processing
     setTimeout(() => this.processNext(), 0);
   }
@@ -1221,7 +1251,11 @@ export class AIEngine {
   /**
    * Execute request with specific provider
    */
-  private async executeWithProvider(provider: any, request: AIRequest, config: AIConfig): Promise<AIResponse> {
+  private async executeWithProvider(
+    provider: any,
+    request: AIRequest,
+    config: AIConfig,
+  ): Promise<AIResponse> {
     switch (config.provider) {
       case 'openai':
         return this.executeOpenAI(provider, request, config);
@@ -1237,7 +1271,11 @@ export class AIEngine {
   /**
    * Execute OpenAI request with advanced prompt engineering
    */
-  private async executeOpenAI(openai: OpenAI, request: AIRequest, config: AIConfig): Promise<AIResponse> {
+  private async executeOpenAI(
+    openai: OpenAI,
+    request: AIRequest,
+    config: AIConfig,
+  ): Promise<AIResponse> {
     const optimizedPrompt = this.buildPrompt(request);
     const template = this.getPromptTemplate(request);
     const optimization = template.optimization || this.getDefaultOptimization(request.task);
@@ -1246,26 +1284,28 @@ export class AIEngine {
       model: config.model as string,
       messages: [
         { role: 'system', content: this.getSystemPrompt(request.task) },
-        { role: 'user', content: optimizedPrompt }
+        { role: 'user', content: optimizedPrompt },
       ],
       temperature: optimization.temperature,
       max_tokens: optimization.maxTokens,
       top_p: optimization.topP,
       frequency_penalty: optimization.frequencyPenalty,
       presence_penalty: optimization.presencePenalty,
-      stream: config.streaming
+      stream: config.streaming,
     });
 
     const response: AIResponse = {
       content: completion.choices[0]?.message?.content || '',
       model: config.model,
       provider: config.provider,
-      usage: completion.usage ? {
-        promptTokens: completion.usage.prompt_tokens,
-        completionTokens: completion.usage.completion_tokens,
-        totalTokens: completion.usage.total_tokens
-      } : undefined,
-      confidence: this.calculateConfidence(completion.choices[0]?.finish_reason)
+      usage: completion.usage
+        ? {
+            promptTokens: completion.usage.prompt_tokens,
+            completionTokens: completion.usage.completion_tokens,
+            totalTokens: completion.usage.total_tokens,
+          }
+        : undefined,
+      confidence: this.calculateConfidence(completion.choices[0]?.finish_reason),
     };
 
     // Parse and validate response
@@ -1275,7 +1315,11 @@ export class AIEngine {
   /**
    * Execute Anthropic request with advanced prompt engineering
    */
-  private async executeAnthropic(anthropic: Anthropic, request: AIRequest, config: AIConfig): Promise<AIResponse> {
+  private async executeAnthropic(
+    anthropic: Anthropic,
+    request: AIRequest,
+    config: AIConfig,
+  ): Promise<AIResponse> {
     const optimizedPrompt = this.buildPrompt(request);
     const template = this.getPromptTemplate(request);
     const optimization = template.optimization || this.getDefaultOptimization(request.task);
@@ -1285,19 +1329,21 @@ export class AIEngine {
       max_tokens: optimization.maxTokens,
       temperature: optimization.temperature,
       system: this.getSystemPrompt(request.task),
-      messages: [{ role: 'user', content: optimizedPrompt }]
+      messages: [{ role: 'user', content: optimizedPrompt }],
     });
 
     const response: AIResponse = {
       content: message.content[0]?.text || '',
       model: config.model,
       provider: config.provider,
-      usage: message.usage ? {
-        promptTokens: message.usage.input_tokens,
-        completionTokens: message.usage.output_tokens,
-        totalTokens: message.usage.input_tokens + message.usage.output_tokens
-      } : undefined,
-      confidence: this.calculateConfidence(message.stop_reason)
+      usage: message.usage
+        ? {
+            promptTokens: message.usage.input_tokens,
+            completionTokens: message.usage.output_tokens,
+            totalTokens: message.usage.input_tokens + message.usage.output_tokens,
+          }
+        : undefined,
+      confidence: this.calculateConfidence(message.stop_reason),
     };
 
     // Parse and validate response
@@ -1307,7 +1353,11 @@ export class AIEngine {
   /**
    * Execute local model request with optimization
    */
-  private async executeLocal(provider: any, request: AIRequest, config: AIConfig): Promise<AIResponse> {
+  private async executeLocal(
+    provider: any,
+    request: AIRequest,
+    config: AIConfig,
+  ): Promise<AIResponse> {
     if (!this.isLocalModelsInitialized) {
       throw new Error('Local models not initialized');
     }
@@ -1323,21 +1373,21 @@ export class AIEngine {
     }
 
     const startTime = Date.now();
-    
+
     try {
       // Preprocess input
       const processedInput = this.preprocessInput(request.prompt, modelInfo.config);
-      
+
       // Execute prediction
       const result = await modelInfo.model.predict(processedInput);
-      
+
       // Postprocess output
       const processedOutput = this.postprocessOutput(result, request.task);
-      
+
       // Update performance metrics
       const responseTime = Date.now() - startTime;
       this.updateLocalModelPerformance(request.task, responseTime, true);
-      
+
       return {
         content: processedOutput,
         model: 'local' as AIModel,
@@ -1348,8 +1398,8 @@ export class AIEngine {
           task: request.task,
           responseTime,
           modelType: modelInfo.config.modelType,
-          quantized: modelInfo.config.quantization
-        }
+          quantized: modelInfo.config.quantization,
+        },
       };
     } catch (error) {
       // Update performance metrics
@@ -1366,10 +1416,10 @@ export class AIEngine {
     if (input.length > config.maxInputLength) {
       input = input.substring(0, config.maxInputLength);
     }
-    
+
     // Basic text cleaning
     input = input.trim().toLowerCase();
-    
+
     return input;
   }
 
@@ -1406,8 +1456,10 @@ export class AIEngine {
 
     if (success) {
       modelInfo.performance.successCount++;
-      modelInfo.performance.averageResponseTime = 
-        (modelInfo.performance.averageResponseTime * (modelInfo.performance.successCount - 1) + responseTime) / modelInfo.performance.successCount;
+      modelInfo.performance.averageResponseTime =
+        (modelInfo.performance.averageResponseTime * (modelInfo.performance.successCount - 1) +
+          responseTime) /
+        modelInfo.performance.successCount;
     } else {
       modelInfo.performance.failureCount++;
     }
@@ -1420,27 +1472,44 @@ export class AIEngine {
    */
   private getSystemPrompt(task: AITask): string {
     const prompts = {
-      'text-generation': 'You are an expert text generator. Generate high-quality, engaging content.',
-      'text-completion': 'You are an expert at completing text. Provide natural and coherent completions.',
-      'text-classification': 'You are an expert at classifying text. Provide accurate classifications.',
-      'sentiment-analysis': 'You are an expert at analyzing sentiment. Provide accurate sentiment analysis.',
-      'entity-extraction': 'You are an expert at extracting entities from text. Extract all relevant entities.',
-      'summarization': 'You are an expert at summarizing text. Provide concise and accurate summaries.',
+      'text-generation':
+        'You are an expert text generator. Generate high-quality, engaging content.',
+      'text-completion':
+        'You are an expert at completing text. Provide natural and coherent completions.',
+      'text-classification':
+        'You are an expert at classifying text. Provide accurate classifications.',
+      'sentiment-analysis':
+        'You are an expert at analyzing sentiment. Provide accurate sentiment analysis.',
+      'entity-extraction':
+        'You are an expert at extracting entities from text. Extract all relevant entities.',
+      'summarization':
+        'You are an expert at summarizing text. Provide concise and accurate summaries.',
       'translation': 'You are an expert translator. Provide accurate and natural translations.',
-      'code-generation': 'You are an expert programmer. Generate clean, efficient, and well-documented code.',
+      'code-generation':
+        'You are an expert programmer. Generate clean, efficient, and well-documented code.',
       'code-review': 'You are an expert code reviewer. Provide thorough and constructive feedback.',
-      'image-generation': 'You are an expert at generating images. Create high-quality, relevant images.',
-      'image-analysis': 'You are an expert at analyzing images. Provide detailed and accurate analysis.',
-      'speech-to-text': 'You are an expert at converting speech to text. Provide accurate transcriptions.',
-      'text-to-speech': 'You are an expert at converting text to speech. Generate natural-sounding speech.',
+      'image-generation':
+        'You are an expert at generating images. Create high-quality, relevant images.',
+      'image-analysis':
+        'You are an expert at analyzing images. Provide detailed and accurate analysis.',
+      'speech-to-text':
+        'You are an expert at converting speech to text. Provide accurate transcriptions.',
+      'text-to-speech':
+        'You are an expert at converting text to speech. Generate natural-sounding speech.',
       'data-analysis': 'You are an expert data analyst. Provide insightful and accurate analysis.',
-      'prediction': 'You are an expert at making predictions. Provide accurate and well-reasoned predictions.',
-      'anomaly-detection': 'You are an expert at detecting anomalies. Identify unusual patterns accurately.',
-      'recommendation': 'You are an expert at making recommendations. Provide personalized and relevant recommendations.',
-      'automation': 'You are an expert at automation. Provide efficient and reliable automation solutions.'
+      'prediction':
+        'You are an expert at making predictions. Provide accurate and well-reasoned predictions.',
+      'anomaly-detection':
+        'You are an expert at detecting anomalies. Identify unusual patterns accurately.',
+      'recommendation':
+        'You are an expert at making recommendations. Provide personalized and relevant recommendations.',
+      'automation':
+        'You are an expert at automation. Provide efficient and reliable automation solutions.',
     };
 
-    return prompts[task] || 'You are an expert AI assistant. Provide helpful and accurate responses.';
+    return (
+      prompts[task] || 'You are an expert AI assistant. Provide helpful and accurate responses.'
+    );
   }
 
   /**
@@ -1448,12 +1517,12 @@ export class AIEngine {
    */
   private getRequestConfig(request: AIRequest): AIConfig {
     const defaultConfig = this.config.providers[this.config.defaultProvider];
-    
+
     return {
       ...defaultConfig,
       ...request.options,
       provider: request.options?.provider || this.config.defaultProvider,
-      model: request.options?.model || this.config.defaultModel
+      model: request.options?.model || this.config.defaultModel,
     };
   }
 
@@ -1467,16 +1536,20 @@ export class AIEngine {
       case 'length':
         return 0.85;
       case 'content_filter':
-        return 0.70;
+        return 0.7;
       default:
-        return 0.80;
+        return 0.8;
     }
   }
 
   /**
    * Cache response (async)
    */
-  private async cacheResponse(request: AIRequest, response: AIResponse, ttl?: number): Promise<void> {
+  private async cacheResponse(
+    request: AIRequest,
+    response: AIResponse,
+    ttl?: number,
+  ): Promise<void> {
     if (!this.config.enableCaching && !request.options?.cache) return;
     const key = this.generateCacheKey(request);
     await this.cache.set(key, response, ttl || this.getCacheTTL(request));
@@ -1507,7 +1580,7 @@ export class AIEngine {
       request.task,
       request.prompt,
       JSON.stringify(request.options || {}),
-      JSON.stringify(request.context || {})
+      JSON.stringify(request.context || {}),
     );
   }
 
@@ -1516,7 +1589,7 @@ export class AIEngine {
    */
   private getCacheTTL(request: AIRequest): number {
     // Allow per-request TTL override, else use default
-    return (request.options?.cache && typeof request.options.cache === 'number')
+    return request.options?.cache && typeof request.options.cache === 'number'
       ? request.options.cache
       : 5 * 60 * 1000; // 5 minutes default
   }
@@ -1534,13 +1607,17 @@ export class AIEngine {
   /**
    * Record performance metrics
    */
-  private recordPerformanceMetrics(request: AIRequest, response: AIResponse, responseTime: number): void {
+  private recordPerformanceMetrics(
+    request: AIRequest,
+    response: AIResponse,
+    responseTime: number,
+  ): void {
     const metrics: AIPerformanceMetrics = {
       responseTime,
       tokenUsage: response.usage?.totalTokens || 0,
       cost: this.calculateCost(response, request),
       latency: responseTime,
-      throughput: 1 / (responseTime / 1000)
+      throughput: 1 / (responseTime / 1000),
     };
 
     this.performanceMetrics.push(metrics);
@@ -1558,26 +1635,26 @@ export class AIEngine {
       'gpt-4-turbo': { input: 0.01, output: 0.03 },
       'gpt-3.5-turbo': { input: 0.0015, output: 0.002 },
       'gpt-3.5-turbo-16k': { input: 0.003, output: 0.004 },
-      
+
       // Anthropic models
       'claude-3-opus': { input: 0.015, output: 0.075 },
       'claude-3-sonnet': { input: 0.003, output: 0.015 },
       'claude-3-haiku': { input: 0.00025, output: 0.00125 },
       'claude-2.1': { input: 0.008, output: 0.024 },
-      
+
       // Local models (minimal cost)
-      'local': { input: 0.00001, output: 0.00001 }
+      'local': { input: 0.00001, output: 0.00001 },
     };
 
     const model = response.model as string;
     const rates = costRates[model] || costRates['gpt-3.5-turbo'];
-    
+
     const inputTokens = response.usage?.promptTokens || 0;
     const outputTokens = response.usage?.completionTokens || 0;
-    
+
     const inputCost = (inputTokens / 1000) * rates.input;
     const outputCost = (outputTokens / 1000) * rates.output;
-    
+
     return inputCost + outputCost;
   }
 
@@ -1615,15 +1692,18 @@ export class AIEngine {
    * Utility function for delay
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
    * Execute request with circuit breaker protection
    */
-  private async executeWithCircuitBreaker(provider: AIProvider, request: AIRequest): Promise<AIResponse> {
+  private async executeWithCircuitBreaker(
+    provider: AIProvider,
+    request: AIRequest,
+  ): Promise<AIResponse> {
     const circuitState = this.getCircuitBreakerState(provider);
-    
+
     if (circuitState === 'OPEN') {
       throw new Error(`Circuit breaker is OPEN for provider: ${provider}`);
     }
@@ -1633,13 +1713,13 @@ export class AIEngine {
         ...request,
         options: {
           ...request.options,
-          provider
-        }
+          provider,
+        },
       });
 
       // Record success and potentially close circuit
       this.recordCircuitBreakerSuccess(provider);
-      
+
       return response;
     } catch (error) {
       // Record failure and potentially open circuit
@@ -1652,7 +1732,7 @@ export class AIEngine {
    * Get healthy providers in fallback order
    */
   private getHealthyProviders(): AIProvider[] {
-    return this.config.fallbackChain.filter(provider => {
+    return this.config.fallbackChain.filter((provider) => {
       const health = this.providerHealth.get(provider);
       return health && health.isHealthy && this.getCircuitBreakerState(provider) !== 'OPEN';
     });
@@ -1664,7 +1744,7 @@ export class AIEngine {
   private getCircuitBreakerState(provider: AIProvider): CircuitBreakerState {
     const state = this.circuitBreakers.get(provider);
     const lastFailureTime = this.lastFailureTimes.get(provider);
-    
+
     if (state === 'OPEN' && lastFailureTime) {
       const timeSinceFailure = Date.now() - lastFailureTime;
       if (timeSinceFailure > this.config.circuitBreaker.recoveryTimeout) {
@@ -1673,7 +1753,7 @@ export class AIEngine {
         return 'HALF_OPEN';
       }
     }
-    
+
     return state || 'CLOSED';
   }
 
@@ -1686,14 +1766,14 @@ export class AIEngine {
 
     health.successCount++;
     health.totalRequests++;
-    
+
     // Close circuit if in HALF_OPEN state
     if (this.circuitBreakers.get(provider) === 'HALF_OPEN') {
       this.circuitBreakers.set(provider, 'CLOSED');
       health.circuitBreakerState = 'CLOSED';
       logger?.info?.('Circuit breaker CLOSED for provider', { provider });
     }
-    
+
     // Update health status
     this.updateProviderHealth(provider);
   }
@@ -1709,21 +1789,20 @@ export class AIEngine {
     health.totalRequests++;
     health.lastFailureTime = Date.now();
     this.lastFailureTimes.set(provider, Date.now());
-    
+
     // Check if circuit should open
     const failureRate = health.failureCount / health.totalRequests;
-    if (health.failureCount >= this.config.circuitBreaker.failureThreshold || 
-        failureRate > 0.5) {
+    if (health.failureCount >= this.config.circuitBreaker.failureThreshold || failureRate > 0.5) {
       this.circuitBreakers.set(provider, 'OPEN');
       health.circuitBreakerState = 'OPEN';
       health.isHealthy = false;
-      logger?.warn?.('Circuit breaker OPENED for provider', { 
-        provider, 
+      logger?.warn?.('Circuit breaker OPENED for provider', {
+        provider,
         failureCount: health.failureCount,
-        failureRate: failureRate.toFixed(2)
+        failureRate: failureRate.toFixed(2),
       });
     }
-    
+
     // Update health status
     this.updateProviderHealth(provider);
   }
@@ -1737,9 +1816,10 @@ export class AIEngine {
 
     health.successCount++;
     health.totalRequests++;
-    health.averageResponseTime = 
-      (health.averageResponseTime * (health.totalRequests - 1) + responseTime) / health.totalRequests;
-    
+    health.averageResponseTime =
+      (health.averageResponseTime * (health.totalRequests - 1) + responseTime) /
+      health.totalRequests;
+
     this.updateProviderHealth(provider);
   }
 
@@ -1753,7 +1833,7 @@ export class AIEngine {
     health.failureCount++;
     health.totalRequests++;
     health.lastFailureTime = Date.now();
-    
+
     this.updateProviderHealth(provider);
   }
 
@@ -1791,8 +1871,8 @@ export class AIEngine {
       confidence: 0.1,
       metadata: {
         degraded: true,
-        reason: 'all_providers_unavailable'
-      }
+        reason: 'all_providers_unavailable',
+      },
     };
   }
 
@@ -1838,17 +1918,17 @@ export class AIEngine {
     return healthyProviders.sort((a, b) => {
       const healthA = this.providerHealth.get(a);
       const healthB = this.providerHealth.get(b);
-      
+
       if (!healthA || !healthB) return 0;
-      
+
       const successRateA = healthA.successCount / healthA.totalRequests;
       const successRateB = healthB.successCount / healthB.totalRequests;
-      
+
       // Prioritize success rate, then cost
       if (Math.abs(successRateA - successRateB) > 0.1) {
         return successRateB - successRateA;
       }
-      
+
       return healthA.costPerRequest - healthB.costPerRequest;
     })[0];
   }
@@ -1866,7 +1946,7 @@ export class AIEngine {
       performance: this.getPerformanceAnalytics(),
       cost: this.getCostAnalytics(),
       health: this.getProviderHealth(),
-      insights: this.getPerformanceInsights()
+      insights: this.getPerformanceInsights(),
     };
   }
 
@@ -1875,7 +1955,10 @@ export class AIEngine {
    */
   getSystemStatus(): {
     status: 'healthy' | 'degraded' | 'unhealthy';
-    providers: Record<AIProvider, { status: 'healthy' | 'degraded' | 'unhealthy'; lastCheck: number }>;
+    providers: Record<
+      AIProvider,
+      { status: 'healthy' | 'degraded' | 'unhealthy'; lastCheck: number }
+    >;
     metrics: {
       uptime: number;
       totalRequests: number;
@@ -1885,7 +1968,7 @@ export class AIEngine {
     };
   } {
     const health = this.getProviderHealth();
-    const healthyProviders = health.filter(h => h.status === 'healthy').length;
+    const healthyProviders = health.filter((h) => h.status === 'healthy').length;
     const totalProviders = health.length;
 
     let status: 'healthy' | 'degraded' | 'unhealthy';
@@ -1897,11 +1980,14 @@ export class AIEngine {
       status = 'unhealthy';
     }
 
-    const providerStatus: Record<AIProvider, { status: 'healthy' | 'degraded' | 'unhealthy'; lastCheck: number }> = {};
-    health.forEach(h => {
+    const providerStatus: Record<
+      AIProvider,
+      { status: 'healthy' | 'degraded' | 'unhealthy'; lastCheck: number }
+    > = {};
+    health.forEach((h) => {
       providerStatus[h.provider] = {
         status: h.status,
-        lastCheck: h.lastCheck
+        lastCheck: h.lastCheck,
       };
     });
 
@@ -1909,12 +1995,16 @@ export class AIEngine {
       status,
       providers: providerStatus,
       metrics: {
-        uptime: Date.now() - (this.performanceData.requests.total > 0 ? this.performanceTrends[0]?.timestamp || Date.now() : Date.now()),
+        uptime:
+          Date.now() -
+          (this.performanceData.requests.total > 0
+            ? this.performanceTrends[0]?.timestamp || Date.now()
+            : Date.now()),
         totalRequests: this.performanceData.requests.total,
         successRate: this.performanceData.requests.successRate,
         averageResponseTime: this.performanceData.responseTime.average,
-        totalCost: this.costMetrics.totalCost
-      }
+        totalCost: this.costMetrics.totalCost,
+      },
     };
   }
 
@@ -1923,19 +2013,19 @@ export class AIEngine {
    */
   async shutdown(): Promise<void> {
     logger?.info?.('Shutting down AI Engine...');
-    
+
     // Clear queues
     this.requestQueue = [];
-    
+
     // Clear caches
     this.costOptimizationCache.clear();
     this.promptCache.clear();
     this.modelCache.clear();
-    
+
     // Reset metrics
     this.resetPerformanceMetrics();
     this.resetCostMetrics();
-    
+
     // Close providers
     for (const [provider, instance] of this.providers) {
       try {
@@ -1946,7 +2036,7 @@ export class AIEngine {
         logger?.warn?.(`Error closing provider ${provider}:`, error);
       }
     }
-    
+
     logger?.info?.('AI Engine shutdown complete');
   }
 
@@ -1957,9 +2047,12 @@ export class AIEngine {
     return {
       ...this.costMetrics,
       costPerRequest: this.costMetrics.totalCost / Math.max(this.costTrends.length, 1),
-      costPerToken: this.costMetrics.totalCost / Math.max(
-        this.costTrends.reduce((sum, trend) => sum + trend.tokens, 0), 1
-      )
+      costPerToken:
+        this.costMetrics.totalCost /
+        Math.max(
+          this.costTrends.reduce((sum, trend) => sum + trend.tokens, 0),
+          1,
+        ),
     };
   }
 
@@ -1967,8 +2060,8 @@ export class AIEngine {
    * Get cost trends
    */
   getCostTrends(days: number = 30): CostTrend[] {
-    const cutoff = Date.now() - (days * 24 * 60 * 60 * 1000);
-    return this.costTrends.filter(trend => trend.timestamp > cutoff);
+    const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+    return this.costTrends.filter((trend) => trend.timestamp > cutoff);
   }
 
   /**
@@ -1995,48 +2088,58 @@ export class AIEngine {
   setBudgetLimits(budget: Partial<BudgetConfig>): void {
     this.config.costManagement.budget = {
       ...this.config.costManagement.budget,
-      ...budget
+      ...budget,
     };
-    this.costMetrics.budgetRemaining = this.config.costManagement.budget.monthly - this.costMetrics.totalCost;
+    this.costMetrics.budgetRemaining =
+      this.config.costManagement.budget.monthly - this.costMetrics.totalCost;
     logger?.info?.('Budget limits updated', budget);
   }
 
   /**
    * Get cost optimization recommendations
    */
-  getCostOptimizationRecommendations(): Array<{ strategy: string; potentialSavings: number; description: string }> {
+  getCostOptimizationRecommendations(): Array<{
+    strategy: string;
+    potentialSavings: number;
+    description: string;
+  }> {
     const recommendations = [];
 
     // Analyze provider costs
     const providerCosts = Object.entries(this.costMetrics.costByProvider);
-    const mostExpensiveProvider = providerCosts.reduce((a, b) => a[1] > b[1] ? a : b);
-    
+    const mostExpensiveProvider = providerCosts.reduce((a, b) => (a[1] > b[1] ? a : b));
+
     if (mostExpensiveProvider[1] > this.costMetrics.totalCost * 0.5) {
       recommendations.push({
         strategy: 'Provider Optimization',
         potentialSavings: mostExpensiveProvider[1] * 0.3,
-        description: `Consider using more cost-effective providers. ${mostExpensiveProvider[0]} accounts for ${((mostExpensiveProvider[1] / this.costMetrics.totalCost) * 100).toFixed(1)}% of total costs.`
+        description: `Consider using more cost-effective providers. ${mostExpensiveProvider[0]} accounts for ${((mostExpensiveProvider[1] / this.costMetrics.totalCost) * 100).toFixed(1)}% of total costs.`,
       });
     }
 
     // Analyze model costs
     const modelCosts = Object.entries(this.costMetrics.costByModel);
-    const expensiveModels = modelCosts.filter(([_, cost]) => cost > this.costMetrics.totalCost * 0.1);
-    
+    const expensiveModels = modelCosts.filter(
+      ([_, cost]) => cost > this.costMetrics.totalCost * 0.1,
+    );
+
     expensiveModels.forEach(([model, cost]) => {
       recommendations.push({
         strategy: 'Model Optimization',
         potentialSavings: cost * 0.2,
-        description: `Consider using more cost-effective models. ${model} costs $${cost.toFixed(2)}.`
+        description: `Consider using more cost-effective models. ${model} costs $${cost.toFixed(2)}.`,
       });
     });
 
     // Local model recommendation
-    if (this.config.localModels.enabled && this.costMetrics.costByProvider.local < this.costMetrics.totalCost * 0.1) {
+    if (
+      this.config.localModels.enabled &&
+      this.costMetrics.costByProvider.local < this.costMetrics.totalCost * 0.1
+    ) {
       recommendations.push({
         strategy: 'Local Model Expansion',
         potentialSavings: this.costMetrics.totalCost * 0.15,
-        description: 'Expand local model usage for supported tasks to reduce cloud costs.'
+        description: 'Expand local model usage for supported tasks to reduce cloud costs.',
       });
     }
 
@@ -2049,22 +2152,22 @@ export class AIEngine {
   getPerformanceInsights() {
     const health = this.getProviderHealth();
     const performance = this.getPerformanceAnalytics();
-    
-    const fastestProvider = health.reduce((fastest, current) => 
-      current.averageResponseTime < fastest.averageResponseTime ? current : fastest
+
+    const fastestProvider = health.reduce((fastest, current) =>
+      current.averageResponseTime < fastest.averageResponseTime ? current : fastest,
     );
-    
-    const slowestProvider = health.reduce((slowest, current) => 
-      current.averageResponseTime > slowest.averageResponseTime ? current : slowest
+
+    const slowestProvider = health.reduce((slowest, current) =>
+      current.averageResponseTime > slowest.averageResponseTime ? current : slowest,
     );
-    
+
     return {
       fastestProvider: fastestProvider.provider,
       fastestResponseTime: fastestProvider.averageResponseTime,
       slowestProvider: slowestProvider.provider,
       slowestResponseTime: slowestProvider.averageResponseTime,
       performanceMetrics: performance,
-      recommendations: this.generatePerformanceRecommendations(health)
+      recommendations: this.generatePerformanceRecommendations(health),
     };
   }
 
@@ -2073,21 +2176,23 @@ export class AIEngine {
    */
   private generatePerformanceRecommendations(health: ProviderHealth[]): string[] {
     const recommendations: string[] = [];
-    
+
     const responseTimes = health
-      .filter(h => h.totalRequests > 5)
-      .map(h => ({ provider: h.provider, avgTime: h.averageResponseTime }))
+      .filter((h) => h.totalRequests > 5)
+      .map((h) => ({ provider: h.provider, avgTime: h.averageResponseTime }))
       .sort((a, b) => b.avgTime - a.avgTime);
-    
+
     if (responseTimes.length > 1) {
       const fastest = responseTimes[responseTimes.length - 1];
       const slowest = responseTimes[0];
-      
+
       if (slowest.avgTime > fastest.avgTime * 2) {
-        recommendations.push(`Consider using ${fastest.provider} for time-sensitive requests. ${slowest.provider} is ${(slowest.avgTime / fastest.avgTime).toFixed(1)}x slower.`);
+        recommendations.push(
+          `Consider using ${fastest.provider} for time-sensitive requests. ${slowest.provider} is ${(slowest.avgTime / fastest.avgTime).toFixed(1)}x slower.`,
+        );
       }
     }
-    
+
     return recommendations;
   }
 
@@ -2100,7 +2205,7 @@ export class AIEngine {
       providers: this.getProviderHealth(),
       circuitBreakers: this.getCircuitBreakerStatus(),
       cache: this.getCacheStats(),
-      performance: this.getPerformanceAnalytics()
+      performance: this.getPerformanceAnalytics(),
     };
   }
 
@@ -2110,7 +2215,7 @@ export class AIEngine {
   getLocalModelStats() {
     const stats = {
       totalModels: Object.keys(this.localModelRegistry).length,
-      loadedModels: Object.values(this.localModelRegistry).filter(m => m.loaded).length,
+      loadedModels: Object.values(this.localModelRegistry).filter((m) => m.loaded).length,
       totalRequests: 0,
       averageResponseTime: 0,
       successRate: 0,
@@ -2120,8 +2225,8 @@ export class AIEngine {
         loaded: info.loaded,
         lastUsed: info.lastUsed,
         performance: info.performance,
-        config: info.config
-      }))
+        config: info.config,
+      })),
     };
 
     // Calculate aggregate metrics
@@ -2129,11 +2234,12 @@ export class AIEngine {
     const totalSuccess = allModels.reduce((sum, m) => sum + m.performance.successCount, 0);
     const totalFailures = allModels.reduce((sum, m) => sum + m.performance.failureCount, 0);
     const totalRequests = totalSuccess + totalFailures;
-    
+
     if (totalRequests > 0) {
       stats.totalRequests = totalRequests;
       stats.successRate = totalSuccess / totalRequests;
-      stats.averageResponseTime = allModels.reduce((sum, m) => sum + m.performance.averageResponseTime, 0) / allModels.length;
+      stats.averageResponseTime =
+        allModels.reduce((sum, m) => sum + m.performance.averageResponseTime, 0) / allModels.length;
     }
 
     return stats;
@@ -2157,10 +2263,10 @@ export class AIEngine {
       if (modelInfo.model && modelInfo.model.dispose) {
         modelInfo.model.dispose();
       }
-      
+
       delete this.localModelRegistry[task];
       this.modelCache.delete(task);
-      
+
       logger?.info?.(`Model for task ${task} unloaded`);
     }
   }
@@ -2170,15 +2276,71 @@ export class AIEngine {
    */
   async reloadModel(task: AITask): Promise<void> {
     await this.unloadModel(task);
-    
+
     const modelConfigs = {
-      'text-classification': { modelPath: './models/text-classification', modelType: 'tensorflow' as const, quantization: true, maxInputLength: 512, batchSize: 32, cacheModel: true, fallbackToCloud: true },
-      'sentiment-analysis': { modelPath: './models/sentiment-analysis', modelType: 'tensorflow' as const, quantization: true, maxInputLength: 256, batchSize: 64, cacheModel: true, fallbackToCloud: true },
-      'entity-extraction': { modelPath: './models/entity-extraction', modelType: 'tensorflow' as const, quantization: true, maxInputLength: 512, batchSize: 16, cacheModel: true, fallbackToCloud: true },
-      'summarization': { modelPath: './models/summarization', modelType: 'tensorflow' as const, quantization: true, maxInputLength: 1024, batchSize: 8, cacheModel: true, fallbackToCloud: true },
-      'translation': { modelPath: './models/translation', modelType: 'tensorflow' as const, quantization: true, maxInputLength: 512, batchSize: 16, cacheModel: true, fallbackToCloud: true },
-      'anomaly-detection': { modelPath: './models/anomaly-detection', modelType: 'tensorflow' as const, quantization: true, maxInputLength: 256, batchSize: 32, cacheModel: true, fallbackToCloud: true },
-      'recommendation': { modelPath: './models/recommendation', modelType: 'tensorflow' as const, quantization: true, maxInputLength: 128, batchSize: 64, cacheModel: true, fallbackToCloud: true }
+      'text-classification': {
+        modelPath: './models/text-classification',
+        modelType: 'tensorflow' as const,
+        quantization: true,
+        maxInputLength: 512,
+        batchSize: 32,
+        cacheModel: true,
+        fallbackToCloud: true,
+      },
+      'sentiment-analysis': {
+        modelPath: './models/sentiment-analysis',
+        modelType: 'tensorflow' as const,
+        quantization: true,
+        maxInputLength: 256,
+        batchSize: 64,
+        cacheModel: true,
+        fallbackToCloud: true,
+      },
+      'entity-extraction': {
+        modelPath: './models/entity-extraction',
+        modelType: 'tensorflow' as const,
+        quantization: true,
+        maxInputLength: 512,
+        batchSize: 16,
+        cacheModel: true,
+        fallbackToCloud: true,
+      },
+      'summarization': {
+        modelPath: './models/summarization',
+        modelType: 'tensorflow' as const,
+        quantization: true,
+        maxInputLength: 1024,
+        batchSize: 8,
+        cacheModel: true,
+        fallbackToCloud: true,
+      },
+      'translation': {
+        modelPath: './models/translation',
+        modelType: 'tensorflow' as const,
+        quantization: true,
+        maxInputLength: 512,
+        batchSize: 16,
+        cacheModel: true,
+        fallbackToCloud: true,
+      },
+      'anomaly-detection': {
+        modelPath: './models/anomaly-detection',
+        modelType: 'tensorflow' as const,
+        quantization: true,
+        maxInputLength: 256,
+        batchSize: 32,
+        cacheModel: true,
+        fallbackToCloud: true,
+      },
+      'recommendation': {
+        modelPath: './models/recommendation',
+        modelType: 'tensorflow' as const,
+        quantization: true,
+        maxInputLength: 128,
+        batchSize: 64,
+        cacheModel: true,
+        fallbackToCloud: true,
+      },
     };
 
     const config = modelConfigs[task];
@@ -2205,7 +2367,7 @@ export class AIEngine {
         variables: this.extractTemplateVariables(template),
         examples: this.getDefaultExamples(task as AITask),
         outputSchema: this.getDefaultOutputSchema(task as AITask),
-        optimization: this.getDefaultOptimization(task as AITask)
+        optimization: this.getDefaultOptimization(task as AITask),
       });
     });
 
@@ -2217,7 +2379,7 @@ export class AIEngine {
    */
   private extractTemplateVariables(template: string): string[] {
     const matches = template.match(/\{([^}]+)\}/g);
-    return matches ? matches.map(match => match.slice(1, -1)) : [];
+    return matches ? matches.map((match) => match.slice(1, -1)) : [];
   }
 
   /**
@@ -2229,40 +2391,41 @@ export class AIEngine {
         {
           input: 'I love this product!',
           output: '{"sentiment": "positive", "confidence": 0.9, "score": 0.8}',
-          explanation: 'Positive sentiment with high confidence'
+          explanation: 'Positive sentiment with high confidence',
         },
         {
           input: 'This is terrible quality.',
           output: '{"sentiment": "negative", "confidence": 0.85, "score": -0.7}',
-          explanation: 'Negative sentiment with high confidence'
-        }
+          explanation: 'Negative sentiment with high confidence',
+        },
       ],
       'text-classification': [
         {
           input: 'The stock market reached new highs today.',
           output: '{"category": "business", "confidence": 0.95}',
-          explanation: 'Business-related content'
+          explanation: 'Business-related content',
         },
         {
           input: 'Scientists discover new species in Amazon.',
           output: '{"category": "science", "confidence": 0.9}',
-          explanation: 'Science-related content'
-        }
+          explanation: 'Science-related content',
+        },
       ],
       'entity-extraction': [
         {
           input: 'John Smith works at Microsoft in Seattle.',
-          output: '{"entities": [{"text": "John Smith", "type": "PERSON"}, {"text": "Microsoft", "type": "ORG"}, {"text": "Seattle", "type": "LOCATION"}]}',
-          explanation: 'Extract person, organization, and location'
-        }
+          output:
+            '{"entities": [{"text": "John Smith", "type": "PERSON"}, {"text": "Microsoft", "type": "ORG"}, {"text": "Seattle", "type": "LOCATION"}]}',
+          explanation: 'Extract person, organization, and location',
+        },
       ],
       'summarization': [
         {
           input: 'The long article about climate change...',
           output: '{"summary": "Climate change impacts and solutions discussed.", "length": 45}',
-          explanation: 'Concise summary with length'
-        }
-      ]
+          explanation: 'Concise summary with length',
+        },
+      ],
     };
 
     return examples[task] || [];
@@ -2276,41 +2439,43 @@ export class AIEngine {
       'sentiment-analysis': z.object({
         sentiment: z.enum(['positive', 'negative', 'neutral']),
         confidence: z.number().min(0).max(1),
-        score: z.number().min(-1).max(1)
+        score: z.number().min(-1).max(1),
       }),
       'text-classification': z.object({
         category: z.string(),
         confidence: z.number().min(0).max(1),
-        alternatives: z.array(z.string()).optional()
+        alternatives: z.array(z.string()).optional(),
       }),
       'entity-extraction': z.object({
-        entities: z.array(z.object({
-          text: z.string(),
-          type: z.string(),
-          confidence: z.number().min(0).max(1)
-        }))
+        entities: z.array(
+          z.object({
+            text: z.string(),
+            type: z.string(),
+            confidence: z.number().min(0).max(1),
+          }),
+        ),
       }),
       'summarization': z.object({
         summary: z.string(),
         length: z.number(),
-        confidence: z.number().min(0).max(1)
+        confidence: z.number().min(0).max(1),
       }),
       'translation': z.object({
         translated: z.string(),
         sourceLanguage: z.string(),
         targetLanguage: z.string(),
-        confidence: z.number().min(0).max(1)
+        confidence: z.number().min(0).max(1),
       }),
       'anomaly-detection': z.object({
         isAnomaly: z.boolean(),
         confidence: z.number().min(0).max(1),
-        score: z.number()
+        score: z.number(),
       }),
       'recommendation': z.object({
         recommendations: z.array(z.string()),
         confidence: z.number().min(0).max(1),
-        scores: z.array(z.number())
-      })
+        scores: z.array(z.number()),
+      }),
     };
 
     return schemas[task] || z.string();
@@ -2326,52 +2491,54 @@ export class AIEngine {
         temperature: 0.1,
         topP: 0.9,
         frequencyPenalty: 0,
-        presencePenalty: 0
+        presencePenalty: 0,
       },
       'text-classification': {
         maxTokens: 150,
         temperature: 0.1,
         topP: 0.9,
         frequencyPenalty: 0,
-        presencePenalty: 0
+        presencePenalty: 0,
       },
       'entity-extraction': {
         maxTokens: 200,
         temperature: 0.1,
         topP: 0.9,
         frequencyPenalty: 0,
-        presencePenalty: 0
+        presencePenalty: 0,
       },
       'summarization': {
         maxTokens: 300,
         temperature: 0.3,
         topP: 0.9,
         frequencyPenalty: 0.1,
-        presencePenalty: 0.1
+        presencePenalty: 0.1,
       },
       'translation': {
         maxTokens: 500,
         temperature: 0.2,
         topP: 0.9,
         frequencyPenalty: 0,
-        presencePenalty: 0
+        presencePenalty: 0,
       },
       'code-generation': {
         maxTokens: 1000,
         temperature: 0.2,
         topP: 0.9,
         frequencyPenalty: 0.1,
-        presencePenalty: 0.1
-      }
+        presencePenalty: 0.1,
+      },
     };
 
-    return optimizations[task] || {
-      maxTokens: 500,
-      temperature: 0.7,
-      topP: 0.9,
-      frequencyPenalty: 0,
-      presencePenalty: 0
-    };
+    return (
+      optimizations[task] || {
+        maxTokens: 500,
+        temperature: 0.7,
+        topP: 0.9,
+        frequencyPenalty: 0,
+        presencePenalty: 0,
+      }
+    );
   }
 
   /**
@@ -2380,7 +2547,7 @@ export class AIEngine {
   private buildPrompt(request: AIRequest): string {
     const template = this.getPromptTemplate(request);
     let optimizedPrompt = this.optimizePrompt(template, request);
-    
+
     // Add few-shot examples if enabled
     if (this.config.promptEngineering.enableFewShotLearning && template.examples) {
       const examples = this.selectBestExamples(template.examples, request);
@@ -2420,7 +2587,7 @@ export class AIEngine {
       task: request.task,
       template: request.prompt,
       variables: [],
-      optimization: this.getDefaultOptimization(request.task)
+      optimization: this.getDefaultOptimization(request.task),
     };
   }
 
@@ -2453,7 +2620,7 @@ export class AIEngine {
    */
   private replaceTemplateVariables(template: string, context: PromptContext): string {
     let result = template;
-    
+
     if (context.domain) {
       result = result.replace(/\{domain\}/g, context.domain);
     }
@@ -2470,7 +2637,11 @@ export class AIEngine {
   /**
    * Apply prompt optimization techniques
    */
-  private applyPromptOptimization(prompt: string, optimization: PromptOptimization, request: AIRequest): string {
+  private applyPromptOptimization(
+    prompt: string,
+    optimization: PromptOptimization,
+    request: AIRequest,
+  ): string {
     let optimizedPrompt = prompt;
 
     // Add tone and style instructions
@@ -2495,12 +2666,15 @@ export class AIEngine {
   /**
    * Add conversation history to prompt
    */
-  private addConversationHistory(prompt: string, history: Array<{ role: 'user' | 'assistant'; content: string }>): string {
+  private addConversationHistory(
+    prompt: string,
+    history: Array<{ role: 'user' | 'assistant'; content: string }>,
+  ): string {
     if (history.length === 0) return prompt;
 
     const historyText = history
       .slice(-5) // Keep last 5 exchanges
-      .map(exchange => `${exchange.role}: ${exchange.content}`)
+      .map((exchange) => `${exchange.role}: ${exchange.content}`)
       .join('\n');
 
     return `Previous conversation:\n${historyText}\n\nCurrent request: ${prompt}`;
@@ -2522,7 +2696,10 @@ export class AIEngine {
     if (examples.length === 0) return prompt;
 
     const examplesText = examples
-      .map(example => `Input: ${example.input}\nOutput: ${example.output}${example.explanation ? `\nExplanation: ${example.explanation}` : ''}`)
+      .map(
+        (example) =>
+          `Input: ${example.input}\nOutput: ${example.output}${example.explanation ? `\nExplanation: ${example.explanation}` : ''}`,
+      )
       .join('\n\n');
 
     return `Examples:\n${examplesText}\n\nNow, please respond to:\n${prompt}`;
@@ -2558,25 +2735,25 @@ export class AIEngine {
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
         const validation = request.outputSchema.safeParse(parsed);
-        
+
         if (validation.success) {
           return {
             ...response,
             structured: {
               data: validation.data,
               confidence: response.confidence || 0.8,
-              metadata: { parsed: true }
+              metadata: { parsed: true },
             },
             parsed: validation.data,
-            validation: { valid: true }
+            validation: { valid: true },
           };
         } else {
           return {
             ...response,
             validation: {
               valid: false,
-              errors: validation.error.errors.map(e => e.message)
-            }
+              errors: validation.error.errors.map((e) => e.message),
+            },
           };
         }
       }
@@ -2612,7 +2789,10 @@ export class AIEngine {
   /**
    * Update prompt optimization based on performance
    */
-  updatePromptOptimization(templateId: string, performance: { success: boolean; responseTime: number; quality: number }): void {
+  updatePromptOptimization(
+    templateId: string,
+    performance: { success: boolean; responseTime: number; quality: number },
+  ): void {
     const template = this.promptTemplates.get(templateId);
     if (!template) return;
 
@@ -2644,7 +2824,7 @@ export class AIEngine {
         openai: 0,
         anthropic: 0,
         local: 0,
-        custom: 0
+        custom: 0,
       },
       costByModel: {},
       costByTask: {
@@ -2665,11 +2845,11 @@ export class AIEngine {
         'prediction': 0,
         'anomaly-detection': 0,
         'recommendation': 0,
-        'automation': 0
+        'automation': 0,
       },
       budgetUsage: 0,
       budgetRemaining: this.config.costManagement.budget.monthly,
-      costTrends: []
+      costTrends: [],
     };
   }
 
@@ -2681,21 +2861,23 @@ export class AIEngine {
 
     // Update total cost
     this.costMetrics.totalCost += cost;
-    
+
     // Update provider cost
     this.costMetrics.costByProvider[response.provider] += cost;
-    
+
     // Update model cost
     const model = response.model as string;
     this.costMetrics.costByModel[model] = (this.costMetrics.costByModel[model] || 0) + cost;
-    
+
     // Update task cost
     this.costMetrics.costByTask[request.task] += cost;
-    
+
     // Update budget usage
-    this.costMetrics.budgetUsage = (this.costMetrics.totalCost / this.config.costManagement.budget.monthly) * 100;
-    this.costMetrics.budgetRemaining = this.config.costManagement.budget.monthly - this.costMetrics.totalCost;
-    
+    this.costMetrics.budgetUsage =
+      (this.costMetrics.totalCost / this.config.costManagement.budget.monthly) * 100;
+    this.costMetrics.budgetRemaining =
+      this.config.costManagement.budget.monthly - this.costMetrics.totalCost;
+
     // Add cost trend
     this.costTrends.push({
       timestamp: Date.now(),
@@ -2703,16 +2885,17 @@ export class AIEngine {
       tokens: response.usage?.totalTokens || 0,
       provider: response.provider,
       model: response.model as string,
-      task: request.task
+      task: request.task,
     });
-    
+
     // Keep only recent trends (last 90 days)
-    const cutoff = Date.now() - (this.config.costManagement.tracking.retentionDays * 24 * 60 * 60 * 1000);
-    this.costTrends = this.costTrends.filter(trend => trend.timestamp > cutoff);
-    
+    const cutoff =
+      Date.now() - this.config.costManagement.tracking.retentionDays * 24 * 60 * 60 * 1000;
+    this.costTrends = this.costTrends.filter((trend) => trend.timestamp > cutoff);
+
     // Check budget alerts
     this.checkBudgetAlerts();
-    
+
     // Update cost optimization cache
     this.updateCostOptimizationCache(request, response, cost);
   }
@@ -2730,14 +2913,14 @@ export class AIEngine {
       this.budgetAlerts.push({
         type: 'critical',
         message: `Critical: Budget usage at ${usage.toFixed(1)}%`,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
       logger?.error?.(`Critical budget alert: ${usage.toFixed(1)}% usage`);
     } else if (usage >= warningThreshold) {
       this.budgetAlerts.push({
         type: 'warning',
         message: `Warning: Budget usage at ${usage.toFixed(1)}%`,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
       logger?.warn?.(`Budget warning: ${usage.toFixed(1)}% usage`);
     }
@@ -2746,12 +2929,16 @@ export class AIEngine {
   /**
    * Update cost optimization cache
    */
-  private updateCostOptimizationCache(request: AIRequest, response: AIResponse, cost: number): void {
+  private updateCostOptimizationCache(
+    request: AIRequest,
+    response: AIResponse,
+    cost: number,
+  ): void {
     const key = `${request.task}-${request.prompt.length}`;
     this.costOptimizationCache.set(key, {
       provider: response.provider,
       model: response.model as string,
-      cost
+      cost,
     });
   }
 
@@ -2762,21 +2949,26 @@ export class AIEngine {
     if (!this.config.costManagement.optimization.enabled) {
       return {
         provider: this.config.defaultProvider,
-        model: this.config.defaultModel
+        model: this.config.defaultModel,
       };
     }
 
     // Check if we can use local models
-    if (this.config.costManagement.optimization.strategies.localModels && 
-        this.config.localModels.enabled &&
-        this.config.localModels.supportedTasks.includes(request.task)) {
+    if (
+      this.config.costManagement.optimization.strategies.localModels &&
+      this.config.localModels.enabled &&
+      this.config.localModels.supportedTasks.includes(request.task)
+    ) {
       return { provider: 'local', model: 'local' };
     }
 
     // Check cache for similar requests
     const key = `${request.task}-${request.prompt.length}`;
     const cached = this.costOptimizationCache.get(key);
-    if (cached && cached.cost <= this.config.costManagement.optimization.thresholds.maxCostPerRequest) {
+    if (
+      cached &&
+      cached.cost <= this.config.costManagement.optimization.thresholds.maxCostPerRequest
+    ) {
       return { provider: cached.provider, model: cached.model };
     }
 
@@ -2793,7 +2985,7 @@ export class AIEngine {
     // Fallback to default
     return {
       provider: this.config.defaultProvider,
-      model: this.config.defaultModel
+      model: this.config.defaultModel,
     };
   }
 
@@ -2819,7 +3011,7 @@ export class AIEngine {
     optimizedRequest.options = {
       ...request.options,
       provider: costOptimized.provider,
-      model: costOptimized.model
+      model: costOptimized.model,
     };
 
     return optimizedRequest;
@@ -2832,7 +3024,7 @@ export class AIEngine {
     const config = this.getRequestConfig(request);
     const avgTokensPerChar = 0.25; // Rough estimate
     const estimatedTokens = request.prompt.length * avgTokensPerChar;
-    
+
     const costRates = {
       'gpt-4': 0.03,
       'gpt-4-turbo': 0.01,
@@ -2840,7 +3032,7 @@ export class AIEngine {
       'claude-3-opus': 0.015,
       'claude-3-sonnet': 0.003,
       'claude-3-haiku': 0.00025,
-      'local': 0.00001
+      'local': 0.00001,
     };
 
     const rate = costRates[config.model as keyof typeof costRates] || 0.002;
@@ -2856,7 +3048,7 @@ export class AIEngine {
         total: 0,
         successful: 0,
         failed: 0,
-        successRate: 0
+        successRate: 0,
       },
       responseTime: {
         average: 0,
@@ -2864,12 +3056,12 @@ export class AIEngine {
         p95: 0,
         p99: 0,
         min: 0,
-        max: 0
+        max: 0,
       },
       throughput: {
         requestsPerSecond: 0,
         tokensPerSecond: 0,
-        concurrentRequests: 0
+        concurrentRequests: 0,
       },
       errors: {
         total: 0,
@@ -2878,9 +3070,9 @@ export class AIEngine {
           openai: 0,
           anthropic: 0,
           local: 0,
-          custom: 0
+          custom: 0,
         },
-        recentErrors: []
+        recentErrors: [],
       },
       utilization: {
         cacheHitRate: 0,
@@ -2888,19 +3080,25 @@ export class AIEngine {
           openai: 0,
           anthropic: 0,
           local: 0,
-          custom: 0
+          custom: 0,
         },
         queueLength: 0,
-        processingTime: 0
+        processingTime: 0,
       },
-      trends: []
+      trends: [],
     };
   }
 
   /**
    * Update performance metrics
    */
-  private updatePerformanceMetrics(request: AIRequest, response: AIResponse, startTime: number, success: boolean, error?: Error): void {
+  private updatePerformanceMetrics(
+    request: AIRequest,
+    response: AIResponse,
+    startTime: number,
+    success: boolean,
+    error?: Error,
+  ): void {
     if (!this.config.performanceMonitoring.enabled) return;
 
     const responseTime = Date.now() - startTime;
@@ -2916,7 +3114,7 @@ export class AIEngine {
     }
 
     // Update success rate
-    this.performanceData.requests.successRate = 
+    this.performanceData.requests.successRate =
       (this.performanceData.requests.successful / this.performanceData.requests.total) * 100;
 
     // Update response time statistics
@@ -2951,7 +3149,7 @@ export class AIEngine {
   private updateResponseTimeStats(responseTime: number): void {
     const times = this.performanceTrends
       .slice(-100) // Last 100 requests
-      .map(trend => trend.responseTime)
+      .map((trend) => trend.responseTime)
       .concat([responseTime])
       .sort((a, b) => a - b);
 
@@ -2961,7 +3159,7 @@ export class AIEngine {
       p95: times[Math.floor(times.length * 0.95)],
       p99: times[Math.floor(times.length * 0.99)],
       min: times[0],
-      max: times[times.length - 1]
+      max: times[times.length - 1],
     };
   }
 
@@ -2970,21 +3168,24 @@ export class AIEngine {
    */
   private updateThroughputStats(response: AIResponse, responseTime: number): void {
     const recentTrends = this.performanceTrends
-      .filter(trend => Date.now() - trend.timestamp < 60000) // Last minute
-      .concat([{
-        timestamp: Date.now(),
-        responseTime,
-        throughput: 1,
-        errorRate: 0,
-        cacheHitRate: 0,
-        provider: response.provider,
-        task: 'unknown' as AITask
-      }]);
+      .filter((trend) => Date.now() - trend.timestamp < 60000) // Last minute
+      .concat([
+        {
+          timestamp: Date.now(),
+          responseTime,
+          throughput: 1,
+          errorRate: 0,
+          cacheHitRate: 0,
+          provider: response.provider,
+          task: 'unknown' as AITask,
+        },
+      ]);
 
     this.performanceData.throughput = {
       requestsPerSecond: recentTrends.length / 60,
-      tokensPerSecond: recentTrends.reduce((sum, trend) => sum + (response.usage?.totalTokens || 0), 0) / 60,
-      concurrentRequests: this.requestQueue.length
+      tokensPerSecond:
+        recentTrends.reduce((sum, trend) => sum + (response.usage?.totalTokens || 0), 0) / 60,
+      concurrentRequests: this.requestQueue.length,
     };
   }
 
@@ -2993,11 +3194,14 @@ export class AIEngine {
    */
   private updateErrorStats(error: Error, provider: AIProvider): void {
     const errorType = error.constructor.name;
-    this.performanceData.errors.byType[errorType] = (this.performanceData.errors.byType[errorType] || 0) + 1;
+    this.performanceData.errors.byType[errorType] =
+      (this.performanceData.errors.byType[errorType] || 0) + 1;
     this.performanceData.errors.byProvider[provider]++;
 
     // Update recent errors
-    const existingError = this.performanceData.errors.recentErrors.find(e => e.error === error.message);
+    const existingError = this.performanceData.errors.recentErrors.find(
+      (e) => e.error === error.message,
+    );
     if (existingError) {
       existingError.count++;
       existingError.timestamp = Date.now();
@@ -3005,13 +3209,13 @@ export class AIEngine {
       this.performanceData.errors.recentErrors.push({
         error: error.message,
         timestamp: Date.now(),
-        count: 1
+        count: 1,
       });
     }
 
     // Keep only recent errors
     this.performanceData.errors.recentErrors = this.performanceData.errors.recentErrors
-      .filter(e => Date.now() - e.timestamp < 3600000) // Last hour
+      .filter((e) => Date.now() - e.timestamp < 3600000) // Last hour
       .sort((a, b) => b.count - a.count)
       .slice(0, 10); // Top 10 errors
   }
@@ -3025,11 +3229,11 @@ export class AIEngine {
 
     // Provider utilization
     const totalRequests = this.performanceData.requests.total;
-    Object.keys(this.performanceData.utilization.providerUtilization).forEach(provider => {
-      const providerRequests = this.performanceTrends
-        .filter(trend => trend.provider === provider)
-        .length;
-      this.performanceData.utilization.providerUtilization[provider as AIProvider] = 
+    Object.keys(this.performanceData.utilization.providerUtilization).forEach((provider) => {
+      const providerRequests = this.performanceTrends.filter(
+        (trend) => trend.provider === provider,
+      ).length;
+      this.performanceData.utilization.providerUtilization[provider as AIProvider] =
         (providerRequests / totalRequests) * 100;
     });
 
@@ -3041,7 +3245,12 @@ export class AIEngine {
   /**
    * Add performance trend
    */
-  private addPerformanceTrend(timestamp: number, responseTime: number, success: boolean, response: AIResponse): void {
+  private addPerformanceTrend(
+    timestamp: number,
+    responseTime: number,
+    success: boolean,
+    response: AIResponse,
+  ): void {
     const trend: PerformanceTrend = {
       timestamp,
       responseTime,
@@ -3049,14 +3258,15 @@ export class AIEngine {
       errorRate: success ? 0 : 1,
       cacheHitRate: this.performanceData.utilization.cacheHitRate,
       provider: response.provider,
-      task: 'unknown' as AITask // Would need to track task from request
+      task: 'unknown' as AITask, // Would need to track task from request
     };
 
     this.performanceTrends.push(trend);
 
     // Keep only recent trends
-    const cutoff = Date.now() - (this.config.performanceMonitoring.retention.trends * 24 * 60 * 60 * 1000);
-    this.performanceTrends = this.performanceTrends.filter(trend => trend.timestamp > cutoff);
+    const cutoff =
+      Date.now() - this.config.performanceMonitoring.retention.trends * 24 * 60 * 60 * 1000;
+    this.performanceTrends = this.performanceTrends.filter((trend) => trend.timestamp > cutoff);
   }
 
   /**
@@ -3064,10 +3274,11 @@ export class AIEngine {
    */
   private shouldSampleRequest(): boolean {
     if (!this.config.performanceMonitoring.sampling.enabled) return false;
-    
+
     const shouldSample = Math.random() * 100 < this.config.performanceMonitoring.sampling.rate;
-    const underLimit = this.requestSamples.length < this.config.performanceMonitoring.sampling.maxSamples;
-    
+    const underLimit =
+      this.requestSamples.length < this.config.performanceMonitoring.sampling.maxSamples;
+
     return shouldSample && underLimit;
   }
 
@@ -3079,12 +3290,13 @@ export class AIEngine {
       request,
       response,
       metrics,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     // Keep only recent samples
-    const cutoff = Date.now() - (this.config.performanceMonitoring.retention.samples * 24 * 60 * 60 * 1000);
-    this.requestSamples = this.requestSamples.filter(sample => sample.timestamp > cutoff);
+    const cutoff =
+      Date.now() - this.config.performanceMonitoring.retention.samples * 24 * 60 * 60 * 1000;
+    this.requestSamples = this.requestSamples.filter((sample) => sample.timestamp > cutoff);
   }
 
   /**
@@ -3097,38 +3309,59 @@ export class AIEngine {
     const cooldownMs = this.config.performanceMonitoring.alerting.cooldown * 60 * 1000;
 
     // Check error rate
-    if (this.performanceData.requests.successRate < (100 - thresholds.errorRate)) {
-      this.createAlert('error_rate', 'high', 
-        `Error rate is ${(100 - this.performanceData.requests.successRate).toFixed(1)}%`, cooldownMs);
+    if (this.performanceData.requests.successRate < 100 - thresholds.errorRate) {
+      this.createAlert(
+        'error_rate',
+        'high',
+        `Error rate is ${(100 - this.performanceData.requests.successRate).toFixed(1)}%`,
+        cooldownMs,
+      );
     }
 
     // Check response time
     if (this.performanceData.responseTime.p95 > thresholds.responseTime) {
-      this.createAlert('response_time', 'medium',
-        `P95 response time is ${this.performanceData.responseTime.p95}ms`, cooldownMs);
+      this.createAlert(
+        'response_time',
+        'medium',
+        `P95 response time is ${this.performanceData.responseTime.p95}ms`,
+        cooldownMs,
+      );
     }
 
     // Check throughput
     if (this.performanceData.throughput.requestsPerSecond < thresholds.throughput) {
-      this.createAlert('throughput', 'low',
-        `Throughput is ${this.performanceData.throughput.requestsPerSecond.toFixed(1)} req/s`, cooldownMs);
+      this.createAlert(
+        'throughput',
+        'low',
+        `Throughput is ${this.performanceData.throughput.requestsPerSecond.toFixed(1)} req/s`,
+        cooldownMs,
+      );
     }
 
     // Check cost per request
     const avgCost = this.costMetrics.totalCost / Math.max(this.performanceData.requests.total, 1);
     if (avgCost > thresholds.costPerRequest) {
-      this.createAlert('cost', 'medium',
-        `Average cost per request is $${avgCost.toFixed(4)}`, cooldownMs);
+      this.createAlert(
+        'cost',
+        'medium',
+        `Average cost per request is $${avgCost.toFixed(4)}`,
+        cooldownMs,
+      );
     }
   }
 
   /**
    * Create performance alert
    */
-  private createAlert(type: string, severity: 'low' | 'medium' | 'high' | 'critical', message: string, cooldownMs: number): void {
+  private createAlert(
+    type: string,
+    severity: 'low' | 'medium' | 'high' | 'critical',
+    message: string,
+    cooldownMs: number,
+  ): void {
     const alertId = `${type}-${severity}`;
     const lastAlert = this.alertCooldowns.get(alertId);
-    
+
     if (lastAlert && Date.now() - lastAlert < cooldownMs) {
       return; // Still in cooldown
     }
@@ -3144,40 +3377,49 @@ export class AIEngine {
         errorRate: this.performanceData.requests.successRate,
         responseTime: this.performanceData.responseTime.p95,
         throughput: this.performanceData.throughput.requestsPerSecond,
-        costPerRequest: this.costMetrics.totalCost / Math.max(this.performanceData.requests.total, 1)
-      }
+        costPerRequest:
+          this.costMetrics.totalCost / Math.max(this.performanceData.requests.total, 1),
+      },
     };
 
     this.performanceAlerts.push(alert);
     this.alertCooldowns.set(alertId, Date.now());
 
     // Log alert
-    logger?.[severity === 'critical' ? 'error' : severity === 'high' ? 'warn' : 'info']?.(`Performance alert: ${message}`);
+    logger?.[severity === 'critical' ? 'error' : severity === 'high' ? 'warn' : 'info']?.(
+      `Performance alert: ${message}`,
+    );
 
     // Keep only recent alerts
-    const cutoff = Date.now() - (this.config.performanceMonitoring.retention.alerts * 24 * 60 * 60 * 1000);
-    this.performanceAlerts = this.performanceAlerts.filter(alert => alert.timestamp > cutoff);
+    const cutoff =
+      Date.now() - this.config.performanceMonitoring.retention.alerts * 24 * 60 * 60 * 1000;
+    this.performanceAlerts = this.performanceAlerts.filter((alert) => alert.timestamp > cutoff);
   }
 
   /**
    * Get performance trends
    */
   getPerformanceTrends(hours: number = 24): PerformanceTrend[] {
-    const cutoff = Date.now() - (hours * 60 * 60 * 1000);
-    return this.performanceTrends.filter(trend => trend.timestamp > cutoff);
+    const cutoff = Date.now() - hours * 60 * 60 * 1000;
+    return this.performanceTrends.filter((trend) => trend.timestamp > cutoff);
   }
 
   /**
    * Get performance alerts
    */
   getPerformanceAlerts(): PerformanceAlert[] {
-    return this.performanceAlerts.filter(alert => !alert.resolved);
+    return this.performanceAlerts.filter((alert) => !alert.resolved);
   }
 
   /**
    * Get request samples
    */
-  getRequestSamples(): Array<{ request: AIRequest; response: AIResponse; metrics: any; timestamp: number }> {
+  getRequestSamples(): Array<{
+    request: AIRequest;
+    response: AIResponse;
+    metrics: any;
+    timestamp: number;
+  }> {
     return [...this.requestSamples];
   }
 
@@ -3197,7 +3439,7 @@ export class AIEngine {
    * Resolve performance alert
    */
   resolveAlert(alertId: string): void {
-    const alert = this.performanceAlerts.find(a => a.id === alertId);
+    const alert = this.performanceAlerts.find((a) => a.id === alertId);
     if (alert) {
       alert.resolved = true;
       logger?.info?.(`Performance alert resolved: ${alert.message}`);
@@ -3207,7 +3449,11 @@ export class AIEngine {
   /**
    * Get performance insights
    */
-  getPerformanceInsights(): Array<{ insight: string; impact: 'low' | 'medium' | 'high'; recommendation: string }> {
+  getPerformanceInsights(): Array<{
+    insight: string;
+    impact: 'low' | 'medium' | 'high';
+    recommendation: string;
+  }> {
     const insights = [];
 
     // Error rate insights
@@ -3215,7 +3461,7 @@ export class AIEngine {
       insights.push({
         insight: `Low success rate: ${this.performanceData.requests.successRate.toFixed(1)}%`,
         impact: 'high',
-        recommendation: 'Investigate error patterns and improve error handling'
+        recommendation: 'Investigate error patterns and improve error handling',
       });
     }
 
@@ -3224,7 +3470,7 @@ export class AIEngine {
       insights.push({
         insight: `Slow response times: P95 is ${this.performanceData.responseTime.p95}ms`,
         impact: 'medium',
-        recommendation: 'Consider caching, optimization, or faster providers'
+        recommendation: 'Consider caching, optimization, or faster providers',
       });
     }
 
@@ -3233,7 +3479,7 @@ export class AIEngine {
       insights.push({
         insight: `Low throughput: ${this.performanceData.throughput.requestsPerSecond.toFixed(1)} req/s`,
         impact: 'medium',
-        recommendation: 'Increase concurrent processing or optimize request handling'
+        recommendation: 'Increase concurrent processing or optimize request handling',
       });
     }
 
@@ -3244,7 +3490,7 @@ export class AIEngine {
       insights.push({
         insight: `Underutilized providers: ${underutilized.map(([p, u]) => `${p} (${u.toFixed(1)}%)`).join(', ')}`,
         impact: 'low',
-        recommendation: 'Consider removing underutilized providers or rebalancing load'
+        recommendation: 'Consider removing underutilized providers or rebalancing load',
       });
     }
 
@@ -3253,4 +3499,4 @@ export class AIEngine {
 }
 
 // Export singleton instance
-export const aiEngine = new AIEngine(); 
+export const aiEngine = new AIEngine();

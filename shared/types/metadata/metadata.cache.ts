@@ -1,17 +1,17 @@
 import { z } from 'zod';
 import { UUID, ISODate, TenantID } from '../primitives';
-import { 
+import {
   MetadataCacheType,
   MetadataCacheTypes,
   MetadataCacheStrategy,
-  MetadataCacheStrategies
+  MetadataCacheStrategies,
 } from './metadata.enums';
-import { 
-  MetadataEntity, 
-  MetadataField, 
+import {
+  MetadataEntity,
+  MetadataField,
   MetadataSchema,
   MetadataValue,
-  MetadataQuery
+  MetadataQuery,
 } from './metadata.types';
 
 // ============================================================================
@@ -21,31 +21,32 @@ import {
 export const MetadataCacheLevel = {
   L1: 'l1', // Memory cache (fastest)
   L2: 'l2', // Distributed cache (Redis, Memcached)
-  L3: 'l3'  // Persistent cache (database, file system)
+  L3: 'l3', // Persistent cache (database, file system)
 } as const;
 
-export type MetadataCacheLevel = typeof MetadataCacheLevel[keyof typeof MetadataCacheLevel];
+export type MetadataCacheLevel = (typeof MetadataCacheLevel)[keyof typeof MetadataCacheLevel];
 
 export const MetadataCacheStatus = {
   HIT: 'hit',
   MISS: 'miss',
   STALE: 'stale',
   EXPIRED: 'expired',
-  INVALIDATED: 'invalidated'
+  INVALIDATED: 'invalidated',
 } as const;
 
-export type MetadataCacheStatus = typeof MetadataCacheStatus[keyof typeof MetadataCacheStatus];
+export type MetadataCacheStatus = (typeof MetadataCacheStatus)[keyof typeof MetadataCacheStatus];
 
 export const MetadataCacheEvictionPolicy = {
-  LRU: 'lru',           // Least Recently Used
-  LFU: 'lfu',           // Least Frequently Used
-  FIFO: 'fifo',         // First In, First Out
-  TTL: 'ttl',           // Time To Live
-  RANDOM: 'random',     // Random eviction
-  CUSTOM: 'custom'      // Custom eviction logic
+  LRU: 'lru', // Least Recently Used
+  LFU: 'lfu', // Least Frequently Used
+  FIFO: 'fifo', // First In, First Out
+  TTL: 'ttl', // Time To Live
+  RANDOM: 'random', // Random eviction
+  CUSTOM: 'custom', // Custom eviction logic
 } as const;
 
-export type MetadataCacheEvictionPolicy = typeof MetadataCacheEvictionPolicy[keyof typeof MetadataCacheEvictionPolicy];
+export type MetadataCacheEvictionPolicy =
+  (typeof MetadataCacheEvictionPolicy)[keyof typeof MetadataCacheEvictionPolicy];
 
 // ============================================================================
 // CACHE INTERFACES
@@ -74,37 +75,37 @@ export interface MetadataCacheConfig {
   type: MetadataCacheType;
   level: MetadataCacheLevel;
   strategy: MetadataCacheStrategy;
-  
+
   // Capacity and limits
   maxSize: number; // in bytes
   maxEntries: number;
   maxMemoryUsage: number; // percentage
-  
+
   // TTL configuration
   defaultTtl: number; // in seconds
   maxTtl: number;
   minTtl: number;
-  
+
   // Eviction configuration
   evictionPolicy: MetadataCacheEvictionPolicy;
   evictionThreshold: number; // percentage
   cleanupInterval: number; // in seconds
-  
+
   // Performance configuration
   compression: boolean;
   serialization: 'json' | 'binary' | 'custom';
   async: boolean;
-  
+
   // Advanced configuration
   clustering: boolean;
   replication: boolean;
   persistence: boolean;
   encryption: boolean;
-  
+
   // Monitoring
   metrics: boolean;
   logging: boolean;
-  
+
   // Custom options
   options?: Record<string, any>;
 }
@@ -115,27 +116,27 @@ export interface MetadataCacheStats {
   misses: number;
   hitRate: number;
   totalRequests: number;
-  
+
   // Memory stats
   currentSize: number;
   maxSize: number;
   memoryUsage: number;
   entryCount: number;
   maxEntries: number;
-  
+
   // Performance stats
   averageResponseTime: number;
   slowestResponseTime: number;
   fastestResponseTime: number;
-  
+
   // Eviction stats
   evictions: number;
   evictionRate: number;
-  
+
   // Error stats
   errors: number;
   errorRate: number;
-  
+
   // Timestamps
   lastReset: ISODate;
   lastCleanup: ISODate;
@@ -149,7 +150,7 @@ export interface MetadataCacheMetrics {
     misses: number;
     errors: number;
   };
-  
+
   // Performance metrics
   performance: {
     averageResponseTime: number;
@@ -161,7 +162,7 @@ export interface MetadataCacheMetrics {
       timestamp: ISODate;
     }>;
   };
-  
+
   // Memory metrics
   memory: {
     currentUsage: number;
@@ -169,7 +170,7 @@ export interface MetadataCacheMetrics {
     fragmentation: number;
     evictions: number;
   };
-  
+
   // Business metrics
   business: {
     mostAccessedKeys: Array<{
@@ -201,11 +202,11 @@ export interface MetadataCacheInvalidationRule {
   id: UUID;
   name: string;
   description?: string;
-  
+
   // Pattern matching
   pattern: string; // regex pattern for keys
   tags?: string[];
-  
+
   // Conditions
   conditions?: {
     timeBased?: {
@@ -223,14 +224,14 @@ export interface MetadataCacheInvalidationRule {
       cascade: boolean;
     };
   };
-  
+
   // Actions
   actions: {
     invalidate: boolean;
     update?: Record<string, any>;
     notify?: string[];
   };
-  
+
   // Metadata
   tenantId: TenantID;
   createdBy: string;
@@ -260,27 +261,29 @@ export interface MetadataCacheProvider {
   set<T>(key: string, value: T, options?: MetadataCacheSetOptions): Promise<void>;
   delete(key: string): Promise<boolean>;
   clear(): Promise<void>;
-  
+
   // Batch operations
   getMany<T>(keys: string[]): Promise<Record<string, T | null>>;
-  setMany<T>(entries: Array<{ key: string; value: T; options?: MetadataCacheSetOptions }>): Promise<void>;
+  setMany<T>(
+    entries: Array<{ key: string; value: T; options?: MetadataCacheSetOptions }>,
+  ): Promise<void>;
   deleteMany(keys: string[]): Promise<number>;
-  
+
   // Advanced operations
   exists(key: string): Promise<boolean>;
   touch(key: string): Promise<void>;
   increment(key: string, value?: number): Promise<number>;
   decrement(key: string, value?: number): Promise<number>;
-  
+
   // Query operations
   keys(pattern?: string): Promise<string[]>;
   values<T>(pattern?: string): Promise<T[]>;
   entries<T>(pattern?: string): Promise<Array<{ key: string; value: T }>>;
-  
+
   // Statistics
   stats(): Promise<MetadataCacheStats>;
   metrics(): Promise<MetadataCacheMetrics>;
-  
+
   // Management
   health(): Promise<{ healthy: boolean; details?: Record<string, any> }>;
   cleanup(): Promise<void>;
@@ -309,34 +312,47 @@ export interface MetadataCacheGetOptions {
 
 export interface MetadataCacheManager {
   // Provider management
-  registerProvider(name: string, provider: MetadataCacheProvider, config: MetadataCacheConfig): void;
+  registerProvider(
+    name: string,
+    provider: MetadataCacheProvider,
+    config: MetadataCacheConfig,
+  ): void;
   getProvider(name: string): MetadataCacheProvider | null;
   listProviders(): string[];
-  
+
   // Multi-level caching
   get<T>(key: string, options?: MetadataCacheGetOptions): Promise<T | null>;
   set<T>(key: string, value: T, options?: MetadataCacheSetOptions): Promise<void>;
   delete(key: string): Promise<boolean>;
   clear(): Promise<void>;
-  
+
   // Cache strategies
-  getWithStrategy<T>(key: string, strategy: MetadataCacheStrategy, options?: MetadataCacheGetOptions): Promise<T | null>;
-  setWithStrategy<T>(key: string, value: T, strategy: MetadataCacheStrategy, options?: MetadataCacheSetOptions): Promise<void>;
-  
+  getWithStrategy<T>(
+    key: string,
+    strategy: MetadataCacheStrategy,
+    options?: MetadataCacheGetOptions,
+  ): Promise<T | null>;
+  setWithStrategy<T>(
+    key: string,
+    value: T,
+    strategy: MetadataCacheStrategy,
+    options?: MetadataCacheSetOptions,
+  ): Promise<void>;
+
   // Invalidation
   invalidate(pattern: string): Promise<number>;
   invalidateByTags(tags: string[]): Promise<number>;
   invalidateByDependencies(dependencies: string[]): Promise<number>;
-  
+
   // Dependencies
   addDependency(key: string, dependencies: string[]): Promise<void>;
   removeDependency(key: string): Promise<void>;
   getDependencies(key: string): Promise<string[]>;
-  
+
   // Monitoring
   getStats(): Promise<Record<string, MetadataCacheStats>>;
   getMetrics(): Promise<Record<string, MetadataCacheMetrics>>;
-  
+
   // Health checks
   health(): Promise<Record<string, { healthy: boolean; details?: Record<string, any> }>>;
 }
@@ -348,12 +364,12 @@ export interface MetadataCacheManager {
 export interface MetadataCacheStrategy {
   name: string;
   description?: string;
-  
+
   // Strategy configuration
   levels: MetadataCacheLevel[];
   readPolicy: 'cache_first' | 'cache_only' | 'cache_after' | 'cache_around';
   writePolicy: 'write_through' | 'write_behind' | 'write_around';
-  
+
   // TTL strategy
   ttlStrategy: {
     type: 'fixed' | 'adaptive' | 'sliding' | 'custom';
@@ -361,13 +377,13 @@ export interface MetadataCacheStrategy {
     maxTtl: number;
     minTtl: number;
   };
-  
+
   // Invalidation strategy
   invalidationStrategy: {
     type: 'time_based' | 'event_based' | 'dependency_based' | 'hybrid';
     rules: MetadataCacheInvalidationRule[];
   };
-  
+
   // Performance tuning
   performance: {
     compression: boolean;
@@ -382,9 +398,9 @@ export interface MetadataCacheStrategyExecutor {
     operation: 'get' | 'set' | 'delete',
     key: string,
     value?: T,
-    options?: MetadataCacheSetOptions
+    options?: MetadataCacheSetOptions,
   ): Promise<T | null>;
-  
+
   shouldCache(key: string, value: any): boolean;
   shouldInvalidate(key: string, reason: string): boolean;
   getOptimalTtl(key: string, value: any): number;
@@ -417,7 +433,7 @@ export const MetadataCacheConfigSchema = z.object({
   encryption: z.boolean(),
   metrics: z.boolean(),
   logging: z.boolean(),
-  options: z.record(z.any()).optional()
+  options: z.record(z.any()).optional(),
 });
 
 export const MetadataCacheEntrySchema = z.object({
@@ -433,8 +449,8 @@ export const MetadataCacheEntrySchema = z.object({
     expiresAt: z.string().datetime().optional(),
     tags: z.array(z.string()).optional(),
     version: z.string().optional(),
-    checksum: z.string().optional()
-  })
+    checksum: z.string().optional(),
+  }),
 });
 
 export const MetadataCacheInvalidationRuleSchema = z.object({
@@ -443,32 +459,40 @@ export const MetadataCacheInvalidationRuleSchema = z.object({
   description: z.string().optional(),
   pattern: z.string(),
   tags: z.array(z.string()).optional(),
-  conditions: z.object({
-    timeBased: z.object({
-      schedule: z.string().optional(),
-      validFrom: z.string().datetime().optional(),
-      validTo: z.string().datetime().optional()
-    }).optional(),
-    dataBased: z.object({
-      field: z.string().optional(),
-      operator: z.enum(['equals', 'not_equals', 'contains', 'greater_than', 'less_than']),
-      value: z.any()
-    }).optional(),
-    dependencyBased: z.object({
-      dependencies: z.array(z.string()),
-      cascade: z.boolean()
-    }).optional()
-  }).optional(),
+  conditions: z
+    .object({
+      timeBased: z
+        .object({
+          schedule: z.string().optional(),
+          validFrom: z.string().datetime().optional(),
+          validTo: z.string().datetime().optional(),
+        })
+        .optional(),
+      dataBased: z
+        .object({
+          field: z.string().optional(),
+          operator: z.enum(['equals', 'not_equals', 'contains', 'greater_than', 'less_than']),
+          value: z.any(),
+        })
+        .optional(),
+      dependencyBased: z
+        .object({
+          dependencies: z.array(z.string()),
+          cascade: z.boolean(),
+        })
+        .optional(),
+    })
+    .optional(),
   actions: z.object({
     invalidate: z.boolean(),
     update: z.record(z.any()).optional(),
-    notify: z.array(z.string()).optional()
+    notify: z.array(z.string()).optional(),
   }),
   tenantId: z.string().uuid(),
   createdBy: z.string(),
   createdAt: z.string().datetime(),
   isActive: z.boolean(),
-  priority: z.number().int().min(0)
+  priority: z.number().int().min(0),
 });
 
 // ============================================================================
@@ -481,7 +505,7 @@ export class MetadataCacheUtils {
    */
   static generateKey(...components: (string | number | boolean)[]): string {
     return components
-      .map(component => String(component).replace(/[^a-zA-Z0-9_-]/g, '_'))
+      .map((component) => String(component).replace(/[^a-zA-Z0-9_-]/g, '_'))
       .join(':');
   }
 
@@ -519,7 +543,9 @@ export class MetadataCacheUtils {
    */
   static hashQuery(query: MetadataQuery): string {
     const queryStr = JSON.stringify(query);
-    return Buffer.from(queryStr).toString('base64').replace(/[^a-zA-Z0-9]/g, '');
+    return Buffer.from(queryStr)
+      .toString('base64')
+      .replace(/[^a-zA-Z0-9]/g, '');
   }
 
   /**
@@ -533,7 +559,7 @@ export class MetadataCacheUtils {
       if (error instanceof z.ZodError) {
         return {
           valid: false,
-          errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          errors: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
         };
       }
       return { valid: false, errors: ['Unknown validation error'] };
@@ -579,8 +605,8 @@ export class MetadataCacheUtils {
       metadata: {
         ...entry.metadata,
         accessedAt: new Date().toISOString() as ISODate,
-        accessCount: entry.metadata.accessCount + 1
-      }
+        accessCount: entry.metadata.accessCount + 1,
+      },
     };
   }
 
@@ -590,12 +616,12 @@ export class MetadataCacheUtils {
   static createEntry<T>(
     key: string,
     value: T,
-    options?: MetadataCacheSetOptions
+    options?: MetadataCacheSetOptions,
   ): MetadataCacheEntry<T> {
     const now = new Date().toISOString() as ISODate;
     const ttl = options?.ttl || 3600; // 1 hour default
     const expiresAt = new Date(Date.now() + ttl * 1000).toISOString() as ISODate;
-    
+
     return {
       key,
       value,
@@ -609,8 +635,8 @@ export class MetadataCacheUtils {
         expiresAt,
         tags: options?.tags || [],
         version: options?.version,
-        checksum: this.generateChecksum(value)
-      }
+        checksum: this.generateChecksum(value),
+      },
     };
   }
 
@@ -673,14 +699,14 @@ export class MetadataCacheUtils {
    */
   static extractTags(key: string): string[] {
     const parts = key.split(':');
-    return parts.filter(part => part.startsWith('tag_')).map(part => part.substring(4));
+    return parts.filter((part) => part.startsWith('tag_')).map((part) => part.substring(4));
   }
 
   /**
    * Adds tags to a cache key
    */
   static addTags(key: string, tags: string[]): string {
-    const tagParts = tags.map(tag => `tag_${tag}`);
+    const tagParts = tags.map((tag) => `tag_${tag}`);
     return `${key}:${tagParts.join(':')}`;
   }
 
@@ -689,7 +715,7 @@ export class MetadataCacheUtils {
    */
   static removeTags(key: string): string {
     const parts = key.split(':');
-    return parts.filter(part => !part.startsWith('tag_')).join(':');
+    return parts.filter((part) => !part.startsWith('tag_')).join(':');
   }
 
   /**
@@ -717,7 +743,7 @@ export class MetadataCacheUtils {
       'Entry Count': `${stats.entryCount}/${stats.maxEntries}`,
       'Average Response Time': `${stats.averageResponseTime.toFixed(2)}ms`,
       'Eviction Rate': `${stats.evictionRate.toFixed(2)}/min`,
-      'Error Rate': `${stats.errorRate.toFixed(2)}%`
+      'Error Rate': `${stats.errorRate.toFixed(2)}%`,
     };
   }
 
@@ -729,28 +755,31 @@ export class MetadataCacheUtils {
     pattern: string,
     tenantId: TenantID,
     createdBy: string,
-    options?: Partial<MetadataCacheInvalidationRule>
+    options?: Partial<MetadataCacheInvalidationRule>,
   ): MetadataCacheInvalidationRule {
     return {
       id: crypto.randomUUID() as UUID,
       name,
       pattern,
       actions: {
-        invalidate: true
+        invalidate: true,
       },
       tenantId,
       createdBy,
       createdAt: new Date().toISOString() as ISODate,
       isActive: true,
       priority: 0,
-      ...options
+      ...options,
     };
   }
 
   /**
    * Validates an invalidation rule
    */
-  static validateInvalidationRule(rule: MetadataCacheInvalidationRule): { valid: boolean; errors?: string[] } {
+  static validateInvalidationRule(rule: MetadataCacheInvalidationRule): {
+    valid: boolean;
+    errors?: string[];
+  } {
     try {
       MetadataCacheInvalidationRuleSchema.parse(rule);
       return { valid: true };
@@ -758,7 +787,7 @@ export class MetadataCacheUtils {
       if (error instanceof z.ZodError) {
         return {
           valid: false,
-          errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          errors: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
         };
       }
       return { valid: false, errors: ['Unknown validation error'] };
@@ -783,7 +812,7 @@ export type {
   MetadataCacheGetOptions,
   MetadataCacheManager,
   MetadataCacheStrategy,
-  MetadataCacheStrategyExecutor
+  MetadataCacheStrategyExecutor,
 };
 
 export {
@@ -793,5 +822,5 @@ export {
   MetadataCacheConfigSchema,
   MetadataCacheEntrySchema,
   MetadataCacheInvalidationRuleSchema,
-  MetadataCacheUtils
-}; 
+  MetadataCacheUtils,
+};

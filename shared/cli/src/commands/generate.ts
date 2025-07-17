@@ -1,6 +1,6 @@
 /**
  * AI-BOS Generate Command
- * 
+ *
  * Generates AI-BOS components including entities, events, manifests,
  * and other platform-specific code with enterprise-grade structure.
  */
@@ -48,7 +48,7 @@ export function generateCommand(program: Command) {
 async function generateComponent(type: string, name?: string, options: GenerateOptions = {}) {
   // Validate generation type
   const validTypes = ['entity', 'event', 'manifest', 'test', 'api', 'ui', 'component'];
-  
+
   if (!validTypes.includes(type)) {
     logger.error(`Invalid generation type: ${type}`);
     logger.info(`Valid types: ${validTypes.join(', ')}`);
@@ -57,7 +57,7 @@ async function generateComponent(type: string, name?: string, options: GenerateO
 
   // Collect component information
   const answers = await collectComponentInfo(type, name, options);
-  
+
   // Validate component name
   if (!validateComponentName(answers.name)) {
     logger.error('Invalid component name. Use PascalCase for components.');
@@ -69,13 +69,15 @@ async function generateComponent(type: string, name?: string, options: GenerateO
     const existingFiles = await checkExistingFiles(type, answers.name);
     if (existingFiles.length > 0) {
       logger.warn(`Files already exist: ${existingFiles.join(', ')}`);
-      const { overwrite } = await inquirer.prompt([{
-        type: 'confirm',
-        name: 'overwrite',
-        message: 'Do you want to overwrite existing files?',
-        default: false
-      }]);
-      
+      const { overwrite } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'overwrite',
+          message: 'Do you want to overwrite existing files?',
+          default: false,
+        },
+      ]);
+
       if (!overwrite) {
         logger.info('Generation cancelled.');
         return;
@@ -85,29 +87,32 @@ async function generateComponent(type: string, name?: string, options: GenerateO
 
   // Generate component
   const spinner = ora(`Generating ${type}...`).start();
-  
+
   try {
     const generatedFiles = await generateComponentFiles(type, answers, options);
     spinner.succeed(`${type} generated successfully!`);
-    
+
     // Display generated files
     if (generatedFiles.length > 0) {
       logger.info('\n' + chalk.blue.bold('Generated files:'));
-      generatedFiles.forEach(file => {
+      generatedFiles.forEach((file) => {
         logger.info(chalk.gray(`  ${file}`));
       });
     }
-    
+
     // Display next steps
     displayNextSteps(type, answers.name);
-    
   } catch (error) {
     spinner.fail(`Failed to generate ${type}`);
     throw error;
   }
 }
 
-async function collectComponentInfo(type: string, name?: string, options: GenerateOptions = {}): Promise<any> {
+async function collectComponentInfo(
+  type: string,
+  name?: string,
+  options: GenerateOptions = {},
+): Promise<any> {
   const questions = [];
 
   // Component name
@@ -121,7 +126,7 @@ async function collectComponentInfo(type: string, name?: string, options: Genera
           return `${type} name must be in PascalCase`;
         }
         return true;
-      }
+      },
     });
   }
 
@@ -133,26 +138,26 @@ async function collectComponentInfo(type: string, name?: string, options: Genera
           type: 'input',
           name: 'description',
           message: 'Entity description:',
-          default: 'A business entity'
+          default: 'A business entity',
         },
         {
           type: 'confirm',
           name: 'audit',
           message: 'Include audit trail?',
-          default: true
+          default: true,
         },
         {
           type: 'confirm',
           name: 'validation',
           message: 'Include validation rules?',
-          default: true
+          default: true,
         },
         {
           type: 'input',
           name: 'fields',
           message: 'Entity fields (comma-separated):',
-          default: 'id, name, email, createdAt'
-        }
+          default: 'id, name, email, createdAt',
+        },
       );
       break;
 
@@ -162,20 +167,20 @@ async function collectComponentInfo(type: string, name?: string, options: Genera
           type: 'input',
           name: 'description',
           message: 'Event description:',
-          default: 'A business event'
+          default: 'A business event',
         },
         {
           type: 'confirm',
           name: 'persistence',
           message: 'Enable event persistence?',
-          default: true
+          default: true,
         },
         {
           type: 'input',
           name: 'payload',
           message: 'Event payload fields (comma-separated):',
-          default: 'id, data, timestamp'
-        }
+          default: 'id, data, timestamp',
+        },
       );
       break;
 
@@ -185,26 +190,26 @@ async function collectComponentInfo(type: string, name?: string, options: Genera
           type: 'input',
           name: 'version',
           message: 'Manifest version:',
-          default: '1.0.0'
+          default: '1.0.0',
         },
         {
           type: 'input',
           name: 'description',
           message: 'Application description:',
-          default: 'AI-BOS application'
+          default: 'AI-BOS application',
         },
         {
           type: 'confirm',
           name: 'compliance',
           message: 'Include compliance frameworks?',
-          default: true
+          default: true,
         },
         {
           type: 'confirm',
           name: 'security',
           message: 'Include security features?',
-          default: true
-        }
+          default: true,
+        },
       );
       break;
 
@@ -215,26 +220,26 @@ async function collectComponentInfo(type: string, name?: string, options: Genera
           name: 'method',
           message: 'HTTP method:',
           choices: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-          default: 'GET'
+          default: 'GET',
         },
         {
           type: 'input',
           name: 'path',
           message: 'API path:',
-          default: '/api/v1'
+          default: '/api/v1',
         },
         {
           type: 'confirm',
           name: 'validation',
           message: 'Include request validation?',
-          default: true
+          default: true,
         },
         {
           type: 'confirm',
           name: 'authentication',
           message: 'Include authentication?',
-          default: true
-        }
+          default: true,
+        },
       );
       break;
 
@@ -246,34 +251,34 @@ async function collectComponentInfo(type: string, name?: string, options: Genera
           name: 'framework',
           message: 'UI framework:',
           choices: ['React', 'Vue', 'Angular', 'Svelte'],
-          default: 'React'
+          default: 'React',
         },
         {
           type: 'list',
           name: 'type',
           message: 'Component type:',
           choices: ['form', 'table', 'chart', 'modal', 'custom'],
-          default: 'custom'
+          default: 'custom',
         },
         {
           type: 'confirm',
           name: 'typescript',
           message: 'Use TypeScript?',
-          default: true
+          default: true,
         },
         {
           type: 'confirm',
           name: 'testing',
           message: 'Include tests?',
-          default: true
-        }
+          default: true,
+        },
       );
       break;
   }
 
   // Get answers
   const answers = await inquirer.prompt(questions);
-  
+
   return {
     name: name || answers.name,
     description: answers.description,
@@ -291,7 +296,7 @@ async function collectComponentInfo(type: string, name?: string, options: Genera
     framework: answers.framework,
     type: answers.type,
     typescript: answers.typescript,
-    testing: answers.testing
+    testing: answers.testing,
   };
 }
 
@@ -303,13 +308,13 @@ function validateComponentName(name: string): boolean {
 async function checkExistingFiles(type: string, name: string): Promise<string[]> {
   const existingFiles = [];
   const basePath = process.cwd();
-  
+
   switch (type) {
     case 'entity':
       const entityFiles = [
         `src/entities/${name}.ts`,
         `src/entities/${name}.test.ts`,
-        `src/schemas/${name}.ts`
+        `src/schemas/${name}.ts`,
       ];
       for (const file of entityFiles) {
         if (fs.existsSync(path.join(basePath, file))) {
@@ -322,7 +327,7 @@ async function checkExistingFiles(type: string, name: string): Promise<string[]>
       const eventFiles = [
         `src/events/${name}.ts`,
         `src/events/${name}.test.ts`,
-        `src/schemas/${name}.ts`
+        `src/schemas/${name}.ts`,
       ];
       for (const file of eventFiles) {
         if (fs.existsSync(path.join(basePath, file))) {
@@ -332,10 +337,7 @@ async function checkExistingFiles(type: string, name: string): Promise<string[]>
       break;
 
     case 'manifest':
-      const manifestFiles = [
-        `src/manifests/${name}.ts`,
-        `src/manifests/${name}.json`
-      ];
+      const manifestFiles = [`src/manifests/${name}.ts`, `src/manifests/${name}.json`];
       for (const file of manifestFiles) {
         if (fs.existsSync(path.join(basePath, file))) {
           existingFiles.push(file);
@@ -344,10 +346,7 @@ async function checkExistingFiles(type: string, name: string): Promise<string[]>
       break;
 
     case 'api':
-      const apiFiles = [
-        `src/api/${name}.ts`,
-        `src/api/${name}.test.ts`
-      ];
+      const apiFiles = [`src/api/${name}.ts`, `src/api/${name}.test.ts`];
       for (const file of apiFiles) {
         if (fs.existsSync(path.join(basePath, file))) {
           existingFiles.push(file);
@@ -360,7 +359,7 @@ async function checkExistingFiles(type: string, name: string): Promise<string[]>
       const uiFiles = [
         `src/components/${name}.tsx`,
         `src/components/${name}.test.tsx`,
-        `src/components/${name}.stories.tsx`
+        `src/components/${name}.stories.tsx`,
       ];
       for (const file of uiFiles) {
         if (fs.existsSync(path.join(basePath, file))) {
@@ -369,74 +368,78 @@ async function checkExistingFiles(type: string, name: string): Promise<string[]>
       }
       break;
   }
-  
+
   return existingFiles;
 }
 
-async function generateComponentFiles(type: string, answers: any, options: GenerateOptions): Promise<string[]> {
+async function generateComponentFiles(
+  type: string,
+  answers: any,
+  options: GenerateOptions,
+): Promise<string[]> {
   const generatedFiles: string[] = [];
-  
+
   switch (type) {
     case 'entity':
-      generatedFiles.push(...await generateEntity(answers, options));
+      generatedFiles.push(...(await generateEntity(answers, options)));
       break;
-      
+
     case 'event':
-      generatedFiles.push(...await generateEvent(answers, options));
+      generatedFiles.push(...(await generateEvent(answers, options)));
       break;
-      
+
     case 'manifest':
-      generatedFiles.push(...await generateManifest(answers, options));
+      generatedFiles.push(...(await generateManifest(answers, options)));
       break;
-      
+
     case 'test':
-      generatedFiles.push(...await generateTest(answers, options));
+      generatedFiles.push(...(await generateTest(answers, options)));
       break;
-      
+
     case 'api':
-      generatedFiles.push(...await generateAPI(answers, options));
+      generatedFiles.push(...(await generateAPI(answers, options)));
       break;
-      
+
     case 'ui':
     case 'component':
-      generatedFiles.push(...await generateUI(answers, options));
+      generatedFiles.push(...(await generateUI(answers, options)));
       break;
   }
-  
+
   return generatedFiles;
 }
 
 function displayNextSteps(type: string, name: string) {
   logger.info('\n' + chalk.blue.bold('Next steps:'));
-  
+
   switch (type) {
     case 'entity':
       logger.info(chalk.gray(`  npm run test src/entities/${name}.test.ts`));
       logger.info(chalk.gray(`  npm run build`));
       break;
-      
+
     case 'event':
       logger.info(chalk.gray(`  npm run test src/events/${name}.test.ts`));
       logger.info(chalk.gray(`  npm run dev`));
       break;
-      
+
     case 'manifest':
       logger.info(chalk.gray(`  npm run validate-manifest`));
       logger.info(chalk.gray(`  npm run deploy`));
       break;
-      
+
     case 'api':
       logger.info(chalk.gray(`  npm run test src/api/${name}.test.ts`));
       logger.info(chalk.gray(`  npm run dev`));
       break;
-      
+
     case 'ui':
     case 'component':
       logger.info(chalk.gray(`  npm run test src/components/${name}.test.tsx`));
       logger.info(chalk.gray(`  npm run storybook`));
       break;
   }
-  
+
   logger.info(chalk.gray(`  # Import and use your ${type}`));
   logger.info(chalk.gray(`  import { ${name} } from './src/${type}s/${name}';`));
-} 
+}

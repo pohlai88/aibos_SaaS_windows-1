@@ -7,7 +7,7 @@ export enum UserRole {
   ADMIN = 'ADMIN',
   MANAGER = 'MANAGER',
   USER = 'USER',
-  GUEST = 'GUEST'
+  GUEST = 'GUEST',
 }
 
 export type UserRoleType = keyof typeof UserRole;
@@ -20,15 +20,15 @@ export enum RoleLevel {
   ADMIN = 80,
   MANAGER = 60,
   USER = 40,
-  GUEST = 0
+  GUEST = 0,
 }
 
 /**
  * Role categories for organization
  */
 export enum RoleCategory {
-  SYSTEM = "system",
-  ADMINISTRATIVE = "administrative",
-  OPERATIONAL = "operational",
-  LIMITED = "limited"
-} 
+  SYSTEM = 'system',
+  ADMINISTRATIVE = 'administrative',
+  OPERATIONAL = 'operational',
+  LIMITED = 'limited',
+}

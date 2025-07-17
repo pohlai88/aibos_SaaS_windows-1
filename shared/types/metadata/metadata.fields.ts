@@ -1,26 +1,26 @@
 /**
  * Enterprise-grade metadata field types for the AI-BOS platform
- * 
+ *
  * This module provides comprehensive field type definitions with discriminated unions,
  * ensuring type safety and proper field-specific configurations.
  */
 
-import { 
+import {
   MetadataFieldType,
   MetadataValidationRule,
   MetadataStatus,
   MetadataSource,
-  MetadataCategory
+  MetadataCategory,
 } from './metadata.enums';
-import { 
-  UUID, 
-  ISODate, 
-  JsonValue, 
+import {
+  UUID,
+  ISODate,
+  JsonValue,
   JsonObject,
   Percentage,
   CurrencyAmount,
   Integer,
-  Float
+  Float,
 } from '../primitives';
 import { FieldTypeToTS } from './metadata.mapping';
 
@@ -829,7 +829,7 @@ export interface VirtualMetadataField extends BaseMetadataField {
 /**
  * Union type for all metadata field types
  */
-export type MetadataField = 
+export type MetadataField =
   | StringMetadataField
   | TextMetadataField
   | RichTextMetadataField
@@ -874,25 +874,30 @@ export type MetadataField =
 /**
  * Type guard to check if a field is a specific type
  */
-export type FieldTypeGuard<T extends MetadataFieldType> = 
-  MetadataField extends { type: T } ? MetadataField & { type: T } : never;
+export type FieldTypeGuard<T extends MetadataFieldType> = MetadataField extends { type: T }
+  ? MetadataField & { type: T }
+  : never;
 
 /**
  * Extract field type from MetadataField union
  */
-export type ExtractFieldType<T extends MetadataFieldType> = 
-  MetadataField extends { type: T } ? MetadataField & { type: T } : never;
+export type ExtractFieldType<T extends MetadataFieldType> = MetadataField extends { type: T }
+  ? MetadataField & { type: T }
+  : never;
 
 /**
  * Type-safe field creation helper
  */
 export function createMetadataField<T extends MetadataFieldType>(
   type: T,
-  config: Omit<ExtractFieldType<T>, 'type' | 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'updatedBy'>
+  config: Omit<
+    ExtractFieldType<T>,
+    'type' | 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'updatedBy'
+  >,
 ): ExtractFieldType<T> {
   const now = new Date().toISOString();
   const id = crypto.randomUUID();
-  
+
   return {
     id,
     type,
@@ -905,4 +910,4 @@ export function createMetadataField<T extends MetadataFieldType>(
     category: MetadataCategory.CORE,
     ...config,
   } as ExtractFieldType<T>;
-} 
+}

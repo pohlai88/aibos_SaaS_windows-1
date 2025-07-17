@@ -1,141 +1,192 @@
 import typescript from '@rollup/plugin-typescript';
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
+import { defineConfig } from 'rollup';
 
-export default [
-  // Main bundle
+// Shared plugin configuration
+const sharedPlugins = [
+  nodeResolve({
+    preferBuiltins: true,
+    exportConditions: ['node', 'import', 'require']
+  }),
+  commonjs({
+    ignoreDynamicRequires: true,
+    esmExternals: true
+  }),
+  typescript({
+    tsconfig: './tsconfig.json',
+    declaration: true,
+    declarationDir: './dist',
+    exclude: ['**/*.test.ts', '**/*.spec.ts', '**/__tests__/**']
+  })
+];
+
+// Production plugins
+const productionPlugins = [
+  terser({
+    compress: {
+      drop_console: true,
+      drop_debugger: true,
+      pure_funcs: ['console.log', 'console.info', 'console.debug']
+    },
+    mangle: {
+      properties: {
+        regex: /^_/
+      }
+    }
+  })
+];
+
+export default defineConfig([
+  // Primary bundle (ESM + CJS)
   {
     input: 'index.ts',
     output: [
       {
-        file: 'dist/index.esm.js',
+        file: 'dist/index.mjs',
         format: 'esm',
         sourcemap: true,
-        exports: 'named'
+        exports: 'named',
+        generatedCode: 'es2015',
+        preserveModules: true,
+        preserveModulesRoot: '.'
       },
       {
-        file: 'dist/index.min.js',
+        file: 'dist/index.cjs',
         format: 'cjs',
         sourcemap: true,
         exports: 'named',
-        plugins: [terser()]
+        plugins: productionPlugins,
+        generatedCode: 'es2015'
       }
     ],
-    plugins: [
-      nodeResolve(),
-      commonjs(),
-      typescript({
-        tsconfig: './tsconfig.json',
-        declaration: true,
-        declarationDir: './dist'
-      })
-    ],
-    external: ['zod', 'redis', 'pg', 'express']
+    plugins: sharedPlugins,
+    external: ['zod', 'redis', 'pg', 'express', 'jose', 'stripe'],
+    treeshake: {
+      moduleSideEffects: false,
+      propertyReadSideEffects: false,
+      unknownGlobalSideEffects: false
+    }
   },
-  
-  // Types bundle
+
+  // Types utilities
   {
     input: 'types/index.ts',
     output: {
-      file: 'dist/types/index.esm.js',
+      file: 'dist/types/index.mjs',
       format: 'esm',
       sourcemap: true,
-      exports: 'named'
+      exports: 'auto',
+      generatedCode: 'es2015',
+      preserveModules: true,
+      preserveModulesRoot: 'types'
     },
     plugins: [
-      nodeResolve(),
-      commonjs(),
+      ...sharedPlugins,
       typescript({
-        tsconfig: './tsconfig.json',
-        declaration: true,
         declarationDir: './dist/types'
       })
     ],
-    external: ['zod']
+    external: ['zod'],
+    treeshake: {
+      moduleSideEffects: false
+    }
   },
-  
-  // Lib bundle
+
+  // Library utilities
   {
     input: 'lib/index.ts',
     output: {
-      file: 'dist/lib/index.esm.js',
+      file: 'dist/lib/index.mjs',
       format: 'esm',
       sourcemap: true,
-      exports: 'named'
+      exports: 'auto',
+      generatedCode: 'es2015',
+      preserveModules: true,
+      preserveModulesRoot: 'lib'
     },
     plugins: [
-      nodeResolve(),
-      commonjs(),
+      ...sharedPlugins,
       typescript({
-        tsconfig: './tsconfig.json',
-        declaration: true,
         declarationDir: './dist/lib'
       })
     ],
-    external: ['zod', 'redis', 'pg']
+    external: ['zod', 'redis', 'pg'],
+    treeshake: {
+      moduleSideEffects: false
+    }
   },
-  
-  // Utils bundle
+
+  // Shared utilities
   {
     input: 'utils/index.ts',
     output: {
-      file: 'dist/utils/index.esm.js',
+      file: 'dist/utils/index.mjs',
       format: 'esm',
       sourcemap: true,
-      exports: 'named'
+      exports: 'auto',
+      generatedCode: 'es2015',
+      preserveModules: true,
+      preserveModulesRoot: 'utils'
     },
     plugins: [
-      nodeResolve(),
-      commonjs(),
+      ...sharedPlugins,
       typescript({
-        tsconfig: './tsconfig.json',
-        declaration: true,
         declarationDir: './dist/utils'
       })
     ],
-    external: ['zod']
+    external: ['zod'],
+    treeshake: {
+      moduleSideEffects: false
+    }
   },
-  
-  // Validation bundle
+
+  // Validation helpers
   {
     input: 'validation/index.ts',
     output: {
-      file: 'dist/validation/index.esm.js',
+      file: 'dist/validation/index.mjs',
       format: 'esm',
       sourcemap: true,
-      exports: 'named'
+      exports: 'auto',
+      generatedCode: 'es2015',
+      preserveModules: true,
+      preserveModulesRoot: 'validation'
     },
     plugins: [
-      nodeResolve(),
-      commonjs(),
+      ...sharedPlugins,
       typescript({
-        tsconfig: './tsconfig.json',
-        declaration: true,
         declarationDir: './dist/validation'
       })
     ],
-    external: ['zod']
+    external: ['zod'],
+    treeshake: {
+      moduleSideEffects: false
+    }
   },
-  
-  // Metadata bundle
+
+  // Metadata types
   {
     input: 'types/metadata/index.ts',
     output: {
-      file: 'dist/types/metadata/index.esm.js',
+      file: 'dist/types/metadata/index.mjs',
       format: 'esm',
       sourcemap: true,
-      exports: 'named'
+      exports: 'auto',
+      generatedCode: 'es2015',
+      preserveModules: true,
+      preserveModulesRoot: 'types/metadata'
     },
     plugins: [
-      nodeResolve(),
-      commonjs(),
+      ...sharedPlugins,
       typescript({
-        tsconfig: './tsconfig.json',
-        declaration: true,
         declarationDir: './dist/types/metadata'
       })
     ],
-    external: ['zod']
+    external: ['zod'],
+    treeshake: {
+      moduleSideEffects: false
+    }
   }
-]; 
+]);

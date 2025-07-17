@@ -1,6 +1,6 @@
 /**
  * AI-BOS Manifest System
- * 
+ *
  * Enterprise-grade manifest validation, processing, and lifecycle management
  * for the AI-BOS micro-app platform.
  */
@@ -123,13 +123,13 @@ export interface AppManifest {
   license?: string;
   homepage?: string;
   repository?: string;
-  
+
   // Core definitions
   entities: ManifestEntity[];
   events: ManifestEvent[];
   uiComponents: ManifestUIComponent[];
   permissions: ManifestPermission[];
-  
+
   // Configuration
   settings?: Record<string, any>;
   dependencies?: string[];
@@ -138,19 +138,19 @@ export interface AppManifest {
     maxAibosVersion?: string;
     features?: string[];
   };
-  
+
   // Metadata
   tags?: string[];
   categories?: string[];
   icon?: string;
   screenshots?: string[];
-  
+
   // Lifecycle
   status: 'draft' | 'published' | 'deprecated' | 'archived';
   createdAt: number;
   updatedAt: number;
   publishedAt?: number;
-  
+
   // Compliance
   compliance?: {
     gdpr?: boolean;
@@ -159,7 +159,7 @@ export interface AppManifest {
     dataRetention?: number;
     dataClassification?: 'public' | 'internal' | 'confidential' | 'restricted';
   };
-  
+
   // Security
   security?: {
     encryptionLevel?: 'none' | 'standard' | 'high';
@@ -271,7 +271,7 @@ export class ManifestValidator {
       type: z.enum(['required', 'min', 'max', 'pattern', 'email', 'url', 'custom']),
       value: z.any().optional(),
       message: z.string().optional(),
-      validator: z.function().optional()
+      validator: z.function().optional(),
     });
 
     // Field schema
@@ -285,7 +285,7 @@ export class ManifestValidator {
       description: z.string().optional(),
       pii: z.boolean().optional(),
       encrypted: z.boolean().optional(),
-      indexed: z.boolean().optional()
+      indexed: z.boolean().optional(),
     });
 
     // Entity index schema
@@ -294,7 +294,7 @@ export class ManifestValidator {
       fields: z.array(z.string()).min(1),
       type: z.enum(['btree', 'hash', 'gin', 'gist']),
       unique: z.boolean().optional(),
-      partial: z.string().optional()
+      partial: z.string().optional(),
     });
 
     // Entity constraint schema
@@ -302,11 +302,13 @@ export class ManifestValidator {
       name: z.string().min(1),
       type: z.enum(['primary_key', 'foreign_key', 'check', 'unique']),
       fields: z.array(z.string()).optional(),
-      reference: z.object({
-        table: z.string(),
-        field: z.string()
-      }).optional(),
-      expression: z.string().optional()
+      reference: z
+        .object({
+          table: z.string(),
+          field: z.string(),
+        })
+        .optional(),
+      expression: z.string().optional(),
     });
 
     // Entity schema
@@ -316,7 +318,7 @@ export class ManifestValidator {
       indexes: z.array(entityIndexSchema).optional(),
       constraints: z.array(entityConstraintSchema).optional(),
       description: z.string().optional(),
-      version: z.string().optional()
+      version: z.string().optional(),
     });
 
     // Event schema
@@ -325,7 +327,7 @@ export class ManifestValidator {
       payload: z.record(z.any()),
       description: z.string().optional(),
       version: z.string().optional(),
-      deprecated: z.boolean().optional()
+      deprecated: z.boolean().optional(),
     });
 
     // UI component schema
@@ -335,7 +337,7 @@ export class ManifestValidator {
       props: z.record(z.any()).optional(),
       events: z.array(z.string()).optional(),
       triggers: z.array(z.string()).optional(),
-      description: z.string().optional()
+      description: z.string().optional(),
     });
 
     // Permission schema
@@ -344,7 +346,7 @@ export class ManifestValidator {
       description: z.string(),
       resources: z.array(z.string()).min(1),
       actions: z.array(z.string()).min(1),
-      conditions: z.record(z.any()).optional()
+      conditions: z.record(z.any()).optional(),
     });
 
     // Main manifest schema
@@ -357,43 +359,51 @@ export class ManifestValidator {
       license: z.string().optional(),
       homepage: z.string().url().optional(),
       repository: z.string().url().optional(),
-      
+
       entities: z.array(entitySchema).min(0).max(this.config.maxEntities),
       events: z.array(eventSchema).min(0).max(this.config.maxEvents),
       uiComponents: z.array(uiComponentSchema).min(0).max(this.config.maxUIComponents),
       permissions: z.array(permissionSchema).min(0),
-      
+
       settings: z.record(z.any()).optional(),
       dependencies: z.array(z.string()).optional(),
-      requirements: z.object({
-        minAibosVersion: z.string().optional(),
-        maxAibosVersion: z.string().optional(),
-        features: z.array(z.string()).optional()
-      }).optional(),
-      
+      requirements: z
+        .object({
+          minAibosVersion: z.string().optional(),
+          maxAibosVersion: z.string().optional(),
+          features: z.array(z.string()).optional(),
+        })
+        .optional(),
+
       tags: z.array(z.string()).optional(),
       categories: z.array(z.string()).optional(),
       icon: z.string().optional(),
       screenshots: z.array(z.string()).optional(),
-      
+
       status: z.enum(['draft', 'published', 'deprecated', 'archived']),
       createdAt: z.number(),
       updatedAt: z.number(),
       publishedAt: z.number().optional(),
-      
-      compliance: z.object({
-        gdpr: z.boolean().optional(),
-        soc2: z.boolean().optional(),
-        hipaa: z.boolean().optional(),
-        dataRetention: z.number().optional(),
-        dataClassification: z.enum(['public', 'internal', 'confidential', 'restricted']).optional()
-      }).optional(),
-      
-      security: z.object({
-        encryptionLevel: z.enum(['none', 'standard', 'high']).optional(),
-        auditTrail: z.boolean().optional(),
-        accessControl: z.enum(['role-based', 'attribute-based', 'policy-based']).optional()
-      }).optional()
+
+      compliance: z
+        .object({
+          gdpr: z.boolean().optional(),
+          soc2: z.boolean().optional(),
+          hipaa: z.boolean().optional(),
+          dataRetention: z.number().optional(),
+          dataClassification: z
+            .enum(['public', 'internal', 'confidential', 'restricted'])
+            .optional(),
+        })
+        .optional(),
+
+      security: z
+        .object({
+          encryptionLevel: z.enum(['none', 'standard', 'high']).optional(),
+          auditTrail: z.boolean().optional(),
+          accessControl: z.enum(['role-based', 'attribute-based', 'policy-based']).optional(),
+        })
+        .optional(),
     });
 
     this.schemas.set('manifest', manifestSchema);
@@ -412,7 +422,7 @@ export class ManifestValidator {
       errors: [],
       warnings: [],
       compliance: [],
-      security: []
+      security: [],
     };
 
     try {
@@ -442,21 +452,22 @@ export class ManifestValidator {
       this.checkPerformance(manifest, result);
 
       result.valid = result.errors.length === 0;
-
     } catch (error) {
       if (error instanceof z.ZodError) {
-        result.errors.push(...error.errors.map(err => ({
-          code: 'SCHEMA_VALIDATION_ERROR',
-          message: err.message,
-          path: err.path.join('.'),
-          severity: 'error' as const
-        })));
+        result.errors.push(
+          ...error.errors.map((err) => ({
+            code: 'SCHEMA_VALIDATION_ERROR',
+            message: err.message,
+            path: err.path.join('.'),
+            severity: 'error' as const,
+          })),
+        );
       } else {
         result.errors.push({
           code: 'VALIDATION_ERROR',
           message: (error as Error).message,
           path: 'manifest',
-          severity: 'error' as const
+          severity: 'error' as const,
         });
       }
       result.valid = false;
@@ -476,31 +487,33 @@ export class ManifestValidator {
         code: 'MANIFEST_TOO_LARGE',
         message: `Manifest size (${manifestSize} bytes) exceeds maximum allowed size (${this.config.maxManifestSize} bytes)`,
         path: 'manifest',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
     // Check for duplicate entity names
-    const entityNames = manifest.entities.map(e => e.name);
-    const duplicateEntities = entityNames.filter((name, index) => entityNames.indexOf(name) !== index);
+    const entityNames = manifest.entities.map((e) => e.name);
+    const duplicateEntities = entityNames.filter(
+      (name, index) => entityNames.indexOf(name) !== index,
+    );
     if (duplicateEntities.length > 0) {
       result.errors.push({
         code: 'DUPLICATE_ENTITY_NAMES',
         message: `Duplicate entity names found: ${duplicateEntities.join(', ')}`,
         path: 'entities',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
     // Check for duplicate event names
-    const eventNames = manifest.events.map(e => e.name);
+    const eventNames = manifest.events.map((e) => e.name);
     const duplicateEvents = eventNames.filter((name, index) => eventNames.indexOf(name) !== index);
     if (duplicateEvents.length > 0) {
       result.errors.push({
         code: 'DUPLICATE_EVENT_NAMES',
         message: `Duplicate event names found: ${duplicateEvents.join(', ')}`,
         path: 'events',
-        severity: 'error'
+        severity: 'error',
       });
     }
   }
@@ -508,8 +521,11 @@ export class ManifestValidator {
   /**
    * Validate entity relationships
    */
-  private validateEntityRelationships(manifest: AppManifest, result: ManifestValidationResult): void {
-    const entityNames = new Set(manifest.entities.map(e => e.name));
+  private validateEntityRelationships(
+    manifest: AppManifest,
+    result: ManifestValidationResult,
+  ): void {
+    const entityNames = new Set(manifest.entities.map((e) => e.name));
 
     for (const entity of manifest.entities) {
       for (const constraint of entity.constraints || []) {
@@ -519,7 +535,7 @@ export class ManifestValidator {
               code: 'INVALID_FOREIGN_KEY',
               message: `Foreign key references non-existent entity: ${constraint.reference.table}`,
               path: `entities.${entity.name}.constraints.${constraint.name}`,
-              severity: 'error'
+              severity: 'error',
             });
           }
         }
@@ -531,7 +547,7 @@ export class ManifestValidator {
    * Validate event consistency
    */
   private validateEventConsistency(manifest: AppManifest, result: ManifestValidationResult): void {
-    const entityNames = new Set(manifest.entities.map(e => e.name));
+    const entityNames = new Set(manifest.entities.map((e) => e.name));
 
     for (const event of manifest.events) {
       // Check if event payload references valid entities
@@ -540,7 +556,7 @@ export class ManifestValidator {
           result.warnings.push({
             code: 'POTENTIAL_INVALID_ENTITY_REFERENCE',
             message: `Event payload may reference invalid entity: ${value}`,
-            path: `events.${event.name}.payload.${key}`
+            path: `events.${event.name}.payload.${key}`,
           });
         }
       }
@@ -557,7 +573,7 @@ export class ManifestValidator {
         result.warnings.push({
           code: 'ENTITY_NAMING_CONVENTION',
           message: `Entity name should follow PascalCase convention: ${entity.name}`,
-          path: `entities.${entity.name}.name`
+          path: `entities.${entity.name}.name`,
         });
       }
     }
@@ -568,7 +584,7 @@ export class ManifestValidator {
         result.warnings.push({
           code: 'EVENT_NAMING_CONVENTION',
           message: `Event name should follow PascalCase convention: ${event.name}`,
-          path: `events.${event.name}.name`
+          path: `events.${event.name}.name`,
         });
       }
     }
@@ -584,17 +600,17 @@ export class ManifestValidator {
         standard: 'GDPR',
         compliant: true,
         issues: [],
-        recommendations: []
+        recommendations: [],
       };
 
       // Check for PII fields
-      const piiFields = manifest.entities.flatMap(e => 
-        e.fields.filter(f => f.pii).map(f => `${e.name}.${f.name}`)
+      const piiFields = manifest.entities.flatMap((e) =>
+        e.fields.filter((f) => f.pii).map((f) => `${e.name}.${f.name}`),
       );
 
       if (piiFields.length > 0) {
         gdprCheck.recommendations.push(
-          `PII fields detected: ${piiFields.join(', ')}. Ensure proper data protection measures.`
+          `PII fields detected: ${piiFields.join(', ')}. Ensure proper data protection measures.`,
         );
       }
 
@@ -613,7 +629,7 @@ export class ManifestValidator {
         standard: 'SOC2',
         compliant: true,
         issues: [],
-        recommendations: []
+        recommendations: [],
       };
 
       // Check audit trail
@@ -640,12 +656,12 @@ export class ManifestValidator {
       aspect: 'General Security',
       secure: true,
       issues: [],
-      recommendations: []
+      recommendations: [],
     };
 
     // Check encryption for sensitive data
-    const sensitiveFields = manifest.entities.flatMap(e => 
-      e.fields.filter(f => f.pii || f.encrypted).map(f => `${e.name}.${f.name}`)
+    const sensitiveFields = manifest.entities.flatMap((e) =>
+      e.fields.filter((f) => f.pii || f.encrypted).map((f) => `${e.name}.${f.name}`),
     );
 
     if (sensitiveFields.length > 0 && manifest.security?.encryptionLevel === 'none') {
@@ -667,15 +683,15 @@ export class ManifestValidator {
   private checkPerformance(manifest: AppManifest, result: ManifestValidationResult): void {
     // Check for missing indexes on frequently queried fields
     for (const entity of manifest.entities) {
-      const uniqueFields = entity.fields.filter(f => f.unique);
-      const indexedFields = entity.indexes?.flatMap(i => i.fields) || [];
+      const uniqueFields = entity.fields.filter((f) => f.unique);
+      const indexedFields = entity.indexes?.flatMap((i) => i.fields) || [];
 
       for (const field of uniqueFields) {
         if (!indexedFields.includes(field.name)) {
           result.warnings.push({
             code: 'MISSING_INDEX',
             message: `Unique field '${field.name}' in entity '${entity.name}' should be indexed for performance`,
-            path: `entities.${entity.name}.fields.${field.name}`
+            path: `entities.${entity.name}.fields.${field.name}`,
           });
         }
       }
@@ -705,14 +721,14 @@ export class ManifestProcessor {
     const result: ManifestInstallResult = {
       success: false,
       manifestId: manifest.id,
-      installedAt: Date.now()
+      installedAt: Date.now(),
     };
 
     try {
       // Validate manifest
       const validation = this.validator.validate(manifest);
       if (!validation.valid) {
-        result.errors = validation.errors.map(e => `${e.path}: ${e.message}`);
+        result.errors = validation.errors.map((e) => `${e.path}: ${e.message}`);
         return result;
       }
 
@@ -727,23 +743,22 @@ export class ManifestProcessor {
       this.installedManifests.set(manifest.id, {
         ...manifest,
         status: 'published',
-        publishedAt: Date.now()
+        publishedAt: Date.now(),
       });
 
       result.success = true;
-      result.warnings = validation.warnings.map(w => `${w.path}: ${w.message}`);
+      result.warnings = validation.warnings.map((w) => `${w.path}: ${w.message}`);
 
       logger.info('Manifest installed successfully', {
         manifestId: manifest.id,
         name: manifest.name,
-        version: manifest.version
+        version: manifest.version,
       });
-
     } catch (error) {
       result.errors = [(error as Error).message];
       logger.error('Manifest installation failed', {
         manifestId: manifest.id,
-        error: (error as Error).message
+        error: (error as Error).message,
       });
     }
 
@@ -760,10 +775,10 @@ export class ManifestProcessor {
     }
 
     this.installedManifests.delete(manifestId);
-    
+
     logger.info('Manifest uninstalled', {
       manifestId,
-      name: manifest.name
+      name: manifest.name,
     });
 
     return true;
@@ -775,7 +790,7 @@ export class ManifestProcessor {
   async update(manifest: AppManifest): Promise<ManifestInstallResult> {
     // Uninstall existing version
     await this.uninstall(manifest.id);
-    
+
     // Install new version
     return this.install(manifest);
   }
@@ -802,8 +817,8 @@ export class ManifestProcessor {
 
     for (const installed of this.installedManifests.values()) {
       // Check for entity name conflicts
-      const installedEntityNames = new Set(installed.entities.map(e => e.name));
-      const newEntityNames = new Set(manifest.entities.map(e => e.name));
+      const installedEntityNames = new Set(installed.entities.map((e) => e.name));
+      const newEntityNames = new Set(manifest.entities.map((e) => e.name));
 
       for (const entityName of newEntityNames) {
         if (installedEntityNames.has(entityName)) {
@@ -812,8 +827,8 @@ export class ManifestProcessor {
       }
 
       // Check for event name conflicts
-      const installedEventNames = new Set(installed.events.map(e => e.name));
-      const newEventNames = new Set(manifest.events.map(e => e.name));
+      const installedEventNames = new Set(installed.events.map((e) => e.name));
+      const newEventNames = new Set(manifest.events.map((e) => e.name));
 
       for (const eventName of newEventNames) {
         if (installedEventNames.has(eventName)) {
@@ -842,7 +857,7 @@ export class ManifestBuilder {
     entities: [],
     events: [],
     uiComponents: [],
-    permissions: []
+    permissions: [],
   };
 
   /**
@@ -952,7 +967,7 @@ export function createEntity(name: string): {
     name,
     fields: [],
     indexes: [],
-    constraints: []
+    constraints: [],
   };
 
   return {
@@ -968,7 +983,7 @@ export function createEntity(name: string): {
       entity.constraints!.push(constraint);
       return this;
     },
-    build: () => entity
+    build: () => entity,
   };
 }
 
@@ -976,13 +991,7 @@ export function createEntity(name: string): {
 // EXPORTS
 // ============================================================================
 
-export {
-  ManifestValidator,
-  ManifestProcessor,
-  ManifestBuilder,
-  createManifest,
-  createEntity
-};
+export { ManifestValidator, ManifestProcessor, ManifestBuilder, createManifest, createEntity };
 
 export type {
   AppManifest,
@@ -1000,5 +1009,5 @@ export type {
   SecurityCheck,
   FieldValidation,
   EntityIndex,
-  EntityConstraint
-}; 
+  EntityConstraint,
+};

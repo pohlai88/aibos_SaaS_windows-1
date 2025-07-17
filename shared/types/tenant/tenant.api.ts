@@ -1,7 +1,7 @@
-import { Tenant, TenantMember, TenantInvitation } from "./tenant";
-import { ApiResponse, PaginatedApiResponse, ApiErrorResponse } from "../api";
-import { ApiErrorCode } from "../api.errors";
-import { UserRole } from "../user/user.enums";
+import { Tenant, TenantMember, TenantInvitation } from './tenant';
+import { ApiResponse, PaginatedApiResponse, ApiErrorResponse } from '../api';
+import { ApiErrorCode } from '../api.errors';
+import { UserRole } from '../user/user.enums';
 
 /**
  * Tenant API response types
@@ -264,7 +264,7 @@ export type GetBillingResponse = ApiResponse<{
 // Tenant Error Responses
 export type TenantErrorResponse = ApiErrorResponse & {
   error: {
-    code: 
+    code:
       | ApiErrorCode.TENANT_NOT_FOUND
       | ApiErrorCode.TENANT_SUSPENDED
       | ApiErrorCode.TENANT_LICENSE_EXPIRED
@@ -302,7 +302,7 @@ export type TenantErrorResponse = ApiErrorResponse & {
 };
 
 // Helper type for all tenant responses
-export type TenantApiResponse = 
+export type TenantApiResponse =
   | GetTenantResponse
   | ListTenantsResponse
   | CreateTenantResponse
@@ -337,7 +337,7 @@ export const isBillingOverdue = (response: TenantErrorResponse): boolean => {
 
 // Utility types for better type safety
 export type TenantSuccessResponse = Exclude<TenantApiResponse, TenantErrorResponse>;
-export type TenantOperation = 
+export type TenantOperation =
   | 'create'
   | 'update'
   | 'delete'
@@ -350,4 +350,4 @@ export type TenantOperation =
   | 'cancel_invitation'
   | 'accept_invitation'
   | 'update_settings'
-  | 'update_billing'; 
+  | 'update_billing';

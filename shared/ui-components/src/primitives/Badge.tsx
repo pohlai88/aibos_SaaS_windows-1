@@ -9,19 +9,29 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: 'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
-        secondary: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive: 'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
+        secondary:
+          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        destructive:
+          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
         outline: 'text-foreground',
-        success: 'border-transparent bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-100',
-        warning: 'border-transparent bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-100',
+        success:
+          'border-transparent bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-100',
+        warning:
+          'border-transparent bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-100',
         info: 'border-transparent bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-100',
         error: 'border-transparent bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-100',
-        pending: 'border-transparent bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-100',
-        processing: 'border-transparent bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-100',
-        completed: 'border-transparent bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-100',
-        draft: 'border-transparent bg-slate-100 text-slate-800 dark:bg-slate-900/20 dark:text-slate-100',
-        published: 'border-transparent bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-100',
-        archived: 'border-transparent bg-zinc-100 text-zinc-800 dark:bg-zinc-900/20 dark:text-zinc-100',
+        pending:
+          'border-transparent bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-100',
+        processing:
+          'border-transparent bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-100',
+        completed:
+          'border-transparent bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-100',
+        draft:
+          'border-transparent bg-slate-100 text-slate-800 dark:bg-slate-900/20 dark:text-slate-100',
+        published:
+          'border-transparent bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-100',
+        archived:
+          'border-transparent bg-zinc-100 text-zinc-800 dark:bg-zinc-900/20 dark:text-zinc-100',
       },
       size: {
         sm: 'px-2 py-0.5 text-xs',
@@ -34,7 +44,7 @@ const badgeVariants = cva(
       variant: 'default',
       size: 'md',
     },
-  }
+  },
 );
 
 export interface BadgeProps extends VariantProps<typeof badgeVariants> {
@@ -66,22 +76,15 @@ export const Badge: React.FC<BadgeProps> = ({
   const dotClasses = cn(
     'inline-block w-1.5 h-1.5 rounded-full mr-1.5',
     pulse && 'animate-pulse',
-    dotColor || 'bg-current'
+    dotColor || 'bg-current',
   );
 
   return (
-    <div
-      className={cn(badgeVariants({ variant, size }), className)}
-      {...props}
-    >
+    <div className={cn(badgeVariants({ variant, size }), className)} {...props}>
       {dot && <span className={dotClasses} />}
-      {Icon && iconPosition === 'left' && (
-        <Icon className="mr-1 h-3 w-3" />
-      )}
+      {Icon && iconPosition === 'left' && <Icon className="mr-1 h-3 w-3" />}
       {children}
-      {Icon && iconPosition === 'right' && (
-        <Icon className="ml-1 h-3 w-3" />
-      )}
+      {Icon && iconPosition === 'right' && <Icon className="ml-1 h-3 w-3" />}
       {dismissible && (
         <button
           type="button"
@@ -187,7 +190,7 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
         size={size}
         className={cn(
           'absolute -top-2 -right-2 min-w-[1.25rem] h-5 flex items-center justify-center',
-          className
+          className,
         )}
       >
         {displayCount}
@@ -215,7 +218,7 @@ export const ProgressBadge: React.FC<ProgressBadgeProps> = ({
   className,
 }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
-  
+
   const getVariant = (): VariantProps<typeof badgeVariants>['variant'] => {
     if (percentage >= 80) return 'success';
     if (percentage >= 60) return 'info';
@@ -232,4 +235,4 @@ export const ProgressBadge: React.FC<ProgressBadgeProps> = ({
       {showPercentage ? `${Math.round(percentage)}%` : value}
     </Badge>
   );
-}; 
+};

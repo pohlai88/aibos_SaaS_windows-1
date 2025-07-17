@@ -1,4 +1,4 @@
-import { SubscriptionPlan } from "@shared/types/tenant/tenant.enums";
+import { SubscriptionPlan } from '@shared/types/tenant/tenant.enums';
 
 /**
  * Maps API plan strings to strongly-typed SubscriptionPlan enum values
@@ -57,4 +57,4 @@ export function comparePlans(a: SubscriptionPlan, b: SubscriptionPlan): number {
     [SubscriptionPlan.ENTERPRISE]: 3,
   };
   return planHierarchy[a] - planHierarchy[b];
-} 
+}

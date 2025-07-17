@@ -1,9 +1,11 @@
 # AI-BOS Technical Architecture
 
 ## Overview
+
 AI-BOS is a meta-platform that acts as the "Windows OS for SaaS" - providing a unified shell, runtime environment, and data model where micro-apps can plug in seamlessly and communicate automatically.
 
 ## Tech Stack
+
 - **Frontend**: Next.js + React + TypeScript → Vercel
 - **Backend**: Node.js + TypeScript → Railway
 - **Database**: Supabase (PostgreSQL + Auth + Storage)
@@ -13,6 +15,7 @@ AI-BOS is a meta-platform that acts as the "Windows OS for SaaS" - providing a u
 ## 1. Frontend Architecture (SaaS Shell)
 
 ### Directory Structure
+
 ```
 src/
 ├── components/
@@ -58,35 +61,37 @@ src/
 ### Key Components
 
 #### 1. AI-BOS SDK (Client-side)
+
 ```typescript
 // utils/sdk.ts
 class AibosSDK {
   // Event handling
-  emitEvent(eventName: string, payload: any): Promise<void>
-  listenEvent(eventName: string, handler: Function): void
-  removeListener(eventName: string, handler: Function): void
-  
+  emitEvent(eventName: string, payload: any): Promise<void>;
+  listenEvent(eventName: string, handler: Function): void;
+  removeListener(eventName: string, handler: Function): void;
+
   // Data access
   db: {
-    insert(entity: string, data: any): Promise<any>
-    update(entity: string, id: string, data: any): Promise<any>
-    delete(entity: string, id: string): Promise<void>
-    query(entity: string, filters?: any): Promise<any[]>
-  }
-  
+    insert(entity: string, data: any): Promise<any>;
+    update(entity: string, id: string, data: any): Promise<any>;
+    delete(entity: string, id: string): Promise<void>;
+    query(entity: string, filters?: any): Promise<any[]>;
+  };
+
   // App management
-  getInstalledApps(): Promise<App[]>
-  installApp(manifestId: string): Promise<void>
-  uninstallApp(appId: string): Promise<void>
-  
+  getInstalledApps(): Promise<App[]>;
+  installApp(manifestId: string): Promise<void>;
+  uninstallApp(appId: string): Promise<void>;
+
   // UI controls
-  openWindow(appId: string, params?: any): void
-  closeWindow(windowId: string): void
-  showNotification(message: string, type: 'info' | 'success' | 'error'): void
+  openWindow(appId: string, params?: any): void;
+  closeWindow(windowId: string): void;
+  showNotification(message: string, type: 'info' | 'success' | 'error'): void;
 }
 ```
 
 #### 2. Window Manager
+
 ```typescript
 // components/shell/WindowManager.tsx
 interface WindowState {
@@ -101,7 +106,7 @@ interface WindowState {
 
 const WindowManager: React.FC = () => {
   const { windows, activeWindow, openWindow, closeWindow } = useWindowManager()
-  
+
   return (
     <div className="window-manager">
       {windows.map(window => (
@@ -118,13 +123,14 @@ const WindowManager: React.FC = () => {
 ```
 
 #### 3. Dynamic App Loading
+
 ```typescript
 // pages/apps/[appId]/index.tsx
 const AppPage: React.FC = () => {
   const { appId } = useRouter()
   const { getAppManifest, loadAppComponent } = useAibosSDK()
   const [AppComponent, setAppComponent] = useState<React.ComponentType | null>(null)
-  
+
   useEffect(() => {
     const loadApp = async () => {
       const manifest = await getAppManifest(appId)
@@ -133,9 +139,9 @@ const AppPage: React.FC = () => {
     }
     loadApp()
   }, [appId])
-  
+
   if (!AppComponent) return <LoadingSpinner />
-  
+
   return <AppComponent />
 }
 ```
@@ -143,6 +149,7 @@ const AppPage: React.FC = () => {
 ## 2. Backend Architecture (Platform Runtime)
 
 ### Directory Structure
+
 ```
 backend/
 ├── src/
@@ -186,6 +193,7 @@ backend/
 ### Key Services
 
 #### 1. Manifest Engine
+
 ```typescript
 // services/manifestEngine.ts
 class ManifestEngine {
@@ -195,14 +203,14 @@ class ManifestEngine {
     // Verify permissions
     // Check compliance rules
   }
-  
+
   async installApp(manifest: Manifest, tenantId: string): Promise<App> {
     // Validate manifest
     // Create app record
     // Set up event subscriptions
     // Initialize app data
   }
-  
+
   async generateManifest(prompt: string): Promise<Manifest> {
     // Use AI to generate manifest from natural language
     // Validate generated manifest
@@ -212,24 +220,25 @@ class ManifestEngine {
 ```
 
 #### 2. Event Bus
+
 ```typescript
 // services/eventBus.ts
 class EventBus {
-  private subscriptions: Map<string, Subscription[]> = new Map()
-  
+  private subscriptions: Map<string, Subscription[]> = new Map();
+
   async emitEvent(tenantId: string, eventName: string, payload: any): Promise<void> {
     // Log event
     // Find subscribers
     // Route to listening apps
     // Handle errors
   }
-  
+
   async subscribe(tenantId: string, appId: string, eventName: string): Promise<void> {
     // Register subscription
     // Validate event exists
     // Set up routing
   }
-  
+
   async unsubscribe(tenantId: string, appId: string, eventName: string): Promise<void> {
     // Remove subscription
     // Clean up routing
@@ -238,6 +247,7 @@ class EventBus {
 ```
 
 #### 3. AI Generator
+
 ```typescript
 // services/aiGenerator.ts
 class AIGenerator {
@@ -249,7 +259,7 @@ class AIGenerator {
     // Validate compliance
     // Return complete manifest
   }
-  
+
   async generateUI(manifest: Manifest): Promise<UIComponents> {
     // Generate React components
     // Create forms
@@ -262,6 +272,7 @@ class AIGenerator {
 ### API Endpoints
 
 #### Manifest Management
+
 ```typescript
 // POST /api/manifests
 {
@@ -298,6 +309,7 @@ class AIGenerator {
 ```
 
 #### Event Management
+
 ```typescript
 // POST /api/events/emit
 {
@@ -324,6 +336,7 @@ class AIGenerator {
 ### Core Tables
 
 #### 1. Tenants
+
 ```sql
 CREATE TABLE tenants (
   tenant_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -335,6 +348,7 @@ CREATE TABLE tenants (
 ```
 
 #### 2. Users
+
 ```sql
 CREATE TABLE users (
   user_id UUID PRIMARY KEY REFERENCES auth.users(id),
@@ -348,6 +362,7 @@ CREATE TABLE users (
 ```
 
 #### 3. Manifests
+
 ```sql
 CREATE TABLE manifests (
   manifest_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -363,6 +378,7 @@ CREATE TABLE manifests (
 ```
 
 #### 4. Apps
+
 ```sql
 CREATE TABLE apps (
   app_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -378,6 +394,7 @@ CREATE TABLE apps (
 ```
 
 #### 5. Entities
+
 ```sql
 CREATE TABLE entities (
   entity_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -392,6 +409,7 @@ CREATE TABLE entities (
 ```
 
 #### 6. Events
+
 ```sql
 CREATE TABLE events (
   event_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -405,6 +423,7 @@ CREATE TABLE events (
 ```
 
 #### 7. Event Subscriptions
+
 ```sql
 CREATE TABLE event_subscriptions (
   subscription_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -418,6 +437,7 @@ CREATE TABLE event_subscriptions (
 ```
 
 #### 8. Audit Logs
+
 ```sql
 CREATE TABLE audit_logs (
   log_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -434,6 +454,7 @@ CREATE TABLE audit_logs (
 ```
 
 ### Row Level Security (RLS)
+
 ```sql
 -- Enable RLS on all tables
 ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
@@ -451,6 +472,7 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
 ## 4. Example: Accounting + Tax Integration
 
 ### Accounting App Manifest
+
 ```json
 {
   "app_name": "Accounting",
@@ -459,20 +481,20 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
     {
       "name": "ChartOfAccounts",
       "fields": [
-        {"name": "id", "type": "uuid", "primary": true},
-        {"name": "code", "type": "string"},
-        {"name": "name", "type": "string"},
-        {"name": "type", "type": "string"},
-        {"name": "tax_code", "type": "string"}
+        { "name": "id", "type": "uuid", "primary": true },
+        { "name": "code", "type": "string" },
+        { "name": "name", "type": "string" },
+        { "name": "type", "type": "string" },
+        { "name": "tax_code", "type": "string" }
       ]
     },
     {
       "name": "JournalEntry",
       "fields": [
-        {"name": "id", "type": "uuid", "primary": true},
-        {"name": "date", "type": "date"},
-        {"name": "description", "type": "string"},
-        {"name": "lines", "type": "jsonb"}
+        { "name": "id", "type": "uuid", "primary": true },
+        { "name": "date", "type": "date" },
+        { "name": "description", "type": "string" },
+        { "name": "lines", "type": "jsonb" }
       ]
     }
   ],
@@ -487,15 +509,12 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
       }
     }
   ],
-  "ui_routes": [
-    "/accounting/chart-of-accounts",
-    "/accounting/journals",
-    "/accounting/reports"
-  ]
+  "ui_routes": ["/accounting/chart-of-accounts", "/accounting/journals", "/accounting/reports"]
 }
 ```
 
 ### Tax App Manifest
+
 ```json
 {
   "app_name": "Tax",
@@ -504,10 +523,10 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
     {
       "name": "TaxCalculation",
       "fields": [
-        {"name": "id", "type": "uuid", "primary": true},
-        {"name": "journal_id", "type": "uuid"},
-        {"name": "tax_amount", "type": "decimal"},
-        {"name": "tax_type", "type": "string"}
+        { "name": "id", "type": "uuid", "primary": true },
+        { "name": "journal_id", "type": "uuid" },
+        { "name": "tax_amount", "type": "decimal" },
+        { "name": "tax_type", "type": "string" }
       ]
     }
   ],
@@ -517,10 +536,7 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
       "handler": "calculateTax"
     }
   ],
-  "ui_routes": [
-    "/tax/calculations",
-    "/tax/reports"
-  ]
+  "ui_routes": ["/tax/calculations", "/tax/reports"]
 }
 ```
 
@@ -528,24 +544,26 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
 
 1. **User posts journal entry in Accounting app**
 2. **Accounting emits event:**
+
    ```typescript
-   sdk.emitEvent("JournalPosted", {
-     journalId: "abc123",
+   sdk.emitEvent('JournalPosted', {
+     journalId: 'abc123',
      amount: 5000,
-     currency: "MYR",
-     accountCodes: ["4000", "5000"]
+     currency: 'MYR',
+     accountCodes: ['4000', '5000'],
    });
    ```
 
 3. **AI-BOS Event Bus routes to Tax app**
 4. **Tax app automatically calculates:**
+
    ```typescript
-   sdk.listenEvent("JournalPosted", async (payload) => {
+   sdk.listenEvent('JournalPosted', async (payload) => {
      const taxAmount = calculateTax(payload.amount, payload.accountCodes);
-     await sdk.db.insert("TaxCalculation", {
+     await sdk.db.insert('TaxCalculation', {
        journal_id: payload.journalId,
        tax_amount: taxAmount,
-       tax_type: "GST"
+       tax_type: 'GST',
      });
    });
    ```
@@ -556,8 +574,10 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
 ## 5. Micro-Developer Flow
 
 ### Maria's Receipt Emailer Request
+
 1. **Maria types:** "Add email receipt button to my POS"
 2. **AI generates manifest:**
+
    ```json
    {
      "app_name": "ReceiptEmailer",
@@ -565,9 +585,9 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
        {
          "name": "Receipt",
          "fields": [
-           {"name": "id", "type": "uuid"},
-           {"name": "amount", "type": "decimal"},
-           {"name": "customer_email", "type": "string", "pii": true}
+           { "name": "id", "type": "uuid" },
+           { "name": "amount", "type": "decimal" },
+           { "name": "customer_email", "type": "string", "pii": true }
          ]
        }
      ],
@@ -598,6 +618,7 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
 ## 6. Deployment Architecture
 
 ### Production Setup
+
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │    Backend      │    │   Database      │
@@ -610,6 +631,7 @@ CREATE POLICY "Users can view their tenant's apps" ON apps
 ```
 
 ### Environment Variables
+
 ```bash
 # Frontend (Vercel)
 NEXT_PUBLIC_API_URL=https://your-backend.railway.app
@@ -626,16 +648,19 @@ JWT_SECRET=your-jwt-secret
 ## 7. Security & Compliance
 
 ### Multi-Tenant Isolation
+
 - Row Level Security (RLS) on all tables
 - Tenant ID in every request
 - Separate API keys per tenant
 
 ### Data Protection
+
 - PII tagging in entity schemas
 - Automatic encryption for sensitive fields
 - GDPR/PDPA compliance built-in
 
 ### App Security
+
 - Immutable runtime environment
 - Manifest validation
 - No direct database access
@@ -644,15 +669,17 @@ JWT_SECRET=your-jwt-secret
 ## 8. Scaling Considerations
 
 ### Horizontal Scaling
+
 - Stateless backend services
 - Database connection pooling
 - CDN for static assets
 - Event bus can scale independently
 
 ### Performance
+
 - Database indexing on tenant_id
 - Caching for manifests
 - Lazy loading of app components
 - Background processing for heavy tasks
 
-This architecture provides the foundation for AI-BOS as a scalable, secure, and user-friendly meta-platform where micro-developers can safely build and deploy apps that communicate seamlessly. 
+This architecture provides the foundation for AI-BOS as a scalable, secure, and user-friendly meta-platform where micro-developers can safely build and deploy apps that communicate seamlessly.

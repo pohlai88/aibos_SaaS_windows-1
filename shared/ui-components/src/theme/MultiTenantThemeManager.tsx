@@ -67,11 +67,11 @@ export interface ThemeDefinition {
   typography: {
     fontFamily: string;
     fontSize: {
-      xs: string;
-      sm: string;
-      base: string;
-      lg: string;
-      xl: string;
+      'xs': string;
+      'sm': string;
+      'base': string;
+      'lg': string;
+      'xl': string;
       '2xl': string;
       '3xl': string;
     };
@@ -83,11 +83,11 @@ export interface ThemeDefinition {
     };
   };
   spacing: {
-    xs: string;
-    sm: string;
-    md: string;
-    lg: string;
-    xl: string;
+    'xs': string;
+    'sm': string;
+    'md': string;
+    'lg': string;
+    'xl': string;
     '2xl': string;
   };
   borderRadius: {
@@ -130,86 +130,98 @@ export const MultiTenantThemeProvider: React.FC<MultiTenantThemeProviderProps> =
   const [themeScopes, setThemeScopes] = useState<Map<string, CSSVariableScope>>(new Map());
 
   const registerTheme = useCallback((theme: ThemeDefinition) => {
-    setThemes(prev => new Map(prev).set(theme.id, theme));
+    setThemes((prev) => new Map(prev).set(theme.id, theme));
   }, []);
 
-  const unregisterTheme = useCallback((themeId: string) => {
-    setThemes(prev => {
-      const newMap = new Map(prev);
-      newMap.delete(themeId);
-      return newMap;
-    });
-    
-    // Clean up theme scope
-    const scope = themeScopes.get(themeId);
-    if (scope) {
-      scope.clear();
-      setThemeScopes(prev => {
+  const unregisterTheme = useCallback(
+    (themeId: string) => {
+      setThemes((prev) => {
         const newMap = new Map(prev);
         newMap.delete(themeId);
         return newMap;
       });
-    }
-  }, [themeScopes]);
 
-  const getTheme = useCallback((themeId: string) => {
-    return themes.get(themeId);
-  }, [themes]);
+      // Clean up theme scope
+      const scope = themeScopes.get(themeId);
+      if (scope) {
+        scope.clear();
+        setThemeScopes((prev) => {
+          const newMap = new Map(prev);
+          newMap.delete(themeId);
+          return newMap;
+        });
+      }
+    },
+    [themeScopes],
+  );
+
+  const getTheme = useCallback(
+    (themeId: string) => {
+      return themes.get(themeId);
+    },
+    [themes],
+  );
 
   const getAllThemes = useCallback(() => {
     return Array.from(themes.values());
   }, [themes]);
 
-  const createThemeScope = useCallback((themeId: string, element: HTMLElement) => {
-    const theme = themes.get(themeId);
-    if (!theme) {
-      throw new Error(`Theme ${themeId} not found`);
-    }
-
-    const scope = new CSSVariableScope(themeId, element);
-    
-    // Apply theme variables
-    Object.entries(theme.colors).forEach(([key, value]) => {
-      scope.setVariable(`color-${key}`, value);
-    });
-
-    Object.entries(theme.typography).forEach(([key, value]) => {
-      if (typeof value === 'object') {
-        Object.entries(value).forEach(([subKey, subValue]) => {
-          scope.setVariable(`typography-${key}-${subKey}`, subValue);
-        });
-      } else {
-        scope.setVariable(`typography-${key}`, value);
+  const createThemeScope = useCallback(
+    (themeId: string, element: HTMLElement) => {
+      const theme = themes.get(themeId);
+      if (!theme) {
+        throw new Error(`Theme ${themeId} not found`);
       }
-    });
 
-    Object.entries(theme.spacing).forEach(([key, value]) => {
-      scope.setVariable(`spacing-${key}`, value);
-    });
+      const scope = new CSSVariableScope(themeId, element);
 
-    Object.entries(theme.borderRadius).forEach(([key, value]) => {
-      scope.setVariable(`radius-${key}`, value);
-    });
-
-    Object.entries(theme.shadows).forEach(([key, value]) => {
-      scope.setVariable(`shadow-${key}`, value);
-    });
-
-    setThemeScopes(prev => new Map(prev).set(themeId, scope));
-    return scope;
-  }, [themes]);
-
-  const removeThemeScope = useCallback((themeId: string) => {
-    const scope = themeScopes.get(themeId);
-    if (scope) {
-      scope.clear();
-      setThemeScopes(prev => {
-        const newMap = new Map(prev);
-        newMap.delete(themeId);
-        return newMap;
+      // Apply theme variables
+      Object.entries(theme.colors).forEach(([key, value]) => {
+        scope.setVariable(`color-${key}`, value);
       });
-    }
-  }, [themeScopes]);
+
+      Object.entries(theme.typography).forEach(([key, value]) => {
+        if (typeof value === 'object') {
+          Object.entries(value).forEach(([subKey, subValue]) => {
+            scope.setVariable(`typography-${key}-${subKey}`, subValue);
+          });
+        } else {
+          scope.setVariable(`typography-${key}`, value);
+        }
+      });
+
+      Object.entries(theme.spacing).forEach(([key, value]) => {
+        scope.setVariable(`spacing-${key}`, value);
+      });
+
+      Object.entries(theme.borderRadius).forEach(([key, value]) => {
+        scope.setVariable(`radius-${key}`, value);
+      });
+
+      Object.entries(theme.shadows).forEach(([key, value]) => {
+        scope.setVariable(`shadow-${key}`, value);
+      });
+
+      setThemeScopes((prev) => new Map(prev).set(themeId, scope));
+      return scope;
+    },
+    [themes],
+  );
+
+  const removeThemeScope = useCallback(
+    (themeId: string) => {
+      const scope = themeScopes.get(themeId);
+      if (scope) {
+        scope.clear();
+        setThemeScopes((prev) => {
+          const newMap = new Map(prev);
+          newMap.delete(themeId);
+          return newMap;
+        });
+      }
+    },
+    [themeScopes],
+  );
 
   // Register default theme
   useEffect(() => {
@@ -250,11 +262,7 @@ export interface ScopedThemeProps {
   className?: string;
 }
 
-export const ScopedTheme: React.FC<ScopedThemeProps> = ({
-  themeId,
-  children,
-  className,
-}) => {
+export const ScopedTheme: React.FC<ScopedThemeProps> = ({ themeId, children, className }) => {
   const { getTheme, createThemeScope, removeThemeScope } = useMultiTenantTheme();
   const elementRef = useRef<HTMLDivElement>(null);
   const scopeRef = useRef<CSSVariableScope | null>(null);
@@ -283,13 +291,15 @@ export const ScopedTheme: React.FC<ScopedThemeProps> = ({
       ref={elementRef}
       className={cn(
         'isolate', // CSS isolation to prevent style leakage
-        className
+        className,
       )}
       data-theme-id={themeId}
-      style={{
-        // Apply theme-specific CSS custom properties
-        '--theme-id': themeId,
-      } as React.CSSProperties}
+      style={
+        {
+          // Apply theme-specific CSS custom properties
+          '--theme-id': themeId,
+        } as React.CSSProperties
+      }
     >
       {children}
     </div>
@@ -317,7 +327,7 @@ const scopedComponentVariants = cva(
       variant: 'default',
       size: 'md',
     },
-  }
+  },
 );
 
 // Scoped button component
@@ -347,7 +357,7 @@ export const ScopedButton: React.FC<ScopedButtonProps> = ({
         'hover:bg-[var(--theme-color-primary)]/90',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         'focus:outline-none focus:ring-2 focus:ring-[var(--theme-color-ring)]',
-        className
+        className,
       )}
     >
       {children}
@@ -361,10 +371,7 @@ export interface ScopedCardProps {
   className?: string;
 }
 
-export const ScopedCard: React.FC<ScopedCardProps> = ({
-  children,
-  className,
-}) => {
+export const ScopedCard: React.FC<ScopedCardProps> = ({ children, className }) => {
   return (
     <div
       className={cn(
@@ -372,7 +379,7 @@ export const ScopedCard: React.FC<ScopedCardProps> = ({
         'bg-[var(--theme-color-background)]',
         'border-[var(--theme-color-border)]',
         'text-[var(--theme-color-foreground)]',
-        className
+        className,
       )}
     >
       {children}
@@ -409,11 +416,11 @@ export const MultiTenantDashboardDemo: React.FC = () => {
       typography: {
         fontFamily: 'Inter, system-ui, sans-serif',
         fontSize: {
-          xs: '0.75rem',
-          sm: '0.875rem',
-          base: '1rem',
-          lg: '1.125rem',
-          xl: '1.25rem',
+          'xs': '0.75rem',
+          'sm': '0.875rem',
+          'base': '1rem',
+          'lg': '1.125rem',
+          'xl': '1.25rem',
           '2xl': '1.5rem',
           '3xl': '1.875rem',
         },
@@ -425,11 +432,11 @@ export const MultiTenantDashboardDemo: React.FC = () => {
         },
       },
       spacing: {
-        xs: '0.25rem',
-        sm: '0.5rem',
-        md: '1rem',
-        lg: '1.5rem',
-        xl: '2rem',
+        'xs': '0.25rem',
+        'sm': '0.5rem',
+        'md': '1rem',
+        'lg': '1.5rem',
+        'xl': '2rem',
         '2xl': '3rem',
       },
       borderRadius: {
@@ -468,11 +475,11 @@ export const MultiTenantDashboardDemo: React.FC = () => {
       typography: {
         fontFamily: 'SF Pro Display, system-ui, sans-serif',
         fontSize: {
-          xs: '0.75rem',
-          sm: '0.875rem',
-          base: '1rem',
-          lg: '1.125rem',
-          xl: '1.25rem',
+          'xs': '0.75rem',
+          'sm': '0.875rem',
+          'base': '1rem',
+          'lg': '1.125rem',
+          'xl': '1.25rem',
           '2xl': '1.5rem',
           '3xl': '1.875rem',
         },
@@ -484,11 +491,11 @@ export const MultiTenantDashboardDemo: React.FC = () => {
         },
       },
       spacing: {
-        xs: '0.25rem',
-        sm: '0.5rem',
-        md: '1rem',
-        lg: '1.5rem',
-        xl: '2rem',
+        'xs': '0.25rem',
+        'sm': '0.5rem',
+        'md': '1rem',
+        'lg': '1.5rem',
+        'xl': '2rem',
         '2xl': '3rem',
       },
       borderRadius: {
@@ -527,11 +534,11 @@ export const MultiTenantDashboardDemo: React.FC = () => {
       typography: {
         fontFamily: 'JetBrains Mono, monospace',
         fontSize: {
-          xs: '0.75rem',
-          sm: '0.875rem',
-          base: '1rem',
-          lg: '1.125rem',
-          xl: '1.25rem',
+          'xs': '0.75rem',
+          'sm': '0.875rem',
+          'base': '1rem',
+          'lg': '1.125rem',
+          'xl': '1.25rem',
           '2xl': '1.5rem',
           '3xl': '1.875rem',
         },
@@ -543,11 +550,11 @@ export const MultiTenantDashboardDemo: React.FC = () => {
         },
       },
       spacing: {
-        xs: '0.25rem',
-        sm: '0.5rem',
-        md: '1rem',
-        lg: '1.5rem',
-        xl: '2rem',
+        'xs': '0.25rem',
+        'sm': '0.5rem',
+        'md': '1rem',
+        'lg': '1.5rem',
+        'xl': '2rem',
         '2xl': '3rem',
       },
       borderRadius: {
@@ -567,27 +574,27 @@ export const MultiTenantDashboardDemo: React.FC = () => {
 
   // Register themes
   useEffect(() => {
-    themes.forEach(theme => registerTheme(theme));
+    themes.forEach((theme) => registerTheme(theme));
   }, [registerTheme]);
 
   const DashboardContent: React.FC<{ themeId: string }> = ({ themeId }) => (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Dashboard - {themeId}</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ScopedCard>
           <h3 className="text-lg font-semibold mb-2">Revenue</h3>
           <p className="text-3xl font-bold">$124,563</p>
           <p className="text-sm text-muted-foreground">+12% from last month</p>
         </ScopedCard>
-        
+
         <ScopedCard>
           <h3 className="text-lg font-semibold mb-2">Users</h3>
           <p className="text-3xl font-bold">1,234</p>
           <p className="text-sm text-muted-foreground">+5% from last week</p>
         </ScopedCard>
       </div>
-      
+
       <div className="flex gap-2">
         <ScopedButton variant="primary">Primary Action</ScopedButton>
         <ScopedButton variant="secondary">Secondary</ScopedButton>
@@ -602,25 +609,25 @@ export const MultiTenantDashboardDemo: React.FC = () => {
       <p className="text-muted-foreground mb-6">
         Three dashboards with completely separate themes, no style collisions.
       </p>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <ScopedTheme themeId="enterprise-blue">
           <DashboardContent themeId="Enterprise Blue" />
         </ScopedTheme>
-        
+
         <ScopedTheme themeId="startup-green">
           <DashboardContent themeId="Startup Green" />
         </ScopedTheme>
-        
+
         <ScopedTheme themeId="fintech-purple">
           <DashboardContent themeId="Fintech Purple" />
         </ScopedTheme>
       </div>
-      
+
       <div className="mt-8 p-4 bg-muted rounded-lg">
         <h3 className="font-semibold mb-2">Theme Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          {themes.map(theme => (
+          {themes.map((theme) => (
             <div key={theme.id} className="space-y-1">
               <p className="font-medium">{theme.name}</p>
               <p className="text-muted-foreground">ID: {theme.id}</p>
@@ -631,4 +638,4 @@ export const MultiTenantDashboardDemo: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};

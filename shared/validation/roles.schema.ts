@@ -8,5 +8,5 @@ export const PermissionsArraySchema = z.array(PermissionSchema).min(1);
 
 export const RoleUpdateSchema = z.object({
   role: RoleSchema,
-  permissions: PermissionsArraySchema
-}); 
+  permissions: PermissionsArraySchema,
+});

@@ -39,4 +39,4 @@ export function dynamicClass(base: string, conditions: Record<string, boolean | 
     }
   });
   return classes.join(' ');
-} 
+}

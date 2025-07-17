@@ -45,16 +45,16 @@ export async function protectedFetch<T>(
   endpoint: string,
   requiredPermissions: Permission | Permission[],
   options?: RequestInit,
-  config?: ApiFetcherConfig
+  config?: ApiFetcherConfig,
 ): Promise<T> {
   const user = getCurrentUser();
-  
+
   if (!user) {
     throw new Error('User not authenticated');
   }
-  
+
   requirePermission(user.role, requiredPermissions);
-  
+
   return apiFetcher<T>(endpoint, options, config);
 }
 
@@ -62,27 +62,63 @@ export async function protectedFetch<T>(
  * Convenience methods for common HTTP methods with permission checking
  */
 export const protectedApi = {
-  get: <T>(endpoint: string, requiredPermissions: Permission | Permission[], config?: ApiFetcherConfig) =>
-    protectedFetch<T>(endpoint, requiredPermissions, { method: 'GET' }, config),
-    
-  post: <T>(endpoint: string, requiredPermissions: Permission | Permission[], data?: unknown, config?: ApiFetcherConfig) =>
-    protectedFetch<T>(endpoint, requiredPermissions, { 
-      method: 'POST', 
-      body: data ? JSON.stringify(data) : undefined 
-    }, config),
-    
-  put: <T>(endpoint: string, requiredPermissions: Permission | Permission[], data?: unknown, config?: ApiFetcherConfig) =>
-    protectedFetch<T>(endpoint, requiredPermissions, { 
-      method: 'PUT', 
-      body: data ? JSON.stringify(data) : undefined 
-    }, config),
-    
-  patch: <T>(endpoint: string, requiredPermissions: Permission | Permission[], data?: unknown, config?: ApiFetcherConfig) =>
-    protectedFetch<T>(endpoint, requiredPermissions, { 
-      method: 'PATCH', 
-      body: data ? JSON.stringify(data) : undefined 
-    }, config),
-    
-  delete: <T>(endpoint: string, requiredPermissions: Permission | Permission[], config?: ApiFetcherConfig) =>
-    protectedFetch<T>(endpoint, requiredPermissions, { method: 'DELETE' }, config)
-}; 
+  get: <T>(
+    endpoint: string,
+    requiredPermissions: Permission | Permission[],
+    config?: ApiFetcherConfig,
+  ) => protectedFetch<T>(endpoint, requiredPermissions, { method: 'GET' }, config),
+
+  post: <T>(
+    endpoint: string,
+    requiredPermissions: Permission | Permission[],
+    data?: unknown,
+    config?: ApiFetcherConfig,
+  ) =>
+    protectedFetch<T>(
+      endpoint,
+      requiredPermissions,
+      {
+        method: 'POST',
+        body: data ? JSON.stringify(data) : undefined,
+      },
+      config,
+    ),
+
+  put: <T>(
+    endpoint: string,
+    requiredPermissions: Permission | Permission[],
+    data?: unknown,
+    config?: ApiFetcherConfig,
+  ) =>
+    protectedFetch<T>(
+      endpoint,
+      requiredPermissions,
+      {
+        method: 'PUT',
+        body: data ? JSON.stringify(data) : undefined,
+      },
+      config,
+    ),
+
+  patch: <T>(
+    endpoint: string,
+    requiredPermissions: Permission | Permission[],
+    data?: unknown,
+    config?: ApiFetcherConfig,
+  ) =>
+    protectedFetch<T>(
+      endpoint,
+      requiredPermissions,
+      {
+        method: 'PATCH',
+        body: data ? JSON.stringify(data) : undefined,
+      },
+      config,
+    ),
+
+  delete: <T>(
+    endpoint: string,
+    requiredPermissions: Permission | Permission[],
+    config?: ApiFetcherConfig,
+  ) => protectedFetch<T>(endpoint, requiredPermissions, { method: 'DELETE' }, config),
+};

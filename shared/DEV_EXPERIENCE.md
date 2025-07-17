@@ -73,16 +73,16 @@ aibos generate manifest MyApp
 
 ### Commands
 
-| Command | Description | Example |
-|---------|-------------|---------|
-| `init` | Initialize new project | `aibos init my-app` |
-| `generate` | Generate components | `aibos generate entity User` |
-| `validate` | Validate manifests | `aibos validate manifest` |
-| `test` | Run tests | `aibos test` |
-| `deploy` | Deploy application | `aibos deploy` |
-| `migrate` | Run migrations | `aibos migrate` |
-| `monitor` | Open monitoring | `aibos monitor` |
-| `docs` | Open documentation | `aibos docs` |
+| Command    | Description            | Example                      |
+| ---------- | ---------------------- | ---------------------------- |
+| `init`     | Initialize new project | `aibos init my-app`          |
+| `generate` | Generate components    | `aibos generate entity User` |
+| `validate` | Validate manifests     | `aibos validate manifest`    |
+| `test`     | Run tests              | `aibos test`                 |
+| `deploy`   | Deploy application     | `aibos deploy`               |
+| `migrate`  | Run migrations         | `aibos migrate`              |
+| `monitor`  | Open monitoring        | `aibos monitor`              |
+| `docs`     | Open documentation     | `aibos docs`                 |
 
 ### Options
 
@@ -472,4 +472,4 @@ MIT License - see [LICENSE](../LICENSE) for details.
 
 ---
 
-**Happy coding with AI-BOS! 🚀** 
+**Happy coding with AI-BOS! 🚀**

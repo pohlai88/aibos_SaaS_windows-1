@@ -1,12 +1,12 @@
-import { z } from "zod";
-import { UUID, ISODate } from "../primitives";
-import { 
-  SubscriptionPlan, 
-  BillingInterval, 
+import { z } from 'zod';
+import { UUID, ISODate } from '../primitives';
+import {
+  SubscriptionPlan,
+  BillingInterval,
   PlanFeature,
   BillingCycle,
-  PlanPrice 
-} from "./billing.enums";
+  PlanPrice,
+} from './billing.enums';
 
 /**
  * Core billing types
@@ -248,4 +248,4 @@ export function getUsagePercentage(usage: Usage): number {
  */
 export function getOverageAmount(usage: Usage): number {
   return Math.max(0, usage.usage - usage.limit);
-} 
+}

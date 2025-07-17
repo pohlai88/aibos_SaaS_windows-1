@@ -1,17 +1,17 @@
 /**
  * Enterprise-grade metadata types for the AI-BOS platform
- * 
+ *
  * This module provides comprehensive type definitions for metadata
  * management, including schemas, fields, validation rules, and operations.
  */
 
-import { 
-  MetadataFieldType, 
-  MetadataValidationRule, 
-  MetadataOperation, 
-  MetadataPermission, 
-  MetadataStatus, 
-  MetadataSource, 
+import {
+  MetadataFieldType,
+  MetadataValidationRule,
+  MetadataOperation,
+  MetadataPermission,
+  MetadataStatus,
+  MetadataSource,
   MetadataCategory,
   MetadataEncryptionLevel,
   MetadataCompressionType,
@@ -19,7 +19,7 @@ import {
   MetadataCacheStrategy,
   MetadataVersioningStrategy,
   MetadataAuditEvent,
-  MetadataErrorType
+  MetadataErrorType,
 } from './metadata.enums';
 import { UUID, Email, ISODate, JsonObject, JsonValue } from '../primitives';
 
@@ -508,7 +508,20 @@ export interface MetadataQuery {
  */
 export interface QueryFilter {
   field: string;
-  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'nin' | 'like' | 'ilike' | 'regex' | 'exists' | 'between';
+  operator:
+    | 'eq'
+    | 'ne'
+    | 'gt'
+    | 'gte'
+    | 'lt'
+    | 'lte'
+    | 'in'
+    | 'nin'
+    | 'like'
+    | 'ilike'
+    | 'regex'
+    | 'exists'
+    | 'between';
   value: JsonValue;
   options?: JsonObject;
 }
@@ -587,4 +600,4 @@ export interface MetadataStatistics {
   deprecatedFields: number;
   lastUpdated: ISODate;
   custom?: JsonObject;
-} 
+}

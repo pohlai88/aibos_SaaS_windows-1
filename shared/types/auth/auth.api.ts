@@ -1,7 +1,7 @@
-import { ApiResponse, ApiErrorResponse } from "../api";
-import { AuthSession, TokenPayload, DeviceInfo } from "./auth";
-import { ApiErrorCode } from "../api.errors";
-import { MfaMethod, AuthProvider } from "./auth.enums";
+import { ApiResponse, ApiErrorResponse } from '../api';
+import { AuthSession, TokenPayload, DeviceInfo } from './auth';
+import { ApiErrorCode } from '../api.errors';
+import { MfaMethod, AuthProvider } from './auth.enums';
 
 /**
  * Authentication API response types
@@ -84,7 +84,7 @@ export type MfaDisableResponse = ApiResponse<{
 // Enhanced error response with comprehensive auth error codes
 export type AuthErrorResponse = ApiErrorResponse & {
   error: {
-    code: 
+    code:
       | ApiErrorCode.AUTH_INVALID_CREDENTIALS
       | ApiErrorCode.AUTH_TOKEN_EXPIRED
       | ApiErrorCode.AUTH_TOKEN_INVALID
@@ -215,7 +215,7 @@ export type SecuritySettingsResponse = ApiResponse<{
 }>;
 
 // Helper type for all auth responses
-export type AuthApiResponse = 
+export type AuthApiResponse =
   | LoginResponse
   | RegisterResponse
   | MfaChallengeResponse
@@ -256,7 +256,7 @@ export const isNewUser = (response: SocialAuthResponse): boolean => {
 
 // Utility types for better type safety
 export type AuthSuccessResponse = Exclude<AuthApiResponse, AuthErrorResponse>;
-export type AuthFlowStep = 
+export type AuthFlowStep =
   | 'login'
   | 'register'
   | 'mfa_setup'
@@ -265,4 +265,4 @@ export type AuthFlowStep =
   | 'email_verification'
   | 'social_auth'
   | 'logout'
-  | 'session_refresh'; 
+  | 'session_refresh';

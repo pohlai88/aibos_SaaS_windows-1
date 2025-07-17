@@ -21,10 +21,10 @@ const tooltipVariants = cva(
         lg: 'text-base px-4 py-3',
       },
       placement: {
-        top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-        bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-        left: 'right-full top-1/2 -translate-y-1/2 mr-2',
-        right: 'left-full top-1/2 -translate-y-1/2 ml-2',
+        'top': 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+        'bottom': 'top-full left-1/2 -translate-x-1/2 mt-2',
+        'left': 'right-full top-1/2 -translate-y-1/2 mr-2',
+        'right': 'left-full top-1/2 -translate-y-1/2 ml-2',
         'top-start': 'bottom-full left-0 mb-2',
         'top-end': 'bottom-full right-0 mb-2',
         'bottom-start': 'top-full left-0 mt-2',
@@ -40,7 +40,7 @@ const tooltipVariants = cva(
       size: 'md',
       placement: 'top',
     },
-  }
+  },
 );
 
 export interface TooltipProps extends VariantProps<typeof tooltipVariants> {
@@ -242,7 +242,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
       aria-describedby={isVisible ? 'tooltip-content' : undefined}
     >
       {children}
-      
+
       <AnimatePresence>
         {isVisible && (
           <div
@@ -250,10 +250,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
             id="tooltip-content"
             role="tooltip"
             aria-hidden={!isVisible}
-            className={cn(
-              tooltipVariants({ variant, size, placement }),
-              contentClassName
-            )}
+            className={cn(tooltipVariants({ variant, size, placement }), contentClassName)}
             style={{
               position: 'fixed',
               left: position.x,
@@ -272,19 +269,21 @@ export const Tooltip: React.FC<TooltipProps> = ({
               {content}
               {showArrow && (
                 <div
-                  className={cn(
-                    'absolute w-2 h-2 bg-inherit border-inherit',
-                    {
-                      'top-full left-1/2 -translate-x-1/2 border-t border-l': placement?.startsWith('top'),
-                      'bottom-full left-1/2 -translate-x-1/2 border-b border-r': placement?.startsWith('bottom'),
-                      'left-full top-1/2 -translate-y-1/2 border-l border-t': placement?.startsWith('left'),
-                      'right-full top-1/2 -translate-y-1/2 border-r border-b': placement?.startsWith('right'),
-                    }
-                  )}
+                  className={cn('absolute w-2 h-2 bg-inherit border-inherit', {
+                    'top-full left-1/2 -translate-x-1/2 border-t border-l':
+                      placement?.startsWith('top'),
+                    'bottom-full left-1/2 -translate-x-1/2 border-b border-r':
+                      placement?.startsWith('bottom'),
+                    'left-full top-1/2 -translate-y-1/2 border-l border-t':
+                      placement?.startsWith('left'),
+                    'right-full top-1/2 -translate-y-1/2 border-r border-b':
+                      placement?.startsWith('right'),
+                  })}
                   style={{
-                    transform: placement?.startsWith('top') || placement?.startsWith('bottom')
-                      ? 'translateX(-50%) rotate(45deg)'
-                      : 'translateY(-50%) rotate(45deg)',
+                    transform:
+                      placement?.startsWith('top') || placement?.startsWith('bottom')
+                        ? 'translateX(-50%) rotate(45deg)'
+                        : 'translateY(-50%) rotate(45deg)',
                   }}
                 />
               )}
@@ -294,4 +293,4 @@ export const Tooltip: React.FC<TooltipProps> = ({
       </AnimatePresence>
     </div>
   );
-}; 
+};

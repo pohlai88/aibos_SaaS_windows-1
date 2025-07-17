@@ -1,13 +1,13 @@
-import { 
-  ApiResponse, 
-  PaginatedResponse, 
+import {
+  ApiResponse,
+  PaginatedResponse,
   PaginatedApiResponse,
   ApiError as ApiErrorType,
   StandardApiError,
   PaginationParams,
-  PaginationQueryParams
-} from "@shared/types/api";
-import { ApiErrorCode, CommonErrors } from "@shared/types/api.errors";
+  PaginationQueryParams,
+} from '@shared/types/api';
+import { ApiErrorCode, CommonErrors } from '@shared/types/api.errors';
 
 /**
  * API Error class for handling API-specific errors
@@ -19,18 +19,18 @@ export class ApiError extends Error {
   public retryable: boolean;
 
   constructor(
-    message: string, 
-    status: number, 
+    message: string,
+    status: number,
     code?: string,
     details?: any,
-    retryable: boolean = false
+    retryable: boolean = false,
   ) {
     super(message);
     this.status = status;
     this.code = code;
     this.details = details;
     this.retryable = retryable;
-    this.name = "ApiError";
+    this.name = 'ApiError';
   }
 
   /**
@@ -81,7 +81,7 @@ export interface ApiFetcherConfig {
 export async function apiFetcher<T>(
   url: string,
   options: RequestInit = {},
-  config: ApiFetcherConfig = {}
+  config: ApiFetcherConfig = {},
 ): Promise<ApiResponse<T>> {
   const {
     baseUrl = '',
@@ -91,7 +91,7 @@ export async function apiFetcher<T>(
     retryDelay = 1000,
     onError,
     onRequest,
-    onResponse
+    onResponse,
   } = config;
 
   const fullUrl = baseUrl + url;
@@ -103,7 +103,7 @@ export async function apiFetcher<T>(
       const requestOptions: RequestInit = {
         ...options,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...defaultHeaders,
           ...options.headers,
         },
@@ -129,64 +129,47 @@ export async function apiFetcher<T>(
       try {
         json = await res.json();
       } catch (parseError) {
-        throw new ApiError(
-          "Invalid JSON response",
-          res.status,
-          "PARSE_ERROR",
-          { originalError: parseError }
-        );
+        throw new ApiError('Invalid JSON response', res.status, 'PARSE_ERROR', {
+          originalError: parseError,
+        });
       }
 
       // Handle error responses
       if (!res.ok) {
         const error = createApiErrorFromResponse(res, json);
         lastError = error;
-        
+
         // Don't retry on client errors (4xx) unless specifically configured
         if (res.status < 500 && !error.isRetryable()) {
           onError?.(error);
           throw error;
         }
-        
+
         // Retry on server errors or retryable errors
         if (attempt < retries && error.isRetryable()) {
           await delay(retryDelay * Math.pow(2, attempt)); // Exponential backoff
           continue;
         }
-        
+
         onError?.(error);
         throw error;
       }
 
       // Validate response structure
       if (!isValidApiResponse(json)) {
-        throw new ApiError(
-          "Invalid API response structure",
-          res.status,
-          "INVALID_RESPONSE",
-          json
-        );
+        throw new ApiError('Invalid API response structure', res.status, 'INVALID_RESPONSE', json);
       }
 
       return json;
-
     } catch (error) {
       if (error instanceof ApiError) {
         lastError = error;
       } else if (error instanceof Error) {
-        lastError = new ApiError(
-          error.message,
-          500,
-          "NETWORK_ERROR",
-          { originalError: error }
-        );
+        lastError = new ApiError(error.message, 500, 'NETWORK_ERROR', { originalError: error });
       } else {
-        lastError = new ApiError(
-          "Unknown error occurred",
-          500,
-          "UNKNOWN_ERROR",
-          { originalError: error }
-        );
+        lastError = new ApiError('Unknown error occurred', 500, 'UNKNOWN_ERROR', {
+          originalError: error,
+        });
       }
 
       // Don't retry on network errors if we've exhausted retries
@@ -214,19 +197,19 @@ export async function apiFetcher<T>(
 export async function paginatedFetcher<T>(
   url: string,
   options: RequestInit = {},
-  config: ApiFetcherConfig = {}
+  config: ApiFetcherConfig = {},
 ): Promise<PaginatedApiResponse<T>> {
   const response = await apiFetcher<PaginatedApiResponse<T>>(url, options, config);
-  
+
   if (!isPaginatedResponse(response)) {
     throw new ApiError(
-      "Response is not a valid paginated response",
+      'Response is not a valid paginated response',
       500,
-      "INVALID_PAGINATED_RESPONSE",
-      response
+      'INVALID_PAGINATED_RESPONSE',
+      response,
     );
   }
-  
+
   return response;
 }
 
@@ -248,19 +231,19 @@ function createApiErrorFromResponse(res: Response, json: any): ApiError {
  */
 function getDefaultErrorMessage(status: number): string {
   const messages: Record<number, string> = {
-    400: "Bad Request",
-    401: "Unauthorized",
-    403: "Forbidden",
-    404: "Not Found",
-    422: "Validation Error",
-    429: "Too Many Requests",
-    500: "Internal Server Error",
-    502: "Bad Gateway",
-    503: "Service Unavailable",
-    504: "Gateway Timeout"
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    422: 'Validation Error',
+    429: 'Too Many Requests',
+    500: 'Internal Server Error',
+    502: 'Bad Gateway',
+    503: 'Service Unavailable',
+    504: 'Gateway Timeout',
   };
-  
-  return messages[status] || "API request failed";
+
+  return messages[status] || 'API request failed';
 }
 
 /**
@@ -277,9 +260,9 @@ function getDefaultErrorCode(status: number): string {
     500: ApiErrorCode.SERVER_ERROR,
     502: ApiErrorCode.BAD_GATEWAY,
     503: ApiErrorCode.SERVICE_UNAVAILABLE,
-    504: ApiErrorCode.GATEWAY_TIMEOUT
+    504: ApiErrorCode.GATEWAY_TIMEOUT,
   };
-  
+
   return codes[status] || ApiErrorCode.SERVER_ERROR;
 }
 
@@ -287,49 +270,51 @@ function getDefaultErrorCode(status: number): string {
  * Validate API response structure
  */
 function isValidApiResponse(response: any): response is ApiResponse<any> {
-  return response && 
-         typeof response.success === 'boolean' &&
-         (response.success ? response.data !== undefined : response.error !== undefined);
+  return (
+    response &&
+    typeof response.success === 'boolean' &&
+    (response.success ? response.data !== undefined : response.error !== undefined)
+  );
 }
 
 /**
  * Check if response is paginated
  */
 function isPaginatedResponse<T>(response: ApiResponse<T[]>): response is PaginatedApiResponse<T> {
-  return response.success && 
-         Array.isArray(response.data) &&
-         response.meta?.pagination !== undefined;
+  return (
+    response.success && Array.isArray(response.data) && response.meta?.pagination !== undefined
+  );
 }
 
 /**
  * Utility function to delay execution
  */
 function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
  * Create URL with query parameters
  */
 export function createApiUrl(
-  baseUrl: string, 
-  path: string, 
-  params?: Record<string, unknown>
+  baseUrl: string,
+  path: string,
+  params?: Record<string, unknown>,
 ): string {
   const url = new URL(path, baseUrl);
-  
+
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         if (Array.isArray(value)) {
-          value.forEach(v => url.searchParams.append(key, String(v)));
+          value.forEach((v) => url.searchParams.append(key, String(v)));
         } else {
           url.searchParams.set(key, String(value));
         }
       }
     });
   }
-  
+
   return url.toString();
 }
 
@@ -340,7 +325,7 @@ export function createPaginatedUrl(
   baseUrl: string,
   path: string,
   pagination: PaginationParams,
-  additionalParams?: Record<string, unknown>
+  additionalParams?: Record<string, unknown>,
 ): string {
   const params = {
     page: pagination.page,
@@ -348,9 +333,9 @@ export function createPaginatedUrl(
     cursor: pagination.cursor,
     sortBy: pagination.sortBy,
     sortOrder: pagination.sortOrder,
-    ...additionalParams
+    ...additionalParams,
   };
-  
+
   return createApiUrl(baseUrl, path, params);
 }
 
@@ -358,30 +343,41 @@ export function createPaginatedUrl(
  * Default API fetcher instance with common configuration
  */
 export const defaultApiFetcher = {
-  get: <T>(url: string, config?: ApiFetcherConfig) => 
-    apiFetcher<T>(url, { method: 'GET' }, config),
-    
-  post: <T>(url: string, data?: unknown, config?: ApiFetcherConfig) => 
-    apiFetcher<T>(url, { 
-      method: 'POST', 
-      body: data ? JSON.stringify(data) : undefined 
-    }, config),
-    
-  put: <T>(url: string, data?: unknown, config?: ApiFetcherConfig) => 
-    apiFetcher<T>(url, { 
-      method: 'PUT', 
-      body: data ? JSON.stringify(data) : undefined 
-    }, config),
-    
-  patch: <T>(url: string, data?: unknown, config?: ApiFetcherConfig) => 
-    apiFetcher<T>(url, { 
-      method: 'PATCH', 
-      body: data ? JSON.stringify(data) : undefined 
-    }, config),
-    
-  delete: <T>(url: string, config?: ApiFetcherConfig) => 
+  get: <T>(url: string, config?: ApiFetcherConfig) => apiFetcher<T>(url, { method: 'GET' }, config),
+
+  post: <T>(url: string, data?: unknown, config?: ApiFetcherConfig) =>
+    apiFetcher<T>(
+      url,
+      {
+        method: 'POST',
+        body: data ? JSON.stringify(data) : undefined,
+      },
+      config,
+    ),
+
+  put: <T>(url: string, data?: unknown, config?: ApiFetcherConfig) =>
+    apiFetcher<T>(
+      url,
+      {
+        method: 'PUT',
+        body: data ? JSON.stringify(data) : undefined,
+      },
+      config,
+    ),
+
+  patch: <T>(url: string, data?: unknown, config?: ApiFetcherConfig) =>
+    apiFetcher<T>(
+      url,
+      {
+        method: 'PATCH',
+        body: data ? JSON.stringify(data) : undefined,
+      },
+      config,
+    ),
+
+  delete: <T>(url: string, config?: ApiFetcherConfig) =>
     apiFetcher<T>(url, { method: 'DELETE' }, config),
-    
-  paginated: <T>(url: string, config?: ApiFetcherConfig) => 
-    paginatedFetcher<T>(url, { method: 'GET' }, config)
-}; 
+
+  paginated: <T>(url: string, config?: ApiFetcherConfig) =>
+    paginatedFetcher<T>(url, { method: 'GET' }, config),
+};

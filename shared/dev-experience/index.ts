@@ -1,6 +1,6 @@
 /**
  * AI-BOS Developer Experience Package
- * 
+ *
  * Comprehensive developer tools and utilities for AI-BOS platform development.
  * This package provides everything needed for enterprise-grade development workflow.
  */
@@ -129,7 +129,7 @@ export class AIBOSDevExperience {
       docs: { enabled: true, interactive: true },
       monitoring: { enabled: true, metrics: [] },
       debugging: { enabled: true, tools: [] },
-      ...config
+      ...config,
     };
   }
 
@@ -138,27 +138,27 @@ export class AIBOSDevExperience {
    */
   async initialize(): Promise<void> {
     console.log('🚀 Initializing AI-BOS Developer Experience...');
-    
+
     if (this.config.cli.enabled) {
       await this.initializeCLI();
     }
-    
+
     if (this.config.vscode.enabled) {
       await this.initializeVSCode();
     }
-    
+
     if (this.config.docs.enabled) {
       await this.initializeDocs();
     }
-    
+
     if (this.config.monitoring.enabled) {
       await this.initializeMonitoring();
     }
-    
+
     if (this.config.debugging.enabled) {
       await this.initializeDebugging();
     }
-    
+
     console.log('✅ AI-BOS Developer Experience initialized successfully!');
   }
 
@@ -167,7 +167,7 @@ export class AIBOSDevExperience {
    */
   async generateComponent(type: string, options: GeneratorOptions): Promise<string[]> {
     console.log(`🔧 Generating ${type} component...`);
-    
+
     switch (type) {
       case 'entity':
         return await this.generateEntity(options);
@@ -191,7 +191,7 @@ export class AIBOSDevExperience {
    */
   async runTests(options: TestOptions): Promise<void> {
     console.log('🧪 Running tests...');
-    
+
     // Implementation for running tests
     // This would integrate with the testing tools
   }
@@ -201,7 +201,7 @@ export class AIBOSDevExperience {
    */
   async generateDocs(options: DocumentationOptions): Promise<void> {
     console.log('📚 Generating documentation...');
-    
+
     // Implementation for generating documentation
     // This would integrate with the documentation tools
   }
@@ -211,7 +211,7 @@ export class AIBOSDevExperience {
    */
   async startMonitoring(): Promise<void> {
     console.log('📊 Starting performance monitoring...');
-    
+
     // Implementation for starting monitoring
     // This would integrate with the monitoring tools
   }
@@ -221,7 +221,7 @@ export class AIBOSDevExperience {
    */
   async openDebugger(): Promise<void> {
     console.log('🐛 Opening debugging tools...');
-    
+
     // Implementation for opening debugging tools
     // This would integrate with the debugging tools
   }
@@ -299,6 +299,6 @@ export function getDevTools(): string[] {
     'debugging-tools',
     'test-generators',
     'migration-tools',
-    'security-audit'
+    'security-audit',
   ];
-} 
+}

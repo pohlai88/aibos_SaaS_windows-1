@@ -36,7 +36,7 @@ import { JobQueueDashboard } from '@aibos/ui-components';
   jobs={jobs}
   isLoading={false}
   error={null}
-/>
+/>;
 ```
 
 ### JobQueueProvider
@@ -54,7 +54,7 @@ import { JobQueueProvider, useJobQueue } from '@aibos/ui-components';
   maxJobs={1000}
 >
   <YourApp />
-</JobQueueProvider>
+</JobQueueProvider>;
 
 // Use the hook in child components
 const { jobs, stats, retryJob, cancelJob, deleteJob } = useJobQueue();
@@ -77,7 +77,7 @@ import { JobForm } from '@aibos/ui-components';
   isLoading={false}
   error={null}
   showAdvanced={true}
-/>
+/>;
 ```
 
 ### JobQueueDemo
@@ -87,11 +87,7 @@ Complete demo component showcasing all features with mock data.
 ```tsx
 import { JobQueueDemo } from '@aibos/ui-components';
 
-<JobQueueDemo
-  queueName="demo-queue"
-  showForm={true}
-  showStats={true}
-/>
+<JobQueueDemo queueName="demo-queue" showForm={true} showStats={true} />;
 ```
 
 ## Quick Start
@@ -195,59 +191,59 @@ function StandaloneDashboard() {
 
 ### JobQueueProvider Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `queueName` | `string` | `'default'` | Name of the job queue |
-| `refreshInterval` | `number` | `5000` | Polling interval in milliseconds (0 to disable) |
-| `apiEndpoint` | `string` | `'/api/jobs'` | API endpoint for job operations |
-| `enableWebSocket` | `boolean` | `true` | Enable real-time updates via WebSocket |
-| `maxJobs` | `number` | `1000` | Maximum number of jobs to load |
-| `children` | `ReactNode` | - | Child components |
+| Prop              | Type        | Default       | Description                                     |
+| ----------------- | ----------- | ------------- | ----------------------------------------------- |
+| `queueName`       | `string`    | `'default'`   | Name of the job queue                           |
+| `refreshInterval` | `number`    | `5000`        | Polling interval in milliseconds (0 to disable) |
+| `apiEndpoint`     | `string`    | `'/api/jobs'` | API endpoint for job operations                 |
+| `enableWebSocket` | `boolean`   | `true`        | Enable real-time updates via WebSocket          |
+| `maxJobs`         | `number`    | `1000`        | Maximum number of jobs to load                  |
+| `children`        | `ReactNode` | -             | Child components                                |
 
 ### JobQueueDashboard Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `queueName` | `string` | - | Queue name for display |
-| `refreshInterval` | `number` | `5000` | Auto-refresh interval |
-| `showFilters` | `boolean` | `true` | Show filter panel |
-| `showActions` | `boolean` | `true` | Show action buttons |
-| `maxJobs` | `number` | `100` | Maximum jobs to display |
-| `onJobAction` | `function` | - | Callback for job actions |
-| `onRefresh` | `function` | - | Manual refresh callback |
-| `jobs` | `Job[]` | `[]` | Array of job objects |
-| `isLoading` | `boolean` | `false` | Loading state |
-| `error` | `string \| null` | `null` | Error message |
+| Prop              | Type             | Default | Description              |
+| ----------------- | ---------------- | ------- | ------------------------ |
+| `queueName`       | `string`         | -       | Queue name for display   |
+| `refreshInterval` | `number`         | `5000`  | Auto-refresh interval    |
+| `showFilters`     | `boolean`        | `true`  | Show filter panel        |
+| `showActions`     | `boolean`        | `true`  | Show action buttons      |
+| `maxJobs`         | `number`         | `100`   | Maximum jobs to display  |
+| `onJobAction`     | `function`       | -       | Callback for job actions |
+| `onRefresh`       | `function`       | -       | Manual refresh callback  |
+| `jobs`            | `Job[]`          | `[]`    | Array of job objects     |
+| `isLoading`       | `boolean`        | `false` | Loading state            |
+| `error`           | `string \| null` | `null`  | Error message            |
 
 ### JobForm Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `onSubmit` | `function` | - | Form submission handler |
-| `onCancel` | `function` | - | Cancel handler |
-| `isLoading` | `boolean` | `false` | Loading state |
-| `error` | `string \| null` | `null` | Error message |
-| `initialData` | `Partial<JobFormData>` | - | Initial form data |
-| `showAdvanced` | `boolean` | `false` | Show advanced options |
+| Prop           | Type                   | Default | Description             |
+| -------------- | ---------------------- | ------- | ----------------------- |
+| `onSubmit`     | `function`             | -       | Form submission handler |
+| `onCancel`     | `function`             | -       | Cancel handler          |
+| `isLoading`    | `boolean`              | `false` | Loading state           |
+| `error`        | `string \| null`       | `null`  | Error message           |
+| `initialData`  | `Partial<JobFormData>` | -       | Initial form data       |
+| `showAdvanced` | `boolean`              | `false` | Show advanced options   |
 
 ### useJobQueue Hook
 
 Returns an object with the following properties:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `jobs` | `Job[]` | Array of jobs |
-| `isLoading` | `boolean` | Loading state |
-| `error` | `string \| null` | Error message |
-| `stats` | `object` | Job statistics |
-| `refreshJobs` | `function` | Refresh jobs |
-| `retryJob` | `function` | Retry a failed job |
-| `cancelJob` | `function` | Cancel a job |
-| `deleteJob` | `function` | Delete a job |
-| `addJob` | `function` | Add a new job |
-| `getJob` | `function` | Get a specific job |
-| `clearCompletedJobs` | `function` | Clear completed jobs |
-| `clearFailedJobs` | `function` | Clear failed jobs |
+| Property             | Type             | Description          |
+| -------------------- | ---------------- | -------------------- |
+| `jobs`               | `Job[]`          | Array of jobs        |
+| `isLoading`          | `boolean`        | Loading state        |
+| `error`              | `string \| null` | Error message        |
+| `stats`              | `object`         | Job statistics       |
+| `refreshJobs`        | `function`       | Refresh jobs         |
+| `retryJob`           | `function`       | Retry a failed job   |
+| `cancelJob`          | `function`       | Cancel a job         |
+| `deleteJob`          | `function`       | Delete a job         |
+| `addJob`             | `function`       | Add a new job        |
+| `getJob`             | `function`       | Get a specific job   |
+| `clearCompletedJobs` | `function`       | Clear completed jobs |
+| `clearFailedJobs`    | `function`       | Clear failed jobs    |
 
 ## Job Data Structure
 
@@ -276,7 +272,7 @@ enum JobStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
-  RETRY = 'retry'
+  RETRY = 'retry',
 }
 
 enum JobPriority {
@@ -284,7 +280,7 @@ enum JobPriority {
   NORMAL = 2,
   HIGH = 3,
   URGENT = 4,
-  CRITICAL = 5
+  CRITICAL = 5,
 }
 ```
 
@@ -399,4 +395,4 @@ interface WebSocketEvent {
 
 ## License
 
-MIT License - see LICENSE file for details. 
+MIT License - see LICENSE file for details.

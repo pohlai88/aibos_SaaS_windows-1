@@ -1,17 +1,38 @@
 {
   "compilerOptions": {
-    // Language and Environment
+    // ===== LANGUAGE & ENVIRONMENT =====
     "target": "ES2022",
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
+    "emitDeclarationOnly": true,
     "jsx": "react-jsx",
+    "jsxImportSource": "react",
 
-    // Emit
+    // ===== STRICT TYPE-CHECKING =====
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+
+    // ===== EMIT & PERFORMANCE =====
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -19,54 +40,75 @@
     "rootDir": "./",
     "removeComments": false,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
 
-    // Type Checking
-    "strict": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
-    "noFallthroughCasesInSwitch": true,
-
-    // Advanced
+    // ===== MODERN FEATURES =====
     "useDefineForClassFields": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "strictPropertyInitialization": true,
+    "allowSyntheticDefaultImports": true,
+    "verbatimModuleSyntax": true,
 
-    // Path Mapping
+    // ===== PATHS ALIASES (Monorepo-Friendly) =====
     "baseUrl": "./",
     "paths": {
       "@/*": ["./*"],
-      "@/types/*": ["./types/*"],
-      "@/lib/*": ["./lib/*"],
-      "@/utils/*": ["./utils/*"],
-      "@/validation/*": ["./validation/*"],
-      "@/metadata/*": ["./types/metadata/*"],
-      "@/config/*": ["./config/*"],
-      "@/examples/*": ["./examples/*"]
+      "@types/*": ["types/*"],
+      "@lib/*": ["lib/*"],
+      "@utils/*": ["utils/*"],
+      "@validation/*": ["validation/*"],
+      "@metadata/*": ["types/metadata/*"],
+      "@config/*": ["config/*"],
+      "@examples/*": ["examples/*"],
+      "@ai/*": ["ai/src/*"],
+      "@cli/*": ["cli/src/*"],
+      "@collaboration/*": ["collaboration/src/*"],
+      "@compliance/*": ["compliance/src/*"],
+      "@debugging/*": ["debugging/src/*"],
+      "@monitoring/*": ["monitoring/src/*"],
+      "@ui-components/*": ["ui-components/src/*"],
+      "@vscode-extension/*": ["vscode-extension/src/*"],
+      "@components/*": ["ui-components/src/*"],
+      "@hooks/*": ["ui-components/src/hooks/*"],
+      "@primitives/*": ["ui-components/src/primitives/*"],
+      "@theme/*": ["ui-components/src/theme/*"],
+      "@analytics/*": ["ui-components/src/analytics/*"],
+      "@data/*": ["ui-components/src/data/*"],
+      "@forms/*": ["ui-components/src/forms/*"],
+      "@layout/*": ["ui-components/src/layout/*"],
+      "@performance/*": ["ui-components/src/performance/*"],
+      "@search/*": ["ui-components/src/search/*"],
+      "@feedback/*": ["ui-components/src/feedback/*"],
+      "@job-queue/*": ["ui-components/src/job-queue/*"]
     },
 
-    // Performance
+    // ===== INCREMENTAL BUILDS =====
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "assumeChangesOnlyAffectDirectDependencies": true
+    "assumeChangesOnlyAffectDirectDependencies": true,
+
+    // ===== ADDITIONAL CHECKS =====
+    "noErrorTruncation": false,
+    "preserveWatchOutput": true,
+    "pretty": true,
+    "listFiles": false,
+    "listEmittedFiles": false,
+    "traceResolution": false,
+
+    // ===== COMPATIBILITY =====
+    "allowJs": false,
+    "checkJs": false,
+    "noEmitOnError": false,
+    "preserveConstEnums": true,
+    "importHelpers": false,
+    "downlevelIteration": false,
+    "allowArbitraryExtensions": false,
+    "resolvePackageJsonExports": true,
+    "resolvePackageJsonImports": true,
+    "moduleDetection": "force"
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.d.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
   "exclude": [
     "node_modules",
     "dist",
@@ -74,15 +116,28 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/__tests__/**",
+    "**/__mocks__/**",
     "**/examples/**",
     "**/scripts/**",
     "**/config/**",
     "**/rollup.config.js",
     "**/jest.config.js",
-    "**/jest.setup.js"
+    "**/jest.setup.js",
+    "**/build/**",
+    "**/.next/**",
+    "**/.vercel/**",
+    "**/.cache/**",
+    "**/tmp/**",
+    "**/temp/**"
   ],
   "ts-node": {
     "esm": true,
-    "experimentalSpecifierResolution": "node"
+    "experimentalSpecifierResolution": "node",
+    "transpileOnly": true,
+    "swc": true,
+    "files": true,
+    "compilerOptions": {
+      "module": "ESNext"
+    }
   }
-} 
+}

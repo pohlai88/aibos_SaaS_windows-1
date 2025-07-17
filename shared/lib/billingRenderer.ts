@@ -1,7 +1,7 @@
-import { Subscription } from "../types/billing/subscription";
-import { Currency } from "../types/billing/currency.enums";
-import { CurrencyUtils } from "../types/billing/currency.enums";
-import { SubscriptionPlan, BillingInterval } from "../types/billing/billing.enums";
+import { Subscription } from '../types/billing/subscription';
+import { Currency } from '../types/billing/currency.enums';
+import { CurrencyUtils } from '../types/billing/currency.enums';
+import { SubscriptionPlan, BillingInterval } from '../types/billing/billing.enums';
 
 // Create localization maps for user-friendly display names
 const PLAN_DISPLAY_NAMES: Record<SubscriptionPlan, string> = {
@@ -32,7 +32,7 @@ function getLocaleForCurrency(currency: Currency): string {
     [Currency.AUD]: 'en-AU',
     [Currency.CAD]: 'en-CA',
     [Currency.CHF]: 'de-CH',
-    
+
     // Southeast Asian Currencies
     [Currency.MYR]: 'ms-MY',
     [Currency.SGD]: 'en-SG',
@@ -44,7 +44,7 @@ function getLocaleForCurrency(currency: Currency): string {
     [Currency.KHR]: 'km-KH',
     [Currency.LAK]: 'lo-LA',
     [Currency.MMK]: 'my-MM',
-    
+
     // Other Asian Currencies
     [Currency.KRW]: 'ko-KR',
     [Currency.INR]: 'en-IN',
@@ -55,7 +55,7 @@ function getLocaleForCurrency(currency: Currency): string {
     [Currency.LKR]: 'si-LK',
     [Currency.NPR]: 'ne-NP',
     [Currency.MNT]: 'mn-MN',
-    
+
     // Middle Eastern Currencies
     [Currency.AED]: 'ar-AE',
     [Currency.SAR]: 'ar-SA',
@@ -63,14 +63,14 @@ function getLocaleForCurrency(currency: Currency): string {
     [Currency.KWD]: 'ar-KW',
     [Currency.BHD]: 'ar-BH',
     [Currency.OMR]: 'ar-OM',
-    
+
     // African Currencies
     [Currency.ZAR]: 'en-ZA',
     [Currency.EGP]: 'ar-EG',
     [Currency.NGN]: 'en-NG',
     [Currency.KES]: 'en-KE',
     [Currency.GHS]: 'en-GH',
-    
+
     // Latin American Currencies
     [Currency.BRL]: 'pt-BR',
     [Currency.MXN]: 'es-MX',
@@ -79,7 +79,7 @@ function getLocaleForCurrency(currency: Currency): string {
     [Currency.COP]: 'es-CO',
     [Currency.PEN]: 'es-PE',
   };
-  
+
   return localeMap[currency] ?? 'en-US'; // Default fallback
 }
 
@@ -89,13 +89,13 @@ function getLocaleForCurrency(currency: Currency): string {
  */
 function formatPriceWithLocale(price: number, currency: Currency): string {
   const locale = getLocaleForCurrency(currency);
-  
+
   try {
     const formatter = new Intl.NumberFormat(locale, {
       style: 'currency',
       currency,
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     });
     return formatter.format(price);
   } catch (error) {
@@ -116,7 +116,7 @@ export type BillingRenderFormat = 'short' | 'full' | 'detailed';
  */
 export function renderBilling(
   subscription: Subscription,
-  format: BillingRenderFormat = 'short'
+  format: BillingRenderFormat = 'short',
 ): string {
   // Validate subscription first
   if (!subscription.plan || !subscription.price) {
@@ -152,9 +152,9 @@ export function renderDetailedBilling(subscription: Subscription): string {
   const planName = PLAN_DISPLAY_NAMES[subscription.plan];
   const intervalName = INTERVAL_DISPLAY_NAMES[subscription.interval];
   const statusText = subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1);
-  
+
   let details = `${planName}: ${formattedPrice}/${intervalName} - ${statusText}`;
-  
+
   if (subscription.trial_end_date) {
     const trialEnd = new Date(subscription.trial_end_date);
     const now = new Date();
@@ -163,11 +163,11 @@ export function renderDetailedBilling(subscription: Subscription): string {
       details += ` - Trial ends in ${daysLeft} days`;
     }
   }
-  
+
   if (subscription.cancel_at_period_end) {
     details += ' - Cancels at period end';
   }
-  
+
   return details;
 }
 
@@ -176,12 +176,12 @@ export function renderDetailedBilling(subscription: Subscription): string {
  */
 export function renderPrice(price: number, currency: Currency, interval?: BillingInterval): string {
   const formattedPrice = formatPriceWithLocale(price, currency);
-  
+
   if (interval) {
     const intervalName = INTERVAL_DISPLAY_NAMES[interval];
     return `${formattedPrice}/${intervalName}`;
   }
-  
+
   return formattedPrice;
 }
 
@@ -192,20 +192,23 @@ export function renderBillingSummary(subscriptions: Subscription[]): string {
   if (subscriptions.length === 0) {
     return 'No active subscriptions';
   }
-  
-  const totalByCurrency = subscriptions.reduce((acc, sub) => {
-    const key = sub.currency;
-    if (!acc[key]) {
-      acc[key] = { total: 0, currency: sub.currency };
-    }
-    acc[key].total += sub.price;
-    return acc;
-  }, {} as Record<string, { total: number; currency: Currency }>);
-  
-  const summaries = Object.values(totalByCurrency).map(({ total, currency }) => 
-    formatPriceWithLocale(total, currency)
+
+  const totalByCurrency = subscriptions.reduce(
+    (acc, sub) => {
+      const key = sub.currency;
+      if (!acc[key]) {
+        acc[key] = { total: 0, currency: sub.currency };
+      }
+      acc[key].total += sub.price;
+      return acc;
+    },
+    {} as Record<string, { total: number; currency: Currency }>,
   );
-  
+
+  const summaries = Object.values(totalByCurrency).map(({ total, currency }) =>
+    formatPriceWithLocale(total, currency),
+  );
+
   return `Total: ${summaries.join(', ')}`;
 }
 
@@ -223,4 +226,4 @@ export function renderBillingHTML(subscription: Subscription): string {
       <p class="interval">per ${INTERVAL_DISPLAY_NAMES[subscription.interval]}</p>
     </div>
   `;
-} 
+}

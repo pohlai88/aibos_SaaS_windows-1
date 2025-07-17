@@ -1,18 +1,18 @@
-import { SubscriptionPlan, BillingInterval } from "./billing.enums";
-import { Currency } from "./currency.enums";
-import { CurrencyUtils, Money } from "./currency.enums";
-import { UUID, ISODate } from "../primitives";
-import { ApiResponse, PaginatedResponse } from "../api";
+import { SubscriptionPlan, BillingInterval } from './billing.enums';
+import { Currency } from './currency.enums';
+import { CurrencyUtils, Money } from './currency.enums';
+import { UUID, ISODate } from '../primitives';
+import { ApiResponse, PaginatedResponse } from '../api';
 
 /**
  * Subscription status lifecycle
  */
 export enum SubscriptionStatus {
-  ACTIVE = "active",
-  CANCELED = "canceled",
-  PAST_DUE = "past_due",
-  TRIALING = "trialing",
-  EXPIRED = "expired",
+  ACTIVE = 'active',
+  CANCELED = 'canceled',
+  PAST_DUE = 'past_due',
+  TRIALING = 'trialing',
+  EXPIRED = 'expired',
 }
 
 /**
@@ -140,8 +140,8 @@ export class SubscriptionUtils {
    * Calculates days remaining until subscription ends
    */
   static daysRemaining(subscription: Subscription): number {
-    const endDate = subscription.end_date 
-      ? new Date(subscription.end_date) 
+    const endDate = subscription.end_date
+      ? new Date(subscription.end_date)
       : new Date(subscription.current_period_end);
     return Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
   }
@@ -159,7 +159,7 @@ export class SubscriptionUtils {
   static getPriceAsMoney(subscription: Subscription): Money {
     return {
       amount: subscription.price,
-      currency: subscription.currency
+      currency: subscription.currency,
     };
   }
 
@@ -167,8 +167,10 @@ export class SubscriptionUtils {
    * Checks if subscription is in trial period
    */
   static isTrial(subscription: Subscription): boolean {
-    return subscription.status === SubscriptionStatus.TRIALING || 
-      (subscription.trial_end_date && new Date(subscription.trial_end_date) > new Date());
+    return (
+      subscription.status === SubscriptionStatus.TRIALING ||
+      (subscription.trial_end_date && new Date(subscription.trial_end_date) > new Date())
+    );
   }
 
   /**
@@ -182,8 +184,10 @@ export class SubscriptionUtils {
    * Checks if subscription is canceled
    */
   static isCanceled(subscription: Subscription): boolean {
-    return subscription.status === SubscriptionStatus.CANCELED || 
-           subscription.cancel_at_period_end === true;
+    return (
+      subscription.status === SubscriptionStatus.CANCELED ||
+      subscription.cancel_at_period_end === true
+    );
   }
 
   /**
@@ -198,12 +202,12 @@ export class SubscriptionUtils {
    */
   static trialDaysRemaining(subscription: Subscription): number | null {
     if (!subscription.trial_end_date) return null;
-    
+
     const trialEnd = new Date(subscription.trial_end_date);
     const now = new Date();
-    
+
     if (trialEnd <= now) return 0;
-    
+
     return Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   }
 
@@ -236,11 +240,11 @@ export class SubscriptionUtils {
    */
   static canUpgrade(subscription: Subscription): boolean {
     if (!this.isActive(subscription)) return false;
-    
+
     // Get plan metadata to check upgrade paths
     const { getPlanMetadata } = require('./billing.enums');
     const currentPlanMeta = getPlanMetadata(subscription.plan);
-    
+
     return currentPlanMeta.upgradeableTo.length > 0;
   }
 
@@ -249,10 +253,10 @@ export class SubscriptionUtils {
    */
   static getAvailableUpgrades(subscription: Subscription): SubscriptionPlan[] {
     if (!this.canUpgrade(subscription)) return [];
-    
+
     const { getPlanMetadata } = require('./billing.enums');
     const currentPlanMeta = getPlanMetadata(subscription.plan);
-    
+
     return currentPlanMeta.upgradeableTo;
   }
 
@@ -262,22 +266,27 @@ export class SubscriptionUtils {
   static calculateProratedAmount(
     subscription: Subscription,
     newPlan: SubscriptionPlan,
-    changeDate: Date = new Date()
+    changeDate: Date = new Date(),
   ): number {
     const { getPlanMetadata } = require('./billing.enums');
     const currentPlanMeta = getPlanMetadata(subscription.plan);
     const newPlanMeta = getPlanMetadata(newPlan);
-    
+
     const currentPeriodEnd = new Date(subscription.current_period_end);
-    const daysRemaining = Math.ceil((currentPeriodEnd.getTime() - changeDate.getTime()) / (1000 * 60 * 60 * 24));
-    const totalDays = Math.ceil((currentPeriodEnd.getTime() - new Date(subscription.current_period_start).getTime()) / (1000 * 60 * 60 * 24));
-    
+    const daysRemaining = Math.ceil(
+      (currentPeriodEnd.getTime() - changeDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    const totalDays = Math.ceil(
+      (currentPeriodEnd.getTime() - new Date(subscription.current_period_start).getTime()) /
+        (1000 * 60 * 60 * 24),
+    );
+
     const currentPlanDailyRate = currentPlanMeta.basePrice / totalDays;
     const newPlanDailyRate = newPlanMeta.basePrice / totalDays;
-    
+
     const currentPlanRemainingValue = currentPlanDailyRate * daysRemaining;
     const newPlanRemainingValue = newPlanDailyRate * daysRemaining;
-    
+
     return newPlanRemainingValue - currentPlanRemainingValue;
   }
 
@@ -330,7 +339,7 @@ export class SubscriptionUtils {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 }
@@ -410,4 +419,4 @@ console.log(SubscriptionUtils.isActive(subscription)); // true
 console.log(SubscriptionUtils.daysRemaining(subscription)); // 15
 console.log(SubscriptionUtils.formatPrice(subscription)); // "$29.99"
 console.log(SubscriptionUtils.canUpgrade(subscription)); // true
-console.log(SubscriptionUtils.getAvailableUpgrades(subscription)); // [SubscriptionPlan.ENTERPRISE] 
+console.log(SubscriptionUtils.getAvailableUpgrades(subscription)); // [SubscriptionPlan.ENTERPRISE]

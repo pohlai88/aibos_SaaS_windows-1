@@ -1,18 +1,14 @@
-import { 
-  Subscription, 
-  SubscriptionStatus, 
+import {
+  Subscription,
+  SubscriptionStatus,
   SubscriptionUtils,
   SubscriptionInvoice,
   SubscriptionUsage,
   PlanChangeRequest,
   SubscriptionAnalytics,
-  SubscriptionEvent
+  SubscriptionEvent,
 } from '../types/billing/subscription';
-import { 
-  SubscriptionPlan, 
-  BillingInterval, 
-  Currency 
-} from '../types/billing/subscription';
+import { SubscriptionPlan, BillingInterval, Currency } from '../types/billing/subscription';
 import { CurrencyUtils } from '../types/billing/currency.enums';
 
 /**
@@ -20,7 +16,7 @@ import { CurrencyUtils } from '../types/billing/currency.enums';
  */
 export function exampleBasicSubscriptionOperations() {
   console.log('=== Basic Subscription Operations ===');
-  
+
   const subscription: Subscription = {
     subscription_id: 'sub_123',
     tenant_id: 'tenant_456',
@@ -48,7 +44,7 @@ export function exampleBasicSubscriptionOperations() {
  */
 export function exampleTrialSubscription() {
   console.log('=== Trial Subscription ===');
-  
+
   const trialSubscription: Subscription = {
     subscription_id: 'sub_trial_123',
     tenant_id: 'tenant_456',
@@ -75,14 +71,14 @@ export function exampleTrialSubscription() {
  */
 export function exampleSoutheastAsianSubscriptions() {
   console.log('=== Southeast Asian Currency Subscriptions ===');
-  
+
   const seaSubscriptions: Subscription[] = [
     {
       subscription_id: 'sub_myr_123',
       tenant_id: 'tenant_my',
       plan: SubscriptionPlan.PRO,
       interval: BillingInterval.MONTHLY,
-      price: 125.00,
+      price: 125.0,
       currency: Currency.MYR,
       status: SubscriptionStatus.ACTIVE,
       start_date: '2023-01-01T00:00:00Z',
@@ -96,7 +92,7 @@ export function exampleSoutheastAsianSubscriptions() {
       tenant_id: 'tenant_th',
       plan: SubscriptionPlan.ENTERPRISE,
       interval: BillingInterval.YEARLY,
-      price: 18000.00,
+      price: 18000.0,
       currency: Currency.THB,
       status: SubscriptionStatus.ACTIVE,
       start_date: '2023-01-01T00:00:00Z',
@@ -110,7 +106,7 @@ export function exampleSoutheastAsianSubscriptions() {
       tenant_id: 'tenant_sg',
       plan: SubscriptionPlan.PRO,
       interval: BillingInterval.MONTHLY,
-      price: 40.50,
+      price: 40.5,
       currency: Currency.SGD,
       status: SubscriptionStatus.ACTIVE,
       start_date: '2023-01-01T00:00:00Z',
@@ -118,10 +114,10 @@ export function exampleSoutheastAsianSubscriptions() {
       current_period_end: '2023-07-01T00:00:00Z',
       created_at: '2023-01-01T00:00:00Z',
       updated_at: '2023-06-01T00:00:00Z',
-    }
+    },
   ];
 
-  seaSubscriptions.forEach(sub => {
+  seaSubscriptions.forEach((sub) => {
     console.log(`\n${sub.currency} Subscription:`);
     console.log(`  Plan: ${sub.plan}`);
     console.log(`  Price: ${SubscriptionUtils.formatPrice(sub)}`);
@@ -135,7 +131,7 @@ export function exampleSoutheastAsianSubscriptions() {
  */
 export function exampleSubscriptionUpgrades() {
   console.log('=== Subscription Upgrades ===');
-  
+
   const freeSubscription: Subscription = {
     subscription_id: 'sub_free_123',
     tenant_id: 'tenant_456',
@@ -168,16 +164,20 @@ export function exampleSubscriptionUpgrades() {
 
   console.log('Free Plan:');
   console.log(`  Can Upgrade: ${SubscriptionUtils.canUpgrade(freeSubscription)}`);
-  console.log(`  Available Upgrades: ${SubscriptionUtils.getAvailableUpgrades(freeSubscription).join(', ')}`);
+  console.log(
+    `  Available Upgrades: ${SubscriptionUtils.getAvailableUpgrades(freeSubscription).join(', ')}`,
+  );
 
   console.log('\nPro Plan:');
   console.log(`  Can Upgrade: ${SubscriptionUtils.canUpgrade(proSubscription)}`);
-  console.log(`  Available Upgrades: ${SubscriptionUtils.getAvailableUpgrades(proSubscription).join(', ')}`);
+  console.log(
+    `  Available Upgrades: ${SubscriptionUtils.getAvailableUpgrades(proSubscription).join(', ')}`,
+  );
 
   // Calculate prorated amount for upgrade
   const proratedAmount = SubscriptionUtils.calculateProratedAmount(
-    proSubscription, 
-    SubscriptionPlan.ENTERPRISE
+    proSubscription,
+    SubscriptionPlan.ENTERPRISE,
   );
   console.log(`\nProrated amount for upgrade to Enterprise: $${proratedAmount.toFixed(2)}`);
 }
@@ -187,7 +187,7 @@ export function exampleSubscriptionUpgrades() {
  */
 export function exampleSubscriptionInvoices() {
   console.log('=== Subscription Invoices ===');
-  
+
   const invoices: SubscriptionInvoice[] = [
     {
       invoice_id: 'inv_123',
@@ -217,14 +217,16 @@ export function exampleSubscriptionInvoices() {
       invoice_number: 'INV-2023-002',
       created_at: '2023-07-01T00:00:00Z',
       updated_at: '2023-07-01T00:00:00Z',
-    }
+    },
   ];
 
-  invoices.forEach(invoice => {
+  invoices.forEach((invoice) => {
     console.log(`\nInvoice ${invoice.invoice_number}:`);
     console.log(`  Amount: ${CurrencyUtils.format(invoice.amount_due, invoice.currency)}`);
     console.log(`  Status: ${invoice.status}`);
-    console.log(`  Period: ${new Date(invoice.period_start).toDateString()} - ${new Date(invoice.period_end).toDateString()}`);
+    console.log(
+      `  Period: ${new Date(invoice.period_start).toDateString()} - ${new Date(invoice.period_end).toDateString()}`,
+    );
     console.log(`  Due Date: ${new Date(invoice.due_date).toDateString()}`);
   });
 }
@@ -234,7 +236,7 @@ export function exampleSubscriptionInvoices() {
  */
 export function exampleSubscriptionUsage() {
   console.log('=== Subscription Usage Tracking ===');
-  
+
   const usage: SubscriptionUsage[] = [
     {
       usage_id: 'usage_123',
@@ -268,10 +270,10 @@ export function exampleSubscriptionUsage() {
       overage: 0,
       period: '2023-06',
       created_at: '2023-06-30T23:59:59Z',
-    }
+    },
   ];
 
-  usage.forEach(u => {
+  usage.forEach((u) => {
     const percentage = (u.usage / u.limit) * 100;
     console.log(`${u.metric}: ${u.usage}/${u.limit} (${percentage.toFixed(1)}%)`);
     if (u.overage > 0) {
@@ -285,7 +287,7 @@ export function exampleSubscriptionUsage() {
  */
 export function examplePlanChangeRequests() {
   console.log('=== Plan Change Requests ===');
-  
+
   const planChangeRequest: PlanChangeRequest = {
     request_id: 'req_123',
     subscription_id: 'sub_123',
@@ -312,7 +314,7 @@ export function examplePlanChangeRequests() {
  */
 export function exampleSubscriptionAnalytics() {
   console.log('=== Subscription Analytics ===');
-  
+
   const analytics: SubscriptionAnalytics = {
     total_subscriptions: 1250,
     active_subscriptions: 1180,
@@ -320,31 +322,31 @@ export function exampleSubscriptionAnalytics() {
     canceled_subscriptions: 25,
     past_due_subscriptions: 15,
     monthly_recurring_revenue: {
-      amount: 37500.00,
-      currency: Currency.USD
+      amount: 37500.0,
+      currency: Currency.USD,
     },
     annual_recurring_revenue: {
-      amount: 450000.00,
-      currency: Currency.USD
+      amount: 450000.0,
+      currency: Currency.USD,
     },
     average_subscription_value: {
       amount: 31.78,
-      currency: Currency.USD
+      currency: Currency.USD,
     },
     churn_rate: 2.1,
     trial_conversion_rate: 68.5,
     plan_distribution: {
       [SubscriptionPlan.FREE]: 200,
       [SubscriptionPlan.PRO]: 850,
-      [SubscriptionPlan.ENTERPRISE]: 200
+      [SubscriptionPlan.ENTERPRISE]: 200,
     },
     currency_distribution: {
       [Currency.USD]: 800,
       [Currency.MYR]: 150,
       [Currency.SGD]: 100,
       [Currency.THB]: 100,
-      [Currency.EUR]: 100
-    }
+      [Currency.EUR]: 100,
+    },
   };
 
   console.log('Subscription Analytics:');
@@ -353,7 +355,9 @@ export function exampleSubscriptionAnalytics() {
   console.log(`  Trial Subscriptions: ${analytics.trial_subscriptions}`);
   console.log(`  MRR: ${CurrencyUtils.formatMoney(analytics.monthly_recurring_revenue)}`);
   console.log(`  ARR: ${CurrencyUtils.formatMoney(analytics.annual_recurring_revenue)}`);
-  console.log(`  Average Value: ${CurrencyUtils.formatMoney(analytics.average_subscription_value)}`);
+  console.log(
+    `  Average Value: ${CurrencyUtils.formatMoney(analytics.average_subscription_value)}`,
+  );
   console.log(`  Churn Rate: ${analytics.churn_rate}%`);
   console.log(`  Trial Conversion: ${analytics.trial_conversion_rate}%`);
 
@@ -373,7 +377,7 @@ export function exampleSubscriptionAnalytics() {
  */
 export function exampleSubscriptionValidation() {
   console.log('=== Subscription Validation ===');
-  
+
   const validSubscription: Subscription = {
     subscription_id: 'sub_123',
     tenant_id: 'tenant_456',
@@ -430,17 +434,17 @@ export function exampleSubscriptionValidation() {
  */
 export function exampleSubscriptionWebhooks() {
   console.log('=== Subscription Webhooks ===');
-  
+
   const webhookEvents = [
     SubscriptionEvent.SUBSCRIPTION_CREATED,
     SubscriptionEvent.SUBSCRIPTION_UPDATED,
     SubscriptionEvent.SUBSCRIPTION_CANCELED,
     SubscriptionEvent.INVOICE_PAID,
-    SubscriptionEvent.INVOICE_PAYMENT_FAILED
+    SubscriptionEvent.INVOICE_PAYMENT_FAILED,
   ];
 
   console.log('Supported Webhook Events:');
-  webhookEvents.forEach(event => {
+  webhookEvents.forEach((event) => {
     console.log(`  ${event}`);
   });
 }
@@ -459,4 +463,4 @@ export function runAllSubscriptionExamples() {
   exampleSubscriptionAnalytics();
   exampleSubscriptionValidation();
   exampleSubscriptionWebhooks();
-} 
+}

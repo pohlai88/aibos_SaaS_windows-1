@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef, ReactNode, useCallback } from 'reac
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  PanelLeftClose, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  PanelLeftClose,
   PanelLeftOpen,
   Settings,
   Smartphone,
   Monitor,
   Tablet,
-  X
+  X,
 } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
@@ -48,7 +48,7 @@ const drawerVariants = cva(
       position: 'left',
       behavior: 'overlay',
     },
-  }
+  },
 );
 
 const overlayVariants = cva(
@@ -63,7 +63,7 @@ const overlayVariants = cva(
     defaultVariants: {
       visible: false,
     },
-  }
+  },
 );
 
 export interface DrawerProps extends VariantProps<typeof drawerVariants> {
@@ -141,7 +141,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [currentWidth, setCurrentWidth] = useState(defaultWidth);
   const [screenSize, setScreenSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('lg');
-  
+
   const drawerRef = useRef<HTMLDivElement>(null);
   const resizeHandleRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
@@ -208,29 +208,34 @@ export const Drawer: React.FC<DrawerProps> = ({
   }, [isOpen, closeOnEscape, onClose]);
 
   // Resize handling
-  const handleResizeStart = useCallback((event: React.MouseEvent) => {
-    if (!resizable) return;
-    
-    setIsResizing(true);
-    startXRef.current = event.clientX;
-    startWidthRef.current = currentWidth;
-    
-    document.addEventListener('mousemove', handleResizeMove);
-    document.addEventListener('mouseup', handleResizeEnd);
-  }, [resizable, currentWidth]);
+  const handleResizeStart = useCallback(
+    (event: React.MouseEvent) => {
+      if (!resizable) return;
 
-  const handleResizeMove = useCallback((event: MouseEvent) => {
-    if (!isResizing) return;
-    
-    const deltaX = event.clientX - startXRef.current;
-    const newWidth = position === 'left' 
-      ? startWidthRef.current + deltaX 
-      : startWidthRef.current - deltaX;
-    
-    const clampedWidth = Math.min(Math.max(newWidth, minWidth), maxWidth);
-    setCurrentWidth(clampedWidth);
-    onResize?.(clampedWidth);
-  }, [isResizing, position, minWidth, maxWidth, onResize]);
+      setIsResizing(true);
+      startXRef.current = event.clientX;
+      startWidthRef.current = currentWidth;
+
+      document.addEventListener('mousemove', handleResizeMove);
+      document.addEventListener('mouseup', handleResizeEnd);
+    },
+    [resizable, currentWidth],
+  );
+
+  const handleResizeMove = useCallback(
+    (event: MouseEvent) => {
+      if (!isResizing) return;
+
+      const deltaX = event.clientX - startXRef.current;
+      const newWidth =
+        position === 'left' ? startWidthRef.current + deltaX : startWidthRef.current - deltaX;
+
+      const clampedWidth = Math.min(Math.max(newWidth, minWidth), maxWidth);
+      setCurrentWidth(clampedWidth);
+      onResize?.(clampedWidth);
+    },
+    [isResizing, position, minWidth, maxWidth, onResize],
+  );
 
   const handleResizeEnd = useCallback(() => {
     setIsResizing(false);
@@ -244,11 +249,14 @@ export const Drawer: React.FC<DrawerProps> = ({
     onCollapse?.(newCollapsed);
   }, [isCollapsed, onCollapse]);
 
-  const handleOverlayClick = useCallback((event: React.MouseEvent) => {
-    if (event.target === event.currentTarget && closeOnOverlayClick) {
-      onClose();
-    }
-  }, [closeOnOverlayClick, onClose]);
+  const handleOverlayClick = useCallback(
+    (event: React.MouseEvent) => {
+      if (event.target === event.currentTarget && closeOnOverlayClick) {
+        onClose();
+      }
+    },
+    [closeOnOverlayClick, onClose],
+  );
 
   const effectiveWidth = isCollapsed ? collapsedWidth : currentWidth;
   const responsiveWidth = responsive ? breakpoints[screenSize] || currentWidth : currentWidth;
@@ -263,17 +271,18 @@ export const Drawer: React.FC<DrawerProps> = ({
           aria-hidden="true"
         />
       )}
-      
+
       {/* Drawer */}
       <div
         ref={drawerRef}
-        className={cn(
-          drawerVariants({ variant, size, position, behavior }),
-          className
-        )}
+        className={cn(drawerVariants({ variant, size, position, behavior }), className)}
         style={{
           width: responsive ? responsiveWidth : effectiveWidth,
-          transform: isOpen ? 'translateX(0)' : position === 'left' ? 'translateX(-100%)' : 'translateX(100%)',
+          transform: isOpen
+            ? 'translateX(0)'
+            : position === 'left'
+              ? 'translateX(-100%)'
+              : 'translateX(100%)',
         }}
         data-state={isOpen ? 'open' : 'closed'}
         role="dialog"
@@ -282,7 +291,12 @@ export const Drawer: React.FC<DrawerProps> = ({
       >
         {/* Header */}
         {(title || header || collapsible) && (
-          <div className={cn('flex items-center justify-between p-4 border-b border-border', headerClassName)}>
+          <div
+            className={cn(
+              'flex items-center justify-between p-4 border-b border-border',
+              headerClassName,
+            )}
+          >
             <div className="flex items-center gap-3 min-w-0 flex-1">
               {header ? (
                 header
@@ -294,16 +308,14 @@ export const Drawer: React.FC<DrawerProps> = ({
                         {title}
                       </h2>
                       {subtitle && (
-                        <p className="text-sm text-muted-foreground truncate">
-                          {subtitle}
-                        </p>
+                        <p className="text-sm text-muted-foreground truncate">{subtitle}</p>
                       )}
                     </div>
                   )}
                 </>
               )}
             </div>
-            
+
             <div className="flex items-center gap-2">
               {collapsible && (
                 <Button
@@ -312,16 +324,15 @@ export const Drawer: React.FC<DrawerProps> = ({
                   onClick={handleCollapse}
                   aria-label={isCollapsed ? 'Expand drawer' : 'Collapse drawer'}
                 >
-                  {isCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+                  {isCollapsed ? (
+                    <PanelLeftOpen className="h-4 w-4" />
+                  ) : (
+                    <PanelLeftClose className="h-4 w-4" />
+                  )}
                 </Button>
               )}
-              
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={onClose}
-                aria-label="Close drawer"
-              >
+
+              <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close drawer">
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -329,18 +340,13 @@ export const Drawer: React.FC<DrawerProps> = ({
         )}
 
         {/* Content */}
-        <div 
-          className={cn('flex-1 overflow-y-auto', contentClassName)}
-          data-drawer-content
-        >
+        <div className={cn('flex-1 overflow-y-auto', contentClassName)} data-drawer-content>
           {children}
         </div>
 
         {/* Footer */}
         {footer && (
-          <div className={cn('p-4 border-t border-border', footerClassName)}>
-            {footer}
-          </div>
+          <div className={cn('p-4 border-t border-border', footerClassName)}>{footer}</div>
         )}
 
         {/* Resize Handle */}
@@ -349,7 +355,7 @@ export const Drawer: React.FC<DrawerProps> = ({
             ref={resizeHandleRef}
             className={cn(
               'absolute top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/20 transition-colors',
-              position === 'left' ? '-right-0.5' : '-left-0.5'
+              position === 'left' ? '-right-0.5' : '-left-0.5',
             )}
             onMouseDown={handleResizeStart}
             aria-label="Resize drawer"
@@ -373,12 +379,14 @@ export const Drawer: React.FC<DrawerProps> = ({
 };
 
 // AI-Powered Drawer Hook
-export const useAIDrawer = (options: {
-  autoCollapse?: boolean;
-  contextAware?: boolean;
-  smartResize?: boolean;
-  usageOptimization?: boolean;
-} = {}) => {
+export const useAIDrawer = (
+  options: {
+    autoCollapse?: boolean;
+    contextAware?: boolean;
+    smartResize?: boolean;
+    usageOptimization?: boolean;
+  } = {},
+) => {
   const [isOpen, setIsOpen] = useState(false);
   const [width, setWidth] = useState(320);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -390,7 +398,7 @@ export const useAIDrawer = (options: {
 
   const open = useCallback(() => {
     setIsOpen(true);
-    setUsageStats(prev => ({
+    setUsageStats((prev) => ({
       ...prev,
       openCount: prev.openCount + 1,
     }));
@@ -401,18 +409,21 @@ export const useAIDrawer = (options: {
   }, []);
 
   const toggle = useCallback(() => {
-    setIsOpen(prev => !prev);
+    setIsOpen((prev) => !prev);
   }, []);
 
-  const resize = useCallback((newWidth: number) => {
-    setWidth(newWidth);
-    if (options.usageOptimization) {
-      setUsageStats(prev => ({
-        ...prev,
-        preferredWidth: newWidth,
-      }));
-    }
-  }, [options.usageOptimization]);
+  const resize = useCallback(
+    (newWidth: number) => {
+      setWidth(newWidth);
+      if (options.usageOptimization) {
+        setUsageStats((prev) => ({
+          ...prev,
+          preferredWidth: newWidth,
+        }));
+      }
+    },
+    [options.usageOptimization],
+  );
 
   const collapse = useCallback((collapsed: boolean) => {
     setIsCollapsed(collapsed);
@@ -429,4 +440,4 @@ export const useAIDrawer = (options: {
     resize,
     collapse,
   };
-}; 
+};

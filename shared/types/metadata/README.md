@@ -16,6 +16,7 @@ The metadata system is built with a modular, extensible architecture that provid
 ## 📦 Core Components
 
 ### 1. **Enums & Types** (`metadata.enums.ts`, `metadata.types.ts`)
+
 Foundation enums and type definitions for all metadata operations.
 
 ```typescript
@@ -23,11 +24,16 @@ import { MetadataFieldType, MetadataEntity, MetadataSchema } from './metadata';
 
 // Field types
 const fieldType: MetadataFieldType = 'string';
-const entity: MetadataEntity = { /* ... */ };
-const schema: MetadataSchema = { /* ... */ };
+const entity: MetadataEntity = {
+  /* ... */
+};
+const schema: MetadataSchema = {
+  /* ... */
+};
 ```
 
 ### 2. **Type Mapping** (`metadata.mapping.ts`)
+
 Type-safe mappings between metadata field types and TypeScript types.
 
 ```typescript
@@ -41,6 +47,7 @@ const isValid = MetadataTypeMapper.validate('string', 'test'); // true
 ```
 
 ### 3. **Field Definitions** (`metadata.fields.ts`)
+
 Comprehensive field type definitions with constraints and validation.
 
 ```typescript
@@ -55,6 +62,7 @@ const field = new MetadataFieldBuilder()
 ```
 
 ### 4. **Query System** (`metadata.query.ts`)
+
 Powerful query system with filters, sorting, pagination, and aggregation.
 
 ```typescript
@@ -69,6 +77,7 @@ const query = new MetadataQueryBuilder()
 ```
 
 ### 5. **Event System** (`metadata.events.ts`)
+
 Event-driven architecture for metadata changes and audit trails.
 
 ```typescript
@@ -78,11 +87,12 @@ const event = MetadataEventUtils.createEvent(
   'entity.created',
   tenantId,
   userId,
-  { entity, schema }
+  { entity, schema },
 );
 ```
 
 ### 6. **Permission System** (`metadata.permissions.ts`)
+
 Fine-grained access control with role-based and field-level permissions.
 
 ```typescript
@@ -95,11 +105,12 @@ const permission = MetadataPermissionUtils.createPermission(
   'user',
   ['read'],
   tenantId,
-  userId
+  userId,
 );
 ```
 
 ### 7. **Caching System** (`metadata.cache.ts`)
+
 Multi-level caching with intelligent invalidation strategies.
 
 ```typescript
@@ -110,6 +121,7 @@ const entry = MetadataCacheUtils.createEntry(cacheKey, userData, { ttl: 3600 });
 ```
 
 ### 8. **Migration System** (`metadata.migration.ts`)
+
 Schema evolution and data migration with rollback support.
 
 ```typescript
@@ -120,11 +132,12 @@ const migration = MetadataMigrationUtils.createMigration(
   '1.1.0',
   MetadataMigrationType.SCHEMA_CHANGE,
   tenantId,
-  userId
+  userId,
 );
 ```
 
 ### 9. **Testing Utilities** (`metadata.testing.ts`)
+
 Comprehensive testing framework with mock generators and assertions.
 
 ```typescript
@@ -139,11 +152,12 @@ const testCase = MetadataTestUtils.createTestCase(
     // Test logic...
     return { success: true };
   },
-  userId
+  userId,
 );
 ```
 
 ### 10. **Error Handling** (`metadata.errors.ts`)
+
 Robust error handling with recovery strategies and detailed reporting.
 
 ```typescript
@@ -155,7 +169,7 @@ const error = MetadataErrorUtils.createError(
   'medium',
   'INVALID_EMAIL',
   'Invalid email format',
-  tenantId
+  tenantId,
 );
 ```
 
@@ -164,12 +178,12 @@ const error = MetadataErrorUtils.createError(
 ### 1. Basic Setup
 
 ```typescript
-import { 
+import {
   createMetadataSystemConfig,
   validateMetadataSystemConfig,
   MetadataEntity,
   MetadataField,
-  MetadataSchema
+  MetadataSchema,
 } from './metadata';
 
 // Create system configuration
@@ -185,7 +199,11 @@ if (!validation.valid) {
 ### 2. Create a Schema
 
 ```typescript
-import { MetadataSchema, MetadataField, MetadataFieldBuilder } from './metadata';
+import {
+  MetadataSchema,
+  MetadataField,
+  MetadataFieldBuilder,
+} from './metadata';
 
 // Define fields
 const fields: MetadataField[] = [
@@ -195,20 +213,15 @@ const fields: MetadataField[] = [
     .required()
     .maxLength(100)
     .build(),
-  
+
   new MetadataFieldBuilder()
     .name('email')
     .type('email')
     .required()
     .unique()
     .build(),
-  
-  new MetadataFieldBuilder()
-    .name('age')
-    .type('number')
-    .min(0)
-    .max(150)
-    .build()
+
+  new MetadataFieldBuilder().name('age').type('number').min(0).max(150).build(),
 ];
 
 // Create schema
@@ -220,7 +233,7 @@ const userSchema: MetadataSchema = {
   tenantId,
   createdBy: userId,
   createdAt: new Date().toISOString() as ISODate,
-  isActive: true
+  isActive: true,
 };
 ```
 
@@ -238,12 +251,12 @@ const userEntity: MetadataEntity = {
   values: {
     name: { value: 'John Doe' } as MetadataValue,
     email: { value: 'john@example.com' } as MetadataValue,
-    age: { value: 30 } as MetadataValue
+    age: { value: 30 } as MetadataValue,
   },
   tenantId,
   createdBy: userId,
   createdAt: new Date().toISOString() as ISODate,
-  isActive: true
+  isActive: true,
 };
 ```
 
@@ -273,7 +286,7 @@ const canReadUsers = await permissionEvaluator.evaluate({
   userId,
   tenantId,
   resourceType: 'user',
-  operation: 'read'
+  operation: 'read',
 });
 
 if (!canReadUsers.allowed) {
@@ -297,8 +310,8 @@ const customField: MetadataField = {
     customType: 'geolocation',
     validation: {
       latitude: { min: -90, max: 90 },
-      longitude: { min: -180, max: 180 }
-    }
+      longitude: { min: -180, max: 180 },
+    },
   },
   // ... other properties
 };
@@ -316,7 +329,7 @@ const eventBus: MetadataEventBus = {
   },
   async publish(event) {
     // Implementation
-  }
+  },
 };
 
 const handler: MetadataEventHandler = async (event) => {
@@ -338,14 +351,14 @@ const cacheManager: MetadataCacheManager = {
   },
   async set(key, value, options) {
     // Implementation
-  }
+  },
 };
 
 // Use cache with strategy
 const cachedEntity = await cacheManager.getWithStrategy(
   'entity:user:123',
   'cache_first',
-  { ttl: 3600 }
+  { ttl: 3600 },
 );
 ```
 
@@ -360,7 +373,7 @@ const migrationManager: MetadataMigrationManager = {
   },
   async executeMigration(migrationId, options) {
     // Implementation
-  }
+  },
 };
 
 // Create and execute migration
@@ -369,7 +382,7 @@ const migration = MetadataMigrationUtils.createMigration(
   '1.2.0',
   'schema_change',
   tenantId,
-  userId
+  userId,
 );
 
 await migrationManager.executeMigration(migration.id);
@@ -389,16 +402,16 @@ const testCase = MetadataTestUtils.createTestCase(
   async (context) => {
     const field = context.utils.generateField('email');
     const value = context.utils.generateValue(field, { valid: true });
-    
+
     // Test validation logic
     const isValid = validateFieldValue(field, value);
-    
+
     return {
       success: isValid,
-      data: { field, value, isValid }
+      data: { field, value, isValid },
     };
   },
-  userId
+  userId,
 );
 ```
 
@@ -412,14 +425,14 @@ const testHelper: MetadataTestHelper = {
     // Setup test database, cache, etc.
     return context;
   },
-  
+
   async assertEntityExists(entityId, expected) {
     const entity = await getEntity(entityId);
     if (!entity) {
       throw new Error(`Entity ${entityId} not found`);
     }
     // Assert expected properties
-  }
+  },
 };
 ```
 
@@ -434,10 +447,10 @@ const permissionManager: MetadataPermissionManager = {
   async createRole(role) {
     // Implementation
   },
-  
+
   async assignRoleToUser(userId, roleId, tenantId, grantedBy) {
     // Implementation
-  }
+  },
 };
 
 // Create admin role
@@ -450,7 +463,7 @@ const adminRole: MetadataRole = {
   createdAt: new Date().toISOString() as ISODate,
   isActive: true,
   isSystem: true,
-  priority: 100
+  priority: 100,
 };
 ```
 
@@ -467,7 +480,7 @@ const ssnMask: MetadataFieldMask = {
   pattern: '\\d{3}-\\d{2}-',
   replacement: '***-**-',
   tenantId,
-  isActive: true
+  isActive: true,
 };
 ```
 
@@ -486,14 +499,14 @@ const errorHandler: MetadataErrorHandler = {
       'medium',
       'INVALID_INPUT',
       error.message,
-      context.tenantId
+      context.tenantId,
     );
-    
+
     await this.report(metadataError);
     await this.monitor(metadataError);
-    
+
     return metadataError;
-  }
+  },
 };
 ```
 
@@ -528,8 +541,8 @@ const queryWithHints: MetadataQuery = {
     ...query.options,
     explain: true,
     timeout: 5000,
-    maxResults: 1000
-  }
+    maxResults: 1000,
+  },
 };
 ```
 
@@ -547,8 +560,8 @@ const aggressiveCacheStrategy: MetadataCacheStrategy = {
     type: 'adaptive',
     baseTtl: 3600,
     maxTtl: 86400,
-    minTtl: 300
-  }
+    minTtl: 300,
+  },
 };
 ```
 
@@ -599,4 +612,4 @@ This metadata system is part of the AI-BOS platform and follows the same licensi
 
 ## 🆘 Support
 
-For questions, issues, or contributions, please refer to the main AI-BOS platform documentation and support channels. 
+For questions, issues, or contributions, please refer to the main AI-BOS platform documentation and support channels.

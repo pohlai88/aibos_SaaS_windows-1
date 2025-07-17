@@ -1,6 +1,6 @@
 /**
  * AI-BOS AI Development Assistant
- * 
+ *
  * The ultimate AI-powered development assistant that makes every developer's dream come true.
  * Real-time code assistance, debugging, optimization, and learning.
  */
@@ -25,7 +25,7 @@ export interface DevContext {
 }
 
 // Assistant Request Types
-export type AssistantRequestType = 
+export type AssistantRequestType =
   | 'code-completion'
   | 'bug-fix'
   | 'code-explanation'
@@ -113,7 +113,7 @@ export interface DebugSession {
 
 /**
  * AI Development Assistant
- * 
+ *
  * Provides intelligent assistance for all aspects of software development,
  * from code completion to architecture design and debugging.
  */
@@ -135,7 +135,7 @@ export class AIDevAssistant {
    */
   async getAssistance(request: AssistantRequest): Promise<AssistantResponse> {
     const prompt = this.buildAssistantPrompt(request);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: this.mapRequestTypeToTask(request.type),
       prompt,
@@ -143,8 +143,8 @@ export class AIDevAssistant {
       options: {
         model: 'gpt-4',
         temperature: 0.3,
-        maxTokens: 3000
-      }
+        maxTokens: 3000,
+      },
     });
 
     return this.parseAssistantResponse(aiResponse.content, request);
@@ -156,10 +156,10 @@ export class AIDevAssistant {
   async getCodeCompletion(
     partialCode: string,
     context: DevContext,
-    cursorPosition?: { line: number; column: number }
+    cursorPosition?: { line: number; column: number },
   ): Promise<AssistantResponse> {
     const prompt = this.buildCompletionPrompt(partialCode, context, cursorPosition);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-generation',
       prompt,
@@ -167,41 +167,37 @@ export class AIDevAssistant {
       options: {
         model: 'gpt-4',
         temperature: 0.2, // Lower temperature for more accurate completions
-        maxTokens: 500
-      }
+        maxTokens: 500,
+      },
     });
 
     return {
       answer: 'Code completion suggestions',
       code: aiResponse.content,
       confidence: aiResponse.confidence || 0.8,
-      estimatedTime: 1
+      estimatedTime: 1,
     };
   }
 
   /**
    * Debug code issues
    */
-  async debugCode(
-    error: string,
-    code: string,
-    context: DevContext
-  ): Promise<DebugSession> {
+  async debugCode(error: string, code: string, context: DevContext): Promise<DebugSession> {
     const prompt = this.buildDebugPrompt(error, code, context);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-review',
       prompt,
       context,
       options: {
         model: 'gpt-4',
-        temperature: 0.2
-      }
+        temperature: 0.2,
+      },
     });
 
     const debugSession = this.parseDebugSession(aiResponse.content, error, context);
     this.debugHistory.set(error, debugSession);
-    
+
     return debugSession;
   }
 
@@ -211,10 +207,10 @@ export class AIDevAssistant {
   async getLearningContent(
     topic: string,
     difficulty: 'beginner' | 'intermediate' | 'advanced',
-    context: DevContext
+    context: DevContext,
   ): Promise<LearningSession> {
     const prompt = this.buildLearningPrompt(topic, difficulty, context);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'text-generation',
       prompt,
@@ -222,8 +218,8 @@ export class AIDevAssistant {
       options: {
         model: 'gpt-4',
         temperature: 0.4,
-        maxTokens: 4000
-      }
+        maxTokens: 4000,
+      },
     });
 
     return this.parseLearningSession(aiResponse.content, topic, difficulty);
@@ -235,24 +231,24 @@ export class AIDevAssistant {
   async optimizeCode(
     code: string,
     context: DevContext,
-    focusOn: 'performance' | 'security' | 'readability' | 'maintainability' = 'performance'
+    focusOn: 'performance' | 'security' | 'readability' | 'maintainability' = 'performance',
   ): Promise<AssistantResponse> {
     const prompt = this.buildOptimizationPrompt(code, context, focusOn);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-review',
       prompt,
       context,
       options: {
         model: 'gpt-4',
-        temperature: 0.3
-      }
+        temperature: 0.3,
+      },
     });
 
     return this.parseAssistantResponse(aiResponse.content, {
       type: 'optimization',
       query: `Optimize code for ${focusOn}`,
-      context
+      context,
     });
   }
 
@@ -261,76 +257,70 @@ export class AIDevAssistant {
    */
   async getArchitectureRecommendations(
     requirements: string,
-    context: DevContext
+    context: DevContext,
   ): Promise<AssistantResponse> {
     const prompt = this.buildArchitecturePrompt(requirements, context);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'automation',
       prompt,
       context,
       options: {
         model: 'gpt-4',
-        temperature: 0.4
-      }
+        temperature: 0.4,
+      },
     });
 
     return this.parseAssistantResponse(aiResponse.content, {
       type: 'architecture',
       query: requirements,
-      context
+      context,
     });
   }
 
   /**
    * Get security analysis
    */
-  async analyzeSecurity(
-    code: string,
-    context: DevContext
-  ): Promise<AssistantResponse> {
+  async analyzeSecurity(code: string, context: DevContext): Promise<AssistantResponse> {
     const prompt = this.buildSecurityPrompt(code, context);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-review',
       prompt,
       context,
       options: {
         model: 'gpt-4',
-        temperature: 0.2
-      }
+        temperature: 0.2,
+      },
     });
 
     return this.parseAssistantResponse(aiResponse.content, {
       type: 'security',
       query: 'Security analysis',
-      context
+      context,
     });
   }
 
   /**
    * Get performance analysis
    */
-  async analyzePerformance(
-    code: string,
-    context: DevContext
-  ): Promise<AssistantResponse> {
+  async analyzePerformance(code: string, context: DevContext): Promise<AssistantResponse> {
     const prompt = this.buildPerformancePrompt(code, context);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-review',
       prompt,
       context,
       options: {
         model: 'gpt-4',
-        temperature: 0.2
-      }
+        temperature: 0.2,
+      },
     });
 
     return this.parseAssistantResponse(aiResponse.content, {
       type: 'performance',
       query: 'Performance analysis',
-      context
+      context,
     });
   }
 
@@ -339,7 +329,7 @@ export class AIDevAssistant {
    */
   private buildAssistantPrompt(request: AssistantRequest): string {
     const contextInfo = this.buildContextInfo(request.context);
-    
+
     return `
 You are an expert AI development assistant helping a developer with ${request.type}.
 
@@ -370,7 +360,7 @@ Make the response practical, actionable, and educational.
   private buildCompletionPrompt(
     partialCode: string,
     context: DevContext,
-    cursorPosition?: { line: number; column: number }
+    cursorPosition?: { line: number; column: number },
   ): string {
     return `
 Complete the following ${context.language} code at the cursor position:
@@ -427,7 +417,7 @@ Format the response as structured JSON.
   private buildLearningPrompt(
     topic: string,
     difficulty: 'beginner' | 'intermediate' | 'advanced',
-    context: DevContext
+    context: DevContext,
   ): string {
     return `
 Create a comprehensive learning session for ${topic} at ${difficulty} level.
@@ -452,11 +442,7 @@ Make it engaging, practical, and tailored to the developer's context.
   /**
    * Build optimization prompt
    */
-  private buildOptimizationPrompt(
-    code: string,
-    context: DevContext,
-    focusOn: string
-  ): string {
+  private buildOptimizationPrompt(code: string, context: DevContext, focusOn: string): string {
     return `
 Analyze and optimize the following ${context.language} code for ${focusOn}:
 
@@ -593,9 +579,9 @@ Analyze for:
       'best-practices': 'code-review',
       'code-review': 'code-review',
       'migration': 'automation',
-      'deployment': 'automation'
+      'deployment': 'automation',
     };
-    
+
     return taskMap[type] || 'text-generation';
   }
 
@@ -604,7 +590,7 @@ Analyze for:
    */
   private parseAssistantResponse(content: string, request: AssistantRequest): AssistantResponse {
     const sections = this.extractResponseSections(content);
-    
+
     return {
       answer: sections.answer || content,
       code: sections.code,
@@ -617,7 +603,7 @@ Analyze for:
       resources: sections.resources,
       confidence: 0.85,
       estimatedTime: this.estimateTime(request.type),
-      complexity: this.assessComplexity(request.type)
+      complexity: this.assessComplexity(request.type),
     };
   }
 
@@ -631,7 +617,7 @@ Analyze for:
         error,
         context,
         analysis: data.analysis,
-        solution: data.solution
+        solution: data.solution,
       };
     } catch {
       return this.fallbackDebugSession(error, context);
@@ -644,10 +630,10 @@ Analyze for:
   private parseLearningSession(
     content: string,
     topic: string,
-    difficulty: 'beginner' | 'intermediate' | 'advanced'
+    difficulty: 'beginner' | 'intermediate' | 'advanced',
   ): LearningSession {
     const sections = this.extractLearningSections(content);
-    
+
     return {
       topic,
       difficulty,
@@ -656,7 +642,7 @@ Analyze for:
       examples: sections.examples || [],
       quiz: sections.quiz || [],
       resources: sections.resources || [],
-      estimatedDuration: this.estimateLearningDuration(difficulty)
+      estimatedDuration: this.estimateLearningDuration(difficulty),
     };
   }
 
@@ -667,7 +653,7 @@ Analyze for:
     const sections: Record<string, any> = {};
     const lines = content.split('\n');
     let currentSection = '';
-    
+
     for (const line of lines) {
       if (line.startsWith('## ')) {
         currentSection = line.replace('## ', '').toLowerCase();
@@ -678,7 +664,7 @@ Analyze for:
         sections[currentSection].push(line.trim());
       }
     }
-    
+
     return sections;
   }
 
@@ -710,9 +696,9 @@ Analyze for:
       'best-practices': 10,
       'code-review': 20,
       'migration': 120,
-      'deployment': 90
+      'deployment': 90,
     };
-    
+
     return timeMap[type] || 15;
   }
 
@@ -736,9 +722,9 @@ Analyze for:
       'best-practices': 'simple',
       'code-review': 'medium',
       'migration': 'complex',
-      'deployment': 'complex'
+      'deployment': 'complex',
     };
-    
+
     return complexityMap[type] || 'medium';
   }
 
@@ -747,10 +733,14 @@ Analyze for:
    */
   private estimateLearningDuration(difficulty: string): number {
     switch (difficulty) {
-      case 'beginner': return 30;
-      case 'intermediate': return 60;
-      case 'advanced': return 120;
-      default: return 45;
+      case 'beginner':
+        return 30;
+      case 'intermediate':
+        return 60;
+      case 'advanced':
+        return 120;
+      default:
+        return 45;
     }
   }
 
@@ -766,17 +756,17 @@ Analyze for:
         severity: 'medium',
         impact: 'Unknown',
         suggestedFixes: ['Review the error message', 'Check documentation'],
-        prevention: ['Add proper error handling', 'Follow best practices']
+        prevention: ['Add proper error handling', 'Follow best practices'],
       },
       solution: {
         code: '',
         explanation: 'Please review the error and implement appropriate fixes',
         testing: 'Test the fix thoroughly',
-        verification: 'Verify the error is resolved'
-      }
+        verification: 'Verify the error is resolved',
+      },
     };
   }
 }
 
 // Export singleton instance
-export const aiDevAssistant = new AIDevAssistant(); 
+export const aiDevAssistant = new AIDevAssistant();

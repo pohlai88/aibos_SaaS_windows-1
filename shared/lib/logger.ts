@@ -8,7 +8,7 @@ export enum LogLevel {
   WARN = 1,
   INFO = 2,
   DEBUG = 3,
-  TRACE = 4
+  TRACE = 4,
 }
 
 /**
@@ -70,7 +70,7 @@ export class Logger {
       enableFile: false,
       enableStructured: true,
       enableMetrics: false,
-      ...config
+      ...config,
     };
   }
 
@@ -98,7 +98,7 @@ export class Logger {
     message: string,
     context: LogContext = {},
     error?: Error,
-    data?: any
+    data?: any,
   ): LogEntry {
     return {
       timestamp: new Date().toISOString(),
@@ -110,10 +110,10 @@ export class Logger {
         sessionId: this.sessionId,
         service: this.config.service,
         version: this.config.version,
-        environment: this.config.environment
+        environment: this.config.environment,
       },
       error,
-      data
+      data,
     };
   }
 
@@ -127,9 +127,12 @@ export class Logger {
 
     const levelName = LogLevel[entry.level];
     const timestamp = entry.timestamp;
-    const context = Object.keys(entry.context).length > 0 
-      ? ` [${Object.entries(entry.context).map(([k, v]) => `${k}=${v}`).join(', ')}]`
-      : '';
+    const context =
+      Object.keys(entry.context).length > 0
+        ? ` [${Object.entries(entry.context)
+            .map(([k, v]) => `${k}=${v}`)
+            .join(', ')}]`
+        : '';
 
     return `[${timestamp}] ${levelName}${context}: ${entry.message}`;
   }
@@ -163,15 +166,15 @@ export class Logger {
   private writeToConsole(entry: LogEntry, formatted: string): void {
     const colors = {
       [LogLevel.ERROR]: '\x1b[31m', // Red
-      [LogLevel.WARN]: '\x1b[33m',  // Yellow
-      [LogLevel.INFO]: '\x1b[36m',  // Cyan
+      [LogLevel.WARN]: '\x1b[33m', // Yellow
+      [LogLevel.INFO]: '\x1b[36m', // Cyan
       [LogLevel.DEBUG]: '\x1b[35m', // Magenta
       [LogLevel.TRACE]: '\x1b[37m', // White
     };
 
     const reset = '\x1b[0m';
     const color = colors[entry.level] || '';
-    
+
     console.log(`${color}${formatted}${reset}`);
   }
 
@@ -240,12 +243,16 @@ export class Logger {
     const childLogger = new Logger(this.config);
     childLogger.requestId = this.requestId;
     childLogger.sessionId = this.sessionId;
-    
+
     // Merge context in log methods
     const originalMethods = ['error', 'warn', 'info', 'debug', 'trace'];
-    originalMethods.forEach(method => {
+    originalMethods.forEach((method) => {
       const original = this[method as keyof Logger] as Function;
-      childLogger[method as keyof Logger] = (message: string, context?: LogContext, ...args: any[]) => {
+      childLogger[method as keyof Logger] = (
+        message: string,
+        context?: LogContext,
+        ...args: any[]
+      ) => {
         const mergedContext = { ...additionalContext, ...context };
         return original.call(this, message, mergedContext, ...args);
       };
@@ -263,7 +270,7 @@ export const logger = new Logger({
   environment: (process.env.NODE_ENV as any) || 'development',
   enableConsole: true,
   enableStructured: process.env.NODE_ENV === 'production',
-  enableMetrics: process.env.NODE_ENV === 'production'
+  enableMetrics: process.env.NODE_ENV === 'production',
 });
 
 /**
@@ -272,7 +279,7 @@ export const logger = new Logger({
 export function createLogger(component: string, config?: Partial<LoggerConfig>): Logger {
   return new Logger({
     ...config,
-    service: `${logger.config.service}:${component}`
+    service: `${logger.config.service}:${component}`,
   });
 }
 
@@ -281,13 +288,14 @@ export function createLogger(component: string, config?: Partial<LoggerConfig>):
  */
 export function requestLogger() {
   return (req: any, res: any, next: any) => {
-    const requestId = req.headers['x-request-id'] || `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const requestId =
+      req.headers['x-request-id'] || `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const sessionId = req.headers['x-session-id'] || req.session?.id;
-    
+
     logger.setRequestContext(requestId, sessionId);
-    
+
     const startTime = Date.now();
-    
+
     // Log request
     logger.info('HTTP Request', {
       method: req.method,
@@ -295,14 +303,14 @@ export function requestLogger() {
       userAgent: req.headers['user-agent'],
       ip: req.ip,
       tenantId: req.user?.tenant_id,
-      userId: req.user?.id
+      userId: req.user?.id,
     });
 
     // Override res.end to log response
     const originalEnd = res.end;
-    res.end = function(chunk?: any, encoding?: any) {
+    res.end = function (chunk?: any, encoding?: any) {
       const duration = Date.now() - startTime;
-      
+
       logger.info('HTTP Response', {
         method: req.method,
         url: req.url,
@@ -310,7 +318,7 @@ export function requestLogger() {
         duration: `${duration}ms`,
         contentLength: res.get('content-length'),
         tenantId: req.user?.tenant_id,
-        userId: req.user?.id
+        userId: req.user?.id,
       });
 
       originalEnd.call(this, chunk, encoding);
@@ -325,13 +333,17 @@ export function requestLogger() {
  */
 export function errorLogger() {
   return (error: Error, req: any, res: any, next: any) => {
-    logger.error('Unhandled Error', {
-      method: req.method,
-      url: req.url,
-      tenantId: req.user?.tenant_id,
-      userId: req.user?.id
-    }, error);
+    logger.error(
+      'Unhandled Error',
+      {
+        method: req.method,
+        url: req.url,
+        tenantId: req.user?.tenant_id,
+        userId: req.user?.id,
+      },
+      error,
+    );
 
     next(error);
   };
-} 
+}

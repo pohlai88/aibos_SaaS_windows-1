@@ -8,22 +8,22 @@ export interface ApiResponse<T = unknown, E extends ApiError = ApiError> {
    * Whether the request was successful
    */
   success: boolean;
-  
+
   /**
    * Response data (present when success = true)
    */
   data?: T;
-  
+
   /**
    * Error details (present when success = false)
    */
   error?: E;
-  
+
   /**
    * Optional human-readable message
    */
   message?: string;
-  
+
   /**
    * Response metadata
    */
@@ -38,27 +38,27 @@ export interface ApiError {
    * Machine-readable error code
    */
   code: string;
-  
+
   /**
    * Human-readable error message
    */
   message: string;
-  
+
   /**
    * Additional error details
    */
   details?: unknown;
-  
+
   /**
    * Optional validation errors
    */
   validation?: Record<string, string[]>;
-  
+
   /**
    * Optional error context for debugging
    */
   context?: Record<string, unknown>;
-  
+
   /**
    * Optional error timestamp
    */
@@ -73,27 +73,27 @@ export interface ApiMeta {
    * API version
    */
   version: string;
-  
+
   /**
    * Timestamp of the response
    */
   timestamp: string;
-  
+
   /**
    * Request ID for tracing
    */
   requestId?: string;
-  
+
   /**
    * Processing time in milliseconds
    */
   processingTime?: number;
-  
+
   /**
    * Pagination information (for list responses)
    */
   pagination?: PaginationInfo;
-  
+
   /**
    * Rate limiting information
    */
@@ -103,7 +103,7 @@ export interface ApiMeta {
     reset: number;
     retryAfter?: number;
   };
-  
+
   /**
    * Cache information
    */
@@ -112,7 +112,7 @@ export interface ApiMeta {
     ttl?: number;
     etag?: string;
   };
-  
+
   /**
    * Additional metadata
    */
@@ -208,7 +208,7 @@ export interface PaginationQueryParams extends PaginationParams {
 /**
  * Enhanced common error codes
  */
-export type ApiErrorCode = 
+export type ApiErrorCode =
   | 'bad_request'
   | 'unauthorized'
   | 'forbidden'
@@ -268,17 +268,21 @@ export type ApiResponseType<T> = SuccessApiResponse<T> | ErrorApiResponse;
 export type PaginatedResponseType<T> = PaginatedApiResponse<T> | ErrorApiResponse;
 
 // Type guards
-export const isSuccessResponse = <T>(response: ApiResponse<T>): response is SuccessApiResponse<T> => {
+export const isSuccessResponse = <T>(
+  response: ApiResponse<T>,
+): response is SuccessApiResponse<T> => {
   return response.success === true && response.data !== undefined;
 };
 
 export const isErrorResponse = <T, E extends ApiError = ApiError>(
-  response: ApiResponse<T, E>
+  response: ApiResponse<T, E>,
 ): response is ErrorApiResponse<E> => {
   return response.success === false && response.error !== undefined;
 };
 
-export const isPaginatedResponse = <T>(response: ApiResponse<T[]>): response is PaginatedApiResponse<T> => {
+export const isPaginatedResponse = <T>(
+  response: ApiResponse<T[]>,
+): response is PaginatedApiResponse<T> => {
   return isSuccessResponse(response) && response.meta?.pagination !== undefined;
 };
 
@@ -286,30 +290,34 @@ export const isPaginatedResponse = <T>(response: ApiResponse<T[]>): response is 
  * Type guard for standalone PaginatedResponse (without ApiResponse wrapper)
  */
 export function isStandalonePaginatedResponse<T>(response: any): response is PaginatedResponse<T> {
-  return response && 
-         Array.isArray(response.data) &&
-         response.pagination &&
-         typeof response.pagination.total === 'number' &&
-         typeof response.pagination.page === 'number' &&
-         typeof response.pagination.perPage === 'number';
+  return (
+    response &&
+    Array.isArray(response.data) &&
+    response.pagination &&
+    typeof response.pagination.total === 'number' &&
+    typeof response.pagination.page === 'number' &&
+    typeof response.pagination.perPage === 'number'
+  );
 }
 
 /**
  * Type guard for legacy pagination format (direct pagination properties)
  */
 export function isLegacyPaginatedResponse<T>(response: any): response is PaginatedResponse<T> {
-  return response && 
-         Array.isArray(response.data) &&
-         typeof response.total === 'number' &&
-         typeof response.page === 'number' &&
-         typeof response.pageSize === 'number';
+  return (
+    response &&
+    Array.isArray(response.data) &&
+    typeof response.total === 'number' &&
+    typeof response.page === 'number' &&
+    typeof response.pageSize === 'number'
+  );
 }
 
 // Helper functions for creating responses
 export const createSuccessResponse = <T>(
   data: T,
   message?: string,
-  meta?: Partial<ApiMeta>
+  meta?: Partial<ApiMeta>,
 ): SuccessApiResponse<T> => ({
   success: true,
   data,
@@ -317,33 +325,33 @@ export const createSuccessResponse = <T>(
   meta: {
     version: '1.0.0',
     timestamp: new Date().toISOString(),
-    ...meta
-  }
+    ...meta,
+  },
 });
 
 export const createErrorResponse = <E extends ApiError = StandardApiError>(
   error: E,
   message?: string,
-  meta?: Partial<ApiMeta>
+  meta?: Partial<ApiMeta>,
 ): ErrorApiResponse<E> => ({
   success: false,
   error: {
     ...error,
-    timestamp: error.timestamp || new Date().toISOString()
+    timestamp: error.timestamp || new Date().toISOString(),
   },
   message,
   meta: {
     version: '1.0.0',
     timestamp: new Date().toISOString(),
-    ...meta
-  }
+    ...meta,
+  },
 });
 
 export const createPaginatedResponse = <T>(
   data: T[],
   pagination: PaginationInfo,
   message?: string,
-  meta?: Partial<ApiMeta>
+  meta?: Partial<ApiMeta>,
 ): PaginatedApiResponse<T> => ({
   success: true,
   data,
@@ -352,8 +360,8 @@ export const createPaginatedResponse = <T>(
     version: '1.0.0',
     timestamp: new Date().toISOString(),
     pagination,
-    ...meta
-  }
+    ...meta,
+  },
 });
 
 // Pagination utility functions
@@ -363,7 +371,7 @@ export const createPaginationInfo = (
   perPage: number,
   nextCursor?: string | null,
   prevCursor?: string | null,
-  links?: PaginationInfo['links']
+  links?: PaginationInfo['links'],
 ): PaginationInfo => {
   const totalPages = Math.ceil(total / perPage);
   return {
@@ -375,7 +383,7 @@ export const createPaginationInfo = (
     hasPrev: page > 1,
     nextCursor,
     prevCursor,
-    links
+    links,
   };
 };
 
@@ -383,7 +391,7 @@ export const validatePaginationParams = (params: PaginationParams): PaginationPa
   return {
     page: Math.max(1, params.page || 1),
     pageSize: Math.min(100, Math.max(1, params.pageSize || 20)),
-    cursor: params.cursor
+    cursor: params.cursor,
   };
 };
 
@@ -406,7 +414,7 @@ export const getPageInfo = (pagination: PaginationInfo) => {
     totalItems: pagination.total,
     itemsPerPage: pagination.perPage,
     hasNext: pagination.hasNext,
-    hasPrev: pagination.hasPrev
+    hasPrev: pagination.hasPrev,
   };
 };
 
@@ -445,40 +453,44 @@ export function getPageRange(page: number, pageSize: number, total: number) {
   const startIndex = calculatePageStartIndex(page, pageSize);
   const endIndex = Math.min(calculatePageEndIndex(page, pageSize), total);
   const itemCount = endIndex - startIndex;
-  
+
   return {
     startIndex,
     endIndex,
     itemCount,
     isEmpty: itemCount === 0,
-    isFull: itemCount === pageSize
+    isFull: itemCount === pageSize,
   };
 }
 
 /**
  * Generate page numbers for pagination UI
  */
-export function generatePageNumbers(currentPage: number, totalPages: number, maxVisible: number = 5) {
+export function generatePageNumbers(
+  currentPage: number,
+  totalPages: number,
+  maxVisible: number = 5,
+) {
   const pages: number[] = [];
   const halfVisible = Math.floor(maxVisible / 2);
-  
+
   let start = Math.max(1, currentPage - halfVisible);
   let end = Math.min(totalPages, start + maxVisible - 1);
-  
+
   // Adjust start if we're near the end
   if (end - start < maxVisible - 1) {
     start = Math.max(1, end - maxVisible + 1);
   }
-  
+
   for (let i = start; i <= end; i++) {
     pages.push(i);
   }
-  
+
   return {
     pages,
     hasGapBefore: start > 1,
     hasGapAfter: end < totalPages,
     showFirst: start > 1,
-    showLast: end < totalPages
+    showLast: end < totalPages,
   };
-} 
+}

@@ -5,43 +5,40 @@ import { cn } from '../../utils/cn';
 import { X } from 'lucide-react';
 import { Button } from './Button';
 
-const modalVariants = cva(
-  'fixed inset-0 z-50 flex items-center justify-center p-4',
-  {
-    variants: {
-      variant: {
-        default: '',
-        centered: 'items-center justify-center',
-        fullscreen: 'p-0',
-      },
+const modalVariants = cva('fixed inset-0 z-50 flex items-center justify-center p-4', {
+  variants: {
+    variant: {
+      default: '',
+      centered: 'items-center justify-center',
+      fullscreen: 'p-0',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 const contentVariants = cva(
   'relative bg-background rounded-lg shadow-lg border border-border max-h-[90vh] overflow-hidden',
   {
     variants: {
       size: {
-        sm: 'max-w-sm w-full',
-        md: 'max-w-md w-full',
-        lg: 'max-w-lg w-full',
-        xl: 'max-w-xl w-full',
+        'sm': 'max-w-sm w-full',
+        'md': 'max-w-md w-full',
+        'lg': 'max-w-lg w-full',
+        'xl': 'max-w-xl w-full',
         '2xl': 'max-w-2xl w-full',
         '3xl': 'max-w-3xl w-full',
         '4xl': 'max-w-4xl w-full',
         '5xl': 'max-w-5xl w-full',
         '6xl': 'max-w-6xl w-full',
-        full: 'w-full h-full rounded-none',
+        'full': 'w-full h-full rounded-none',
       },
     },
     defaultVariants: {
       size: 'md',
     },
-  }
+  },
 );
 
 export interface ModalProps extends VariantProps<typeof modalVariants> {
@@ -89,7 +86,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
       finalFocus,
       ...props
     },
-    ref
+    ref,
   ) => {
     const modalRef = useRef<HTMLDivElement>(null);
     const previousActiveElement = useRef<HTMLElement | null>(null);
@@ -110,7 +107,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
         initialFocus.current.focus();
       } else if (modalRef.current) {
         const focusableElements = modalRef.current.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         );
         if (focusableElements.length > 0) {
           (focusableElements[0] as HTMLElement).focus();
@@ -152,18 +149,14 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
     if (!isOpen) return null;
 
     const modalContent = (
-      <div
-        className={cn(modalVariants({ variant }), className)}
-        ref={ref}
-        {...props}
-      >
+      <div className={cn(modalVariants({ variant }), className)} ref={ref} {...props}>
         {/* Backdrop */}
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
           onClick={handleBackdropClick}
           aria-hidden="true"
         />
-        
+
         {/* Modal */}
         <div
           ref={modalRef}
@@ -175,7 +168,12 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
         >
           {/* Header */}
           {(title || showCloseButton) && (
-            <div className={cn('flex items-center justify-between p-6 border-b border-border', headerClassName)}>
+            <div
+              className={cn(
+                'flex items-center justify-between p-6 border-b border-border',
+                headerClassName,
+              )}
+            >
               <div className="flex-1">
                 {title && (
                   <h2 id="modal-title" className="text-lg font-semibold text-foreground">
@@ -203,13 +201,16 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
           )}
 
           {/* Body */}
-          <div className={cn('p-6', bodyClassName)}>
-            {children}
-          </div>
+          <div className={cn('p-6', bodyClassName)}>{children}</div>
 
           {/* Footer */}
           {footer && (
-            <div className={cn('flex items-center justify-end space-x-2 p-6 border-t border-border', footerClassName)}>
+            <div
+              className={cn(
+                'flex items-center justify-end space-x-2 p-6 border-t border-border',
+                footerClassName,
+              )}
+            >
               {footer}
             </div>
           )}
@@ -218,9 +219,9 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
     );
 
     return typeof window !== 'undefined' ? createPortal(modalContent, document.body) : null;
-  }
+  },
 );
 
 Modal.displayName = 'Modal';
 
-export { Modal, modalVariants, contentVariants }; 
+export { Modal, modalVariants, contentVariants };

@@ -41,49 +41,50 @@ export const useOfflineSupport = (config: OfflineConfig = {}) => {
   });
 
   // Add pending action
-  const addPendingAction = useCallback((action: () => Promise<void>) => {
-    const pendingAction = {
-      id: Math.random().toString(36).substr(2, 9),
-      action,
-      timestamp: new Date(),
-      retries: 0,
-    };
+  const addPendingAction = useCallback(
+    (action: () => Promise<void>) => {
+      const pendingAction = {
+        id: Math.random().toString(36).substr(2, 9),
+        action,
+        timestamp: new Date(),
+        retries: 0,
+      };
 
-    setOfflineState(prev => ({
-      ...prev,
-      pendingActions: [...prev.pendingActions, pendingAction],
-    }));
+      setOfflineState((prev) => ({
+        ...prev,
+        pendingActions: [...prev.pendingActions, pendingAction],
+      }));
 
-    // Persist to localStorage if enabled
-    if (persistData) {
-      const stored = localStorage.getItem('aibos-offline-actions');
-      const actions = stored ? JSON.parse(stored) : [];
-      actions.push(pendingAction);
-      localStorage.setItem('aibos-offline-actions', JSON.stringify(actions));
-    }
-  }, [persistData]);
+      // Persist to localStorage if enabled
+      if (persistData) {
+        const stored = localStorage.getItem('aibos-offline-actions');
+        const actions = stored ? JSON.parse(stored) : [];
+        actions.push(pendingAction);
+        localStorage.setItem('aibos-offline-actions', JSON.stringify(actions));
+      }
+    },
+    [persistData],
+  );
 
   // Execute pending actions
   const executePendingActions = useCallback(async () => {
     const actions = [...offlineState.pendingActions];
-    
+
     for (const pendingAction of actions) {
       try {
         await pendingAction.action();
-        
+
         // Remove successful action
-        setOfflineState(prev => ({
+        setOfflineState((prev) => ({
           ...prev,
-          pendingActions: prev.pendingActions.filter(a => a.id !== pendingAction.id),
+          pendingActions: prev.pendingActions.filter((a) => a.id !== pendingAction.id),
         }));
       } catch (error) {
         // Increment retry count
-        setOfflineState(prev => ({
+        setOfflineState((prev) => ({
           ...prev,
-          pendingActions: prev.pendingActions.map(a =>
-            a.id === pendingAction.id
-              ? { ...a, retries: a.retries + 1 }
-              : a
+          pendingActions: prev.pendingActions.map((a) =>
+            a.id === pendingAction.id ? { ...a, retries: a.retries + 1 } : a,
           ),
         }));
       }
@@ -93,7 +94,7 @@ export const useOfflineSupport = (config: OfflineConfig = {}) => {
   // Handle online/offline events
   useEffect(() => {
     const handleOnline = () => {
-      setOfflineState(prev => ({
+      setOfflineState((prev) => ({
         ...prev,
         isOnline: true,
         isOffline: false,
@@ -108,7 +109,7 @@ export const useOfflineSupport = (config: OfflineConfig = {}) => {
     };
 
     const handleOffline = () => {
-      setOfflineState(prev => ({
+      setOfflineState((prev) => ({
         ...prev,
         isOnline: false,
         isOffline: true,
@@ -132,7 +133,7 @@ export const useOfflineSupport = (config: OfflineConfig = {}) => {
       if (stored) {
         try {
           const actions = JSON.parse(stored);
-          setOfflineState(prev => ({
+          setOfflineState((prev) => ({
             ...prev,
             pendingActions: actions,
           }));
@@ -156,29 +157,32 @@ export const useOfflineForm = (config: OfflineConfig = {}) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submitForm = useCallback(async (data: Record<string, any>, onSubmit: (data: any) => Promise<void>) => {
-    if (isOffline) {
-      // Store form data locally
-      setFormData(data);
-      
-      // Add to pending actions
-      addPendingAction(async () => {
-        await onSubmit(data);
-      });
+  const submitForm = useCallback(
+    async (data: Record<string, any>, onSubmit: (data: any) => Promise<void>) => {
+      if (isOffline) {
+        // Store form data locally
+        setFormData(data);
 
-      return { success: true, offline: true };
-    } else {
-      setIsSubmitting(true);
-      try {
-        await onSubmit(data);
-        return { success: true, offline: false };
-      } catch (error) {
-        return { success: false, error, offline: false };
-      } finally {
-        setIsSubmitting(false);
+        // Add to pending actions
+        addPendingAction(async () => {
+          await onSubmit(data);
+        });
+
+        return { success: true, offline: true };
+      } else {
+        setIsSubmitting(true);
+        try {
+          await onSubmit(data);
+          return { success: true, offline: false };
+        } catch (error) {
+          return { success: false, error, offline: false };
+        } finally {
+          setIsSubmitting(false);
+        }
       }
-    }
-  }, [isOffline, addPendingAction]);
+    },
+    [isOffline, addPendingAction],
+  );
 
   return {
     isOffline,
@@ -192,93 +196,113 @@ export const useOfflineForm = (config: OfflineConfig = {}) => {
 export const useOfflineDataGrid = (config: OfflineConfig = {}) => {
   const { isOffline, addPendingAction } = useOfflineSupport(config);
   const [localData, setLocalData] = useState<any[]>([]);
-  const [pendingChanges, setPendingChanges] = useState<Array<{
-    id: string;
-    type: 'create' | 'update' | 'delete';
-    data: any;
-    timestamp: Date;
-  }>>([]);
+  const [pendingChanges, setPendingChanges] = useState<
+    Array<{
+      id: string;
+      type: 'create' | 'update' | 'delete';
+      data: any;
+      timestamp: Date;
+    }>
+  >([]);
 
-  const addRow = useCallback(async (row: any, onAdd: (row: any) => Promise<void>) => {
-    if (isOffline) {
-      const tempId = `temp_${Date.now()}`;
-      const newRow = { ...row, id: tempId, _offline: true };
-      
-      setLocalData(prev => [...prev, newRow]);
-      setPendingChanges(prev => [...prev, {
-        id: tempId,
-        type: 'create',
-        data: row,
-        timestamp: new Date(),
-      }]);
+  const addRow = useCallback(
+    async (row: any, onAdd: (row: any) => Promise<void>) => {
+      if (isOffline) {
+        const tempId = `temp_${Date.now()}`;
+        const newRow = { ...row, id: tempId, _offline: true };
 
-      addPendingAction(async () => {
-        await onAdd(row);
-      });
+        setLocalData((prev) => [...prev, newRow]);
+        setPendingChanges((prev) => [
+          ...prev,
+          {
+            id: tempId,
+            type: 'create',
+            data: row,
+            timestamp: new Date(),
+          },
+        ]);
 
-      return { success: true, offline: true, tempId };
-    } else {
-      try {
-        await onAdd(row);
-        return { success: true, offline: false };
-      } catch (error) {
-        return { success: false, error, offline: false };
+        addPendingAction(async () => {
+          await onAdd(row);
+        });
+
+        return { success: true, offline: true, tempId };
+      } else {
+        try {
+          await onAdd(row);
+          return { success: true, offline: false };
+        } catch (error) {
+          return { success: false, error, offline: false };
+        }
       }
-    }
-  }, [isOffline, addPendingAction]);
+    },
+    [isOffline, addPendingAction],
+  );
 
-  const updateRow = useCallback(async (id: string, updates: any, onUpdate: (id: string, updates: any) => Promise<void>) => {
-    if (isOffline) {
-      setLocalData(prev => prev.map(row => 
-        row.id === id ? { ...row, ...updates, _offline: true } : row
-      ));
-      
-      setPendingChanges(prev => [...prev, {
-        id,
-        type: 'update',
-        data: updates,
-        timestamp: new Date(),
-      }]);
+  const updateRow = useCallback(
+    async (id: string, updates: any, onUpdate: (id: string, updates: any) => Promise<void>) => {
+      if (isOffline) {
+        setLocalData((prev) =>
+          prev.map((row) => (row.id === id ? { ...row, ...updates, _offline: true } : row)),
+        );
 
-      addPendingAction(async () => {
-        await onUpdate(id, updates);
-      });
+        setPendingChanges((prev) => [
+          ...prev,
+          {
+            id,
+            type: 'update',
+            data: updates,
+            timestamp: new Date(),
+          },
+        ]);
 
-      return { success: true, offline: true };
-    } else {
-      try {
-        await onUpdate(id, updates);
-        return { success: true, offline: false };
-      } catch (error) {
-        return { success: false, error, offline: false };
+        addPendingAction(async () => {
+          await onUpdate(id, updates);
+        });
+
+        return { success: true, offline: true };
+      } else {
+        try {
+          await onUpdate(id, updates);
+          return { success: true, offline: false };
+        } catch (error) {
+          return { success: false, error, offline: false };
+        }
       }
-    }
-  }, [isOffline, addPendingAction]);
+    },
+    [isOffline, addPendingAction],
+  );
 
-  const deleteRow = useCallback(async (id: string, onDelete: (id: string) => Promise<void>) => {
-    if (isOffline) {
-      setLocalData(prev => prev.filter(row => row.id !== id));
-      setPendingChanges(prev => [...prev, {
-        id,
-        type: 'delete',
-        data: null,
-        timestamp: new Date(),
-      }]);
+  const deleteRow = useCallback(
+    async (id: string, onDelete: (id: string) => Promise<void>) => {
+      if (isOffline) {
+        setLocalData((prev) => prev.filter((row) => row.id !== id));
+        setPendingChanges((prev) => [
+          ...prev,
+          {
+            id,
+            type: 'delete',
+            data: null,
+            timestamp: new Date(),
+          },
+        ]);
 
-      addPendingAction(async () => {
-        await onDelete(id);
-      });
+        addPendingAction(async () => {
+          await onDelete(id);
+        });
 
-      return { success: true, offline: true };
-    } else {
-      try {
-        await onDelete(id);
-        return { success: true, offline: false };
-      } catch (error) {
-        return { success: false, error, offline: false };
+        return { success: true, offline: true };
+      } else {
+        try {
+          await onDelete(id);
+          return { success: true, offline: false };
+        } catch (error) {
+          return { success: false, error, offline: false };
+        }
       }
-    }
-  }, [isOffline, addPendingAction]);
+    },
+    [isOffline, addPendingAction],
+  );
 
   return {
     isOffline,
@@ -297,18 +321,18 @@ export const OfflineIndicator: React.FC<{ className?: string }> = ({ className }
   if (!isOffline) return null;
 
   return (
-    <div className={`fixed top-4 right-4 z-50 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg ${className}`}>
+    <div
+      className={`fixed top-4 right-4 z-50 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg ${className}`}
+    >
       <div className="flex items-center gap-2">
         <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
         <span className="text-sm font-medium">
           Offline Mode
           {pendingActions.length > 0 && (
-            <span className="ml-2 text-xs">
-              ({pendingActions.length} pending)
-            </span>
+            <span className="ml-2 text-xs">({pendingActions.length} pending)</span>
           )}
         </span>
       </div>
     </div>
   );
-}; 
+};

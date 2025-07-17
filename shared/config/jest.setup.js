@@ -31,20 +31,20 @@ global.WebSocket = class MockWebSocket {
     this.onmessage = null;
     this.onerror = null;
     this.onclose = null;
-    
+
     // Simulate connection
     setTimeout(() => {
       this.readyState = 1; // OPEN
       if (this.onopen) this.onopen();
     }, 10);
   }
-  
+
   send(data) {
     if (this.onmessage) {
       this.onmessage({ data });
     }
   }
-  
+
   close() {
     this.readyState = 3; // CLOSED
     if (this.onclose) this.onclose();
@@ -77,7 +77,7 @@ global.createTestUser = (overrides = {}) => ({
   tenant_id: 'test-tenant-id',
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
-  ...overrides
+  ...overrides,
 });
 
 global.createTestTenant = (overrides = {}) => ({
@@ -86,7 +86,7 @@ global.createTestTenant = (overrides = {}) => ({
   domain: 'test.example.com',
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
-  ...overrides
+  ...overrides,
 });
 
 global.createTestSubscription = (overrides = {}) => ({
@@ -102,7 +102,7 @@ global.createTestSubscription = (overrides = {}) => ({
   current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
-  ...overrides
+  ...overrides,
 });
 
 // Mock Supabase client
@@ -136,7 +136,7 @@ global.createMockSupabaseClient = () => ({
 });
 
 // Test helpers
-global.waitFor = (ms = 100) => new Promise(resolve => setTimeout(resolve, ms));
+global.waitFor = (ms = 100) => new Promise((resolve) => setTimeout(resolve, ms));
 
 global.mockApiResponse = (data, status = 200) => ({
   ok: status >= 200 && status < 300,
@@ -157,4 +157,4 @@ afterEach(() => {
   jest.clearAllMocks();
   localStorageMock.clear();
   sessionStorageMock.clear();
-}); 
+});

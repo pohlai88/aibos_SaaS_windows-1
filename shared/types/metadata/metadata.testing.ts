@@ -1,20 +1,20 @@
 import { z } from 'zod';
 import { UUID, ISODate, UserID, TenantID } from '../primitives';
-import { 
+import {
   MetadataFieldType,
   MetadataFieldTypes,
   MetadataOperationType,
   MetadataOperationTypes,
   MetadataValidationRule,
-  MetadataValidationRules
+  MetadataValidationRules,
 } from './metadata.enums';
-import { 
-  MetadataEntity, 
-  MetadataField, 
+import {
+  MetadataEntity,
+  MetadataField,
   MetadataValue,
   MetadataSchema,
   MetadataConstraint,
-  MetadataQuery
+  MetadataQuery,
 } from './metadata.types';
 
 // ============================================================================
@@ -27,29 +27,29 @@ export const MetadataTestType = {
   E2E: 'e2e',
   PERFORMANCE: 'performance',
   SECURITY: 'security',
-  MIGRATION: 'migration'
+  MIGRATION: 'migration',
 } as const;
 
-export type MetadataTestType = typeof MetadataTestType[keyof typeof MetadataTestType];
+export type MetadataTestType = (typeof MetadataTestType)[keyof typeof MetadataTestType];
 
 export const MetadataTestStatus = {
   PASSED: 'passed',
   FAILED: 'failed',
   SKIPPED: 'skipped',
   PENDING: 'pending',
-  RUNNING: 'running'
+  RUNNING: 'running',
 } as const;
 
-export type MetadataTestStatus = typeof MetadataTestStatus[keyof typeof MetadataTestStatus];
+export type MetadataTestStatus = (typeof MetadataTestStatus)[keyof typeof MetadataTestStatus];
 
 export const MetadataTestPriority = {
   LOW: 'low',
   MEDIUM: 'medium',
   HIGH: 'high',
-  CRITICAL: 'critical'
+  CRITICAL: 'critical',
 } as const;
 
-export type MetadataTestPriority = typeof MetadataTestPriority[keyof typeof MetadataTestPriority];
+export type MetadataTestPriority = (typeof MetadataTestPriority)[keyof typeof MetadataTestPriority];
 
 // ============================================================================
 // TEST INTERFACES
@@ -61,7 +61,7 @@ export interface MetadataTestCase {
   description?: string;
   type: MetadataTestType;
   priority: MetadataTestPriority;
-  
+
   // Test configuration
   config: {
     timeout: number;
@@ -70,7 +70,7 @@ export interface MetadataTestCase {
     isolated: boolean;
     cleanup: boolean;
   };
-  
+
   // Test data
   setup?: {
     entities?: MetadataEntity[];
@@ -78,16 +78,16 @@ export interface MetadataTestCase {
     constraints?: MetadataConstraint[];
     data?: Record<string, any>;
   };
-  
+
   teardown?: {
     cleanupEntities?: UUID[];
     cleanupSchemas?: UUID[];
     cleanupData?: string[];
   };
-  
+
   // Test execution
   execute: (context: MetadataTestContext) => Promise<MetadataTestResult>;
-  
+
   // Metadata
   createdBy: UserID;
   createdAt: ISODate;
@@ -101,10 +101,10 @@ export interface MetadataTestSuite {
   id: UUID;
   name: string;
   description?: string;
-  
+
   // Test cases
   testCases: MetadataTestCase[];
-  
+
   // Suite configuration
   config: {
     parallel: boolean;
@@ -113,14 +113,14 @@ export interface MetadataTestSuite {
     timeout: number;
     retries: number;
   };
-  
+
   // Dependencies
   dependencies?: {
     suites?: UUID[];
     services?: string[];
     databases?: string[];
   };
-  
+
   // Metadata
   createdBy: UserID;
   createdAt: ISODate;
@@ -133,13 +133,13 @@ export interface MetadataTestExecution {
   id: UUID;
   testCaseId: UUID;
   testSuiteId?: UUID;
-  
+
   // Execution details
   status: MetadataTestStatus;
   startedAt: ISODate;
   completedAt?: ISODate;
   duration?: number;
-  
+
   // Results
   result: {
     success: boolean;
@@ -158,7 +158,7 @@ export interface MetadataTestExecution {
       details?: Record<string, any>;
     }>;
   };
-  
+
   // Performance metrics
   performance?: {
     memoryUsage: number;
@@ -166,7 +166,7 @@ export interface MetadataTestExecution {
     networkRequests: number;
     databaseQueries: number;
   };
-  
+
   // Context
   context: MetadataTestContext;
 }
@@ -176,11 +176,11 @@ export interface MetadataTestContext {
   environment: string;
   tenantId: TenantID;
   userId: UserID;
-  
+
   // Test data
   testData: Record<string, any>;
   mocks: Record<string, any>;
-  
+
   // Services
   services: {
     database?: any;
@@ -188,7 +188,7 @@ export interface MetadataTestContext {
     eventBus?: any;
     permissionManager?: any;
   };
-  
+
   // Utilities
   utils: {
     generateId: () => UUID;
@@ -200,7 +200,7 @@ export interface MetadataTestContext {
     assertField: (field: MetadataField, expected: Record<string, any>) => void;
     assertSchema: (schema: MetadataSchema, expected: Record<string, any>) => void;
   };
-  
+
   // Metadata
   metadata?: Record<string, any>;
 }
@@ -227,57 +227,82 @@ export interface MetadataTestResult {
 
 export interface MetadataMockGenerator {
   // Entity mocks
-  generateEntity(type: string, options?: {
-    id?: UUID;
-    tenantId?: TenantID;
-    userId?: UserID;
-    data?: Record<string, any>;
-    fields?: MetadataField[];
-  }): MetadataEntity;
-  
-  generateEntityBatch(type: string, count: number, options?: {
-    tenantId?: TenantID;
-    userId?: UserID;
-    data?: Record<string, any>;
-  }): MetadataEntity[];
-  
+  generateEntity(
+    type: string,
+    options?: {
+      id?: UUID;
+      tenantId?: TenantID;
+      userId?: UserID;
+      data?: Record<string, any>;
+      fields?: MetadataField[];
+    },
+  ): MetadataEntity;
+
+  generateEntityBatch(
+    type: string,
+    count: number,
+    options?: {
+      tenantId?: TenantID;
+      userId?: UserID;
+      data?: Record<string, any>;
+    },
+  ): MetadataEntity[];
+
   // Field mocks
-  generateField(type: MetadataFieldType, options?: {
-    id?: UUID;
-    name?: string;
-    config?: Record<string, any>;
-    constraints?: MetadataConstraint[];
-  }): MetadataField;
-  
-  generateFieldBatch(types: MetadataFieldType[], options?: {
-    names?: string[];
-    configs?: Record<string, any>[];
-  }): MetadataField[];
-  
+  generateField(
+    type: MetadataFieldType,
+    options?: {
+      id?: UUID;
+      name?: string;
+      config?: Record<string, any>;
+      constraints?: MetadataConstraint[];
+    },
+  ): MetadataField;
+
+  generateFieldBatch(
+    types: MetadataFieldType[],
+    options?: {
+      names?: string[];
+      configs?: Record<string, any>[];
+    },
+  ): MetadataField[];
+
   // Schema mocks
-  generateSchema(name: string, options?: {
-    id?: UUID;
-    fields?: MetadataField[];
-    constraints?: MetadataConstraint[];
-    config?: Record<string, any>;
-  }): MetadataSchema;
-  
-  generateSchemaBatch(names: string[], options?: {
-    fieldCounts?: number[];
-    includeConstraints?: boolean;
-  }): MetadataSchema[];
-  
+  generateSchema(
+    name: string,
+    options?: {
+      id?: UUID;
+      fields?: MetadataField[];
+      constraints?: MetadataConstraint[];
+      config?: Record<string, any>;
+    },
+  ): MetadataSchema;
+
+  generateSchemaBatch(
+    names: string[],
+    options?: {
+      fieldCounts?: number[];
+      includeConstraints?: boolean;
+    },
+  ): MetadataSchema[];
+
   // Value mocks
-  generateValue(field: MetadataField, options?: {
-    valid?: boolean;
-    constraints?: Record<string, any>;
-  }): MetadataValue;
-  
-  generateValueBatch(fields: MetadataField[], options?: {
-    valid?: boolean;
-    constraints?: Record<string, any>[];
-  }): MetadataValue[];
-  
+  generateValue(
+    field: MetadataField,
+    options?: {
+      valid?: boolean;
+      constraints?: Record<string, any>;
+    },
+  ): MetadataValue;
+
+  generateValueBatch(
+    fields: MetadataField[],
+    options?: {
+      valid?: boolean;
+      constraints?: Record<string, any>[];
+    },
+  ): MetadataValue[];
+
   // Query mocks
   generateQuery(options?: {
     filter?: any;
@@ -285,18 +310,24 @@ export interface MetadataMockGenerator {
     pagination?: any;
     aggregations?: any;
   }): MetadataQuery;
-  
+
   // Constraint mocks
-  generateConstraint(type: string, options?: {
-    id?: UUID;
-    fieldId?: UUID;
-    config?: Record<string, any>;
-  }): MetadataConstraint;
-  
-  generateConstraintBatch(types: string[], options?: {
-    fieldIds?: UUID[];
-    configs?: Record<string, any>[];
-  }): MetadataConstraint[];
+  generateConstraint(
+    type: string,
+    options?: {
+      id?: UUID;
+      fieldId?: UUID;
+      config?: Record<string, any>;
+    },
+  ): MetadataConstraint;
+
+  generateConstraintBatch(
+    types: string[],
+    options?: {
+      fieldIds?: UUID[];
+      configs?: Record<string, any>[];
+    },
+  ): MetadataConstraint[];
 }
 
 // ============================================================================
@@ -311,46 +342,60 @@ export interface MetadataTestHelper {
     eventBus?: boolean;
     permissions?: boolean;
   }): Promise<MetadataTestContext>;
-  
+
   teardownTestEnvironment(context: MetadataTestContext): Promise<void>;
-  
+
   // Data management
   seedTestData(data: Record<string, any>): Promise<void>;
   cleanupTestData(patterns: string[]): Promise<void>;
-  
+
   // Assertions
   assertEntityExists(entityId: UUID, expected?: Record<string, any>): Promise<void>;
   assertEntityNotExists(entityId: UUID): Promise<void>;
   assertFieldExists(fieldId: UUID, expected?: Record<string, any>): Promise<void>;
   assertSchemaExists(schemaId: UUID, expected?: Record<string, any>): Promise<void>;
   assertQueryReturns(query: MetadataQuery, expectedCount: number): Promise<void>;
-  assertPermissionGranted(userId: UserID, resource: string, operation: MetadataOperationType): Promise<void>;
-  assertPermissionDenied(userId: UserID, resource: string, operation: MetadataOperationType): Promise<void>;
-  
+  assertPermissionGranted(
+    userId: UserID,
+    resource: string,
+    operation: MetadataOperationType,
+  ): Promise<void>;
+  assertPermissionDenied(
+    userId: UserID,
+    resource: string,
+    operation: MetadataOperationType,
+  ): Promise<void>;
+
   // Performance testing
-  measurePerformance<T>(operation: () => Promise<T>, options?: {
-    iterations?: number;
-    timeout?: number;
-  }): Promise<{
+  measurePerformance<T>(
+    operation: () => Promise<T>,
+    options?: {
+      iterations?: number;
+      timeout?: number;
+    },
+  ): Promise<{
     result: T;
     duration: number;
     memoryUsage: number;
     cpuUsage: number;
   }>;
-  
+
   // Load testing
-  generateLoad(operations: Array<() => Promise<any>>, options?: {
-    concurrency?: number;
-    duration?: number;
-    rampUp?: number;
-  }): Promise<{
+  generateLoad(
+    operations: Array<() => Promise<any>>,
+    options?: {
+      concurrency?: number;
+      duration?: number;
+      rampUp?: number;
+    },
+  ): Promise<{
     totalOperations: number;
     successfulOperations: number;
     failedOperations: number;
     averageResponseTime: number;
     throughput: number;
   }>;
-  
+
   // Security testing
   testSecurityVulnerabilities(options?: {
     sqlInjection?: boolean;
@@ -382,25 +427,29 @@ export const MetadataTestCaseSchema = z.object({
     retries: z.number().nonnegative(),
     parallel: z.boolean(),
     isolated: z.boolean(),
-    cleanup: z.boolean()
+    cleanup: z.boolean(),
   }),
-  setup: z.object({
-    entities: z.array(z.any()).optional(),
-    schemas: z.array(z.any()).optional(),
-    constraints: z.array(z.any()).optional(),
-    data: z.record(z.any()).optional()
-  }).optional(),
-  teardown: z.object({
-    cleanupEntities: z.array(z.string().uuid()).optional(),
-    cleanupSchemas: z.array(z.string().uuid()).optional(),
-    cleanupData: z.array(z.string()).optional()
-  }).optional(),
+  setup: z
+    .object({
+      entities: z.array(z.any()).optional(),
+      schemas: z.array(z.any()).optional(),
+      constraints: z.array(z.any()).optional(),
+      data: z.record(z.any()).optional(),
+    })
+    .optional(),
+  teardown: z
+    .object({
+      cleanupEntities: z.array(z.string().uuid()).optional(),
+      cleanupSchemas: z.array(z.string().uuid()).optional(),
+      cleanupData: z.array(z.string()).optional(),
+    })
+    .optional(),
   createdBy: z.string().uuid(),
   createdAt: z.string().datetime(),
   updatedBy: z.string().uuid().optional(),
   updatedAt: z.string().datetime().optional(),
   isActive: z.boolean(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
 });
 
 export const MetadataTestExecutionSchema = z.object({
@@ -416,24 +465,30 @@ export const MetadataTestExecutionSchema = z.object({
     assertions: z.number().nonnegative(),
     passed: z.number().nonnegative(),
     failed: z.number().nonnegative(),
-    errors: z.array(z.object({
-      code: z.string(),
-      message: z.string(),
-      stack: z.string().optional(),
-      details: z.record(z.any()).optional()
-    })),
-    warnings: z.array(z.object({
-      code: z.string(),
-      message: z.string(),
-      details: z.record(z.any()).optional()
-    }))
+    errors: z.array(
+      z.object({
+        code: z.string(),
+        message: z.string(),
+        stack: z.string().optional(),
+        details: z.record(z.any()).optional(),
+      }),
+    ),
+    warnings: z.array(
+      z.object({
+        code: z.string(),
+        message: z.string(),
+        details: z.record(z.any()).optional(),
+      }),
+    ),
   }),
-  performance: z.object({
-    memoryUsage: z.number().nonnegative(),
-    cpuUsage: z.number().nonnegative(),
-    networkRequests: z.number().nonnegative(),
-    databaseQueries: z.number().nonnegative()
-  }).optional()
+  performance: z
+    .object({
+      memoryUsage: z.number().nonnegative(),
+      cpuUsage: z.number().nonnegative(),
+      networkRequests: z.number().nonnegative(),
+      databaseQueries: z.number().nonnegative(),
+    })
+    .optional(),
 });
 
 // ============================================================================
@@ -450,7 +505,7 @@ export class MetadataTestUtils {
     priority: MetadataTestPriority,
     execute: (context: MetadataTestContext) => Promise<MetadataTestResult>,
     createdBy: UserID,
-    options?: Partial<MetadataTestCase>
+    options?: Partial<MetadataTestCase>,
   ): MetadataTestCase {
     return {
       id: crypto.randomUUID() as UUID,
@@ -462,13 +517,13 @@ export class MetadataTestUtils {
         retries: 0,
         parallel: false,
         isolated: true,
-        cleanup: true
+        cleanup: true,
       },
       execute,
       createdBy,
       createdAt: new Date().toISOString() as ISODate,
       isActive: true,
-      ...options
+      ...options,
     };
   }
 
@@ -479,7 +534,7 @@ export class MetadataTestUtils {
     name: string,
     testCases: MetadataTestCase[],
     createdBy: UserID,
-    options?: Partial<MetadataTestSuite>
+    options?: Partial<MetadataTestSuite>,
   ): MetadataTestSuite {
     return {
       id: crypto.randomUUID() as UUID,
@@ -490,12 +545,12 @@ export class MetadataTestUtils {
         maxConcurrent: 1,
         stopOnFailure: true,
         timeout: 300000, // 5 minutes
-        retries: 0
+        retries: 0,
       },
       createdBy,
       createdAt: new Date().toISOString() as ISODate,
       isActive: true,
-      ...options
+      ...options,
     };
   }
 
@@ -510,7 +565,7 @@ export class MetadataTestUtils {
       if (error instanceof z.ZodError) {
         return {
           valid: false,
-          errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          errors: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
         };
       }
       return { valid: false, errors: ['Unknown validation error'] };
@@ -528,7 +583,7 @@ export class MetadataTestUtils {
       userId?: UserID;
       data?: Record<string, any>;
       fields?: MetadataField[];
-    }
+    },
   ): MetadataEntity {
     return {
       id: options?.id || (crypto.randomUUID() as UUID),
@@ -545,7 +600,7 @@ export class MetadataTestUtils {
         tenantId: options?.tenantId || (crypto.randomUUID() as TenantID),
         createdBy: options?.userId || (crypto.randomUUID() as UserID),
         createdAt: new Date().toISOString() as ISODate,
-        isActive: true
+        isActive: true,
       },
       tenantId: options?.tenantId || (crypto.randomUUID() as TenantID),
       createdBy: options?.userId || (crypto.randomUUID() as UserID),
@@ -556,7 +611,7 @@ export class MetadataTestUtils {
       isDeleted: false,
       isArchived: false,
       metadata: options?.data || {},
-      version: '1.0.0'
+      version: '1.0.0',
     };
   }
 
@@ -570,7 +625,7 @@ export class MetadataTestUtils {
       name?: string;
       config?: Record<string, any>;
       constraints?: MetadataConstraint[];
-    }
+    },
   ): MetadataField {
     return {
       id: options?.id || (crypto.randomUUID() as UUID),
@@ -594,7 +649,7 @@ export class MetadataTestUtils {
       updatedBy: crypto.randomUUID() as UserID,
       updatedAt: new Date().toISOString() as ISODate,
       isActive: true,
-      metadata: {}
+      metadata: {},
     };
   }
 
@@ -608,7 +663,7 @@ export class MetadataTestUtils {
       fields?: MetadataField[];
       constraints?: MetadataConstraint[];
       config?: Record<string, any>;
-    }
+    },
   ): MetadataSchema {
     return {
       id: options?.id || (crypto.randomUUID() as UUID),
@@ -624,7 +679,7 @@ export class MetadataTestUtils {
       updatedBy: crypto.randomUUID() as UserID,
       updatedAt: new Date().toISOString() as ISODate,
       isActive: true,
-      metadata: {}
+      metadata: {},
     };
   }
 
@@ -636,12 +691,12 @@ export class MetadataTestUtils {
     options?: {
       valid?: boolean;
       constraints?: Record<string, any>;
-    }
+    },
   ): MetadataValue {
     const valid = options?.valid !== false;
-    
+
     let value: any;
-    
+
     switch (field.type) {
       case 'string':
         value = valid ? `test_string_${Math.random().toString(36).substr(2, 9)}` : '';
@@ -656,10 +711,14 @@ export class MetadataTestUtils {
         value = valid ? new Date().toISOString() : 'invalid_date';
         break;
       case 'email':
-        value = valid ? `test${Math.random().toString(36).substr(2, 9)}@example.com` : 'invalid_email';
+        value = valid
+          ? `test${Math.random().toString(36).substr(2, 9)}@example.com`
+          : 'invalid_email';
         break;
       case 'url':
-        value = valid ? `https://example.com/${Math.random().toString(36).substr(2, 9)}` : 'invalid_url';
+        value = valid
+          ? `https://example.com/${Math.random().toString(36).substr(2, 9)}`
+          : 'invalid_url';
         break;
       case 'uuid':
         value = valid ? crypto.randomUUID() : 'invalid_uuid';
@@ -673,7 +732,7 @@ export class MetadataTestUtils {
       default:
         value = `test_value_${Math.random().toString(36).substr(2, 9)}`;
     }
-    
+
     return {
       id: crypto.randomUUID() as UUID,
       fieldId: field.id,
@@ -681,14 +740,14 @@ export class MetadataTestUtils {
       metadata: {
         generated: true,
         valid,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       tenantId: crypto.randomUUID() as TenantID,
       createdBy: crypto.randomUUID() as UserID,
       createdAt: new Date().toISOString() as ISODate,
       updatedBy: crypto.randomUUID() as UserID,
       updatedAt: new Date().toISOString() as ISODate,
-      isActive: true
+      isActive: true,
     };
   }
 
@@ -705,30 +764,32 @@ export class MetadataTestUtils {
       filter: options?.filter || {
         field: 'name',
         operator: 'contains',
-        value: 'test'
+        value: 'test',
       },
-      sort: options?.sort || [{
-        field: 'createdAt',
-        order: 'desc'
-      }],
+      sort: options?.sort || [
+        {
+          field: 'createdAt',
+          order: 'desc',
+        },
+      ],
       pagination: options?.pagination || {
         page: 1,
-        limit: 10
+        limit: 10,
       },
       aggregations: options?.aggregations || [],
       select: ['id', 'name', 'createdAt'],
       exclude: ['metadata'],
       cache: {
         ttl: 300,
-        key: `test_query_${Math.random().toString(36).substr(2, 9)}`
+        key: `test_query_${Math.random().toString(36).substr(2, 9)}`,
       },
       options: {
         explain: false,
         timeout: 5000,
         maxResults: 1000,
         includeDeleted: false,
-        includeArchived: false
-      }
+        includeArchived: false,
+      },
     };
   }
 
@@ -739,7 +800,7 @@ export class MetadataTestUtils {
     environment: string,
     tenantId: TenantID,
     userId: UserID,
-    options?: Partial<MetadataTestContext>
+    options?: Partial<MetadataTestContext>,
   ): MetadataTestContext {
     return {
       environment,
@@ -757,27 +818,33 @@ export class MetadataTestUtils {
         assertEntity: (entity: MetadataEntity, expected: Record<string, any>) => {
           Object.entries(expected).forEach(([key, value]) => {
             if (entity[key as keyof MetadataEntity] !== value) {
-              throw new Error(`Entity assertion failed: ${key} expected ${value}, got ${entity[key as keyof MetadataEntity]}`);
+              throw new Error(
+                `Entity assertion failed: ${key} expected ${value}, got ${entity[key as keyof MetadataEntity]}`,
+              );
             }
           });
         },
         assertField: (field: MetadataField, expected: Record<string, any>) => {
           Object.entries(expected).forEach(([key, value]) => {
             if (field[key as keyof MetadataField] !== value) {
-              throw new Error(`Field assertion failed: ${key} expected ${value}, got ${field[key as keyof MetadataField]}`);
+              throw new Error(
+                `Field assertion failed: ${key} expected ${value}, got ${field[key as keyof MetadataField]}`,
+              );
             }
           });
         },
         assertSchema: (schema: MetadataSchema, expected: Record<string, any>) => {
           Object.entries(expected).forEach(([key, value]) => {
             if (schema[key as keyof MetadataSchema] !== value) {
-              throw new Error(`Schema assertion failed: ${key} expected ${value}, got ${schema[key as keyof MetadataSchema]}`);
+              throw new Error(
+                `Schema assertion failed: ${key} expected ${value}, got ${schema[key as keyof MetadataSchema]}`,
+              );
             }
           });
-        }
+        },
       },
       metadata: {},
-      ...options
+      ...options,
     };
   }
 
@@ -786,7 +853,7 @@ export class MetadataTestUtils {
    */
   static async runTestCase(
     testCase: MetadataTestCase,
-    context: MetadataTestContext
+    context: MetadataTestContext,
   ): Promise<MetadataTestExecution> {
     const execution: MetadataTestExecution = {
       id: crypto.randomUUID() as UUID,
@@ -799,9 +866,9 @@ export class MetadataTestUtils {
         passed: 0,
         failed: 0,
         errors: [],
-        warnings: []
+        warnings: [],
       },
-      context
+      context,
     };
 
     try {
@@ -823,10 +890,10 @@ export class MetadataTestUtils {
       execution.result = {
         success: result.success,
         assertions: result.data?.assertions || 0,
-        passed: result.success ? (result.data?.assertions || 0) : 0,
-        failed: result.success ? 0 : (result.data?.assertions || 1),
+        passed: result.success ? result.data?.assertions || 0 : 0,
+        failed: result.success ? 0 : result.data?.assertions || 1,
         errors: result.errors || [],
-        warnings: result.warnings || []
+        warnings: result.warnings || [],
       };
 
       // Teardown
@@ -834,7 +901,6 @@ export class MetadataTestUtils {
         // Cleanup test data
         // This would be implemented based on the actual cleanup logic
       }
-
     } catch (error) {
       execution.status = MetadataTestStatus.FAILED;
       execution.completedAt = new Date().toISOString() as ISODate;
@@ -842,7 +908,7 @@ export class MetadataTestUtils {
       execution.result.errors.push({
         code: 'TEST_EXECUTION_ERROR',
         message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
+        stack: error instanceof Error ? error.stack : undefined,
       });
     }
 
@@ -854,22 +920,22 @@ export class MetadataTestUtils {
    */
   static async runTestSuite(
     testSuite: MetadataTestSuite,
-    context: MetadataTestContext
+    context: MetadataTestContext,
   ): Promise<MetadataTestExecution[]> {
     const executions: MetadataTestExecution[] = [];
 
     if (testSuite.config.parallel) {
       // Run tests in parallel
       const chunks = this.chunkArray(testSuite.testCases, testSuite.config.maxConcurrent);
-      
+
       for (const chunk of chunks) {
         const chunkExecutions = await Promise.all(
-          chunk.map(testCase => this.runTestCase(testCase, context))
+          chunk.map((testCase) => this.runTestCase(testCase, context)),
         );
         executions.push(...chunkExecutions);
-        
+
         // Check if we should stop on failure
-        if (testSuite.config.stopOnFailure && chunkExecutions.some(e => !e.result.success)) {
+        if (testSuite.config.stopOnFailure && chunkExecutions.some((e) => !e.result.success)) {
           break;
         }
       }
@@ -878,7 +944,7 @@ export class MetadataTestUtils {
       for (const testCase of testSuite.testCases) {
         const execution = await this.runTestCase(testCase, context);
         executions.push(execution);
-        
+
         // Check if we should stop on failure
         if (testSuite.config.stopOnFailure && !execution.result.success) {
           break;
@@ -894,7 +960,7 @@ export class MetadataTestUtils {
    */
   static generateTestReport(executions: MetadataTestExecution[]): string {
     const total = executions.length;
-    const passed = executions.filter(e => e.result.success).length;
+    const passed = executions.filter((e) => e.result.success).length;
     const failed = total - passed;
     const successRate = total > 0 ? (passed / total) * 100 : 0;
 
@@ -906,15 +972,17 @@ export class MetadataTestUtils {
 
     if (failed > 0) {
       report += `## Failed Tests\n\n`;
-      executions.filter(e => !e.result.success).forEach(execution => {
-        report += `### ${execution.testCaseId}\n`;
-        report += `- **Duration:** ${execution.duration}ms\n`;
-        report += `- **Errors:** ${execution.result.errors.length}\n`;
-        execution.result.errors.forEach(error => {
-          report += `  - ${error.code}: ${error.message}\n`;
+      executions
+        .filter((e) => !e.result.success)
+        .forEach((execution) => {
+          report += `### ${execution.testCaseId}\n`;
+          report += `- **Duration:** ${execution.duration}ms\n`;
+          report += `- **Errors:** ${execution.result.errors.length}\n`;
+          execution.result.errors.forEach((error) => {
+            report += `  - ${error.code}: ${error.message}\n`;
+          });
+          report += `\n`;
         });
-        report += `\n`;
-      });
     }
 
     return report;
@@ -943,7 +1011,7 @@ export type {
   MetadataTestContext,
   MetadataTestResult,
   MetadataMockGenerator,
-  MetadataTestHelper
+  MetadataTestHelper,
 };
 
 export {
@@ -952,5 +1020,5 @@ export {
   MetadataTestPriority,
   MetadataTestCaseSchema,
   MetadataTestExecutionSchema,
-  MetadataTestUtils
-}; 
+  MetadataTestUtils,
+};

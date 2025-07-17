@@ -11,10 +11,82 @@ env:
   NPM_VERSION: '9'
 
 jobs:
+  # Security Validation - Check for committed secrets and build artifacts
+  security-validation:
+    name: Security Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security validation script
+        run: |
+          echo "🔍 Running security validation..."
+          if [ -f "scripts/validate-secrets.sh" ]; then
+            chmod +x scripts/validate-secrets.sh
+            ./scripts/validate-secrets.sh
+          else
+            echo "⚠️  Validation script not found, skipping..."
+          fi
+
+      - name: Check for committed secrets (PowerShell fallback)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Write-Host "🔍 Running PowerShell security validation..."
+          if (Test-Path "scripts/validate-secrets.ps1") {
+            & "scripts/validate-secrets.ps1"
+          } else {
+            Write-Host "⚠️  PowerShell validation script not found, skipping..."
+          }
+
+      - name: Check for committed secrets (Bash fallback)
+        if: runner.os != 'Windows'
+        run: |
+          echo "🔍 Running bash security validation..."
+          if [ -f "scripts/validate-secrets.sh" ]; then
+            chmod +x scripts/validate-secrets.sh
+            ./scripts/validate-secrets.sh
+          else
+            echo "⚠️  Validation script not found, skipping..."
+          fi
+
+      - name: Check for build artifacts in git
+        run: |
+          echo "🔍 Checking for build artifacts in git..."
+          if git ls-files | grep -E "(node_modules|dist|build|\.next|coverage)" | head -10; then
+            echo "❌ Found build artifacts in git! These should be ignored."
+            echo "Run: git rm -r --cached node_modules dist build .next coverage"
+            exit 1
+          else
+            echo "✅ No build artifacts found in git"
+          fi
+
+      - name: Check for environment files in git
+        run: |
+          echo "🔍 Checking for environment files in git..."
+          if git ls-files | grep -E "\.(env|local|secret)" | head -10; then
+            echo "❌ Found environment files in git! These should be ignored."
+            echo "Run: git rm --cached *.env *.local *.secret"
+            exit 1
+          else
+            echo "✅ No environment files found in git"
+          fi
+
   # Security and Code Quality
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    needs: security-validation
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,10 +124,24 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
 
+      - name: Additional security validation
+        run: |
+          echo "🔍 Running additional security checks..."
+          # Check for hardcoded secrets in code
+          if grep -r -i "password.*=.*['\"][^'\"]*['\"]" --include="*.ts" --include="*.js" --include="*.tsx" --include="*.jsx" . | grep -v "test" | head -5; then
+            echo "⚠️  Potential hardcoded passwords found"
+          fi
+          
+          # Check for API keys in code
+          if grep -r -i "api.*key.*=.*['\"][^'\"]*['\"]" --include="*.ts" --include="*.js" --include="*.tsx" --include="*.jsx" . | grep -v "test" | head -5; then
+            echo "⚠️  Potential hardcoded API keys found"
+          fi
+
   # Code Quality and Linting
   code-quality:
     name: Code Quality
     runs-on: ubuntu-latest
+    needs: security-validation
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -107,6 +193,7 @@ jobs:
   test:
     name: Test Suite
     runs-on: ubuntu-latest
+    needs: security-validation
     strategy:
       matrix:
         node-version: [16, 18, 20]

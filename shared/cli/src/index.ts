@@ -2,7 +2,7 @@
 
 /**
  * AI-BOS CLI - Enterprise-Grade Development Tools
- * 
+ *
  * Comprehensive CLI for AI-BOS platform development with scaffolding,
  * code generation, testing, and deployment tools.
  */
@@ -85,7 +85,6 @@ async function main() {
     if (!process.argv.slice(2).length) {
       program.outputHelp();
     }
-
   } catch (error) {
     logger.error('CLI execution failed:', error);
     process.exit(1);
@@ -108,4 +107,4 @@ if (require.main === module) {
   main();
 }
 
-export { main }; 
+export { main };

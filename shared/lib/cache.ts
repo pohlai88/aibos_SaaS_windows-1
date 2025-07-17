@@ -56,7 +56,7 @@ export class MemoryCache {
       maxSize: 1000,
       cleanupInterval: 60 * 1000, // 1 minute
       enableStats: true,
-      ...config
+      ...config,
     };
 
     this.stats = {
@@ -66,7 +66,7 @@ export class MemoryCache {
       deletes: 0,
       evictions: 0,
       size: 0,
-      hitRate: 0
+      hitRate: 0,
     };
 
     this.startCleanup();
@@ -81,7 +81,7 @@ export class MemoryCache {
       timestamp: Date.now(),
       ttl: ttl || this.config.defaultTTL,
       accessCount: 0,
-      lastAccessed: Date.now()
+      lastAccessed: Date.now(),
     };
 
     // Check if we need to evict entries
@@ -279,7 +279,7 @@ export class RedisCache {
       deletes: 0,
       evictions: 0,
       size: 0,
-      hitRate: 0
+      hitRate: 0,
     };
 
     if (config.redisUrl) {
@@ -294,10 +294,10 @@ export class RedisCache {
     try {
       // Dynamic import to avoid requiring redis in non-Redis environments
       const { createClient } = await import('redis');
-      
+
       this.redis = createClient({
         url: this.config.redisUrl,
-        ...this.config.redisOptions
+        ...this.config.redisOptions,
       });
 
       this.redis.on('error', (err: Error) => {
@@ -329,7 +329,7 @@ export class RedisCache {
     try {
       const serialized = JSON.stringify(value);
       const ttlSeconds = Math.floor((ttl || this.config.defaultTTL) / 1000);
-      
+
       await this.redis.setEx(key, ttlSeconds, serialized);
       this.stats.sets++;
     } catch (error) {
@@ -350,7 +350,7 @@ export class RedisCache {
 
     try {
       const value = await this.redis.get(key);
-      
+
       if (value === null) {
         this.stats.misses++;
         this.updateHitRate();
@@ -441,7 +441,7 @@ export class MultiLevelCache {
     this.l1Cache = new MemoryCache({
       defaultTTL: Math.min(config.defaultTTL, 60 * 1000), // L1 cache shorter TTL
       maxSize: Math.min(config.maxSize, 100), // L1 cache smaller size
-      ...config
+      ...config,
     });
 
     if (config.redisUrl) {
@@ -510,7 +510,7 @@ export class MultiLevelCache {
   getStats(): { l1: CacheStats; l2: CacheStats | null } {
     return {
       l1: this.l1Cache.getStats(),
-      l2: this.l2Cache ? this.l2Cache.getStats() : null
+      l2: this.l2Cache ? this.l2Cache.getStats() : null,
     };
   }
 
@@ -534,7 +534,7 @@ export function Cached(ttl?: number, keyGenerator?: CacheKeyGenerator) {
     const cache = new MemoryCache();
 
     descriptor.value = async function (...args: any[]) {
-      const key = keyGenerator 
+      const key = keyGenerator
         ? keyGenerator(...args)
         : `${target.constructor.name}:${propertyName}:${JSON.stringify(args)}`;
 
@@ -561,7 +561,7 @@ export const multiLevelCache = new MultiLevelCache({
   maxSize: 1000,
   cleanupInterval: 60 * 1000,
   enableStats: true,
-  redisUrl: process.env.REDIS_URL
+  redisUrl: process.env.REDIS_URL,
 });
 
 /**
@@ -572,9 +572,9 @@ export class CacheUtils {
    * Generate cache key from function and arguments
    */
   static generateKey(prefix: string, ...args: any[]): string {
-    return `${prefix}:${args.map(arg => 
-      typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-    ).join(':')}`;
+    return `${prefix}:${args
+      .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : String(arg)))
+      .join(':')}`;
   }
 
   /**
@@ -584,7 +584,7 @@ export class CacheUtils {
     cache: MemoryCache | RedisCache | MultiLevelCache,
     key: string,
     fn: () => Promise<T>,
-    ttl?: number
+    ttl?: number,
   ): Promise<T> {
     const cached = await cache.get<T>(key);
     if (cached !== null) {
@@ -601,10 +601,10 @@ export class CacheUtils {
    */
   static async batchGet<T>(
     cache: MemoryCache | RedisCache | MultiLevelCache,
-    keys: string[]
+    keys: string[],
   ): Promise<Map<string, T>> {
     const results = new Map<string, T>();
-    
+
     for (const key of keys) {
       const value = await cache.get<T>(key);
       if (value !== null) {
@@ -620,10 +620,10 @@ export class CacheUtils {
    */
   static async batchSet<T>(
     cache: MemoryCache | RedisCache | MultiLevelCache,
-    entries: Array<{ key: string; value: T; ttl?: number }>
+    entries: Array<{ key: string; value: T; ttl?: number }>,
   ): Promise<void> {
     for (const { key, value, ttl } of entries) {
       await cache.set(key, value, ttl);
     }
   }
-} 
+}

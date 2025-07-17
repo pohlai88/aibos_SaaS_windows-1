@@ -15,12 +15,7 @@ export type {
   SecurityPolicy,
   SecurityAudit,
   AuditResult,
-  PolicyEnforcementResult
+  PolicyEnforcementResult,
 } from './audit';
 
-export {
-  SecurityLevel,
-  ComplianceStandard,
-  AuditStatus,
-  SecurityAuditService
-} from './audit'; 
+export { SecurityLevel, ComplianceStandard, AuditStatus, SecurityAuditService } from './audit';

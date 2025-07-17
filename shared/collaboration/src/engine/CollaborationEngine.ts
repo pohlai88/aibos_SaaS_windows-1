@@ -1,6 +1,6 @@
 /**
  * AI-BOS Real-time Collaboration Engine
- * 
+ *
  * The ultimate real-time collaboration system that makes team development seamless.
  * CRDT-based synchronization, presence awareness, and AI-powered assistance.
  */
@@ -12,7 +12,7 @@ import { IndexeddbPersistence } from 'y-indexeddb';
 import { z } from 'zod';
 
 // Collaboration Types
-export type CollaborationType = 
+export type CollaborationType =
   | 'code-editor'
   | 'document'
   | 'whiteboard'
@@ -24,22 +24,9 @@ export type CollaborationType =
   | 'mindmap'
   | 'kanban';
 
-export type UserRole = 
-  | 'owner'
-  | 'admin'
-  | 'editor'
-  | 'viewer'
-  | 'commenter'
-  | 'guest';
+export type UserRole = 'owner' | 'admin' | 'editor' | 'viewer' | 'commenter' | 'guest';
 
-export type Permission = 
-  | 'read'
-  | 'write'
-  | 'delete'
-  | 'share'
-  | 'comment'
-  | 'approve'
-  | 'admin';
+export type Permission = 'read' | 'write' | 'delete' | 'share' | 'comment' | 'approve' | 'admin';
 
 // User Presence
 export interface UserPresence {
@@ -104,7 +91,7 @@ export interface AICollaborationAssistant {
 
 /**
  * Real-time Collaboration Engine
- * 
+ *
  * Provides seamless real-time collaboration with CRDT synchronization,
  * presence awareness, conflict resolution, and AI assistance.
  */
@@ -141,8 +128,8 @@ export class CollaborationEngine {
       auth: {
         userId: config.userId,
         username: config.username,
-        avatar: config.avatar
-      }
+        avatar: config.avatar,
+      },
     });
 
     // Setup event handlers
@@ -164,7 +151,7 @@ export class CollaborationEngine {
     settings?: Partial<CollaborationSession['settings']>;
   }): Promise<CollaborationSession> {
     const sessionId = this.generateSessionId();
-    
+
     // Create Yjs document
     const doc = new Y.Doc();
     this.documents.set(sessionId, doc);
@@ -184,15 +171,15 @@ export class CollaborationEngine {
         autoSave: true,
         versionControl: true,
         aiAssistance: true,
-        ...config.settings
+        ...config.settings,
       },
       metadata: {
         createdAt: new Date(),
         updatedAt: new Date(),
         createdBy: 'current-user',
         version: 1,
-        tags: []
-      }
+        tags: [],
+      },
     };
 
     this.sessions.set(sessionId, session);
@@ -210,12 +197,15 @@ export class CollaborationEngine {
   /**
    * Join an existing collaboration session
    */
-  async joinSession(sessionId: string, userInfo: {
-    userId: string;
-    username: string;
-    avatar?: string;
-    role?: UserRole;
-  }): Promise<CollaborationSession> {
+  async joinSession(
+    sessionId: string,
+    userInfo: {
+      userId: string;
+      username: string;
+      avatar?: string;
+      role?: UserRole;
+    },
+  ): Promise<CollaborationSession> {
     const session = this.sessions.get(sessionId);
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
@@ -228,7 +218,7 @@ export class CollaborationEngine {
       avatar: userInfo.avatar,
       status: 'online',
       activity: 'Joined session',
-      lastSeen: new Date()
+      lastSeen: new Date(),
     };
 
     session.participants.set(userInfo.userId, presence);
@@ -281,15 +271,19 @@ export class CollaborationEngine {
   /**
    * Update content in a collaboration session
    */
-  async updateContent(sessionId: string, userId: string, update: {
-    type: 'text' | 'code' | 'comment' | 'suggestion';
-    content: string;
-    position?: number;
-    metadata?: Record<string, any>;
-  }): Promise<void> {
+  async updateContent(
+    sessionId: string,
+    userId: string,
+    update: {
+      type: 'text' | 'code' | 'comment' | 'suggestion';
+      content: string;
+      position?: number;
+      metadata?: Record<string, any>;
+    },
+  ): Promise<void> {
     const session = this.sessions.get(sessionId);
     const doc = this.documents.get(sessionId);
-    
+
     if (!session || !doc) {
       throw new Error(`Session ${sessionId} not found`);
     }
@@ -315,14 +309,16 @@ export class CollaborationEngine {
     // Handle comments and suggestions
     if (update.type === 'comment' || update.type === 'suggestion') {
       const comments = doc.getArray('comments');
-      comments.push([{
-        id: this.generateId(),
-        userId,
-        type: update.type,
-        content: update.content,
-        timestamp: new Date(),
-        metadata: update.metadata
-      }]);
+      comments.push([
+        {
+          id: this.generateId(),
+          userId,
+          type: update.type,
+          content: update.content,
+          timestamp: new Date(),
+          metadata: update.metadata,
+        },
+      ]);
     }
 
     // Update session metadata
@@ -334,7 +330,7 @@ export class CollaborationEngine {
       sessionId,
       userId,
       update,
-      version: session.metadata.version
+      version: session.metadata.version,
     });
 
     // AI assistance if enabled
@@ -410,13 +406,13 @@ export class CollaborationEngine {
 
     try {
       const resolution = await this.aiAssistant.resolveConflicts(conflicts);
-      
+
       // Apply resolution
       await this.applyConflictResolution(sessionId, resolution);
-      
+
       // Emit conflict resolved event
       this.emit('conflictsResolved', { sessionId, conflicts, resolution });
-      
+
       return resolution;
     } catch (error) {
       console.error('Failed to resolve conflicts:', error);
@@ -437,14 +433,14 @@ export class CollaborationEngine {
       const context = {
         sessionType: session.type,
         participants: this.getParticipants(sessionId),
-        content: content
+        content: content,
       };
 
       const suggestions = await this.aiAssistant.suggestImprovements(content, context);
-      
+
       // Emit suggestions event
       this.emit('aiSuggestions', { sessionId, suggestions });
-      
+
       return suggestions;
     } catch (error) {
       console.error('Failed to get AI suggestions:', error);
@@ -481,7 +477,7 @@ export class CollaborationEngine {
   private emit(event: string, data: any): void {
     const handlers = this.eventHandlers.get(event);
     if (handlers) {
-      handlers.forEach(handler => {
+      handlers.forEach((handler) => {
         try {
           handler(data);
         } catch (error) {
@@ -543,7 +539,7 @@ export class CollaborationEngine {
     const provider = new WebsocketProvider(
       'ws://localhost:1234', // Replace with your WebSocket server
       sessionId,
-      doc
+      doc,
     );
 
     // Setup IndexedDB persistence for offline support
@@ -565,7 +561,7 @@ export class CollaborationEngine {
       this.sessions.forEach((session, sessionId) => {
         if (session.participants.has(userId)) {
           this.updatePresence(sessionId, userId, {
-            lastSeen: new Date()
+            lastSeen: new Date(),
           });
         }
       });
@@ -579,13 +575,13 @@ export class CollaborationEngine {
     try {
       const content = this.getContent(sessionId);
       const suggestions = await this.getAISuggestions(sessionId, content);
-      
+
       if (suggestions.length > 0) {
         // Emit AI assistance event
         this.emit('aiAssistance', {
           sessionId,
           suggestions,
-          context: update
+          context: update,
         });
       }
     } catch (error) {
@@ -616,7 +612,7 @@ export class CollaborationEngine {
       editor: ['read', 'write', 'comment'],
       viewer: ['read', 'comment'],
       commenter: ['read', 'comment'],
-      guest: ['read']
+      guest: ['read'],
     };
 
     return permissionMap[role] || ['read'];
@@ -657,13 +653,13 @@ export class CollaborationEngine {
         // Default implementation - can be overridden
         return {
           score: 80,
-          suggestions: ['Add error handling', 'Improve variable names']
+          suggestions: ['Add error handling', 'Improve variable names'],
         };
       },
       suggestAlternatives: async (content: string, context: any) => {
         // Default implementation - can be overridden
         return ['Alternative approach 1', 'Alternative approach 2'];
-      }
+      },
     };
   }
 
@@ -677,7 +673,7 @@ export class CollaborationEngine {
     }
 
     // Disconnect providers
-    this.providers.forEach(provider => {
+    this.providers.forEach((provider) => {
       provider.destroy();
     });
 
@@ -697,4 +693,4 @@ export class CollaborationEngine {
 }
 
 // Export singleton instance
-export const collaborationEngine = new CollaborationEngine(); 
+export const collaborationEngine = new CollaborationEngine();

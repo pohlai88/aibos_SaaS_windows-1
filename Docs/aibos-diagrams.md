@@ -45,7 +45,7 @@ graph TD
     I --> K
     I --> N
     I --> O
-    
+
     H -->|dispatch event| B
     G -->|validate manifest| E
     J -->|generate app| G
@@ -146,32 +146,32 @@ flowchart TD
     A --> A2
     A --> A3
     A --> A4
-    
+
     B --> B1
     B --> B2
     B --> B3
     B --> B4
-    
+
     C --> C1
     C --> C2
     C --> C3
     C --> C4
-    
+
     D --> D1
     D --> D2
     D --> D3
     D --> D4
-    
+
     E --> E1
     E --> E2
     E --> E3
     E --> E4
-    
+
     F --> F1
     F --> F2
     F --> F3
     F --> F4
-    
+
     G --> G1
     G --> G2
     G --> G3
@@ -313,7 +313,8 @@ These diagrams provide a complete visual understanding of:
 7. **Security**: How the platform stays secure and compliant
 
 You can copy any of these Mermaid diagrams into:
+
 - GitHub README files
 - Documentation
 - Notion pages
-- Any Markdown editor that supports Mermaid 
+- Any Markdown editor that supports Mermaid

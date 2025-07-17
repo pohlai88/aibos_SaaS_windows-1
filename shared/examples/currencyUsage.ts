@@ -1,9 +1,9 @@
-import { 
-  Currency, 
-  CurrencyUtils, 
+import {
+  Currency,
+  CurrencyUtils,
   CurrencyConversionService,
   Money,
-  ExchangeRates
+  ExchangeRates,
 } from '../types/billing/currency.enums';
 
 /**
@@ -11,10 +11,10 @@ import {
  */
 export function exampleSoutheastAsianFormatting() {
   console.log('=== Southeast Asian Currency Formatting ===');
-  
+
   const seaCurrencies = CurrencyUtils.getSoutheastAsianCurrencies();
-  
-  seaCurrencies.forEach(currency => {
+
+  seaCurrencies.forEach((currency) => {
     const amount = 1234567.89;
     const formatted = CurrencyUtils.format(amount, currency.isoCode as Currency);
     console.log(`${currency.name} (${currency.isoCode}): ${formatted}`);
@@ -26,13 +26,13 @@ export function exampleSoutheastAsianFormatting() {
  */
 export function exampleCurrencyByRegion() {
   console.log('=== Currencies by Region ===');
-  
+
   const regions = ['southeast-asia', 'asia', 'middle-east', 'africa', 'latin-america'] as const;
-  
-  regions.forEach(region => {
+
+  regions.forEach((region) => {
     const currencies = CurrencyUtils.getCurrenciesByRegion(region);
     console.log(`\n${region.toUpperCase()}:`);
-    currencies.forEach(currency => {
+    currencies.forEach((currency) => {
       console.log(`  ${currency.isoCode} - ${currency.name} (${currency.symbol})`);
     });
   });
@@ -43,16 +43,16 @@ export function exampleCurrencyByRegion() {
  */
 export function exampleMoneyOperations() {
   console.log('=== Money Object Operations ===');
-  
+
   const prices: Money[] = [
     { amount: 99.99, currency: Currency.USD },
     { amount: 1500, currency: Currency.THB },
     { amount: 50000, currency: Currency.MYR },
     { amount: 1000000, currency: Currency.IDR },
-    { amount: 25000, currency: Currency.VND }
+    { amount: 25000, currency: Currency.VND },
   ];
-  
-  prices.forEach(price => {
+
+  prices.forEach((price) => {
     const formatted = CurrencyUtils.formatMoney(price);
     console.log(`${price.currency}: ${formatted}`);
   });
@@ -63,11 +63,11 @@ export function exampleMoneyOperations() {
  */
 export function exampleCurrencyConversion() {
   console.log('=== Currency Conversion ===');
-  
+
   // Sample exchange rates (in real app, these would come from an API)
   const rates: ExchangeRates = {
-    USD_MYR: 4.20,
-    USD_THB: 35.50,
+    USD_MYR: 4.2,
+    USD_THB: 35.5,
     USD_SGD: 1.35,
     USD_IDR: 15000,
     USD_VND: 24000,
@@ -75,14 +75,14 @@ export function exampleCurrencyConversion() {
     THB_USD: 0.028,
     SGD_USD: 0.741,
     IDR_USD: 0.000067,
-    VND_USD: 0.000042
+    VND_USD: 0.000042,
   };
-  
+
   const usdPrice: Money = { amount: 100, currency: Currency.USD };
-  
+
   const seaCurrencies = [Currency.MYR, Currency.THB, Currency.SGD, Currency.IDR, Currency.VND];
-  
-  seaCurrencies.forEach(targetCurrency => {
+
+  seaCurrencies.forEach((targetCurrency) => {
     try {
       const converted = CurrencyUtils.convertMoney(usdPrice, targetCurrency, rates);
       const formatted = CurrencyUtils.formatMoney(converted);
@@ -98,32 +98,32 @@ export function exampleCurrencyConversion() {
  */
 export async function exampleCurrencyConversionService() {
   console.log('=== Currency Conversion Service ===');
-  
+
   const conversionService = new CurrencyConversionService();
-  
+
   // Set some sample rates
   const rates: ExchangeRates = {
-    USD_MYR: 4.20,
-    USD_THB: 35.50,
+    USD_MYR: 4.2,
+    USD_THB: 35.5,
     USD_SGD: 1.35,
     MYR_USD: 0.238,
     THB_USD: 0.028,
-    SGD_USD: 0.741
+    SGD_USD: 0.741,
   };
-  
+
   conversionService.setRates(rates);
-  
+
   const prices: Money[] = [
     { amount: 50, currency: Currency.USD },
     { amount: 200, currency: Currency.MYR },
-    { amount: 1000, currency: Currency.THB }
+    { amount: 1000, currency: Currency.THB },
   ];
-  
+
   for (const price of prices) {
     console.log(`\nConverting ${CurrencyUtils.formatMoney(price)}:`);
-    
+
     const targetCurrencies = [Currency.USD, Currency.MYR, Currency.THB, Currency.SGD];
-    
+
     for (const targetCurrency of targetCurrencies) {
       if (price.currency !== targetCurrency) {
         try {
@@ -142,15 +142,15 @@ export async function exampleCurrencyConversionService() {
  */
 export function exampleCurrencyParsing() {
   console.log('=== Currency Parsing ===');
-  
+
   const formattedValues = [
-    { value: "$1,234.56", currency: Currency.USD },
-    { value: "RM5,000.00", currency: Currency.MYR },
-    { value: "฿2,500.00", currency: Currency.THB },
-    { value: "Rp1.500.000", currency: Currency.IDR },
-    { value: "50.000₫", currency: Currency.VND }
+    { value: '$1,234.56', currency: Currency.USD },
+    { value: 'RM5,000.00', currency: Currency.MYR },
+    { value: '฿2,500.00', currency: Currency.THB },
+    { value: 'Rp1.500.000', currency: Currency.IDR },
+    { value: '50.000₫', currency: Currency.VND },
   ];
-  
+
   formattedValues.forEach(({ value, currency }) => {
     try {
       const parsed = CurrencyUtils.parse(value, currency);
@@ -166,15 +166,15 @@ export function exampleCurrencyParsing() {
  */
 export function exampleCurrencyRounding() {
   console.log('=== Currency Rounding ===');
-  
+
   const testAmounts = [123.456, 99.999, 1000.001];
   const testCurrencies = [Currency.USD, Currency.JPY, Currency.KWD]; // Different decimal places
-  
-  testCurrencies.forEach(currency => {
+
+  testCurrencies.forEach((currency) => {
     const meta = CurrencyUtils.getCurrencyMetadata(currency);
     console.log(`\n${currency} (${meta.decimalDigits} decimal places):`);
-    
-    testAmounts.forEach(amount => {
+
+    testAmounts.forEach((amount) => {
       const rounded = CurrencyUtils.round(amount, currency);
       const formatted = CurrencyUtils.format(rounded, currency);
       console.log(`  ${amount} → ${rounded} → ${formatted}`);
@@ -187,13 +187,13 @@ export function exampleCurrencyRounding() {
  */
 export function exampleCurrencyValidation() {
   console.log('=== Currency Validation ===');
-  
+
   const testCurrencies = ['USD', 'MYR', 'THB', 'INVALID', 'SGD'];
-  
-  testCurrencies.forEach(currency => {
+
+  testCurrencies.forEach((currency) => {
     const isValid = CurrencyUtils.isSupported(currency);
     console.log(`${currency}: ${isValid ? '✓ Supported' : '✗ Not supported'}`);
-    
+
     if (isValid) {
       const meta = CurrencyUtils.getCurrencyMetadata(currency as Currency);
       console.log(`  Name: ${meta.name}`);
@@ -208,15 +208,16 @@ export function exampleCurrencyValidation() {
  */
 export function exampleRegionalComparison() {
   console.log('=== Regional Currency Comparison ===');
-  
+
   const regions = ['southeast-asia', 'asia', 'middle-east'] as const;
   const testAmount = 1000;
-  
-  regions.forEach(region => {
+
+  regions.forEach((region) => {
     const currencies = CurrencyUtils.getCurrenciesByRegion(region);
     console.log(`\n${region.toUpperCase()} (${currencies.length} currencies):`);
-    
-    currencies.slice(0, 5).forEach(currency => { // Show first 5 for brevity
+
+    currencies.slice(0, 5).forEach((currency) => {
+      // Show first 5 for brevity
       const formatted = CurrencyUtils.format(testAmount, currency.isoCode as Currency);
       console.log(`  ${currency.isoCode}: ${formatted}`);
     });
@@ -228,18 +229,22 @@ export function exampleRegionalComparison() {
  */
 export function exampleCurrencyPriority() {
   console.log('=== Currency Priority and Sorting ===');
-  
+
   const allCurrencies = CurrencyUtils.listSupportedCurrencies();
-  
+
   console.log('Top 10 currencies by priority:');
   allCurrencies.slice(0, 10).forEach((currency, index) => {
-    console.log(`${index + 1}. ${currency.isoCode} - ${currency.name} (Priority: ${currency.priority})`);
+    console.log(
+      `${index + 1}. ${currency.isoCode} - ${currency.name} (Priority: ${currency.priority})`,
+    );
   });
-  
+
   console.log('\nSoutheast Asian currencies by priority:');
   const seaCurrencies = CurrencyUtils.getSoutheastAsianCurrencies();
   seaCurrencies.forEach((currency, index) => {
-    console.log(`${index + 1}. ${currency.isoCode} - ${currency.name} (Priority: ${currency.priority})`);
+    console.log(
+      `${index + 1}. ${currency.isoCode} - ${currency.name} (Priority: ${currency.priority})`,
+    );
   });
 }
 
@@ -257,4 +262,4 @@ export async function runAllCurrencyExamples() {
   exampleCurrencyValidation();
   exampleRegionalComparison();
   exampleCurrencyPriority();
-} 
+}

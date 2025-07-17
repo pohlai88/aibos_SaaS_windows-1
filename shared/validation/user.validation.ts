@@ -1,21 +1,21 @@
-import { z } from "zod";
-import { UserRole } from "../types/user/user.enums";
+import { z } from 'zod';
+import { UserRole } from '../types/user/user.enums';
 
 /**
  * User permission types for validation
  */
 export const UserPermissionSchema = z.enum([
-  "VIEW_USERS",
-  "EDIT_USERS", 
-  "DELETE_USERS",
-  "VIEW_TENANTS",
-  "EDIT_TENANTS",
-  "DELETE_TENANTS",
-  "MANAGE_BILLING",
-  "VIEW_ANALYTICS",
-  "MANAGE_SETTINGS",
-  "INVITE_USERS",
-  "MANAGE_ROLES"
+  'VIEW_USERS',
+  'EDIT_USERS',
+  'DELETE_USERS',
+  'VIEW_TENANTS',
+  'EDIT_TENANTS',
+  'DELETE_TENANTS',
+  'MANAGE_BILLING',
+  'VIEW_ANALYTICS',
+  'MANAGE_SETTINGS',
+  'INVITE_USERS',
+  'MANAGE_ROLES',
 ]);
 
 export type UserPermission = z.infer<typeof UserPermissionSchema>;
@@ -24,17 +24,19 @@ export type UserPermission = z.infer<typeof UserPermissionSchema>;
  * User validation schema
  */
 export const UserSchema = z.object({
-  user_id: z.string().uuid("Invalid user ID format"),
-  email: z.string().email("Invalid email format"),
-  name: z.string()
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be less than 100 characters")
-    .regex(/^[a-zA-Z\s\-']+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
+  user_id: z.string().uuid('Invalid user ID format'),
+  email: z.string().email('Invalid email format'),
+  name: z
+    .string()
+    .min(2, 'Name must be at least 2 characters')
+    .max(100, 'Name must be less than 100 characters')
+    .regex(/^[a-zA-Z\s\-']+$/, 'Name can only contain letters, spaces, hyphens, and apostrophes'),
   role: z.nativeEnum(UserRole, {
-    errorMap: () => ({ message: "Invalid user role" })
+    errorMap: () => ({ message: 'Invalid user role' }),
   }),
-  permissions: z.array(UserPermissionSchema)
-    .min(1, "User must have at least one permission")
+  permissions: z
+    .array(UserPermissionSchema)
+    .min(1, 'User must have at least one permission')
     .default([]),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
@@ -42,11 +44,17 @@ export const UserSchema = z.object({
   isActive: z.boolean().default(true),
   lastLoginAt: z.date().optional(),
   emailVerified: z.boolean().default(false),
-  phoneNumber: z.string().regex(/^\+?[\d\s\-\(\)]+$/, "Invalid phone number format").optional(),
-  avatar: z.string().url("Invalid avatar URL").optional(),
+  phoneNumber: z
+    .string()
+    .regex(/^\+?[\d\s\-\(\)]+$/, 'Invalid phone number format')
+    .optional(),
+  avatar: z.string().url('Invalid avatar URL').optional(),
   timezone: z.string().optional(),
-  locale: z.string().regex(/^[a-z]{2}(-[A-Z]{2})?$/, "Invalid locale format").optional(),
-  preferences: z.record(z.unknown()).optional()
+  locale: z
+    .string()
+    .regex(/^[a-z]{2}(-[A-Z]{2})?$/, 'Invalid locale format')
+    .optional(),
+  preferences: z.record(z.unknown()).optional(),
 });
 
 /**
@@ -56,34 +64,40 @@ export const CreateUserSchema = UserSchema.omit({
   user_id: true,
   createdAt: true,
   updatedAt: true,
-  lastLoginAt: true
-}).extend({
-  password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one lowercase letter, one uppercase letter, and one number")
-    .max(128, "Password must be less than 128 characters"),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"]
-});
+  lastLoginAt: true,
+})
+  .extend({
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Password must contain at least one lowercase letter, one uppercase letter, and one number',
+      )
+      .max(128, 'Password must be less than 128 characters'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 /**
  * User update schema (all fields optional except user_id)
  */
 export const UpdateUserSchema = UserSchema.partial().extend({
-  user_id: z.string().uuid("Invalid user ID format")
+  user_id: z.string().uuid('Invalid user ID format'),
 });
 
 /**
  * User login schema
  */
 export const UserLoginSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().email('Invalid email format'),
+  password: z.string().min(1, 'Password is required'),
   rememberMe: z.boolean().default(false),
   deviceId: z.string().uuid().optional(),
-  mfaCode: z.string().optional()
+  mfaCode: z.string().optional(),
 });
 
 /**
@@ -91,34 +105,40 @@ export const UserLoginSchema = z.object({
  */
 export const UserRegistrationSchema = CreateUserSchema.extend({
   termsAccepted: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the terms and conditions" })
+    errorMap: () => ({ message: 'You must accept the terms and conditions' }),
   }),
   privacyPolicyAccepted: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the privacy policy" })
+    errorMap: () => ({ message: 'You must accept the privacy policy' }),
   }),
-  marketingEmails: z.boolean().default(false)
+  marketingEmails: z.boolean().default(false),
 });
 
 /**
  * Password reset request schema
  */
 export const PasswordResetRequestSchema = z.object({
-  email: z.string().email("Invalid email format")
+  email: z.string().email('Invalid email format'),
 });
 
 /**
  * Password reset confirmation schema
  */
-export const PasswordResetConfirmSchema = z.object({
-  token: z.string().min(1, "Reset token is required"),
-  password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one lowercase letter, one uppercase letter, and one number"),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"]
-});
+export const PasswordResetConfirmSchema = z
+  .object({
+    token: z.string().min(1, 'Reset token is required'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Password must contain at least one lowercase letter, one uppercase letter, and one number',
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 /**
  * User search/filter schema
@@ -130,18 +150,18 @@ export const UserSearchSchema = z.object({
   emailVerified: z.boolean().optional(),
   page: z.number().int().min(1).default(1),
   perPage: z.number().int().min(1).max(100).default(20),
-  sortBy: z.enum(["name", "email", "role", "createdAt", "lastLoginAt"]).default("createdAt"),
-  sortOrder: z.enum(["asc", "desc"]).default("desc")
+  sortBy: z.enum(['name', 'email', 'role', 'createdAt', 'lastLoginAt']).default('createdAt'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
 
 /**
  * Bulk user operations schema
  */
 export const BulkUserOperationSchema = z.object({
-  userIds: z.array(z.string().uuid()).min(1, "At least one user ID is required"),
-  operation: z.enum(["activate", "deactivate", "delete", "changeRole"]),
+  userIds: z.array(z.string().uuid()).min(1, 'At least one user ID is required'),
+  operation: z.enum(['activate', 'deactivate', 'delete', 'changeRole']),
   role: z.nativeEnum(UserRole).optional(),
-  reason: z.string().optional()
+  reason: z.string().optional(),
 });
 
 // Type exports
@@ -188,4 +208,4 @@ export const hasPermission = (user: User, permission: UserPermission): boolean =
 
 export const hasRole = (user: User, role: UserRole): boolean => {
   return user.role === role;
-}; 
+};

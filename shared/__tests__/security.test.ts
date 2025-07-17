@@ -1,9 +1,9 @@
-import { 
-  RateLimiter, 
-  SecurityUtils, 
-  SecurityMiddleware, 
+import {
+  RateLimiter,
+  SecurityUtils,
+  SecurityMiddleware,
   ValidationSchemas,
-  security 
+  security,
 } from '../lib/security';
 
 describe('RateLimiter', () => {
@@ -12,14 +12,14 @@ describe('RateLimiter', () => {
   beforeEach(() => {
     rateLimiter = new RateLimiter({
       windowMs: 1000, // 1 second for testing
-      maxRequests: 3
+      maxRequests: 3,
     });
   });
 
   describe('Rate Limiting', () => {
     it('should allow requests within limit', () => {
       const identifier = 'test-ip';
-      
+
       const result1 = rateLimiter.isAllowed(identifier);
       expect(result1.allowed).toBe(true);
       expect(result1.remaining).toBe(2);
@@ -35,7 +35,7 @@ describe('RateLimiter', () => {
 
     it('should block requests over limit', () => {
       const identifier = 'test-ip';
-      
+
       // Make 3 requests (at limit)
       rateLimiter.isAllowed(identifier);
       rateLimiter.isAllowed(identifier);
@@ -49,14 +49,14 @@ describe('RateLimiter', () => {
 
     it('should reset after window expires', async () => {
       const identifier = 'test-ip';
-      
+
       // Make requests
       rateLimiter.isAllowed(identifier);
       rateLimiter.isAllowed(identifier);
       rateLimiter.isAllowed(identifier);
 
       // Wait for window to expire
-      await new Promise(resolve => setTimeout(resolve, 1100));
+      await new Promise((resolve) => setTimeout(resolve, 1100));
 
       // Should be allowed again
       const result = rateLimiter.isAllowed(identifier);
@@ -77,14 +77,14 @@ describe('RateLimiter', () => {
   describe('Cleanup', () => {
     it('should clean up expired entries', async () => {
       const identifier = 'test-ip';
-      
+
       rateLimiter.isAllowed(identifier);
-      
+
       // Wait for window to expire
-      await new Promise(resolve => setTimeout(resolve, 1100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1100));
+
       rateLimiter.cleanup();
-      
+
       // Should be allowed again
       const result = rateLimiter.isAllowed(identifier);
       expect(result.allowed).toBe(true);
@@ -228,7 +228,9 @@ describe('ValidationSchemas', () => {
 
   describe('UUID Schema', () => {
     it('should validate correct UUID', () => {
-      expect(() => ValidationSchemas.uuid.parse('123e4567-e89b-12d3-a456-426614174000')).not.toThrow();
+      expect(() =>
+        ValidationSchemas.uuid.parse('123e4567-e89b-12d3-a456-426614174000'),
+      ).not.toThrow();
     });
 
     it('should reject invalid UUID', () => {
@@ -269,16 +271,16 @@ describe('SecurityMiddleware', () => {
       method: 'GET',
       url: '/api/test',
       headers: {
-        'user-agent': 'test-agent'
+        'user-agent': 'test-agent',
       },
       body: {},
       query: {},
-      params: {}
+      params: {},
     };
     mockRes = {
       set: jest.fn(),
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
     };
     mockNext = jest.fn();
   });
@@ -292,14 +294,14 @@ describe('SecurityMiddleware', () => {
       expect(mockRes.set).toHaveBeenCalledWith(
         expect.objectContaining({
           'X-RateLimit-Limit': expect.any(Number),
-          'X-RateLimit-Remaining': expect.any(Number)
-        })
+          'X-RateLimit-Remaining': expect.any(Number),
+        }),
       );
     });
 
     it('should block requests over limit', () => {
       const rateLimitMiddleware = middleware.rateLimit();
-      
+
       // Make multiple requests to exceed limit
       for (let i = 0; i < 150; i++) {
         rateLimitMiddleware(mockReq, mockRes, mockNext);
@@ -307,7 +309,7 @@ describe('SecurityMiddleware', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(429);
       expect(mockRes.json).toHaveBeenCalledWith({
-        error: expect.stringContaining('Too many requests')
+        error: expect.stringContaining('Too many requests'),
       });
     });
   });
@@ -317,14 +319,8 @@ describe('SecurityMiddleware', () => {
       const headersMiddleware = middleware.securityHeaders();
       headersMiddleware(mockReq, mockRes, mockNext);
 
-      expect(mockRes.set).toHaveBeenCalledWith(
-        'X-Frame-Options',
-        'DENY'
-      );
-      expect(mockRes.set).toHaveBeenCalledWith(
-        'X-Content-Type-Options',
-        'nosniff'
-      );
+      expect(mockRes.set).toHaveBeenCalledWith('X-Frame-Options', 'DENY');
+      expect(mockRes.set).toHaveBeenCalledWith('X-Content-Type-Options', 'nosniff');
       expect(mockNext).toHaveBeenCalled();
     });
   });
@@ -333,7 +329,7 @@ describe('SecurityMiddleware', () => {
     it('should validate request body', () => {
       const validationMiddleware = middleware.validateInput(ValidationSchemas.email, 'body');
       mockReq.body = { email: 'test@example.com' };
-      
+
       validationMiddleware(mockReq, mockRes, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
@@ -343,13 +339,13 @@ describe('SecurityMiddleware', () => {
     it('should reject invalid input', () => {
       const validationMiddleware = middleware.validateInput(ValidationSchemas.email, 'body');
       mockReq.body = { email: 'invalid-email' };
-      
+
       validationMiddleware(mockReq, mockRes, mockNext);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
         error: 'Validation failed',
-        details: expect.any(Array)
+        details: expect.any(Array),
       });
     });
   });
@@ -358,7 +354,7 @@ describe('SecurityMiddleware', () => {
     it('should allow safe requests', () => {
       const scanMiddleware = middleware.securityScan();
       mockReq.body = { message: 'Hello, world!' };
-      
+
       scanMiddleware(mockReq, mockRes, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
@@ -367,13 +363,13 @@ describe('SecurityMiddleware', () => {
     it('should block requests with security issues', () => {
       const scanMiddleware = middleware.securityScan();
       mockReq.body = { query: "'; DROP TABLE users; --" };
-      
+
       scanMiddleware(mockReq, mockRes, mockNext);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
         error: 'Security validation failed',
-        message: 'Request contains potentially unsafe content'
+        message: 'Request contains potentially unsafe content',
       });
     });
   });
@@ -382,12 +378,12 @@ describe('SecurityMiddleware', () => {
     it('should handle allowed origin', () => {
       const corsMiddleware = middleware.cors();
       mockReq.headers.origin = 'http://localhost:3000';
-      
+
       corsMiddleware(mockReq, mockRes, mockNext);
 
       expect(mockRes.set).toHaveBeenCalledWith(
         'Access-Control-Allow-Origin',
-        'http://localhost:3000'
+        'http://localhost:3000',
       );
       expect(mockNext).toHaveBeenCalled();
     });
@@ -395,7 +391,7 @@ describe('SecurityMiddleware', () => {
     it('should handle OPTIONS request', () => {
       const corsMiddleware = middleware.cors();
       mockReq.method = 'OPTIONS';
-      
+
       corsMiddleware(mockReq, mockRes, mockNext);
 
       expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -412,4 +408,4 @@ describe('Global Security Instance', () => {
   it('should have rate limiter', () => {
     expect(security.rateLimiter).toBeDefined();
   });
-}); 
+});

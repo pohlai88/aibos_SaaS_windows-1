@@ -1,19 +1,19 @@
 import { z } from 'zod';
 import { UUID, ISODate, UserID, TenantID } from '../primitives';
-import { 
+import {
   MetadataEventType,
   MetadataEventTypes,
   MetadataAuditEventType,
   MetadataAuditEventTypes,
   MetadataOperationType,
-  MetadataOperationTypes
+  MetadataOperationTypes,
 } from './metadata.enums';
-import { 
-  MetadataEntity, 
-  MetadataField, 
+import {
+  MetadataEntity,
+  MetadataField,
   MetadataValue,
   MetadataSchema,
-  MetadataConstraint
+  MetadataConstraint,
 } from './metadata.types';
 
 // ============================================================================
@@ -476,7 +476,7 @@ export interface MetadataCustomEvent extends MetadataEventBase {
 // UNION TYPES
 // ============================================================================
 
-export type MetadataEvent = 
+export type MetadataEvent =
   | MetadataEntityCreatedEvent
   | MetadataEntityUpdatedEvent
   | MetadataEntityDeletedEvent
@@ -519,7 +519,7 @@ export type MetadataEvent =
   | MetadataSystemWarningEvent
   | MetadataCustomEvent;
 
-export type MetadataAuditEvent = 
+export type MetadataAuditEvent =
   | MetadataEntityCreatedEvent
   | MetadataEntityUpdatedEvent
   | MetadataEntityDeletedEvent
@@ -592,16 +592,22 @@ export interface MetadataEventBus {
 export interface MetadataEventStore {
   append(event: MetadataEvent): Promise<void>;
   appendBatch(events: MetadataEvent[]): Promise<void>;
-  getEvents(filter: MetadataEventFilter, options?: {
-    limit?: number;
-    offset?: number;
-    orderBy?: 'timestamp' | 'id';
-    order?: 'asc' | 'desc';
-  }): Promise<MetadataEvent[]>;
-  getEventStream(filter: MetadataEventFilter, options?: {
-    batchSize?: number;
-    timeout?: number;
-  }): AsyncIterable<MetadataEvent[]>;
+  getEvents(
+    filter: MetadataEventFilter,
+    options?: {
+      limit?: number;
+      offset?: number;
+      orderBy?: 'timestamp' | 'id';
+      order?: 'asc' | 'desc';
+    },
+  ): Promise<MetadataEvent[]>;
+  getEventStream(
+    filter: MetadataEventFilter,
+    options?: {
+      batchSize?: number;
+      timeout?: number;
+    },
+  ): AsyncIterable<MetadataEvent[]>;
   getEventCount(filter: MetadataEventFilter): Promise<number>;
   deleteEvents(filter: MetadataEventFilter): Promise<number>;
   compactEvents(beforeDate: ISODate): Promise<number>;
@@ -613,13 +619,16 @@ export interface MetadataEventStore {
 
 export interface MetadataAuditTrail {
   record(event: MetadataAuditEvent): Promise<void>;
-  getAuditTrail(entityId: UUID, options?: {
-    startDate?: ISODate;
-    endDate?: ISODate;
-    operations?: MetadataOperationType[];
-    limit?: number;
-    offset?: number;
-  }): Promise<MetadataAuditEvent[]>;
+  getAuditTrail(
+    entityId: UUID,
+    options?: {
+      startDate?: ISODate;
+      endDate?: ISODate;
+      operations?: MetadataOperationType[];
+      limit?: number;
+      offset?: number;
+    },
+  ): Promise<MetadataAuditEvent[]>;
   getAuditSummary(entityId: UUID): Promise<{
     totalEvents: number;
     firstEvent: ISODate;
@@ -642,7 +651,7 @@ export const MetadataEventSchema = z.object({
   userId: z.string().uuid(),
   sessionId: z.string().optional(),
   correlationId: z.string().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 export const MetadataAuditEventSchema = MetadataEventSchema.extend({
@@ -650,14 +659,16 @@ export const MetadataAuditEventSchema = MetadataEventSchema.extend({
   entityId: z.string().uuid(),
   entityType: z.string(),
   operation: z.nativeEnum(MetadataOperationTypes),
-  changes: z.object({
-    before: z.record(z.any()).optional(),
-    after: z.record(z.any()).optional(),
-    fields: z.array(z.string()).optional()
-  }).optional(),
+  changes: z
+    .object({
+      before: z.record(z.any()).optional(),
+      after: z.record(z.any()).optional(),
+      fields: z.array(z.string()).optional(),
+    })
+    .optional(),
   reason: z.string().optional(),
   ipAddress: z.string().ip().optional(),
-  userAgent: z.string().optional()
+  userAgent: z.string().optional(),
 });
 
 // ============================================================================
@@ -672,7 +683,7 @@ export class MetadataEventUtils {
     type: T['type'],
     tenantId: TenantID,
     userId: UserID,
-    data: Omit<T, keyof MetadataEventBase>
+    data: Omit<T, keyof MetadataEventBase>,
   ): T {
     return {
       id: crypto.randomUUID() as UUID,
@@ -680,7 +691,7 @@ export class MetadataEventUtils {
       timestamp: new Date().toISOString() as ISODate,
       tenantId,
       userId,
-      ...data
+      ...data,
     } as T;
   }
 
@@ -694,7 +705,7 @@ export class MetadataEventUtils {
     entityId: UUID,
     entityType: string,
     operation: MetadataOperationType,
-    data: Omit<T, keyof MetadataAuditEventBase>
+    data: Omit<T, keyof MetadataAuditEventBase>,
   ): T {
     return {
       id: crypto.randomUUID() as UUID,
@@ -705,7 +716,7 @@ export class MetadataEventUtils {
       entityId,
       entityType,
       operation,
-      ...data
+      ...data,
     } as T;
   }
 
@@ -720,7 +731,7 @@ export class MetadataEventUtils {
       if (error instanceof z.ZodError) {
         return {
           valid: false,
-          errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          errors: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
         };
       }
       return { valid: false, errors: ['Unknown validation error'] };
@@ -731,33 +742,33 @@ export class MetadataEventUtils {
    * Filters events based on criteria
    */
   static filterEvents(events: MetadataEvent[], filter: MetadataEventFilter): MetadataEvent[] {
-    return events.filter(event => {
+    return events.filter((event) => {
       if (filter.types && !filter.types.includes(event.type)) {
         return false;
       }
-      
+
       if (filter.tenantIds && !filter.tenantIds.includes(event.tenantId)) {
         return false;
       }
-      
+
       if (filter.userIds && !filter.userIds.includes(event.userId)) {
         return false;
       }
-      
+
       if (filter.dateRange) {
         const eventDate = new Date(event.timestamp);
         const startDate = new Date(filter.dateRange.start);
         const endDate = new Date(filter.dateRange.end);
-        
+
         if (eventDate < startDate || eventDate > endDate) {
           return false;
         }
       }
-      
+
       if (filter.custom && !filter.custom(event)) {
         return false;
       }
-      
+
       return true;
     });
   }
@@ -766,13 +777,16 @@ export class MetadataEventUtils {
    * Groups events by type
    */
   static groupEventsByType(events: MetadataEvent[]): Record<MetadataEventType, MetadataEvent[]> {
-    return events.reduce((groups, event) => {
-      if (!groups[event.type]) {
-        groups[event.type] = [];
-      }
-      groups[event.type].push(event);
-      return groups;
-    }, {} as Record<MetadataEventType, MetadataEvent[]>);
+    return events.reduce(
+      (groups, event) => {
+        if (!groups[event.type]) {
+          groups[event.type] = [];
+        }
+        groups[event.type].push(event);
+        return groups;
+      },
+      {} as Record<MetadataEventType, MetadataEvent[]>,
+    );
   }
 
   /**
@@ -791,16 +805,16 @@ export class MetadataEventUtils {
     let startDate: ISODate | null = null;
     let endDate: ISODate | null = null;
 
-    events.forEach(event => {
+    events.forEach((event) => {
       // Count by type
       byType[event.type] = (byType[event.type] || 0) + 1;
-      
+
       // Count by user
       byUser[event.userId] = (byUser[event.userId] || 0) + 1;
-      
+
       // Count by tenant
       byTenant[event.tenantId] = (byTenant[event.tenantId] || 0) + 1;
-      
+
       // Track time range
       const eventDate = new Date(event.timestamp);
       if (!startDate || eventDate < new Date(startDate)) {
@@ -818,8 +832,8 @@ export class MetadataEventUtils {
       byTenant,
       timeRange: {
         start: startDate!,
-        end: endDate!
-      }
+        end: endDate!,
+      },
     };
   }
 
@@ -858,12 +872,12 @@ export class MetadataEventUtils {
     if (this.isAuditEvent(event)) {
       return event.entityId;
     }
-    
+
     // Check for entityId in custom events
     if ('entityId' in event && typeof event.entityId === 'string') {
       return event.entityId as UUID;
     }
-    
+
     return null;
   }
 }
@@ -923,11 +937,7 @@ export type {
   MetadataEventSubscription,
   MetadataEventBus,
   MetadataEventStore,
-  MetadataAuditTrail
+  MetadataAuditTrail,
 };
 
-export {
-  MetadataEventSchema,
-  MetadataAuditEventSchema,
-  MetadataEventUtils
-}; 
+export { MetadataEventSchema, MetadataAuditEventSchema, MetadataEventUtils };

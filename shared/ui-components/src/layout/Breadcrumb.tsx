@@ -4,63 +4,57 @@ import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
 import { Tooltip } from '../primitives/Tooltip';
 import { Badge } from '../primitives/Badge';
-import { 
-  ChevronRight, 
-  Home, 
-  Folder, 
-  File, 
-  Settings, 
+import {
+  ChevronRight,
+  Home,
+  Folder,
+  File,
+  Settings,
   Search,
   Clock,
   Star,
   TrendingUp,
   Brain,
   Zap,
-  History
+  History,
 } from 'lucide-react';
 
-const breadcrumbVariants = cva(
-  'flex items-center space-x-1 text-sm',
-  {
-    variants: {
-      variant: {
-        default: 'text-muted-foreground',
-        elevated: 'bg-background border border-border rounded-lg px-3 py-2',
-        minimal: 'text-sm',
-        rich: 'bg-muted/50 rounded-lg px-3 py-2',
-      },
-      size: {
-        sm: 'text-xs',
-        md: 'text-sm',
-        lg: 'text-base',
-      },
+const breadcrumbVariants = cva('flex items-center space-x-1 text-sm', {
+  variants: {
+    variant: {
+      default: 'text-muted-foreground',
+      elevated: 'bg-background border border-border rounded-lg px-3 py-2',
+      minimal: 'text-sm',
+      rich: 'bg-muted/50 rounded-lg px-3 py-2',
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'md',
+    size: {
+      sm: 'text-xs',
+      md: 'text-sm',
+      lg: 'text-base',
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+    size: 'md',
+  },
+});
 
-const itemVariants = cva(
-  'inline-flex items-center gap-1 transition-colors hover:text-foreground',
-  {
-    variants: {
-      active: {
-        true: 'text-foreground font-medium',
-        false: 'text-muted-foreground hover:text-foreground',
-      },
-      clickable: {
-        true: 'cursor-pointer',
-        false: 'cursor-default',
-      },
+const itemVariants = cva('inline-flex items-center gap-1 transition-colors hover:text-foreground', {
+  variants: {
+    active: {
+      true: 'text-foreground font-medium',
+      false: 'text-muted-foreground hover:text-foreground',
     },
-    defaultVariants: {
-      active: false,
-      clickable: true,
+    clickable: {
+      true: 'cursor-pointer',
+      false: 'cursor-default',
     },
-  }
-);
+  },
+  defaultVariants: {
+    active: false,
+    clickable: true,
+  },
+});
 
 export interface BreadcrumbItem {
   id: string;
@@ -116,13 +110,15 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   variant = 'default',
   size = 'md',
 }) => {
-  const [usageStats, setUsageStats] = useState<Record<string, { count: number; lastVisited: Date }>>({});
+  const [usageStats, setUsageStats] = useState<
+    Record<string, { count: number; lastVisited: Date }>
+  >({});
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [predictiveItems, setPredictiveItems] = useState<BreadcrumbItem[]>([]);
 
   // AI-powered usage tracking
   const updateUsageStats = useCallback((itemId: string) => {
-    setUsageStats(prev => ({
+    setUsageStats((prev) => ({
       ...prev,
       [itemId]: {
         count: (prev[itemId]?.count || 0) + 1,
@@ -145,34 +141,41 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
           icon: <TrendingUp className="h-3 w-3" />,
           metadata: { priority: 1 },
         }));
-      
+
       setPredictiveItems(frequentlyVisited);
     }
   }, [items, usageStats, aiFeatures.predictiveNavigation]);
 
-  const handleItemClick = useCallback((item: BreadcrumbItem, index: number) => {
-    if (aiFeatures.usageTracking) {
-      updateUsageStats(item.id);
-    }
-    onItemClick?.(item, index);
-  }, [onItemClick, aiFeatures.usageTracking, updateUsageStats]);
+  const handleItemClick = useCallback(
+    (item: BreadcrumbItem, index: number) => {
+      if (aiFeatures.usageTracking) {
+        updateUsageStats(item.id);
+      }
+      onItemClick?.(item, index);
+    },
+    [onItemClick, aiFeatures.usageTracking, updateUsageStats],
+  );
 
-  const handleSuggestionClick = useCallback((suggestion: BreadcrumbItem) => {
-    if (aiFeatures.usageTracking) {
-      updateUsageStats(suggestion.id);
-    }
-    onSuggestionClick?.(suggestion);
-    setShowSuggestions(false);
-  }, [onSuggestionClick, aiFeatures.usageTracking, updateUsageStats]);
+  const handleSuggestionClick = useCallback(
+    (suggestion: BreadcrumbItem) => {
+      if (aiFeatures.usageTracking) {
+        updateUsageStats(suggestion.id);
+      }
+      onSuggestionClick?.(suggestion);
+      setShowSuggestions(false);
+    },
+    [onSuggestionClick, aiFeatures.usageTracking, updateUsageStats],
+  );
 
   // Determine which items to show (handle overflow)
-  const visibleItems = items.length > maxItems 
-    ? [
-        ...items.slice(0, 1), // First item
-        { id: 'ellipsis', label: '...', icon: <span>⋯</span> } as BreadcrumbItem,
-        ...items.slice(-maxItems + 2) // Last items
-      ]
-    : items;
+  const visibleItems =
+    items.length > maxItems
+      ? [
+          ...items.slice(0, 1), // First item
+          { id: 'ellipsis', label: '...', icon: <span>⋯</span> } as BreadcrumbItem,
+          ...items.slice(-maxItems + 2), // Last items
+        ]
+      : items;
 
   return (
     <div className={cn('relative', className)}>
@@ -185,21 +188,19 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                   {separator}
                 </span>
               )}
-              
+
               <button
                 className={cn(
-                  itemVariants({ 
+                  itemVariants({
                     active: index === items.length - 1,
-                    clickable: item.id !== 'ellipsis' && !!onItemClick
-                  })
+                    clickable: item.id !== 'ellipsis' && !!onItemClick,
+                  }),
                 )}
                 onClick={() => item.id !== 'ellipsis' && handleItemClick(item, index)}
                 disabled={item.id === 'ellipsis'}
                 aria-current={index === items.length - 1 ? 'page' : undefined}
               >
-                {showIcons && item.icon && (
-                  <span className="flex-shrink-0">{item.icon}</span>
-                )}
+                {showIcons && item.icon && <span className="flex-shrink-0">{item.icon}</span>}
                 <span className="truncate">{item.label}</span>
                 {item.badge && (
                   <Badge variant="secondary" size="sm">
@@ -228,7 +229,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
               <Brain className="h-4 w-4" />
             </Button>
           )}
-          
+
           {aiFeatures.contextAware && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -242,9 +243,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
       {showSuggestions && suggestions.length > 0 && (
         <div className="absolute top-full left-0 mt-1 w-64 bg-background border border-border rounded-lg shadow-lg z-50">
           <div className="p-2">
-            <div className="text-xs font-medium text-muted-foreground mb-2">
-              AI Suggestions
-            </div>
+            <div className="text-xs font-medium text-muted-foreground mb-2">AI Suggestions</div>
             <div className="space-y-1">
               {suggestions.map((suggestion) => (
                 <button
@@ -291,26 +290,30 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
 };
 
 // AI-Powered Breadcrumb Hook
-export const useAIBreadcrumb = (options: {
-  smartSuggestions?: boolean;
-  contextAware?: boolean;
-  usageTracking?: boolean;
-  predictiveNavigation?: boolean;
-} = {}) => {
+export const useAIBreadcrumb = (
+  options: {
+    smartSuggestions?: boolean;
+    contextAware?: boolean;
+    usageTracking?: boolean;
+    predictiveNavigation?: boolean;
+  } = {},
+) => {
   const [items, setItems] = useState<BreadcrumbItem[]>([]);
   const [suggestions, setSuggestions] = useState<BreadcrumbItem[]>([]);
-  const [usageStats, setUsageStats] = useState<Record<string, { count: number; lastVisited: Date }>>({});
+  const [usageStats, setUsageStats] = useState<
+    Record<string, { count: number; lastVisited: Date }>
+  >({});
 
   const addItem = useCallback((item: BreadcrumbItem) => {
-    setItems(prev => [...prev, item]);
+    setItems((prev) => [...prev, item]);
   }, []);
 
   const removeItem = useCallback((itemId: string) => {
-    setItems(prev => prev.filter(item => item.id !== itemId));
+    setItems((prev) => prev.filter((item) => item.id !== itemId));
   }, []);
 
   const updateUsage = useCallback((itemId: string) => {
-    setUsageStats(prev => ({
+    setUsageStats((prev) => ({
       ...prev,
       [itemId]: {
         count: (prev[itemId]?.count || 0) + 1,
@@ -335,7 +338,7 @@ export const useAIBreadcrumb = (options: {
         metadata: { priority: 2 },
       },
     ];
-    
+
     setSuggestions(contextSuggestions);
   }, []);
 
@@ -366,14 +369,14 @@ export const BreadcrumbBuilder: React.FC<{
         href: newItem.href || undefined,
         icon: newItem.icon ? <span>{newItem.icon}</span> : undefined,
       };
-      
-      setItems(prev => [...prev, item]);
+
+      setItems((prev) => [...prev, item]);
       setNewItem({ label: '', icon: '', href: '' });
     }
   };
 
   const removeItem = (index: number) => {
-    setItems(prev => prev.filter((_, i) => i !== index));
+    setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleBuild = () => {
@@ -387,21 +390,21 @@ export const BreadcrumbBuilder: React.FC<{
           type="text"
           placeholder="Label"
           value={newItem.label}
-          onChange={(e) => setNewItem(prev => ({ ...prev, label: e.target.value }))}
+          onChange={(e) => setNewItem((prev) => ({ ...prev, label: e.target.value }))}
           className="flex-1 px-3 py-2 border rounded-md"
         />
         <input
           type="text"
           placeholder="Icon (emoji)"
           value={newItem.icon}
-          onChange={(e) => setNewItem(prev => ({ ...prev, icon: e.target.value }))}
+          onChange={(e) => setNewItem((prev) => ({ ...prev, icon: e.target.value }))}
           className="w-20 px-3 py-2 border rounded-md"
         />
         <input
           type="text"
           placeholder="URL (optional)"
           value={newItem.href}
-          onChange={(e) => setNewItem(prev => ({ ...prev, href: e.target.value }))}
+          onChange={(e) => setNewItem((prev) => ({ ...prev, href: e.target.value }))}
           className="flex-1 px-3 py-2 border rounded-md"
         />
         <Button onClick={addItem}>Add</Button>
@@ -427,4 +430,4 @@ export const BreadcrumbBuilder: React.FC<{
       )}
     </div>
   );
-}; 
+};

@@ -8,7 +8,7 @@ describe('Logger', () => {
     testLogger = new Logger({
       level: LogLevel.DEBUG,
       enableConsole: true,
-      enableStructured: false
+      enableStructured: false,
     });
     consoleSpy = jest.spyOn(console, 'log').mockImplementation();
   });
@@ -21,37 +21,29 @@ describe('Logger', () => {
   describe('Log Levels', () => {
     it('should log error messages', () => {
       testLogger.error('Test error message');
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('ERROR: Test error message')
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('ERROR: Test error message'));
     });
 
     it('should log warning messages', () => {
       testLogger.warn('Test warning message');
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('WARN: Test warning message')
+        expect.stringContaining('WARN: Test warning message'),
       );
     });
 
     it('should log info messages', () => {
       testLogger.info('Test info message');
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('INFO: Test info message')
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('INFO: Test info message'));
     });
 
     it('should log debug messages', () => {
       testLogger.debug('Test debug message');
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('DEBUG: Test debug message')
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('DEBUG: Test debug message'));
     });
 
     it('should log trace messages', () => {
       testLogger.trace('Test trace message');
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('TRACE: Test trace message')
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('TRACE: Test trace message'));
     });
   });
 
@@ -78,16 +70,14 @@ describe('Logger', () => {
   describe('Context Logging', () => {
     it('should include context in log messages', () => {
       testLogger.info('Test message', { userId: '123', action: 'login' });
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('userId=123, action=login')
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('userId=123, action=login'));
     });
 
     it('should include request context when set', () => {
       testLogger.setRequestContext('req-123', 'session-456');
       testLogger.info('Test message');
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('requestId=req-123, sessionId=session-456')
+        expect.stringContaining('requestId=req-123, sessionId=session-456'),
       );
     });
 
@@ -95,7 +85,7 @@ describe('Logger', () => {
       testLogger.setRequestContext('req-123');
       testLogger.info('Test message', { userId: '456' });
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('requestId=req-123, userId=456')
+        expect.stringContaining('requestId=req-123, userId=456'),
       );
     });
   });
@@ -104,17 +94,13 @@ describe('Logger', () => {
     it('should log error objects', () => {
       const error = new Error('Test error');
       testLogger.error('Error occurred', undefined, error);
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('ERROR: Error occurred')
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('ERROR: Error occurred'));
     });
 
     it('should log error with context', () => {
       const error = new Error('Test error');
       testLogger.error('Error occurred', { component: 'auth' }, error);
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('component=auth')
-      );
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('component=auth'));
     });
   });
 
@@ -122,20 +108,20 @@ describe('Logger', () => {
     it('should output JSON when structured logging is enabled', () => {
       const structuredLogger = new Logger({
         enableStructured: true,
-        enableConsole: true
+        enableConsole: true,
       });
-      
+
       structuredLogger.info('Test message', { userId: '123' });
-      
+
       const call = consoleSpy.mock.calls[0][0];
       const parsed = JSON.parse(call);
-      
+
       expect(parsed).toMatchObject({
         level: LogLevel.INFO,
         message: 'Test message',
         context: expect.objectContaining({
-          userId: '123'
-        })
+          userId: '123',
+        }),
       });
     });
   });
@@ -144,11 +130,11 @@ describe('Logger', () => {
     it('should create child logger with additional context', () => {
       testLogger.setRequestContext('req-123');
       const childLogger = testLogger.child({ component: 'auth' });
-      
+
       childLogger.info('Test message', { userId: '456' });
-      
+
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('requestId=req-123, component=auth, userId=456')
+        expect.stringContaining('requestId=req-123, component=auth, userId=456'),
       );
     });
 
@@ -163,10 +149,10 @@ describe('Logger', () => {
     it('should set and clear request context', () => {
       testLogger.setRequestContext('req-123', 'session-456');
       testLogger.info('With context');
-      
+
       testLogger.clearRequestContext();
       testLogger.info('Without context');
-      
+
       expect(consoleSpy).toHaveBeenCalledTimes(2);
       expect(consoleSpy.mock.calls[0][0]).toContain('requestId=req-123');
       expect(consoleSpy.mock.calls[1][0]).not.toContain('requestId=req-123');
@@ -214,16 +200,16 @@ describe('Request Logger Middleware', () => {
       url: '/api/test',
       headers: {
         'user-agent': 'test-agent',
-        'x-request-id': 'req-123'
+        'x-request-id': 'req-123',
       },
       ip: '127.0.0.1',
-      user: { id: 'user-123', tenant_id: 'tenant-456' }
+      user: { id: 'user-123', tenant_id: 'tenant-456' },
     };
 
     mockRes = {
       statusCode: 200,
       get: jest.fn().mockReturnValue('1024'),
-      end: jest.fn()
+      end: jest.fn(),
     };
 
     mockNext = jest.fn();
@@ -239,27 +225,21 @@ describe('Request Logger Middleware', () => {
     middleware(mockReq, mockRes, mockNext);
 
     expect(mockNext).toHaveBeenCalled();
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('HTTP Request')
-    );
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('HTTP Request'));
 
     // Simulate response end
     mockRes.end();
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('HTTP Response')
-    );
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('HTTP Response'));
   });
 
   it('should generate request ID if not provided', () => {
     delete mockReq.headers['x-request-id'];
-    
+
     const middleware = requestLogger();
     middleware(mockReq, mockRes, mockNext);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('HTTP Request')
-    );
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('HTTP Request'));
   });
 });
 
@@ -273,7 +253,7 @@ describe('Error Logger Middleware', () => {
     mockReq = {
       method: 'GET',
       url: '/api/test',
-      user: { id: 'user-123', tenant_id: 'tenant-456' }
+      user: { id: 'user-123', tenant_id: 'tenant-456' },
     };
 
     mockRes = {};
@@ -288,12 +268,10 @@ describe('Error Logger Middleware', () => {
   it('should log errors', () => {
     const error = new Error('Test error');
     const middleware = errorLogger();
-    
+
     middleware(error, mockReq, mockRes, mockNext);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('ERROR: Unhandled Error')
-    );
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('ERROR: Unhandled Error'));
     expect(mockNext).toHaveBeenCalledWith(error);
   });
 });
@@ -302,7 +280,7 @@ describe('Logger Configuration', () => {
   it('should handle different environments', () => {
     const devLogger = new Logger({ environment: 'development' });
     const prodLogger = new Logger({ environment: 'production' });
-    
+
     expect(devLogger).toBeInstanceOf(Logger);
     expect(prodLogger).toBeInstanceOf(Logger);
   });
@@ -311,4 +289,4 @@ describe('Logger Configuration', () => {
     const metricsLogger = new Logger({ enableMetrics: true });
     expect(metricsLogger).toBeInstanceOf(Logger);
   });
-}); 
+});

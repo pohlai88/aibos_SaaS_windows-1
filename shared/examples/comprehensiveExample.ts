@@ -1,12 +1,12 @@
 /**
  * AI-BOS Comprehensive Example
- * 
+ *
  * This example demonstrates how to use all AI-BOS systems together
  * to build a complete micro-app platform with event-driven architecture,
  * manifest management, and entity operations.
  */
 
-import { 
+import {
   initializeAibosSystems,
   createAibosApp,
   EventBus,
@@ -16,7 +16,7 @@ import {
   createManifest,
   createEntityFilter,
   event,
-  CommonEventSchemas
+  CommonEventSchemas,
 } from '../lib';
 import { z } from 'zod';
 
@@ -35,23 +35,23 @@ async function ecommercePlatformExample() {
   // ============================================================================
 
   console.log('📦 Initializing AI-BOS Systems...');
-  
+
   const systems = initializeAibosSystems({
     events: {
       enablePersistence: true,
       enableMetrics: true,
-      enableAudit: true
+      enableAudit: true,
     },
     manifests: {
       enableValidation: true,
       enableCompliance: true,
-      enableSecurity: true
+      enableSecurity: true,
     },
     entities: {
       enableCaching: true,
       enableAudit: true,
-      enableValidation: true
-    }
+      enableValidation: true,
+    },
   });
 
   const { eventBus, manifestValidator, manifestProcessor, entityManager } = systems;
@@ -70,62 +70,65 @@ async function ecommercePlatformExample() {
         name: 'name',
         type: 'string',
         required: true,
-        validation: [{ type: 'min', value: 1 }, { type: 'max', value: 200 }]
+        validation: [
+          { type: 'min', value: 1 },
+          { type: 'max', value: 200 },
+        ],
       },
       {
         name: 'description',
         type: 'string',
         required: false,
-        validation: [{ type: 'max', value: 1000 }]
+        validation: [{ type: 'max', value: 1000 }],
       },
       {
         name: 'price',
         type: 'number',
         required: true,
-        validation: [{ type: 'min', value: 0 }]
+        validation: [{ type: 'min', value: 0 }],
       },
       {
         name: 'category',
         type: 'string',
         required: true,
-        indexed: true
+        indexed: true,
       },
       {
         name: 'inStock',
         type: 'boolean',
         required: true,
-        defaultValue: true
+        defaultValue: true,
       },
       {
         name: 'tags',
         type: 'array',
-        required: false
+        required: false,
       },
       {
         name: 'images',
         type: 'array',
-        required: false
-      }
+        required: false,
+      },
     ],
     indexes: [
       {
         name: 'idx_product_category',
         fields: ['category'],
-        type: 'btree'
+        type: 'btree',
       },
       {
         name: 'idx_product_price',
         fields: ['price'],
-        type: 'btree'
-      }
+        type: 'btree',
+      },
     ],
     constraints: [
       {
         name: 'pk_product',
         type: 'primary_key',
-        fields: ['id']
-      }
-    ]
+        fields: ['id'],
+      },
+    ],
   };
 
   // Define order entity schema
@@ -136,18 +139,18 @@ async function ecommercePlatformExample() {
         name: 'customerId',
         type: 'string',
         required: true,
-        indexed: true
+        indexed: true,
       },
       {
         name: 'items',
         type: 'array',
-        required: true
+        required: true,
       },
       {
         name: 'total',
         type: 'number',
         required: true,
-        validation: [{ type: 'min', value: 0 }]
+        validation: [{ type: 'min', value: 0 }],
       },
       {
         name: 'status',
@@ -155,36 +158,36 @@ async function ecommercePlatformExample() {
         required: true,
         defaultValue: 'pending',
         validation: [
-          { 
-            type: 'custom', 
-            validator: (value: string) => 
-              ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'].includes(value)
-          }
-        ]
+          {
+            type: 'custom',
+            validator: (value: string) =>
+              ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'].includes(value),
+          },
+        ],
       },
       {
         name: 'shippingAddress',
         type: 'object',
-        required: true
+        required: true,
       },
       {
         name: 'paymentMethod',
         type: 'string',
-        required: true
-      }
+        required: true,
+      },
     ],
     indexes: [
       {
         name: 'idx_order_customer',
         fields: ['customerId'],
-        type: 'btree'
+        type: 'btree',
       },
       {
         name: 'idx_order_status',
         fields: ['status'],
-        type: 'btree'
-      }
-    ]
+        type: 'btree',
+      },
+    ],
   };
 
   // Create e-commerce manifest
@@ -202,17 +205,17 @@ async function ecommercePlatformExample() {
         productId: 'string',
         name: 'string',
         price: 'number',
-        category: 'string'
+        category: 'string',
       },
-      description: 'Emitted when a new product is created'
+      description: 'Emitted when a new product is created',
     })
     .addEvent({
       name: 'ProductUpdated',
       payload: {
         productId: 'string',
-        changes: 'object'
+        changes: 'object',
       },
-      description: 'Emitted when a product is updated'
+      description: 'Emitted when a product is updated',
     })
     .addEvent({
       name: 'OrderPlaced',
@@ -220,18 +223,18 @@ async function ecommercePlatformExample() {
         orderId: 'string',
         customerId: 'string',
         total: 'number',
-        items: 'array'
+        items: 'array',
       },
-      description: 'Emitted when a new order is placed'
+      description: 'Emitted when a new order is placed',
     })
     .addEvent({
       name: 'OrderStatusChanged',
       payload: {
         orderId: 'string',
         oldStatus: 'string',
-        newStatus: 'string'
+        newStatus: 'string',
       },
-      description: 'Emitted when order status changes'
+      description: 'Emitted when order status changes',
     })
     .addUIComponent({
       name: 'ProductGrid',
@@ -239,48 +242,48 @@ async function ecommercePlatformExample() {
       props: {
         columns: ['name', 'price', 'category', 'inStock'],
         sortable: true,
-        filterable: true
+        filterable: true,
       },
       events: ['ProductCreated', 'ProductUpdated'],
-      description: 'Displays products in a grid format'
+      description: 'Displays products in a grid format',
     })
     .addUIComponent({
       name: 'OrderForm',
       type: 'form',
       props: {
-        fields: ['customerId', 'items', 'shippingAddress', 'paymentMethod']
+        fields: ['customerId', 'items', 'shippingAddress', 'paymentMethod'],
       },
       events: ['OrderPlaced'],
-      description: 'Form for placing new orders'
+      description: 'Form for placing new orders',
     })
     .addPermission({
       name: 'manage_products',
       description: 'Can create, update, and delete products',
       resources: ['Product'],
-      actions: ['create', 'read', 'update', 'delete']
+      actions: ['create', 'read', 'update', 'delete'],
     })
     .addPermission({
       name: 'manage_orders',
       description: 'Can view and update orders',
       resources: ['Order'],
-      actions: ['read', 'update']
+      actions: ['read', 'update'],
     })
     .addPermission({
       name: 'place_orders',
       description: 'Can place new orders',
       resources: ['Order'],
-      actions: ['create']
+      actions: ['create'],
     })
     .compliance({
       gdpr: true,
       soc2: true,
       dataRetention: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
-      dataClassification: 'confidential'
+      dataClassification: 'confidential',
     })
     .security({
       encryptionLevel: 'high',
       auditTrail: true,
-      accessControl: 'role-based'
+      accessControl: 'role-based',
     })
     .build();
 
@@ -311,25 +314,30 @@ async function ecommercePlatformExample() {
   // Product event handlers
   eventBus.subscribe('ProductCreated', async (event) => {
     console.log(`🆕 Product created: ${event.payload.productId} - ${event.payload.name}`);
-    
+
     // Update inventory
-    await entityManager.update('Product', event.payload.productId, {
-      inStock: true
-    }, {
-      tenantId: event.metadata.tenantId,
-      userId: event.metadata.userId || 'system'
-    });
+    await entityManager.update(
+      'Product',
+      event.payload.productId,
+      {
+        inStock: true,
+      },
+      {
+        tenantId: event.metadata.tenantId,
+        userId: event.metadata.userId || 'system',
+      },
+    );
   });
 
   eventBus.subscribe('ProductUpdated', async (event) => {
     console.log(`✏️ Product updated: ${event.payload.productId}`);
-    
+
     // Send notifications if price changed
     if (event.payload.changes.price) {
       await event('PriceChangeNotification', {
         productId: event.payload.productId,
         oldPrice: event.payload.changes.price.from,
-        newPrice: event.payload.changes.price.to
+        newPrice: event.payload.changes.price.to,
       })
         .tenant(event.metadata.tenantId)
         .user(event.metadata.userId || 'system')
@@ -340,22 +348,27 @@ async function ecommercePlatformExample() {
   // Order event handlers
   eventBus.subscribe('OrderPlaced', async (event) => {
     console.log(`🛒 Order placed: ${event.payload.orderId} - $${event.payload.total}`);
-    
+
     // Update inventory
     for (const item of event.payload.items) {
-      await entityManager.update('Product', item.productId, {
-        inStock: false
-      }, {
-        tenantId: event.metadata.tenantId,
-        userId: event.metadata.userId || 'system'
-      });
+      await entityManager.update(
+        'Product',
+        item.productId,
+        {
+          inStock: false,
+        },
+        {
+          tenantId: event.metadata.tenantId,
+          userId: event.metadata.userId || 'system',
+        },
+      );
     }
-    
+
     // Send confirmation email
     await event('OrderConfirmationEmail', {
       orderId: event.payload.orderId,
       customerId: event.payload.customerId,
-      total: event.payload.total
+      total: event.payload.total,
     })
       .tenant(event.metadata.tenantId)
       .user(event.metadata.userId || 'system')
@@ -363,12 +376,14 @@ async function ecommercePlatformExample() {
   });
 
   eventBus.subscribe('OrderStatusChanged', async (event) => {
-    console.log(`📦 Order status changed: ${event.payload.orderId} - ${event.payload.oldStatus} → ${event.payload.newStatus}`);
-    
+    console.log(
+      `📦 Order status changed: ${event.payload.orderId} - ${event.payload.oldStatus} → ${event.payload.newStatus}`,
+    );
+
     // Send status update notification
     await event('OrderStatusNotification', {
       orderId: event.payload.orderId,
-      status: event.payload.newStatus
+      status: event.payload.newStatus,
     })
       .tenant(event.metadata.tenantId)
       .user(event.metadata.userId || 'system')
@@ -385,40 +400,52 @@ async function ecommercePlatformExample() {
   const userId = 'admin-user';
 
   // Create products
-  const product1 = await entityManager.create('Product', {
-    name: 'iPhone 15 Pro',
-    description: 'Latest iPhone with advanced camera system',
-    price: 999.99,
-    category: 'Electronics',
-    inStock: true,
-    tags: ['smartphone', 'apple', '5g'],
-    images: ['iphone15pro-1.jpg', 'iphone15pro-2.jpg']
-  }, { tenantId, userId });
+  const product1 = await entityManager.create(
+    'Product',
+    {
+      name: 'iPhone 15 Pro',
+      description: 'Latest iPhone with advanced camera system',
+      price: 999.99,
+      category: 'Electronics',
+      inStock: true,
+      tags: ['smartphone', 'apple', '5g'],
+      images: ['iphone15pro-1.jpg', 'iphone15pro-2.jpg'],
+    },
+    { tenantId, userId },
+  );
 
-  const product2 = await entityManager.create('Product', {
-    name: 'MacBook Air M2',
-    description: 'Ultra-thin laptop with M2 chip',
-    price: 1199.99,
-    category: 'Electronics',
-    inStock: true,
-    tags: ['laptop', 'apple', 'm2'],
-    images: ['macbook-air-m2.jpg']
-  }, { tenantId, userId });
+  const product2 = await entityManager.create(
+    'Product',
+    {
+      name: 'MacBook Air M2',
+      description: 'Ultra-thin laptop with M2 chip',
+      price: 1199.99,
+      category: 'Electronics',
+      inStock: true,
+      tags: ['laptop', 'apple', 'm2'],
+      images: ['macbook-air-m2.jpg'],
+    },
+    { tenantId, userId },
+  );
 
-  const product3 = await entityManager.create('Product', {
-    name: 'Wireless Headphones',
-    description: 'Noise-cancelling wireless headphones',
-    price: 299.99,
-    category: 'Audio',
-    inStock: true,
-    tags: ['headphones', 'wireless', 'noise-cancelling'],
-    images: ['headphones-1.jpg']
-  }, { tenantId, userId });
+  const product3 = await entityManager.create(
+    'Product',
+    {
+      name: 'Wireless Headphones',
+      description: 'Noise-cancelling wireless headphones',
+      price: 299.99,
+      category: 'Audio',
+      inStock: true,
+      tags: ['headphones', 'wireless', 'noise-cancelling'],
+      images: ['headphones-1.jpg'],
+    },
+    { tenantId, userId },
+  );
 
   console.log('✅ Products created:', {
     product1: product1.entity?.id,
     product2: product2.entity?.id,
-    product3: product3.entity?.id
+    product3: product3.entity?.id,
   });
 
   // Query products
@@ -431,39 +458,48 @@ async function ecommercePlatformExample() {
   const electronicsProducts = await entityManager.query(electronicsFilter, {
     limit: 10,
     sortBy: 'price',
-    sortOrder: 'desc'
+    sortOrder: 'desc',
   });
 
   console.log('📱 Electronics products found:', electronicsProducts.entities.length);
-  electronicsProducts.entities.forEach(product => {
+  electronicsProducts.entities.forEach((product) => {
     console.log(`  - ${product.data.name}: $${product.data.price}`);
   });
 
   // Create an order
-  const order = await entityManager.create('Order', {
-    customerId: 'customer-123',
-    items: [
-      { productId: product1.entity!.id, quantity: 1, price: 999.99 },
-      { productId: product3.entity!.id, quantity: 2, price: 299.99 }
-    ],
-    total: 1599.97,
-    status: 'pending',
-    shippingAddress: {
-      street: '123 Main St',
-      city: 'New York',
-      state: 'NY',
-      zipCode: '10001',
-      country: 'USA'
+  const order = await entityManager.create(
+    'Order',
+    {
+      customerId: 'customer-123',
+      items: [
+        { productId: product1.entity!.id, quantity: 1, price: 999.99 },
+        { productId: product3.entity!.id, quantity: 2, price: 299.99 },
+      ],
+      total: 1599.97,
+      status: 'pending',
+      shippingAddress: {
+        street: '123 Main St',
+        city: 'New York',
+        state: 'NY',
+        zipCode: '10001',
+        country: 'USA',
+      },
+      paymentMethod: 'credit_card',
     },
-    paymentMethod: 'credit_card'
-  }, { tenantId, userId });
+    { tenantId, userId },
+  );
 
   console.log('✅ Order created:', order.entity?.id);
 
   // Update order status
-  await entityManager.update('Order', order.entity!.id, {
-    status: 'confirmed'
-  }, { tenantId, userId });
+  await entityManager.update(
+    'Order',
+    order.entity!.id,
+    {
+      status: 'confirmed',
+    },
+    { tenantId, userId },
+  );
 
   // Query orders
   const orderFilter = createEntityFilter()
@@ -486,7 +522,7 @@ async function ecommercePlatformExample() {
     productId: product1.entity!.id,
     name: product1.entity!.data.name,
     price: product1.entity!.data.price,
-    category: product1.entity!.data.category
+    category: product1.entity!.data.category,
   })
     .tenant(tenantId)
     .user(userId)
@@ -497,7 +533,7 @@ async function ecommercePlatformExample() {
     orderId: order.entity!.id,
     customerId: order.entity!.data.customerId,
     total: order.entity!.data.total,
-    items: order.entity!.data.items
+    items: order.entity!.data.items,
   })
     .tenant(tenantId)
     .user(userId)
@@ -506,7 +542,7 @@ async function ecommercePlatformExample() {
   await event('OrderStatusChanged', {
     orderId: order.entity!.id,
     oldStatus: 'pending',
-    newStatus: 'confirmed'
+    newStatus: 'confirmed',
   })
     .tenant(tenantId)
     .user(userId)
@@ -523,7 +559,7 @@ async function ecommercePlatformExample() {
     enabled: true,
     batchSize: 10,
     concurrency: 1,
-    filter: { tenantId }
+    filter: { tenantId },
   });
   console.log(`🔄 Replayed ${replayCount} events`);
 
@@ -536,13 +572,13 @@ async function ecommercePlatformExample() {
     eventsPerSecond: eventStats.eventsPerSecond.toFixed(2),
     activeSubscriptions: eventStats.activeSubscriptions,
     failedEvents: eventStats.failedEvents,
-    averageLatency: `${eventStats.averageLatency.toFixed(2)}ms`
+    averageLatency: `${eventStats.averageLatency.toFixed(2)}ms`,
   });
 
   console.log('📊 Entity Manager Statistics:', {
     totalEntities: entityStats.totalEntities,
     entitiesByType: entityStats.entitiesByType,
-    entitiesByTenant: entityStats.entitiesByTenant
+    entitiesByTenant: entityStats.entitiesByTenant,
   });
 
   // ============================================================================
@@ -558,24 +594,24 @@ async function ecommercePlatformExample() {
     errors: validation.errors.length,
     warnings: validation.warnings.length,
     complianceChecks: validation.compliance.length,
-    securityChecks: validation.security.length
+    securityChecks: validation.security.length,
   });
 
   // Show compliance details
-  validation.compliance.forEach(check => {
+  validation.compliance.forEach((check) => {
     console.log(`📋 ${check.standard} Compliance:`, {
       compliant: check.compliant ? '✅' : '❌',
       issues: check.issues.length,
-      recommendations: check.recommendations.length
+      recommendations: check.recommendations.length,
     });
   });
 
   // Show security details
-  validation.security.forEach(check => {
+  validation.security.forEach((check) => {
     console.log(`🔐 ${check.aspect} Security:`, {
       secure: check.secure ? '✅' : '❌',
       issues: check.issues.length,
-      recommendations: check.recommendations.length
+      recommendations: check.recommendations.length,
     });
   });
 
@@ -610,7 +646,7 @@ async function ecommercePlatformExample() {
     order,
     eventStats,
     entityStats,
-    validation
+    validation,
   };
 }
 
@@ -630,4 +666,4 @@ if (require.main === module) {
     });
 }
 
-export { ecommercePlatformExample }; 
+export { ecommercePlatformExample };

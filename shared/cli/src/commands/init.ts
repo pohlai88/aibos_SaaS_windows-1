@@ -1,6 +1,6 @@
 /**
  * AI-BOS Init Command
- * 
+ *
  * Scaffolds a complete AI-BOS application with enterprise-grade structure,
  * configuration, and best practices.
  */
@@ -56,11 +56,11 @@ export function initCommand(program: Command) {
 async function initProject(name?: string, options: InitOptions = {}) {
   // Display welcome message
   logger.info(chalk.blue.bold('🚀 Welcome to AI-BOS Platform!'));
-  logger.info(chalk.gray('Let\'s create your enterprise-grade application.\n'));
+  logger.info(chalk.gray("Let's create your enterprise-grade application.\n"));
 
   // Collect project information
   const answers = await collectProjectInfo(name, options);
-  
+
   // Validate project name
   if (!validateProjectName(answers.name)) {
     logger.error('Invalid project name. Use only lowercase letters, numbers, and hyphens.');
@@ -69,7 +69,7 @@ async function initProject(name?: string, options: InitOptions = {}) {
 
   // Determine project path
   const projectPath = path.resolve(answers.name);
-  
+
   // Check if directory exists
   if (fs.existsSync(projectPath) && !answers.force) {
     logger.error(`Directory ${answers.name} already exists. Use --force to overwrite.`);
@@ -78,7 +78,7 @@ async function initProject(name?: string, options: InitOptions = {}) {
 
   // Create project structure
   const spinner = ora('Creating project structure...').start();
-  
+
   try {
     await generateProjectStructure(projectPath, answers);
     spinner.succeed('Project structure created successfully!');
@@ -90,7 +90,7 @@ async function initProject(name?: string, options: InitOptions = {}) {
   // Install dependencies
   if (!answers.skipInstall) {
     const installSpinner = ora('Installing dependencies...').start();
-    
+
     try {
       await installDependencies(projectPath, answers);
       installSpinner.succeed('Dependencies installed successfully!');
@@ -119,7 +119,7 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
           return 'Project name must contain only lowercase letters, numbers, and hyphens';
         }
         return true;
-      }
+      },
     });
   }
 
@@ -134,9 +134,9 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
         { name: 'CRM System', value: 'crm' },
         { name: 'Project Management', value: 'project-management' },
         { name: 'Analytics Dashboard', value: 'analytics' },
-        { name: 'Minimal Starter', value: 'minimal' }
+        { name: 'Minimal Starter', value: 'minimal' },
       ],
-      default: 'minimal'
+      default: 'minimal',
     });
   }
 
@@ -146,7 +146,7 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
       type: 'confirm',
       name: 'typescript',
       message: 'Use TypeScript?',
-      default: true
+      default: true,
     });
   }
 
@@ -156,7 +156,7 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
       type: 'confirm',
       name: 'testing',
       message: 'Include testing setup?',
-      default: true
+      default: true,
     });
   }
 
@@ -166,7 +166,7 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
       type: 'confirm',
       name: 'docker',
       message: 'Include Docker configuration?',
-      default: true
+      default: true,
     });
   }
 
@@ -176,7 +176,7 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
       type: 'confirm',
       name: 'ci',
       message: 'Include CI/CD configuration?',
-      default: true
+      default: true,
     });
   }
 
@@ -189,9 +189,9 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
       { name: 'PostgreSQL (Recommended)', value: 'postgresql' },
       { name: 'MySQL', value: 'mysql' },
       { name: 'SQLite (Development)', value: 'sqlite' },
-      { name: 'MongoDB', value: 'mongodb' }
+      { name: 'MongoDB', value: 'mongodb' },
     ],
-    default: 'postgresql'
+    default: 'postgresql',
   });
 
   // Cache
@@ -202,14 +202,14 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
     choices: [
       { name: 'Redis (Recommended)', value: 'redis' },
       { name: 'Memory (Development)', value: 'memory' },
-      { name: 'None', value: 'none' }
+      { name: 'None', value: 'none' },
     ],
-    default: 'redis'
+    default: 'redis',
   });
 
   // Get answers
   const answers = await inquirer.prompt(questions);
-  
+
   // Merge with options
   return {
     name: name || answers.name,
@@ -221,7 +221,7 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
     database: answers.database,
     cache: answers.cache,
     force: options.force || false,
-    skipInstall: options.skipInstall || false
+    skipInstall: options.skipInstall || false,
   };
 }
 
@@ -233,14 +233,14 @@ function displaySuccessMessage(projectName: string, projectPath: string) {
   logger.info(chalk.gray('  npm test             # Run tests'));
   logger.info(chalk.gray('  npm run build        # Build for production'));
   logger.info(chalk.gray('  npm run deploy       # Deploy to production'));
-  
+
   logger.info('\n' + chalk.blue.bold('Documentation:'));
   logger.info(chalk.gray('  https://docs.aibos.com'));
   logger.info(chalk.gray('  https://github.com/aibos/shared'));
-  
+
   logger.info('\n' + chalk.blue.bold('Support:'));
   logger.info(chalk.gray('  Discord: https://discord.gg/aibos'));
   logger.info(chalk.gray('  Issues: https://github.com/aibos/shared/issues'));
-  
+
   logger.info('\n' + chalk.yellow.bold('Happy coding! 🚀'));
-} 
+}

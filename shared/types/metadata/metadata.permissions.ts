@@ -1,18 +1,18 @@
 import { z } from 'zod';
 import { UUID, UserID, TenantID, ISODate } from '../primitives';
-import { 
+import {
   MetadataPermissionType,
   MetadataPermissionTypes,
   MetadataOperationType,
   MetadataOperationTypes,
   MetadataFieldType,
-  MetadataFieldTypes
+  MetadataFieldTypes,
 } from './metadata.enums';
-import { 
-  MetadataEntity, 
-  MetadataField, 
+import {
+  MetadataEntity,
+  MetadataField,
   MetadataSchema,
-  MetadataConstraint
+  MetadataConstraint,
 } from './metadata.types';
 
 // ============================================================================
@@ -24,57 +24,60 @@ export const MetadataPermissionScope = {
   ENTITY: 'entity',
   ENTITY_TYPE: 'entity_type',
   ENTITY_INSTANCE: 'entity_instance',
-  
+
   // Field-level permissions
   FIELD: 'field',
   FIELD_TYPE: 'field_type',
   FIELD_INSTANCE: 'field_instance',
-  
+
   // Schema-level permissions
   SCHEMA: 'schema',
   SCHEMA_TYPE: 'schema_type',
   SCHEMA_INSTANCE: 'schema_instance',
-  
+
   // System-level permissions
   SYSTEM: 'system',
   TENANT: 'tenant',
-  GLOBAL: 'global'
+  GLOBAL: 'global',
 } as const;
 
-export type MetadataPermissionScope = typeof MetadataPermissionScope[keyof typeof MetadataPermissionScope];
+export type MetadataPermissionScope =
+  (typeof MetadataPermissionScope)[keyof typeof MetadataPermissionScope];
 
 export const MetadataPermissionEffect = {
   ALLOW: 'allow',
-  DENY: 'deny'
+  DENY: 'deny',
 } as const;
 
-export type MetadataPermissionEffect = typeof MetadataPermissionEffect[keyof typeof MetadataPermissionEffect];
+export type MetadataPermissionEffect =
+  (typeof MetadataPermissionEffect)[keyof typeof MetadataPermissionEffect];
 
 export const MetadataPermissionCondition = {
   // Time-based conditions
   TIME_BASED: 'time_based',
   SCHEDULE_BASED: 'schedule_based',
-  
+
   // Data-based conditions
   DATA_BASED: 'data_based',
   FIELD_VALUE: 'field_value',
   ENTITY_STATE: 'entity_state',
-  
+
   // User-based conditions
   USER_BASED: 'user_based',
   ROLE_BASED: 'role_based',
   GROUP_BASED: 'group_based',
-  
+
   // Context-based conditions
   CONTEXT_BASED: 'context_based',
   LOCATION_BASED: 'location_based',
   DEVICE_BASED: 'device_based',
-  
+
   // Custom conditions
-  CUSTOM: 'custom'
+  CUSTOM: 'custom',
 } as const;
 
-export type MetadataPermissionCondition = typeof MetadataPermissionCondition[keyof typeof MetadataPermissionCondition];
+export type MetadataPermissionCondition =
+  (typeof MetadataPermissionCondition)[keyof typeof MetadataPermissionCondition];
 
 // ============================================================================
 // PERMISSION INTERFACES
@@ -87,18 +90,18 @@ export interface MetadataPermission {
   type: MetadataPermissionType;
   scope: MetadataPermissionScope;
   effect: MetadataPermissionEffect;
-  
+
   // Resource identification
   resourceType: string;
   resourceId?: UUID;
   resourcePattern?: string;
-  
+
   // Operations
   operations: MetadataOperationType[];
-  
+
   // Conditions
   conditions?: MetadataPermissionConditionConfig[];
-  
+
   // Constraints
   constraints?: {
     fieldConstraints?: Record<string, any>;
@@ -114,7 +117,7 @@ export interface MetadataPermission {
       currentUsage?: number;
     };
   };
-  
+
   // Metadata
   tenantId: TenantID;
   createdBy: UserID;
@@ -128,7 +131,16 @@ export interface MetadataPermission {
 
 export interface MetadataPermissionConditionConfig {
   type: MetadataPermissionCondition;
-  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'in' | 'not_in' | 'regex' | 'custom';
+  operator:
+    | 'equals'
+    | 'not_equals'
+    | 'contains'
+    | 'greater_than'
+    | 'less_than'
+    | 'in'
+    | 'not_in'
+    | 'regex'
+    | 'custom';
   field?: string;
   value: any;
   options?: Record<string, any>;
@@ -226,13 +238,13 @@ export interface MetadataAccessPolicy {
   name: string;
   description?: string;
   type: 'allow' | 'deny' | 'conditional';
-  
+
   // Matching criteria
   resourceType?: string;
   resourcePattern?: string;
   operations?: MetadataOperationType[];
   conditions?: MetadataPermissionConditionConfig[];
-  
+
   // Actions
   actions: {
     allow?: boolean;
@@ -241,11 +253,11 @@ export interface MetadataAccessPolicy {
     audit?: boolean;
     notify?: string[];
   };
-  
+
   // Priority and ordering
   priority: number;
   order: number;
-  
+
   // Metadata
   tenantId: TenantID;
   createdBy: UserID;
@@ -265,7 +277,7 @@ export interface MetadataFieldPermission {
   entityType: string;
   permissionType: MetadataPermissionType;
   operations: MetadataOperationType[];
-  
+
   // Field-specific constraints
   constraints: {
     read?: boolean;
@@ -285,10 +297,10 @@ export interface MetadataFieldPermission {
       customValidator?: string;
     };
   };
-  
+
   // Conditions
   conditions?: MetadataPermissionConditionConfig[];
-  
+
   // Metadata
   tenantId: TenantID;
   createdBy: UserID;
@@ -318,32 +330,37 @@ export interface MetadataPermissionEvaluator {
   evaluate(
     request: MetadataAccessRequest,
     userPermissions: MetadataPermission[],
-    userRoles: MetadataRole[]
+    userRoles: MetadataRole[],
   ): Promise<MetadataAccessResponse>;
-  
+
   evaluateFieldAccess(
     fieldId: UUID,
     operation: MetadataOperationType,
     userId: UserID,
     tenantId: TenantID,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): Promise<{
     allowed: boolean;
     constraints?: Record<string, any>;
     mask?: MetadataFieldMask;
   }>;
-  
+
   getEffectivePermissions(
     userId: UserID,
     tenantId: TenantID,
     resourceType?: string,
-    resourceId?: UUID
+    resourceId?: UUID,
   ): Promise<MetadataPermission[]>;
 }
 
 export interface MetadataPermissionCache {
   get(userId: UserID, tenantId: TenantID): Promise<MetadataPermission[] | null>;
-  set(userId: UserID, tenantId: TenantID, permissions: MetadataPermission[], ttl?: number): Promise<void>;
+  set(
+    userId: UserID,
+    tenantId: TenantID,
+    permissions: MetadataPermission[],
+    ttl?: number,
+  ): Promise<void>;
   invalidate(userId: UserID, tenantId: TenantID): Promise<void>;
   invalidateByPattern(pattern: string): Promise<void>;
   clear(): Promise<void>;
@@ -355,7 +372,9 @@ export interface MetadataPermissionCache {
 
 export interface MetadataPermissionManager {
   // Permission CRUD
-  createPermission(permission: Omit<MetadataPermission, 'id' | 'createdAt'>): Promise<MetadataPermission>;
+  createPermission(
+    permission: Omit<MetadataPermission, 'id' | 'createdAt'>,
+  ): Promise<MetadataPermission>;
   updatePermission(id: UUID, updates: Partial<MetadataPermission>): Promise<MetadataPermission>;
   deletePermission(id: UUID): Promise<void>;
   getPermission(id: UUID): Promise<MetadataPermission | null>;
@@ -366,7 +385,7 @@ export interface MetadataPermissionManager {
     resourceType?: string;
     isActive?: boolean;
   }): Promise<MetadataPermission[]>;
-  
+
   // Role CRUD
   createRole(role: Omit<MetadataRole, 'id' | 'createdAt'>): Promise<MetadataRole>;
   updateRole(id: UUID, updates: Partial<MetadataRole>): Promise<MetadataRole>;
@@ -377,31 +396,45 @@ export interface MetadataPermissionManager {
     isActive?: boolean;
     isSystem?: boolean;
   }): Promise<MetadataRole[]>;
-  
+
   // User role assignments
-  assignRoleToUser(userId: UserID, roleId: UUID, tenantId: TenantID, grantedBy: UserID): Promise<MetadataUserRole>;
+  assignRoleToUser(
+    userId: UserID,
+    roleId: UUID,
+    tenantId: TenantID,
+    grantedBy: UserID,
+  ): Promise<MetadataUserRole>;
   removeRoleFromUser(userId: UserID, roleId: UUID, tenantId: TenantID): Promise<void>;
   getUserRoles(userId: UserID, tenantId: TenantID): Promise<MetadataUserRole[]>;
-  
+
   // Permission assignments
-  assignPermissionToUser(userId: UserID, permissionId: UUID, tenantId: TenantID, grantedBy: UserID): Promise<MetadataPermissionAssignment>;
+  assignPermissionToUser(
+    userId: UserID,
+    permissionId: UUID,
+    tenantId: TenantID,
+    grantedBy: UserID,
+  ): Promise<MetadataPermissionAssignment>;
   removePermissionFromUser(userId: UserID, permissionId: UUID, tenantId: TenantID): Promise<void>;
   getUserPermissions(userId: UserID, tenantId: TenantID): Promise<MetadataPermissionAssignment[]>;
-  
+
   // Bulk operations
-  bulkAssignRoles(assignments: Array<{
-    userId: UserID;
-    roleId: UUID;
-    tenantId: TenantID;
-    grantedBy: UserID;
-  }>): Promise<MetadataUserRole[]>;
-  
-  bulkAssignPermissions(assignments: Array<{
-    userId: UserID;
-    permissionId: UUID;
-    tenantId: TenantID;
-    grantedBy: UserID;
-  }>): Promise<MetadataPermissionAssignment[]>;
+  bulkAssignRoles(
+    assignments: Array<{
+      userId: UserID;
+      roleId: UUID;
+      tenantId: TenantID;
+      grantedBy: UserID;
+    }>,
+  ): Promise<MetadataUserRole[]>;
+
+  bulkAssignPermissions(
+    assignments: Array<{
+      userId: UserID;
+      permissionId: UUID;
+      tenantId: TenantID;
+      grantedBy: UserID;
+    }>,
+  ): Promise<MetadataPermissionAssignment[]>;
 }
 
 // ============================================================================
@@ -419,27 +452,47 @@ export const MetadataPermissionSchema = z.object({
   resourceId: z.string().uuid().optional(),
   resourcePattern: z.string().optional(),
   operations: z.array(z.nativeEnum(MetadataOperationTypes)),
-  conditions: z.array(z.object({
-    type: z.nativeEnum(MetadataPermissionCondition),
-    operator: z.enum(['equals', 'not_equals', 'contains', 'greater_than', 'less_than', 'in', 'not_in', 'regex', 'custom']),
-    field: z.string().optional(),
-    value: z.any(),
-    options: z.record(z.any()).optional()
-  })).optional(),
-  constraints: z.object({
-    fieldConstraints: z.record(z.any()).optional(),
-    valueConstraints: z.record(z.any()).optional(),
-    timeConstraints: z.object({
-      validFrom: z.string().datetime().optional(),
-      validTo: z.string().datetime().optional(),
-      schedule: z.string().optional()
-    }).optional(),
-    usageConstraints: z.object({
-      maxUsage: z.number().positive().optional(),
-      usagePeriod: z.string().optional(),
-      currentUsage: z.number().nonnegative().optional()
-    }).optional()
-  }).optional(),
+  conditions: z
+    .array(
+      z.object({
+        type: z.nativeEnum(MetadataPermissionCondition),
+        operator: z.enum([
+          'equals',
+          'not_equals',
+          'contains',
+          'greater_than',
+          'less_than',
+          'in',
+          'not_in',
+          'regex',
+          'custom',
+        ]),
+        field: z.string().optional(),
+        value: z.any(),
+        options: z.record(z.any()).optional(),
+      }),
+    )
+    .optional(),
+  constraints: z
+    .object({
+      fieldConstraints: z.record(z.any()).optional(),
+      valueConstraints: z.record(z.any()).optional(),
+      timeConstraints: z
+        .object({
+          validFrom: z.string().datetime().optional(),
+          validTo: z.string().datetime().optional(),
+          schedule: z.string().optional(),
+        })
+        .optional(),
+      usageConstraints: z
+        .object({
+          maxUsage: z.number().positive().optional(),
+          usagePeriod: z.string().optional(),
+          currentUsage: z.number().nonnegative().optional(),
+        })
+        .optional(),
+    })
+    .optional(),
   tenantId: z.string().uuid(),
   createdBy: z.string().uuid(),
   createdAt: z.string().datetime(),
@@ -447,7 +500,7 @@ export const MetadataPermissionSchema = z.object({
   updatedAt: z.string().datetime().optional(),
   isActive: z.boolean(),
   priority: z.number().int().min(0),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
 });
 
 export const MetadataRoleSchema = z.object({
@@ -463,7 +516,7 @@ export const MetadataRoleSchema = z.object({
   updatedAt: z.string().datetime().optional(),
   isActive: z.boolean(),
   isSystem: z.boolean(),
-  priority: z.number().int().min(0)
+  priority: z.number().int().min(0),
 });
 
 export const MetadataAccessRequestSchema = z.object({
@@ -480,9 +533,9 @@ export const MetadataAccessRequestSchema = z.object({
     location: z.string().optional(),
     device: z.string().optional(),
     timestamp: z.string().datetime(),
-    metadata: z.record(z.any()).optional()
+    metadata: z.record(z.any()).optional(),
   }),
-  data: z.record(z.any()).optional()
+  data: z.record(z.any()).optional(),
 });
 
 // ============================================================================
@@ -501,7 +554,7 @@ export class MetadataPermissionUtils {
     operations: MetadataOperationType[],
     tenantId: TenantID,
     createdBy: UserID,
-    options?: Partial<MetadataPermission>
+    options?: Partial<MetadataPermission>,
   ): MetadataPermission {
     return {
       id: crypto.randomUUID() as UUID,
@@ -516,7 +569,7 @@ export class MetadataPermissionUtils {
       createdAt: new Date().toISOString() as ISODate,
       isActive: true,
       priority: 0,
-      ...options
+      ...options,
     };
   }
 
@@ -527,7 +580,7 @@ export class MetadataPermissionUtils {
     name: string,
     tenantId: TenantID,
     createdBy: UserID,
-    options?: Partial<MetadataRole>
+    options?: Partial<MetadataRole>,
   ): MetadataRole {
     return {
       id: crypto.randomUUID() as UUID,
@@ -540,7 +593,7 @@ export class MetadataPermissionUtils {
       isActive: true,
       isSystem: false,
       priority: 0,
-      ...options
+      ...options,
     };
   }
 
@@ -555,7 +608,7 @@ export class MetadataPermissionUtils {
       if (error instanceof z.ZodError) {
         return {
           valid: false,
-          errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          errors: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
         };
       }
       return { valid: false, errors: ['Unknown validation error'] };
@@ -573,7 +626,7 @@ export class MetadataPermissionUtils {
       if (error instanceof z.ZodError) {
         return {
           valid: false,
-          errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          errors: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
         };
       }
       return { valid: false, errors: ['Unknown validation error'] };
@@ -586,18 +639,18 @@ export class MetadataPermissionUtils {
   static matchesResource(
     permission: MetadataPermission,
     resourceType: string,
-    resourceId?: UUID
+    resourceId?: UUID,
   ): boolean {
     // Check resource type
     if (permission.resourceType !== resourceType) {
       return false;
     }
-    
+
     // Check resource ID if specified
     if (permission.resourceId && resourceId && permission.resourceId !== resourceId) {
       return false;
     }
-    
+
     // Check resource pattern if specified
     if (permission.resourcePattern && resourceId) {
       const pattern = new RegExp(permission.resourcePattern);
@@ -605,7 +658,7 @@ export class MetadataPermissionUtils {
         return false;
       }
     }
-    
+
     return true;
   }
 
@@ -614,7 +667,7 @@ export class MetadataPermissionUtils {
    */
   static allowsOperation(
     permission: MetadataPermission,
-    operation: MetadataOperationType
+    operation: MetadataOperationType,
   ): boolean {
     return permission.operations.includes(operation);
   }
@@ -624,15 +677,15 @@ export class MetadataPermissionUtils {
    */
   static evaluateConditions(
     conditions: MetadataPermissionConditionConfig[],
-    context: Record<string, any>
+    context: Record<string, any>,
   ): boolean {
     if (!conditions || conditions.length === 0) {
       return true;
     }
-    
-    return conditions.every(condition => {
+
+    return conditions.every((condition) => {
       const fieldValue = condition.field ? context[condition.field] : context;
-      
+
       switch (condition.operator) {
         case 'equals':
           return fieldValue === condition.value;
@@ -664,35 +717,41 @@ export class MetadataPermissionUtils {
    */
   static mergePermissions(permissions: MetadataPermission[]): MetadataPermission[] {
     // Group by resource and operation
-    const grouped = permissions.reduce((groups, permission) => {
-      const key = `${permission.resourceType}:${permission.operations.join(',')}`;
-      if (!groups[key]) {
-        groups[key] = [];
-      }
-      groups[key].push(permission);
-      return groups;
-    }, {} as Record<string, MetadataPermission[]>);
-    
+    const grouped = permissions.reduce(
+      (groups, permission) => {
+        const key = `${permission.resourceType}:${permission.operations.join(',')}`;
+        if (!groups[key]) {
+          groups[key] = [];
+        }
+        groups[key].push(permission);
+        return groups;
+      },
+      {} as Record<string, MetadataPermission[]>,
+    );
+
     // Merge each group
-    return Object.values(grouped).map(group => {
+    return Object.values(grouped).map((group) => {
       if (group.length === 1) {
         return group[0];
       }
-      
+
       // Merge multiple permissions for the same resource/operation
       const base = group[0];
       const merged: MetadataPermission = {
         ...base,
-        conditions: group.flatMap(p => p.conditions || []),
+        conditions: group.flatMap((p) => p.conditions || []),
         constraints: {
           ...base.constraints,
-          ...group.slice(1).reduce((acc, p) => ({
-            ...acc,
-            ...p.constraints
-          }), {})
-        }
+          ...group.slice(1).reduce(
+            (acc, p) => ({
+              ...acc,
+              ...p.constraints,
+            }),
+            {},
+          ),
+        },
       };
-      
+
       return merged;
     });
   }
@@ -703,17 +762,18 @@ export class MetadataPermissionUtils {
   static getEffectivePermissions(
     userPermissions: MetadataPermission[],
     userRoles: MetadataRole[],
-    rolePermissions: MetadataPermission[]
+    rolePermissions: MetadataPermission[],
   ): MetadataPermission[] {
     const allPermissions = [
       ...userPermissions,
-      ...userRoles.flatMap(role => 
-        role.permissions.map(permissionId => 
-          rolePermissions.find(p => p.id === permissionId)
-        ).filter(Boolean) as MetadataPermission[]
-      )
+      ...userRoles.flatMap(
+        (role) =>
+          role.permissions
+            .map((permissionId) => rolePermissions.find((p) => p.id === permissionId))
+            .filter(Boolean) as MetadataPermission[],
+      ),
     ];
-    
+
     return this.mergePermissions(allPermissions);
   }
 
@@ -729,7 +789,7 @@ export class MetadataPermissionUtils {
       replacement?: string;
       customMask?: (value: any) => any;
       conditions?: MetadataPermissionConditionConfig[];
-    }
+    },
   ): MetadataFieldMask {
     return {
       id: crypto.randomUUID() as UUID,
@@ -740,7 +800,7 @@ export class MetadataPermissionUtils {
       customMask: options?.customMask,
       conditions: options?.conditions,
       tenantId,
-      isActive: true
+      isActive: true,
     };
   }
 
@@ -751,23 +811,23 @@ export class MetadataPermissionUtils {
     if (!mask.isActive) {
       return value;
     }
-    
+
     switch (mask.maskType) {
       case 'partial':
         if (mask.pattern && mask.replacement) {
           return String(value).replace(new RegExp(mask.pattern, 'g'), mask.replacement);
         }
         return value;
-        
+
       case 'full':
         return mask.replacement || '***';
-        
+
       case 'hash':
         return crypto.createHash('sha256').update(String(value)).digest('hex');
-        
+
       case 'custom':
         return mask.customMask ? mask.customMask(value) : value;
-        
+
       default:
         return value;
     }
@@ -776,7 +836,11 @@ export class MetadataPermissionUtils {
   /**
    * Generates a permission cache key
    */
-  static generatePermissionCacheKey(userId: UserID, tenantId: TenantID, resourceType?: string): string {
+  static generatePermissionCacheKey(
+    userId: UserID,
+    tenantId: TenantID,
+    resourceType?: string,
+  ): string {
     const parts = ['permissions', userId, tenantId];
     if (resourceType) {
       parts.push(resourceType);
@@ -787,10 +851,12 @@ export class MetadataPermissionUtils {
   /**
    * Checks if permissions have expired
    */
-  static hasExpiredPermissions(assignments: (MetadataUserRole | MetadataPermissionAssignment)[]): boolean {
+  static hasExpiredPermissions(
+    assignments: (MetadataUserRole | MetadataPermissionAssignment)[],
+  ): boolean {
     const now = new Date();
-    return assignments.some(assignment => 
-      assignment.expiresAt && new Date(assignment.expiresAt) < now
+    return assignments.some(
+      (assignment) => assignment.expiresAt && new Date(assignment.expiresAt) < now,
     );
   }
 
@@ -798,11 +864,11 @@ export class MetadataPermissionUtils {
    * Gets active permissions (not expired)
    */
   static getActivePermissions<T extends MetadataUserRole | MetadataPermissionAssignment>(
-    assignments: T[]
+    assignments: T[],
   ): T[] {
     const now = new Date();
-    return assignments.filter(assignment => 
-      !assignment.expiresAt || new Date(assignment.expiresAt) > now
+    return assignments.filter(
+      (assignment) => !assignment.expiresAt || new Date(assignment.expiresAt) > now,
     );
   }
 }
@@ -825,7 +891,7 @@ export type {
   MetadataFieldMask,
   MetadataPermissionEvaluator,
   MetadataPermissionCache,
-  MetadataPermissionManager
+  MetadataPermissionManager,
 };
 
 export {
@@ -835,5 +901,5 @@ export {
   MetadataPermissionSchema,
   MetadataRoleSchema,
   MetadataAccessRequestSchema,
-  MetadataPermissionUtils
-}; 
+  MetadataPermissionUtils,
+};

@@ -7,7 +7,7 @@ export enum MetricType {
   COUNTER = 'counter',
   GAUGE = 'gauge',
   HISTOGRAM = 'histogram',
-  SUMMARY = 'summary'
+  SUMMARY = 'summary',
 }
 
 /**
@@ -81,13 +81,13 @@ export class PerformanceMonitor {
       type,
       description: '',
       labels: Object.keys(labels),
-      values: []
+      values: [],
     };
 
     metric.values.push({
       value,
       timestamp: Date.now(),
-      labels
+      labels,
     });
 
     // Keep only last 1000 values per metric
@@ -107,7 +107,7 @@ export class PerformanceMonitor {
       return null;
     }
 
-    const values = metric.values.map(v => v.value);
+    const values = metric.values.map((v) => v.value);
     const sum = values.reduce((a, b) => a + b, 0);
     const avg = sum / values.length;
     const min = Math.min(...values);
@@ -122,7 +122,7 @@ export class PerformanceMonitor {
       min,
       max,
       lastValue: values[values.length - 1],
-      lastUpdate: metric.values[metric.values.length - 1].timestamp
+      lastUpdate: metric.values[metric.values.length - 1].timestamp,
     };
   }
 
@@ -138,23 +138,24 @@ export class PerformanceMonitor {
    */
   getPrometheusMetrics(): string {
     const lines: string[] = [];
-    
+
     for (const metric of this.metrics.values()) {
       // Add metric description
       lines.push(`# HELP ${metric.name} ${metric.description || metric.name}`);
       lines.push(`# TYPE ${metric.name} ${metric.type}`);
-      
+
       // Add metric values
-      for (const value of metric.values.slice(-10)) { // Last 10 values
+      for (const value of metric.values.slice(-10)) {
+        // Last 10 values
         const labelStr = Object.entries(value.labels)
           .map(([k, v]) => `${k}="${v}"`)
           .join(',');
-        
+
         const labels = labelStr ? `{${labelStr}}` : '';
         lines.push(`${metric.name}${labels} ${value.value} ${value.timestamp}`);
       }
     }
-    
+
     return lines.join('\n');
   }
 
@@ -173,7 +174,7 @@ export class PerformanceMonitor {
 export enum HealthStatus {
   HEALTHY = 'healthy',
   DEGRADED = 'degraded',
-  UNHEALTHY = 'unhealthy'
+  UNHEALTHY = 'unhealthy',
 }
 
 /**
@@ -219,7 +220,7 @@ export class HealthMonitor {
           status: HealthStatus.UNHEALTHY,
           message: error instanceof Error ? error.message : 'Unknown error',
           timestamp: Date.now(),
-          details: { error: error instanceof Error ? error.stack : error }
+          details: { error: error instanceof Error ? error.stack : error },
         };
         this.results.set(name, result);
         return [name, result] as [string, HealthCheckResult];
@@ -238,16 +239,16 @@ export class HealthMonitor {
       return HealthStatus.UNHEALTHY;
     }
 
-    const statuses = Array.from(this.results.values()).map(r => r.status);
-    
-    if (statuses.some(s => s === HealthStatus.UNHEALTHY)) {
+    const statuses = Array.from(this.results.values()).map((r) => r.status);
+
+    if (statuses.some((s) => s === HealthStatus.UNHEALTHY)) {
       return HealthStatus.UNHEALTHY;
     }
-    
-    if (statuses.some(s => s === HealthStatus.DEGRADED)) {
+
+    if (statuses.some((s) => s === HealthStatus.DEGRADED)) {
       return HealthStatus.DEGRADED;
     }
-    
+
     return HealthStatus.HEALTHY;
   }
 
@@ -270,7 +271,7 @@ export class ApplicationMonitor {
   constructor() {
     this.performance = new PerformanceMonitor();
     this.health = new HealthMonitor();
-    
+
     // Register default health checks
     this.registerDefaultHealthChecks();
   }
@@ -305,8 +306,8 @@ export class ApplicationMonitor {
           heapUsed: `${heapUsedMB.toFixed(2)} MB`,
           heapTotal: `${heapTotalMB.toFixed(2)} MB`,
           heapUsage: `${heapUsagePercent.toFixed(2)}%`,
-          rss: `${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`
-        }
+          rss: `${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`,
+        },
       };
     });
 
@@ -314,7 +315,7 @@ export class ApplicationMonitor {
     this.health.registerCheck('cpu', () => {
       const cpuUsage = process.cpuUsage();
       const totalCPU = cpuUsage.user + cpuUsage.system;
-      
+
       // This is a simplified check - in production, you'd want more sophisticated CPU monitoring
       return {
         status: HealthStatus.HEALTHY,
@@ -323,8 +324,8 @@ export class ApplicationMonitor {
         details: {
           user: `${(cpuUsage.user / 1000).toFixed(2)} ms`,
           system: `${(cpuUsage.system / 1000).toFixed(2)} ms`,
-          total: `${(totalCPU / 1000).toFixed(2)} ms`
-        }
+          total: `${(totalCPU / 1000).toFixed(2)} ms`,
+        },
       };
     });
 
@@ -332,15 +333,15 @@ export class ApplicationMonitor {
     this.health.registerCheck('uptime', () => {
       const uptimeMs = Date.now() - this.uptime;
       const uptimeHours = uptimeMs / (1000 * 60 * 60);
-      
+
       return {
         status: HealthStatus.HEALTHY,
         message: 'Application running',
         timestamp: Date.now(),
         details: {
           uptime: `${uptimeHours.toFixed(2)} hours`,
-          uptimeMs
-        }
+          uptimeMs,
+        },
       };
     });
   }
@@ -352,19 +353,19 @@ export class ApplicationMonitor {
     this.performance.incrementCounter('api_requests_total', 1, {
       method,
       path,
-      status: statusCode.toString()
+      status: statusCode.toString(),
     });
 
     this.performance.recordHistogram('api_request_duration_ms', duration, {
       method,
-      path
+      path,
     });
 
     if (statusCode >= 400) {
       this.performance.incrementCounter('api_errors_total', 1, {
         method,
         path,
-        status: statusCode.toString()
+        status: statusCode.toString(),
       });
     }
   }
@@ -372,22 +373,27 @@ export class ApplicationMonitor {
   /**
    * Record database operation
    */
-  recordDatabaseOperation(operation: string, table: string, duration: number, success: boolean): void {
+  recordDatabaseOperation(
+    operation: string,
+    table: string,
+    duration: number,
+    success: boolean,
+  ): void {
     this.performance.incrementCounter('database_operations_total', 1, {
       operation,
       table,
-      success: success.toString()
+      success: success.toString(),
     });
 
     this.performance.recordHistogram('database_operation_duration_ms', duration, {
       operation,
-      table
+      table,
     });
 
     if (!success) {
       this.performance.incrementCounter('database_errors_total', 1, {
         operation,
-        table
+        table,
       });
     }
   }
@@ -399,7 +405,7 @@ export class ApplicationMonitor {
     this.performance.incrementCounter('business_events_total', 1, {
       event,
       tenantId: tenantId || 'unknown',
-      userId: userId || 'unknown'
+      userId: userId || 'unknown',
     });
   }
 
@@ -427,16 +433,16 @@ export class ApplicationMonitor {
     health: Map<string, HealthCheckResult>;
   }> {
     await this.health.runChecks();
-    
+
     return {
       status: this.health.getOverallHealth(),
       uptime: Date.now() - this.uptime,
       performance: {
         metrics: this.performance.getAllMetrics().length,
         requests: this.performance.getMetricStats('api_requests_total'),
-        errors: this.performance.getMetricStats('api_errors_total')
+        errors: this.performance.getMetricStats('api_errors_total'),
       },
-      health: this.health.getResults()
+      health: this.health.getResults(),
     };
   }
 
@@ -457,12 +463,12 @@ export class ApplicationMonitor {
     checks: Record<string, HealthCheckResult>;
   }> {
     await this.health.runChecks();
-    
+
     return {
       status: this.health.getOverallHealth(),
       timestamp: Date.now(),
       uptime: Date.now() - this.uptime,
-      checks: Object.fromEntries(this.health.getResults())
+      checks: Object.fromEntries(this.health.getResults()),
     };
   }
 }
@@ -478,18 +484,13 @@ export const monitoring = new ApplicationMonitor();
 export function requestMonitoring() {
   return (req: any, res: any, next: any) => {
     const startTime = Date.now();
-    
+
     // Override res.end to record metrics
     const originalEnd = res.end;
-    res.end = function(chunk?: any, encoding?: any) {
+    res.end = function (chunk?: any, encoding?: any) {
       const duration = Date.now() - startTime;
-      
-      monitoring.recordApiRequest(
-        req.method,
-        req.path,
-        res.statusCode,
-        duration
-      );
+
+      monitoring.recordApiRequest(req.method, req.path, res.statusCode, duration);
 
       originalEnd.call(this, chunk, encoding);
     };
@@ -504,19 +505,19 @@ export function requestMonitoring() {
 export function monitorDatabaseOperation<T>(
   operation: string,
   table: string,
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<T> {
   const startTime = Date.now();
-  
+
   return fn()
-    .then(result => {
+    .then((result) => {
       const duration = Date.now() - startTime;
       monitoring.recordDatabaseOperation(operation, table, duration, true);
       return result;
     })
-    .catch(error => {
+    .catch((error) => {
       const duration = Date.now() - startTime;
       monitoring.recordDatabaseOperation(operation, table, duration, false);
       throw error;
     });
-} 
+}

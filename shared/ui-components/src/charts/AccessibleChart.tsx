@@ -37,7 +37,7 @@ class AccessibilityAnnouncer {
 
   announce(message: string, priority: 'low' | 'medium' | 'high' = 'medium') {
     const now = Date.now();
-    
+
     // Add to queue
     this.announcementQueue.push({
       message,
@@ -56,16 +56,15 @@ class AccessibilityAnnouncer {
     if (now - this.lastAnnouncement < this.announcementDelay) return;
 
     // Get highest priority announcement
-    const announcement = this.announcementQueue
-      .sort((a, b) => {
-        const priorityOrder = { high: 3, medium: 2, low: 1 };
-        return priorityOrder[b.priority] - priorityOrder[a.priority];
-      })[0];
+    const announcement = this.announcementQueue.sort((a, b) => {
+      const priorityOrder = { high: 3, medium: 2, low: 1 };
+      return priorityOrder[b.priority] - priorityOrder[a.priority];
+    })[0];
 
     if (!announcement) return;
 
     // Remove from queue
-    this.announcementQueue = this.announcementQueue.filter(a => a !== announcement);
+    this.announcementQueue = this.announcementQueue.filter((a) => a !== announcement);
 
     // Announce
     this.isAnnouncing = true;
@@ -73,7 +72,7 @@ class AccessibilityAnnouncer {
 
     if (this.screenReaderElement) {
       this.screenReaderElement.textContent = announcement.message;
-      
+
       // Clear after announcement
       setTimeout(() => {
         if (this.screenReaderElement) {
@@ -95,7 +94,7 @@ class AccessibilityAnnouncer {
     context?: string;
   }) {
     const { type, value, previousValue, change, percentage, context } = update;
-    
+
     let message = '';
     let priority: 'low' | 'medium' | 'high' = 'low';
 
@@ -104,7 +103,7 @@ class AccessibilityAnnouncer {
         message = `${context || 'Data point'} updated to ${value}`;
         priority = 'low';
         break;
-      
+
       case 'trend':
         if (change && Math.abs(change) > 10) {
           const direction = change > 0 ? 'increased' : 'decreased';
@@ -112,12 +111,12 @@ class AccessibilityAnnouncer {
           priority = 'medium';
         }
         break;
-      
+
       case 'threshold':
         message = `${context || 'Value'} ${value} has reached threshold`;
         priority = 'high';
         break;
-      
+
       case 'summary':
         if (percentage && Math.abs(percentage) > 5) {
           const direction = percentage > 0 ? 'up' : 'down';
@@ -159,27 +158,24 @@ export interface AccessibleChartProps extends VariantProps<typeof chartVariants>
   onTrendChange?: (trend: 'up' | 'down' | 'stable', change: number) => void;
 }
 
-const chartVariants = cva(
-  'w-full border border-border rounded-lg p-4',
-  {
-    variants: {
-      variant: {
-        default: 'bg-background',
-        elevated: 'bg-background shadow-lg',
-        minimal: 'bg-transparent border-none',
-      },
-      size: {
-        sm: 'h-64',
-        md: 'h-80',
-        lg: 'h-96',
-      },
+const chartVariants = cva('w-full border border-border rounded-lg p-4', {
+  variants: {
+    variant: {
+      default: 'bg-background',
+      elevated: 'bg-background shadow-lg',
+      minimal: 'bg-transparent border-none',
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'md',
+    size: {
+      sm: 'h-64',
+      md: 'h-80',
+      lg: 'h-96',
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+    size: 'md',
+  },
+});
 
 export const AccessibleChart: React.FC<AccessibleChartProps> = ({
   data,
@@ -207,7 +203,7 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
   useEffect(() => {
     if (enableAnnouncements) {
       announcerRef.current = new AccessibilityAnnouncer();
-      
+
       // Initial announcement
       announcerRef.current.announce(`${title} chart loaded with ${data.length} data points`);
     }
@@ -219,7 +215,7 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
 
     const interval = setInterval(() => {
       const now = Date.now();
-      
+
       // Throttle announcements
       if (now - lastAnnouncement < announcementThrottle) return;
 
@@ -227,13 +223,12 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
       const newData = currentData.map((point, index) => {
         const change = (Math.random() - 0.5) * 20;
         const newValue = Math.max(0, point.y + change);
-        
+
         // Determine trend
-        const trend: 'up' | 'down' | 'stable' = 
-          change > 5 ? 'up' : change < -5 ? 'down' : 'stable';
-        
+        const trend: 'up' | 'down' | 'stable' = change > 5 ? 'up' : change < -5 ? 'down' : 'stable';
+
         // Check thresholds
-        const threshold: 'warning' | 'critical' | 'normal' = 
+        const threshold: 'warning' | 'critical' | 'normal' =
           newValue > 80 ? 'critical' : newValue > 60 ? 'warning' : 'normal';
 
         return {
@@ -248,7 +243,7 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
       setPreviousData(currentData);
       setCurrentData(newData);
       setLastAnnouncement(now);
-      setAnnouncementCount(prev => prev + 1);
+      setAnnouncementCount((prev) => prev + 1);
 
       // Intelligent announcements
       const significantChanges = newData.filter((point, index) => {
@@ -259,13 +254,14 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
 
       if (significantChanges.length > 0) {
         // Announce summary instead of individual points
-        const avgChange = significantChanges.reduce((sum, point, index) => {
-          const oldPoint = currentData[index];
-          return sum + (point.y - oldPoint.y);
-        }, 0) / significantChanges.length;
+        const avgChange =
+          significantChanges.reduce((sum, point, index) => {
+            const oldPoint = currentData[index];
+            return sum + (point.y - oldPoint.y);
+          }, 0) / significantChanges.length;
 
         const direction = avgChange > 0 ? 'up' : 'down';
-        const percentage = Math.abs(avgChange) / 100 * 100;
+        const percentage = (Math.abs(avgChange) / 100) * 100;
 
         announcerRef.current?.announceRealTimeUpdate({
           type: 'summary',
@@ -277,12 +273,14 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
       }
 
       // Notify trend changes
-      const overallTrend = newData.reduce((sum, point) => sum + (point.trend === 'up' ? 1 : point.trend === 'down' ? -1 : 0), 0);
+      const overallTrend = newData.reduce(
+        (sum, point) => sum + (point.trend === 'up' ? 1 : point.trend === 'down' ? -1 : 0),
+        0,
+      );
       if (Math.abs(overallTrend) > newData.length * 0.3) {
         const trend: 'up' | 'down' | 'stable' = overallTrend > 0 ? 'up' : 'down';
         onTrendChange?.(trend, overallTrend);
       }
-
     }, realTimeInterval);
 
     return () => clearInterval(interval);
@@ -300,22 +298,26 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
   const generateChartDescription = useCallback(() => {
     const totalPoints = currentData.length;
     const avgValue = currentData.reduce((sum, point) => sum + point.y, 0) / totalPoints;
-    const maxValue = Math.max(...currentData.map(p => p.y));
-    const minValue = Math.min(...currentData.map(p => p.y));
-    
+    const maxValue = Math.max(...currentData.map((p) => p.y));
+    const minValue = Math.min(...currentData.map((p) => p.y));
+
     return `${title} chart showing ${totalPoints} data points. Average value is ${avgValue.toFixed(1)}, ranging from ${minValue.toFixed(1)} to ${maxValue.toFixed(1)}.`;
   }, [currentData, title]);
 
   // Handle data point interaction
-  const handleDataPointClick = useCallback((point: AccessibleDataPoint, index: number) => {
-    if (announcerRef.current) {
-      const announcement = point.announcement || 
-        `${point.label || `Data point ${index + 1}`} has value ${point.y.toFixed(1)}`;
-      announcerRef.current.announce(announcement, 'medium');
-    }
-    
-    onDataPointClick?.(point, index);
-  }, [onDataPointClick]);
+  const handleDataPointClick = useCallback(
+    (point: AccessibleDataPoint, index: number) => {
+      if (announcerRef.current) {
+        const announcement =
+          point.announcement ||
+          `${point.label || `Data point ${index + 1}`} has value ${point.y.toFixed(1)}`;
+        announcerRef.current.announce(announcement, 'medium');
+      }
+
+      onDataPointClick?.(point, index);
+    },
+    [onDataPointClick],
+  );
 
   // Generate chart SVG (simplified for demo)
   const renderChart = useCallback(() => {
@@ -325,8 +327,8 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
     const chartWidth = width - 2 * padding;
     const chartHeight = height - 2 * padding;
 
-    const maxY = Math.max(...currentData.map(p => p.y));
-    const minY = Math.min(...currentData.map(p => p.y));
+    const maxY = Math.max(...currentData.map((p) => p.y));
+    const minY = Math.min(...currentData.map((p) => p.y));
     const yRange = maxY - minY || 1;
 
     const points = currentData.map((point, index) => {
@@ -354,7 +356,7 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
         {/* Chart area */}
         {type === 'area' && (
           <path
-            d={`M ${points.map(p => `${p.x},${p.y}`).join(' L ')} L ${points[points.length - 1].x},${height - padding} L ${points[0].x},${height - padding} Z`}
+            d={`M ${points.map((p) => `${p.x},${p.y}`).join(' L ')} L ${points[points.length - 1].x},${height - padding} L ${points[0].x},${height - padding} Z`}
             fill="url(#chartGradient)"
             aria-hidden="true"
           />
@@ -363,7 +365,7 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
         {/* Chart line */}
         {type === 'line' && (
           <path
-            d={`M ${points.map(p => `${p.x},${p.y}`).join(' L ')}`}
+            d={`M ${points.map((p) => `${p.x},${p.y}`).join(' L ')}`}
             stroke="var(--primary)"
             strokeWidth="2"
             fill="none"
@@ -378,8 +380,13 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
               cx={x}
               cy={y}
               r="4"
-              fill={point.threshold === 'critical' ? 'var(--destructive)' : 
-                    point.threshold === 'warning' ? 'var(--warning)' : 'var(--primary)'}
+              fill={
+                point.threshold === 'critical'
+                  ? 'var(--destructive)'
+                  : point.threshold === 'warning'
+                    ? 'var(--warning)'
+                    : 'var(--primary)'
+              }
               stroke="white"
               strokeWidth="2"
               role="button"
@@ -394,7 +401,7 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
               }}
               className="cursor-pointer hover:r-6 transition-all"
             />
-            
+
             {/* Trend indicator */}
             {point.trend && (
               <text
@@ -402,8 +409,13 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
                 y={y - 15}
                 textAnchor="middle"
                 fontSize="12"
-                fill={point.trend === 'up' ? 'var(--success)' : 
-                      point.trend === 'down' ? 'var(--destructive)' : 'var(--muted-foreground)'}
+                fill={
+                  point.trend === 'up'
+                    ? 'var(--success)'
+                    : point.trend === 'down'
+                      ? 'var(--destructive)'
+                      : 'var(--muted-foreground)'
+                }
                 aria-hidden="true"
               >
                 {point.trend === 'up' ? '↗' : point.trend === 'down' ? '↘' : '→'}
@@ -447,7 +459,7 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
             {description}
           </p>
         )}
-        
+
         {/* Accessibility controls */}
         <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
           <span>Announcements: {announcementCount}</span>
@@ -461,7 +473,7 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
       </div>
 
       {/* Chart container */}
-      <div 
+      <div
         ref={chartRef}
         className="flex justify-center items-center"
         role="region"
@@ -475,11 +487,12 @@ export const AccessibleChart: React.FC<AccessibleChartProps> = ({
       <div className="mt-4 p-3 bg-muted/20 rounded text-sm">
         <h4 className="font-medium mb-2">Chart Summary</h4>
         <p className="text-muted-foreground">{generateChartDescription()}</p>
-        
+
         {enableAnnouncements && (
           <div className="mt-2">
             <p className="text-xs">
-              Screen reader announcements are enabled. Significant changes will be announced automatically.
+              Screen reader announcements are enabled. Significant changes will be announced
+              automatically.
             </p>
           </div>
         )}
@@ -531,4 +544,4 @@ export const AccessibleChartTest: React.FC = () => {
       />
     </div>
   );
-}; 
+};

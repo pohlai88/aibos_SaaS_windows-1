@@ -75,7 +75,7 @@ export class DatabaseConnection {
     try {
       // Dynamic import to avoid requiring pg in non-database environments
       const { Client } = await import('pg');
-      
+
       this.client = new Client({
         host: this.config.host,
         port: this.config.port,
@@ -84,15 +84,15 @@ export class DatabaseConnection {
         password: this.config.password,
         ssl: this.config.ssl ? { rejectUnauthorized: false } : false,
         connectionTimeoutMillis: this.config.connectionTimeout,
-        query_timeout: this.config.queryTimeout
+        query_timeout: this.config.queryTimeout,
       });
 
       await this.client.connect();
       this.isConnected = true;
-      
+
       logger.info('Database connection established', {
         host: this.config.host,
-        database: this.config.database
+        database: this.config.database,
       });
     } catch (error) {
       logger.error('Database connection failed', { error });
@@ -104,7 +104,11 @@ export class DatabaseConnection {
   /**
    * Execute a query
    */
-  async query<T = any>(text: string, params?: any[], options?: QueryOptions): Promise<QueryResult<T>> {
+  async query<T = any>(
+    text: string,
+    params?: any[],
+    options?: QueryOptions,
+  ): Promise<QueryResult<T>> {
     if (!this.isConnected) {
       throw new Error('Database not connected');
     }
@@ -120,7 +124,7 @@ export class DatabaseConnection {
           return {
             ...cached,
             cached: true,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           };
         }
       }
@@ -134,7 +138,7 @@ export class DatabaseConnection {
         rowCount: result.rowCount,
         executionTime,
         cached: false,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       // Cache result if enabled
@@ -149,12 +153,12 @@ export class DatabaseConnection {
     } catch (error) {
       const executionTime = Date.now() - startTime;
       monitoring.recordDatabaseOperation('QUERY', 'custom', executionTime, false);
-      
+
       logger.error('Database query failed', {
         query: text,
         params,
         error: error.message,
-        executionTime
+        executionTime,
       });
 
       throw error;
@@ -175,14 +179,14 @@ export class DatabaseConnection {
       await this.client.query('BEGIN');
       const result = await callback(this.client);
       await this.client.query('COMMIT');
-      
+
       const executionTime = Date.now() - startTime;
       monitoring.recordDatabaseOperation('TRANSACTION', 'custom', executionTime, true);
 
       return result;
     } catch (error) {
       await this.client.query('ROLLBACK');
-      
+
       const executionTime = Date.now() - startTime;
       monitoring.recordDatabaseOperation('TRANSACTION', 'custom', executionTime, false);
 
@@ -235,7 +239,7 @@ export class ConnectionPool {
       waitingClients: 0,
       maxConnections: config.maxConnections,
       connectionErrors: 0,
-      queryErrors: 0
+      queryErrors: 0,
     };
 
     this.initializePool();
@@ -248,7 +252,7 @@ export class ConnectionPool {
   private async initializePool(): Promise<void> {
     try {
       const { Pool } = await import('pg');
-      
+
       this.pool = new Pool({
         host: this.config.host,
         port: this.config.port,
@@ -260,7 +264,7 @@ export class ConnectionPool {
         min: this.config.minConnections,
         connectionTimeoutMillis: this.config.connectionTimeout,
         idleTimeoutMillis: this.config.idleTimeout,
-        query_timeout: this.config.queryTimeout
+        query_timeout: this.config.queryTimeout,
       });
 
       // Set up event listeners
@@ -286,7 +290,7 @@ export class ConnectionPool {
 
       logger.info('Database connection pool initialized', {
         maxConnections: this.config.maxConnections,
-        minConnections: this.config.minConnections
+        minConnections: this.config.minConnections,
       });
     } catch (error) {
       logger.error('Failed to initialize database pool', { error });
@@ -311,7 +315,11 @@ export class ConnectionPool {
   /**
    * Execute a query using the pool
    */
-  async query<T = any>(text: string, params?: any[], options?: QueryOptions): Promise<QueryResult<T>> {
+  async query<T = any>(
+    text: string,
+    params?: any[],
+    options?: QueryOptions,
+  ): Promise<QueryResult<T>> {
     const startTime = Date.now();
     const cacheKey = options?.cache ? this.generateCacheKey(text, params) : null;
 
@@ -323,7 +331,7 @@ export class ConnectionPool {
           return {
             ...cached,
             cached: true,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           };
         }
       }
@@ -337,7 +345,7 @@ export class ConnectionPool {
         rowCount: result.rowCount,
         executionTime,
         cached: false,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       // Cache result if enabled
@@ -353,12 +361,12 @@ export class ConnectionPool {
       const executionTime = Date.now() - startTime;
       this.stats.queryErrors++;
       monitoring.recordDatabaseOperation('QUERY', 'pool', executionTime, false);
-      
+
       logger.error('Database query failed', {
         query: text,
         params,
         error: error.message,
-        executionTime
+        executionTime,
       });
 
       throw error;
@@ -376,14 +384,14 @@ export class ConnectionPool {
       await client.query('BEGIN');
       const result = await callback(client);
       await client.query('COMMIT');
-      
+
       const executionTime = Date.now() - startTime;
       monitoring.recordDatabaseOperation('TRANSACTION', 'pool', executionTime, true);
 
       return result;
     } catch (error) {
       await client.query('ROLLBACK');
-      
+
       const executionTime = Date.now() - startTime;
       monitoring.recordDatabaseOperation('TRANSACTION', 'pool', executionTime, false);
 
@@ -507,7 +515,7 @@ export class DatabaseManager {
     databaseName: string,
     text: string,
     params?: any[],
-    options?: QueryOptions
+    options?: QueryOptions,
   ): Promise<QueryResult<T>> {
     const pool = this.getPool(databaseName);
     return await pool.query<T>(text, params, options);
@@ -516,10 +524,7 @@ export class DatabaseManager {
   /**
    * Execute transaction on specific database
    */
-  async transaction<T>(
-    databaseName: string,
-    callback: (client: any) => Promise<T>
-  ): Promise<T> {
+  async transaction<T>(databaseName: string, callback: (client: any) => Promise<T>): Promise<T> {
     const pool = this.getPool(databaseName);
     return await pool.transaction(callback);
   }
@@ -644,7 +649,7 @@ export class QueryBuilder {
     // Build WHERE clause
     let whereClause = '';
     if (this.whereConditions.length > 0) {
-      const conditions = this.whereConditions.map(condition => {
+      const conditions = this.whereConditions.map((condition) => {
         if (condition.operator === 'IN') {
           const placeholders = condition.value.map(() => `$${paramIndex++}`).join(', ');
           params.push(...condition.value);
@@ -660,7 +665,7 @@ export class QueryBuilder {
     // Build ORDER BY clause
     let orderByClause = '';
     if (this.orderBy.length > 0) {
-      const orders = this.orderBy.map(order => `${order.field} ${order.direction}`);
+      const orders = this.orderBy.map((order) => `${order.field} ${order.direction}`);
       orderByClause = `ORDER BY ${orders.join(', ')}`;
     }
 
@@ -683,7 +688,9 @@ export class QueryBuilder {
       ${orderByClause}
       ${limitClause}
       ${offsetClause}
-    `.trim().replace(/\s+/g, ' ');
+    `
+      .trim()
+      .replace(/\s+/g, ' ');
 
     return { text, params };
   }
@@ -713,10 +720,10 @@ export class DatabaseUtils {
     table: string,
     fields: string[] = ['*'],
     conditions: Record<string, any> = {},
-    options?: QueryOptions
+    options?: QueryOptions,
   ): Promise<QueryResult<T>> {
     const queryBuilder = new QueryBuilder(table).select(...fields);
-    
+
     for (const [field, value] of Object.entries(conditions)) {
       queryBuilder.whereEq(field, value);
     }
@@ -733,7 +740,7 @@ export class DatabaseUtils {
     table: string,
     data: Record<string, any>,
     returning: string[] = ['*'],
-    options?: QueryOptions
+    options?: QueryOptions,
   ): Promise<QueryResult<T>> {
     const fields = Object.keys(data);
     const values = Object.values(data);
@@ -744,7 +751,9 @@ export class DatabaseUtils {
       INSERT INTO ${table} (${fields.join(', ')})
       VALUES (${placeholders})
       RETURNING ${returningClause}
-    `.trim().replace(/\s+/g, ' ');
+    `
+      .trim()
+      .replace(/\s+/g, ' ');
 
     return await databaseManager.query<T>(databaseName, text, values, options);
   }
@@ -758,7 +767,7 @@ export class DatabaseUtils {
     data: Record<string, any>,
     conditions: Record<string, any>,
     returning: string[] = ['*'],
-    options?: QueryOptions
+    options?: QueryOptions,
   ): Promise<QueryResult<T>> {
     const setFields = Object.keys(data);
     const setValues = Object.values(data);
@@ -766,7 +775,9 @@ export class DatabaseUtils {
     const whereValues = Object.values(conditions);
 
     const setClause = setFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
-    const whereClause = whereFields.map((field, index) => `${field} = $${setValues.length + index + 1}`).join(' AND ');
+    const whereClause = whereFields
+      .map((field, index) => `${field} = $${setValues.length + index + 1}`)
+      .join(' AND ');
     const returningClause = returning.join(', ');
 
     const text = `
@@ -774,7 +785,9 @@ export class DatabaseUtils {
       SET ${setClause}
       WHERE ${whereClause}
       RETURNING ${returningClause}
-    `.trim().replace(/\s+/g, ' ');
+    `
+      .trim()
+      .replace(/\s+/g, ' ');
 
     const params = [...setValues, ...whereValues];
     return await databaseManager.query<T>(databaseName, text, params, options);
@@ -788,7 +801,7 @@ export class DatabaseUtils {
     table: string,
     conditions: Record<string, any>,
     returning: string[] = ['*'],
-    options?: QueryOptions
+    options?: QueryOptions,
   ): Promise<QueryResult<T>> {
     const whereFields = Object.keys(conditions);
     const whereValues = Object.values(conditions);
@@ -799,8 +812,10 @@ export class DatabaseUtils {
       DELETE FROM ${table}
       WHERE ${whereClause}
       RETURNING ${returningClause}
-    `.trim().replace(/\s+/g, ' ');
+    `
+      .trim()
+      .replace(/\s+/g, ' ');
 
     return await databaseManager.query<T>(databaseName, text, whereValues, options);
   }
-} 
+}

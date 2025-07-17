@@ -13,4 +13,4 @@ export type GetRoleResponse = ApiResponse<RoleDetailResponse>;
 export type UpdateRolePermissionsResponse = ApiResponse<{
   previous: Permission[];
   current: Permission[];
-}>; 
+}>;

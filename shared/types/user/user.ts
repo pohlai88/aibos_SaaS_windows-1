@@ -1,7 +1,7 @@
-import { Permission, PermissionCheck, getPermissionMeta } from "../roles/permissions";
-import { UserRole } from "./user.enums";
-import { rolePermissionsMap, getRoleMeta } from "../roles/rolePermissionsMap";
-import { UUID, ISODate } from "../primitives";
+import { Permission, PermissionCheck, getPermissionMeta } from '../roles/permissions';
+import { UserRole } from './user.enums';
+import { rolePermissionsMap, getRoleMeta } from '../roles/rolePermissionsMap';
+import { UUID, ISODate } from '../primitives';
 
 export type Email = `${string}@${string}.${string}`;
 
@@ -13,24 +13,24 @@ export interface User {
   email: Email;
   username?: string;
   role: UserRole;
-  
+
   /**
    * Direct permissions assigned to this user (overrides role permissions)
    * Use for special cases where users need permissions beyond their role
    */
   customPermissions?: Permission[];
-  
+
   /**
    * Permissions explicitly denied to this user (overrides both role and custom permissions)
    */
   deniedPermissions?: Permission[];
-  
+
   // Standard user properties
   isActive: boolean;
   emailVerified: boolean;
   createdAt: ISODate;
   updatedAt: ISODate;
-  
+
   // Profile information
   firstName?: string;
   lastName?: string;
@@ -39,7 +39,7 @@ export interface User {
   phoneNumber?: string;
   timezone?: string;
   locale?: string;
-  
+
   // Security and authentication
   lastLoginAt?: ISODate;
   lastPasswordChangeAt?: ISODate;
@@ -47,11 +47,11 @@ export interface User {
   accountLockedUntil?: ISODate;
   mfaEnabled: boolean;
   mfaMethods?: string[];
-  
+
   // Preferences and settings
   preferences?: UserPreferences;
   notificationSettings?: NotificationSettings;
-  
+
   // Metadata
   metadata?: Record<string, unknown>;
 }
@@ -123,22 +123,22 @@ export interface UserWithResolvedPermissions extends User {
    * (role permissions + custom permissions - denied permissions)
    */
   effectivePermissions: Permission[];
-  
+
   /**
    * Permissions grouped by category for easier access
    */
   permissionsByCategory: Record<string, Permission[]>;
-  
+
   /**
    * Permissions grouped by impact level
    */
   permissionsByImpact: Record<'low' | 'medium' | 'high' | 'critical', Permission[]>;
-  
+
   /**
    * Dangerous permissions the user has
    */
   dangerousPermissions: Permission[];
-  
+
   /**
    * Role metadata for display purposes
    */
@@ -159,7 +159,7 @@ export interface CreateUserRequest {
   role: UserRole;
   customPermissions?: Permission[];
   deniedPermissions?: Permission[];
-  
+
   // Profile information
   firstName?: string;
   lastName?: string;
@@ -167,11 +167,11 @@ export interface CreateUserRequest {
   phoneNumber?: string;
   timezone?: string;
   locale?: string;
-  
+
   // Preferences
   preferences?: Partial<UserPreferences>;
   notificationSettings?: Partial<NotificationSettings>;
-  
+
   // Metadata
   metadata?: Record<string, unknown>;
 }
@@ -184,7 +184,7 @@ export interface UpdateUserRequest {
   role?: UserRole;
   customPermissions?: Permission[];
   deniedPermissions?: Permission[];
-  
+
   // Profile information
   firstName?: string;
   lastName?: string;
@@ -193,19 +193,19 @@ export interface UpdateUserRequest {
   phoneNumber?: string;
   timezone?: string;
   locale?: string;
-  
+
   // Status
   isActive?: boolean;
   emailVerified?: boolean;
-  
+
   // Security
   mfaEnabled?: boolean;
   mfaMethods?: string[];
-  
+
   // Preferences
   preferences?: Partial<UserPreferences>;
   notificationSettings?: Partial<NotificationSettings>;
-  
+
   // Metadata
   metadata?: Record<string, unknown>;
 }
@@ -217,12 +217,12 @@ export function resolveUserPermissions(user: User): Permission[] {
   const rolePermissions = rolePermissionsMap[user.role] || [];
   const customPermissions = user.customPermissions || [];
   const deniedPermissions = new Set(user.deniedPermissions || []);
-  
+
   const allPermissions = new Set([...rolePermissions, ...customPermissions]);
-  
+
   // Remove denied permissions
-  deniedPermissions.forEach(p => allPermissions.delete(p));
-  
+  deniedPermissions.forEach((p) => allPermissions.delete(p));
+
   return Array.from(allPermissions);
 }
 
@@ -232,8 +232,8 @@ export function resolveUserPermissions(user: User): Permission[] {
 export function groupUserPermissionsByCategory(user: User): Record<string, Permission[]> {
   const permissions = resolveUserPermissions(user);
   const grouped: Record<string, Permission[]> = {};
-  
-  permissions.forEach(permission => {
+
+  permissions.forEach((permission) => {
     const meta = getPermissionMeta(permission);
     if (meta) {
       const category = meta.category;
@@ -243,7 +243,7 @@ export function groupUserPermissionsByCategory(user: User): Record<string, Permi
       grouped[category].push(permission);
     }
   });
-  
+
   return grouped;
 }
 
@@ -251,13 +251,15 @@ export function groupUserPermissionsByCategory(user: User): Record<string, Permi
  * Groups permissions by impact level for a user
  * Note: Impact levels are not currently supported in the simplified permission system
  */
-export function groupUserPermissionsByImpact(user: User): Record<'low' | 'medium' | 'high' | 'critical', Permission[]> {
+export function groupUserPermissionsByImpact(
+  user: User,
+): Record<'low' | 'medium' | 'high' | 'critical', Permission[]> {
   // Impact levels are not currently supported in the simplified permission system
   return {
     low: [],
     medium: [],
     high: [],
-    critical: []
+    critical: [],
   };
 }
 
@@ -273,14 +275,11 @@ export function getUserDangerousPermissions(user: User): Permission[] {
 /**
  * Checks if a user has a specific permission or set of permissions
  */
-export function userHasPermission(
-  user: User,
-  permission: Permission | Permission[]
-): boolean {
+export function userHasPermission(user: User, permission: Permission | Permission[]): boolean {
   const permissions = [...(rolePermissionsMap[user.role] || []), ...(user.customPermissions || [])];
-    
+
   if (Array.isArray(permission)) {
-    return permission.every(p => permissions.includes(p));
+    return permission.every((p) => permissions.includes(p));
   }
   return permissions.includes(permission);
 }
@@ -298,7 +297,7 @@ export function userHasDangerousPermissions(user: User): boolean {
 export function userCanPerformAction(
   user: User,
   action: 'view' | 'create' | 'edit' | 'delete' | 'manage',
-  resource: string
+  resource: string,
 ): boolean {
   const permissionKey = `${resource.toUpperCase()}_${action.toUpperCase()}` as Permission;
   return userHasPermission(user, permissionKey);
@@ -318,7 +317,7 @@ export function getUserPermissionsByCategory(user: User, category: string): Perm
  */
 export function getUserPermissionsByImpact(
   user: User,
-  impact: 'low' | 'medium' | 'high' | 'critical'
+  impact: 'low' | 'medium' | 'high' | 'critical',
 ): Permission[] {
   // Impact levels are not currently supported in the simplified permission system
   return [];
@@ -327,12 +326,10 @@ export function getUserPermissionsByImpact(
 /**
  * Creates a new user object with resolved permissions
  */
-export function createUserWithResolvedPermissions(
-  user: User
-): UserWithResolvedPermissions {
+export function createUserWithResolvedPermissions(user: User): UserWithResolvedPermissions {
   const effectivePermissions = resolveUserPermissions(user);
   const roleMeta = getRoleMeta(user.role);
-  
+
   return {
     ...user,
     effectivePermissions,
@@ -343,8 +340,8 @@ export function createUserWithResolvedPermissions(
       label: roleMeta.label,
       description: roleMeta.description,
       level: roleMeta.level,
-      dangerous: roleMeta.dangerous || false
-    }
+      dangerous: roleMeta.dangerous || false,
+    },
   };
 }
 
@@ -358,44 +355,44 @@ export function validateUserPermissions(user: User): {
 } {
   const issues: string[] = [];
   const warnings: string[] = [];
-  
+
   // Check for invalid permissions
   const allPermissions = Object.values(Permission);
   const customPermissions = user.customPermissions || [];
   const deniedPermissions = user.deniedPermissions || [];
-  
-  customPermissions.forEach(permission => {
+
+  customPermissions.forEach((permission) => {
     if (!allPermissions.includes(permission)) {
       issues.push(`Invalid custom permission: ${permission}`);
     }
   });
-  
-  deniedPermissions.forEach(permission => {
+
+  deniedPermissions.forEach((permission) => {
     if (!allPermissions.includes(permission)) {
       issues.push(`Invalid denied permission: ${permission}`);
     }
   });
-  
+
   // Check for dangerous permissions
   const dangerousPermissions = getUserDangerousPermissions(user);
   if (dangerousPermissions.length > 0) {
     warnings.push(`User has ${dangerousPermissions.length} dangerous permission(s)`);
   }
-  
+
   // Check for permission conflicts
   const effectivePermissions = resolveUserPermissions(user);
   const rolePermissions = rolePermissionsMap[user.role] || [];
-  
-  deniedPermissions.forEach(permission => {
+
+  deniedPermissions.forEach((permission) => {
     if (!rolePermissions.includes(permission) && !customPermissions.includes(permission)) {
       warnings.push(`Denying permission that user doesn't have: ${permission}`);
     }
   });
-  
+
   return {
     isValid: issues.length === 0,
     issues,
-    warnings
+    warnings,
   };
 }
 
@@ -416,13 +413,13 @@ export function getUserPermissionSummary(user: User): {
   const deniedPermissions = user.deniedPermissions || [];
   const dangerousPermissions = getUserDangerousPermissions(user);
   const categories = Object.keys(groupUserPermissionsByCategory(user));
-  
+
   return {
     totalPermissions: effectivePermissions.length,
     rolePermissions: rolePermissions.length,
     customPermissions: customPermissions.length,
     deniedPermissions: deniedPermissions.length,
     dangerousPermissions: dangerousPermissions.length,
-    categories
+    categories,
   };
-} 
+}

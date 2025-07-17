@@ -2,4 +2,4 @@
 
 // Enterprise-Grade Data Grid
 export { DataGrid } from './DataGrid';
-export type { DataGridProps, Column } from './DataGrid'; 
+export type { DataGridProps, Column } from './DataGrid';

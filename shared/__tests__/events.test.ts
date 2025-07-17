@@ -1,20 +1,20 @@
 /**
  * Event System Tests
- * 
+ *
  * Comprehensive test suite for the AI-BOS event-driven architecture
  */
 
-import { 
-  EventBus, 
-  EventSchemaRegistry, 
-  DeadLetterQueue, 
+import {
+  EventBus,
+  EventSchemaRegistry,
+  DeadLetterQueue,
   MemoryEventPersistence,
   createEventSchema,
   event,
   CommonEventSchemas,
   EventBusConfig,
   EventEnvelope,
-  EventMetadata
+  EventMetadata,
 } from '../lib/events';
 import { z } from 'zod';
 
@@ -29,16 +29,16 @@ describe('Event System', () => {
       name: 'test-event-bus',
       persistence: {
         enabled: true,
-        provider: 'memory'
+        provider: 'memory',
       },
       deadLetterQueue: {
         enabled: true,
         maxRetries: 3,
         ttl: 24 * 60 * 60 * 1000, // 24 hours
-        alertThreshold: 10
+        alertThreshold: 10,
       },
       enableMetrics: true,
-      enableAudit: true
+      enableAudit: true,
     };
 
     eventBus = new EventBus(config);
@@ -53,24 +53,32 @@ describe('Event System', () => {
 
   describe('Event Schema Registry', () => {
     it('should register and retrieve schemas', () => {
-      const schema = createEventSchema('TestEvent', '1.0', z.object({
-        message: z.string(),
-        timestamp: z.number()
-      }));
+      const schema = createEventSchema(
+        'TestEvent',
+        '1.0',
+        z.object({
+          message: z.string(),
+          timestamp: z.number(),
+        }),
+      );
 
       schemaRegistry.register(schema);
       const retrieved = schemaRegistry.get('TestEvent', '1.0');
-      
+
       expect(retrieved).toBeDefined();
       expect(retrieved?.name).toBe('TestEvent');
       expect(retrieved?.version).toBe('1.0');
     });
 
     it('should validate event payloads', () => {
-      const schema = createEventSchema('TestEvent', '1.0', z.object({
-        message: z.string(),
-        timestamp: z.number()
-      }));
+      const schema = createEventSchema(
+        'TestEvent',
+        '1.0',
+        z.object({
+          message: z.string(),
+          timestamp: z.number(),
+        }),
+      );
 
       schemaRegistry.register(schema);
 
@@ -96,16 +104,16 @@ describe('Event System', () => {
     it('should emit and handle events', async () => {
       const eventName = 'TestEvent';
       const payload = { message: 'Hello World', timestamp: Date.now() };
-      
+
       let receivedEvent: EventEnvelope | null = null;
-      
+
       const subscriptionId = eventBus.subscribe(eventName, (event) => {
         receivedEvent = event;
       });
 
       const eventId = await eventBus.emit(eventName, payload, {
         tenantId: 'test-tenant',
-        userId: 'test-user'
+        userId: 'test-user',
       });
 
       expect(eventId).toBeDefined();
@@ -120,13 +128,13 @@ describe('Event System', () => {
     it('should handle multiple subscribers', async () => {
       const eventName = 'TestEvent';
       const payload = { message: 'Hello World' };
-      
+
       const receivedEvents: EventEnvelope[] = [];
-      
+
       const sub1 = eventBus.subscribe(eventName, (event) => {
         receivedEvents.push(event);
       });
-      
+
       const sub2 = eventBus.subscribe(eventName, (event) => {
         receivedEvents.push(event);
       });
@@ -144,26 +152,30 @@ describe('Event System', () => {
     it('should handle event filters', async () => {
       const eventName = 'TestEvent';
       const payload = { message: 'Hello World' };
-      
+
       let receivedCount = 0;
-      
+
       // Subscribe with filter
-      const subscriptionId = eventBus.subscribe(eventName, (event) => {
-        receivedCount++;
-      }, {
-        filter: {
-          tenantId: 'specific-tenant'
-        }
-      });
+      const subscriptionId = eventBus.subscribe(
+        eventName,
+        (event) => {
+          receivedCount++;
+        },
+        {
+          filter: {
+            tenantId: 'specific-tenant',
+          },
+        },
+      );
 
       // Emit event for different tenant
       await eventBus.emit(eventName, payload, {
-        tenantId: 'other-tenant'
+        tenantId: 'other-tenant',
       });
 
       // Emit event for specific tenant
       await eventBus.emit(eventName, payload, {
-        tenantId: 'specific-tenant'
+        tenantId: 'specific-tenant',
       });
 
       expect(receivedCount).toBe(1);
@@ -172,10 +184,14 @@ describe('Event System', () => {
     });
 
     it('should handle event validation', async () => {
-      const schema = createEventSchema('ValidatedEvent', '1.0', z.object({
-        message: z.string().min(1),
-        count: z.number().positive()
-      }));
+      const schema = createEventSchema(
+        'ValidatedEvent',
+        '1.0',
+        z.object({
+          message: z.string().min(1),
+          count: z.number().positive(),
+        }),
+      );
 
       eventBus.registerSchema(schema);
 
@@ -186,8 +202,9 @@ describe('Event System', () => {
 
       // Invalid event
       const invalidPayload = { message: '', count: -1 };
-      await expect(eventBus.emit('ValidatedEvent', invalidPayload))
-        .rejects.toThrow('Event validation failed');
+      await expect(eventBus.emit('ValidatedEvent', invalidPayload)).rejects.toThrow(
+        'Event validation failed',
+      );
     });
 
     it('should provide event statistics', async () => {
@@ -215,14 +232,14 @@ describe('Event System', () => {
           tenantId: 'test-tenant',
           appId: 'test-app',
           version: '1.0',
-          source: 'test'
+          source: 'test',
         },
         payload: { message: 'test' },
-        schema: 'TestEvent:1.0'
+        schema: 'TestEvent:1.0',
       };
 
       await persistence.store(event);
-      
+
       const retrieved = await persistence.retrieve('test-event-1');
       expect(retrieved).toBeDefined();
       expect(retrieved?.payload).toEqual(event.payload);
@@ -237,10 +254,10 @@ describe('Event System', () => {
             tenantId: 'tenant-1',
             appId: 'app-1',
             version: '1.0',
-            source: 'test'
+            source: 'test',
           },
           payload: { message: 'test1' },
-          schema: 'TestEvent:1.0'
+          schema: 'TestEvent:1.0',
         },
         {
           metadata: {
@@ -249,11 +266,11 @@ describe('Event System', () => {
             tenantId: 'tenant-2',
             appId: 'app-1',
             version: '1.0',
-            source: 'test'
+            source: 'test',
           },
           payload: { message: 'test2' },
-          schema: 'TestEvent:1.0'
-        }
+          schema: 'TestEvent:1.0',
+        },
       ];
 
       for (const event of events) {
@@ -273,14 +290,14 @@ describe('Event System', () => {
           tenantId: 'test-tenant',
           appId: 'test-app',
           version: '1.0',
-          source: 'test'
+          source: 'test',
         },
         payload: { message: 'old' },
-        schema: 'TestEvent:1.0'
+        schema: 'TestEvent:1.0',
       };
 
       await persistence.store(oldEvent);
-      
+
       const deletedCount = await persistence.cleanup(Date.now() - 12 * 60 * 60 * 1000); // 12 hours ago
       expect(deletedCount).toBe(1);
 
@@ -298,10 +315,10 @@ describe('Event System', () => {
           tenantId: 'test-tenant',
           appId: 'test-app',
           version: '1.0',
-          source: 'test'
+          source: 'test',
         },
         payload: { message: 'failed' },
-        schema: 'TestEvent:1.0'
+        schema: 'TestEvent:1.0',
       };
 
       const error = new Error('Processing failed');
@@ -321,10 +338,10 @@ describe('Event System', () => {
           tenantId: 'test-tenant',
           appId: 'test-app',
           version: '1.0',
-          source: 'test'
+          source: 'test',
         },
         payload: { message: 'retry' },
-        schema: 'TestEvent:1.0'
+        schema: 'TestEvent:1.0',
       };
 
       const error = new Error('Processing failed');
@@ -361,10 +378,10 @@ describe('Event System', () => {
           tenantId: 'test-tenant',
           appId: 'test-app',
           version: '1.0',
-          source: 'test'
+          source: 'test',
         },
         payload: { message: 'max-retry' },
-        schema: 'TestEvent:1.0'
+        schema: 'TestEvent:1.0',
       };
 
       const error = new Error('Processing failed');
@@ -388,7 +405,7 @@ describe('Event System', () => {
   describe('Event Builder', () => {
     it('should build events with fluent API', async () => {
       const payload = { message: 'Hello World' };
-      
+
       const eventId = await event('TestEvent', payload)
         .tenant('test-tenant')
         .user('test-user')
@@ -407,7 +424,7 @@ describe('Event System', () => {
       });
 
       // Wait for event processing
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       expect(receivedEvent).toBeDefined();
       expect(receivedEvent?.metadata.tenantId).toBe('test-tenant');
@@ -430,13 +447,13 @@ describe('Event System', () => {
         userId: 'user-123',
         email: 'test@example.com',
         tenantId: 'tenant-123',
-        role: 'user'
+        role: 'user',
       };
 
       const invalidPayload = {
         userId: 'user-123',
         email: 'invalid-email',
-        tenantId: 'tenant-123'
+        tenantId: 'tenant-123',
         // missing role
       };
 
@@ -453,7 +470,7 @@ describe('Event System', () => {
         appId: 'app-123',
         manifestId: 'manifest-123',
         tenantId: 'tenant-123',
-        version: '1.0.0'
+        version: '1.0.0',
       };
 
       expect(() => appInstalledSchema.payload.parse(validPayload)).not.toThrow();
@@ -468,7 +485,7 @@ describe('Event System', () => {
         entityId: 'entity-123',
         entityType: 'User',
         data: { name: 'John Doe' },
-        tenantId: 'tenant-123'
+        tenantId: 'tenant-123',
       };
 
       expect(() => entityCreatedSchema.payload.parse(validPayload)).not.toThrow();
@@ -478,10 +495,14 @@ describe('Event System', () => {
   describe('Integration Tests', () => {
     it('should handle complete event lifecycle', async () => {
       // Register schema
-      const schema = createEventSchema('LifecycleEvent', '1.0', z.object({
-        step: z.string(),
-        data: z.any()
-      }));
+      const schema = createEventSchema(
+        'LifecycleEvent',
+        '1.0',
+        z.object({
+          step: z.string(),
+          data: z.any(),
+        }),
+      );
       eventBus.registerSchema(schema);
 
       // Subscribe to events
@@ -509,7 +530,7 @@ describe('Event System', () => {
         .emit(eventBus);
 
       // Wait for processing
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Verify events
       expect(receivedEvents).toHaveLength(3);
@@ -532,9 +553,9 @@ describe('Event System', () => {
         name: 'persistence-test',
         persistence: {
           enabled: true,
-          provider: 'memory'
+          provider: 'memory',
         },
-        enableMetrics: false
+        enableMetrics: false,
       };
 
       const persistentEventBus = new EventBus(config);
@@ -549,7 +570,7 @@ describe('Event System', () => {
         enabled: true,
         batchSize: 10,
         concurrency: 1,
-        filter: { tenantId: 'tenant-1' }
+        filter: { tenantId: 'tenant-1' },
       });
 
       expect(replayCount).toBe(2);
@@ -557,4 +578,4 @@ describe('Event System', () => {
       await persistentEventBus.destroy();
     });
   });
-}); 
+});

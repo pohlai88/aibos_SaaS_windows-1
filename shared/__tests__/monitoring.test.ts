@@ -1,12 +1,12 @@
-import { 
-  PerformanceMonitor, 
-  HealthMonitor, 
-  ApplicationMonitor, 
+import {
+  PerformanceMonitor,
+  HealthMonitor,
+  ApplicationMonitor,
   monitoring,
   MetricType,
   HealthStatus,
   requestMonitoring,
-  monitorDatabaseOperation
+  monitorDatabaseOperation,
 } from '../lib/monitoring';
 
 describe('PerformanceMonitor', () => {
@@ -27,7 +27,7 @@ describe('PerformanceMonitor', () => {
         type: MetricType.COUNTER,
         count: 2,
         sum: 3,
-        lastValue: 2
+        lastValue: 2,
       });
     });
 
@@ -72,7 +72,7 @@ describe('PerformanceMonitor', () => {
 
     it('should calculate correct statistics', () => {
       const values = [10, 20, 30, 40, 50];
-      values.forEach(value => {
+      values.forEach((value) => {
         performanceMonitor.recordHistogram('test_metric', value);
       });
 
@@ -90,7 +90,7 @@ describe('PerformanceMonitor', () => {
       performanceMonitor.recordHistogram('test_histogram', 100);
 
       const prometheusMetrics = performanceMonitor.getPrometheusMetrics();
-      
+
       expect(prometheusMetrics).toContain('# HELP test_counter');
       expect(prometheusMetrics).toContain('# TYPE test_counter counter');
       expect(prometheusMetrics).toContain('test_counter{label="value"}');
@@ -125,11 +125,11 @@ describe('HealthMonitor', () => {
       const mockCheck = jest.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'OK',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       healthMonitor.registerCheck('test_check', mockCheck);
-      
+
       // Verify check is registered by running checks
       healthMonitor.runChecks();
       expect(mockCheck).toHaveBeenCalled();
@@ -141,20 +141,20 @@ describe('HealthMonitor', () => {
       const check1 = jest.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'Check 1 OK',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       const check2 = jest.fn().mockResolvedValue({
         status: HealthStatus.DEGRADED,
         message: 'Check 2 degraded',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       healthMonitor.registerCheck('check1', check1);
       healthMonitor.registerCheck('check2', check2);
 
       const results = await healthMonitor.runChecks();
-      
+
       expect(results.size).toBe(2);
       expect(check1).toHaveBeenCalled();
       expect(check2).toHaveBeenCalled();
@@ -177,7 +177,7 @@ describe('HealthMonitor', () => {
       const healthyCheck = jest.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'OK',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       healthMonitor.registerCheck('healthy_check', healthyCheck);
@@ -190,13 +190,13 @@ describe('HealthMonitor', () => {
       const healthyCheck = jest.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'OK',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       const degradedCheck = jest.fn().mockResolvedValue({
         status: HealthStatus.DEGRADED,
         message: 'Degraded',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       healthMonitor.registerCheck('healthy_check', healthyCheck);
@@ -210,13 +210,13 @@ describe('HealthMonitor', () => {
       const healthyCheck = jest.fn().mockResolvedValue({
         status: HealthStatus.HEALTHY,
         message: 'OK',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       const unhealthyCheck = jest.fn().mockResolvedValue({
         status: HealthStatus.UNHEALTHY,
         message: 'Failed',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       healthMonitor.registerCheck('healthy_check', healthyCheck);
@@ -289,7 +289,7 @@ describe('ApplicationMonitor', () => {
         status: expect.any(String),
         uptime: expect.any(Number),
         performance: expect.any(Object),
-        health: expect.any(Map)
+        health: expect.any(Map),
       });
     });
   });
@@ -297,9 +297,9 @@ describe('ApplicationMonitor', () => {
   describe('Metrics Endpoint', () => {
     it('should return Prometheus format metrics', () => {
       appMonitor.recordApiRequest('GET', '/api/test', 200, 100);
-      
+
       const metrics = appMonitor.getMetricsEndpoint();
-      
+
       expect(metrics).toContain('# HELP api_requests_total');
       expect(metrics).toContain('# TYPE api_requests_total counter');
       expect(metrics).toContain('api_requests_total');
@@ -314,7 +314,7 @@ describe('ApplicationMonitor', () => {
         status: expect.any(String),
         timestamp: expect.any(Number),
         uptime: expect.any(Number),
-        checks: expect.any(Object)
+        checks: expect.any(Object),
       });
     });
   });
@@ -339,12 +339,12 @@ describe('Request Monitoring Middleware', () => {
   beforeEach(() => {
     mockReq = {
       method: 'GET',
-      path: '/api/test'
+      path: '/api/test',
     };
 
     mockRes = {
       statusCode: 200,
-      end: jest.fn()
+      end: jest.fn(),
     };
 
     mockNext = jest.fn();
@@ -377,8 +377,9 @@ describe('Database Monitoring Wrapper', () => {
   it('should monitor failed database operations', async () => {
     const mockOperation = jest.fn().mockRejectedValue(new Error('Database error'));
 
-    await expect(monitorDatabaseOperation('SELECT', 'users', mockOperation))
-      .rejects.toThrow('Database error');
+    await expect(monitorDatabaseOperation('SELECT', 'users', mockOperation)).rejects.toThrow(
+      'Database error',
+    );
 
     expect(mockOperation).toHaveBeenCalled();
   });
@@ -388,13 +389,13 @@ describe('Health Check Implementations', () => {
   describe('Memory Health Check', () => {
     it('should return healthy for normal memory usage', async () => {
       const healthMonitor = new HealthMonitor();
-      
+
       // Mock process.memoryUsage to return normal values
       const originalMemoryUsage = process.memoryUsage;
       process.memoryUsage = jest.fn().mockReturnValue({
         heapUsed: 50 * 1024 * 1024, // 50MB
         heapTotal: 100 * 1024 * 1024, // 100MB
-        rss: 80 * 1024 * 1024 // 80MB
+        rss: 80 * 1024 * 1024, // 80MB
       });
 
       healthMonitor.registerCheck('memory', () => {
@@ -422,8 +423,8 @@ describe('Health Check Implementations', () => {
             heapUsed: `${heapUsedMB.toFixed(2)} MB`,
             heapTotal: `${heapTotalMB.toFixed(2)} MB`,
             heapUsage: `${heapUsagePercent.toFixed(2)}%`,
-            rss: `${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`
-          }
+            rss: `${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`,
+          },
         };
       });
 
@@ -437,4 +438,4 @@ describe('Health Check Implementations', () => {
       process.memoryUsage = originalMemoryUsage;
     });
   });
-}); 
+});

@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit security validation..."
+
+# Run security validation script if it exists
+if [ -f "scripts/validate-secrets.sh" ]; then
+  chmod +x scripts/validate-secrets.sh
+  ./scripts/validate-secrets.sh
+fi
+
+# Check for build artifacts in staged files
+if git diff --cached --name-only | grep -E "(node_modules|dist|build|\.next|coverage)" > /dev/null; then
+  echo "❌ Build artifacts detected in staged files!"
+  echo "Please remove them with: git reset HEAD <file>"
+  exit 1
+fi
+
+# Check for environment files in staged files
+if git diff --cached --name-only | grep -E "\.(env|local|secret)" > /dev/null; then
+  echo "❌ Environment files detected in staged files!"
+  echo "Please remove them with: git reset HEAD <file>"
+  exit 1
+fi
+
+echo "✅ Pre-commit validation passed" 

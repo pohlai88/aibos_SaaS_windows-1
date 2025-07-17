@@ -1,4 +1,4 @@
-import { SubscriptionPlan, BillingInterval } from "../types/billing/billing.enums";
+import { SubscriptionPlan, BillingInterval } from '../types/billing/billing.enums';
 
 /**
  * Centralized mapping of Stripe product IDs to internal SubscriptionPlan values.
@@ -70,4 +70,4 @@ export function assertNeverPlan(plan: never): never {
 export const TESTING_ONLY = {
   getStripeProductMap: () => ({ ...STRIPE_PRODUCT_MAP }),
   getStripeIntervalMap: () => ({ ...STRIPE_INTERVAL_MAP }),
-}; 
+};

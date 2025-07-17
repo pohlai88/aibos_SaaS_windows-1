@@ -1,10 +1,6 @@
-import { z } from "zod";
-import { 
-  SubscriptionPlan, 
-  BillingInterval, 
-  PlanFeature 
-} from "../types/billing/billing.enums";
-import { ISODate } from "../types/primitives";
+import { z } from 'zod';
+import { SubscriptionPlan, BillingInterval, PlanFeature } from '../types/billing/billing.enums';
+import { ISODate } from '../types/primitives';
 
 /**
  * Billing validation schemas
@@ -33,13 +29,13 @@ export const PlanFeatureSchema = z.nativeEnum(PlanFeature);
  * Billing address schema
  */
 export const BillingAddressSchema = z.object({
-  line1: z.string().min(1, "Address line 1 is required"),
+  line1: z.string().min(1, 'Address line 1 is required'),
   line2: z.string().optional(),
-  city: z.string().min(1, "City is required"),
-  state: z.string().length(2, "State must be 2 characters").optional(),
-  country: z.string().length(2, "Country must be 2 characters"),
-  postalCode: z.string().min(1, "Postal code is required"),
-  isCommercial: z.boolean()
+  city: z.string().min(1, 'City is required'),
+  state: z.string().length(2, 'State must be 2 characters').optional(),
+  country: z.string().length(2, 'Country must be 2 characters'),
+  postalCode: z.string().min(1, 'Postal code is required'),
+  isCommercial: z.boolean(),
 });
 
 /**
@@ -51,7 +47,7 @@ export const PaymentMethodSchema = z.object({
   last4: z.string().length(4).optional(),
   expiryMonth: z.number().min(1).max(12).optional(),
   expiryYear: z.number().min(new Date().getFullYear()).optional(),
-  isDefault: z.boolean().default(false)
+  isDefault: z.boolean().default(false),
 });
 
 /**
@@ -59,9 +55,9 @@ export const PaymentMethodSchema = z.object({
  */
 export const TaxInfoSchema = z.object({
   type: z.enum(['vat', 'gst', 'tax_id']),
-  number: z.string().min(1, "Tax number is required"),
-  country: z.string().length(2, "Country must be 2 characters"),
-  isValid: z.boolean().default(false)
+  number: z.string().min(1, 'Tax number is required'),
+  country: z.string().length(2, 'Country must be 2 characters'),
+  isValid: z.boolean().default(false),
 });
 
 /**
@@ -73,7 +69,7 @@ export const CreateSubscriptionSchema = z.object({
   billingInterval: BillingIntervalSchema,
   paymentMethodId: UUIDSchema.optional(),
   trialDays: z.number().min(0).max(30).optional(),
-  metadata: z.record(z.unknown()).optional()
+  metadata: z.record(z.unknown()).optional(),
 });
 
 /**
@@ -83,7 +79,7 @@ export const UpdateSubscriptionSchema = z.object({
   plan: SubscriptionPlanSchema.optional(),
   billingInterval: BillingIntervalSchema.optional(),
   cancelAtPeriodEnd: z.boolean().optional(),
-  metadata: z.record(z.unknown()).optional()
+  metadata: z.record(z.unknown()).optional(),
 });
 
 /**
@@ -96,7 +92,7 @@ export const PlanChangeRequestSchema = z.object({
   billingInterval: BillingIntervalSchema,
   effectiveDate: z.enum(['immediate', 'end_of_period']),
   reason: z.string().max(500).optional(),
-  requestedBy: UUIDSchema
+  requestedBy: UUIDSchema,
 });
 
 /**
@@ -110,9 +106,9 @@ export const BillingSettingsSchema = z.object({
   taxInfo: TaxInfoSchema.optional(),
   invoiceSettings: z.object({
     sendInvoices: z.boolean(),
-    invoiceEmail: z.string().email("Invalid invoice email"),
-    invoicePrefix: z.string().min(1).max(10, "Invoice prefix too long")
-  })
+    invoiceEmail: z.string().email('Invalid invoice email'),
+    invoicePrefix: z.string().min(1).max(10, 'Invoice prefix too long'),
+  }),
 });
 
 /**
@@ -120,11 +116,11 @@ export const BillingSettingsSchema = z.object({
  */
 export const UsageSchema = z.object({
   tenantId: UUIDSchema,
-  period: z.string().regex(/^\d{4}-\d{2}$/, "Period must be YYYY-MM format"),
+  period: z.string().regex(/^\d{4}-\d{2}$/, 'Period must be YYYY-MM format'),
   metric: z.enum(['api_calls', 'storage_gb', 'seats']),
   usage: z.number().min(0),
   limit: z.number().min(0),
-  overage: z.number().min(0)
+  overage: z.number().min(0),
 });
 
 /**
@@ -133,16 +129,16 @@ export const UsageSchema = z.object({
 export const InvoiceSchema = z.object({
   subscriptionId: UUIDSchema,
   tenantId: UUIDSchema,
-  number: z.string().min(1, "Invoice number is required"),
+  number: z.string().min(1, 'Invoice number is required'),
   status: z.enum(['draft', 'open', 'paid', 'void', 'uncollectible']),
-  amount: z.number().min(0, "Amount must be non-negative"),
-  currency: z.string().length(3, "Currency must be 3 characters"),
-  amountPaid: z.number().min(0, "Amount paid must be non-negative"),
-  amountDue: z.number().min(0, "Amount due must be non-negative"),
+  amount: z.number().min(0, 'Amount must be non-negative'),
+  currency: z.string().length(3, 'Currency must be 3 characters'),
+  amountPaid: z.number().min(0, 'Amount paid must be non-negative'),
+  amountDue: z.number().min(0, 'Amount due must be non-negative'),
   periodStart: ISODateSchema,
   periodEnd: ISODateSchema,
   dueDate: ISODateSchema,
-  paidAt: ISODateSchema.optional()
+  paidAt: ISODateSchema.optional(),
 });
 
 /**
@@ -156,14 +152,14 @@ export const SubscriptionSchema = z.object({
   currentPeriodStart: ISODateSchema,
   currentPeriodEnd: ISODateSchema,
   billingInterval: BillingIntervalSchema,
-  amount: z.number().min(0, "Amount must be non-negative"),
-  currency: z.string().length(3, "Currency must be 3 characters"),
+  amount: z.number().min(0, 'Amount must be non-negative'),
+  currency: z.string().length(3, 'Currency must be 3 characters'),
   cancelAtPeriodEnd: z.boolean(),
   canceledAt: ISODateSchema.optional(),
   trialStart: ISODateSchema.optional(),
   trialEnd: ISODateSchema.optional(),
   createdAt: ISODateSchema,
-  updatedAt: ISODateSchema
+  updatedAt: ISODateSchema,
 });
 
 /**
@@ -175,12 +171,12 @@ export const SubscriptionSchema = z.object({
  */
 export function validatePlanUpgrade(
   currentPlan: SubscriptionPlan,
-  newPlan: SubscriptionPlan
+  newPlan: SubscriptionPlan,
 ): { isValid: boolean; error?: string } {
   const planHierarchy = {
     [SubscriptionPlan.FREE]: 0,
     [SubscriptionPlan.PRO]: 1,
-    [SubscriptionPlan.ENTERPRISE]: 2
+    [SubscriptionPlan.ENTERPRISE]: 2,
   };
 
   const currentLevel = planHierarchy[currentPlan];
@@ -189,7 +185,7 @@ export function validatePlanUpgrade(
   if (newLevel <= currentLevel) {
     return {
       isValid: false,
-      error: `Cannot upgrade from ${currentPlan} to ${newPlan}`
+      error: `Cannot upgrade from ${currentPlan} to ${newPlan}`,
     };
   }
 
@@ -201,13 +197,13 @@ export function validatePlanUpgrade(
  */
 export function validateBillingInterval(
   plan: SubscriptionPlan,
-  interval: BillingInterval
+  interval: BillingInterval,
 ): { isValid: boolean; error?: string } {
   // Free plan can only be monthly
   if (plan === SubscriptionPlan.FREE && interval === BillingInterval.YEARLY) {
     return {
       isValid: false,
-      error: "Free plan only supports monthly billing"
+      error: 'Free plan only supports monthly billing',
     };
   }
 
@@ -219,7 +215,7 @@ export function validateBillingInterval(
  */
 export function validateUsage(
   plan: SubscriptionPlan,
-  usage: { seats: number; storageGB: number; apiCalls: number }
+  usage: { seats: number; storageGB: number; apiCalls: number },
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
   const planMetadata = require('../types/billing/billing.enums').PlanMetadataMap[plan];
@@ -229,15 +225,19 @@ export function validateUsage(
   }
 
   if (planMetadata.limits.storageGB && usage.storageGB > planMetadata.limits.storageGB) {
-    errors.push(`Storage usage (${usage.storageGB}GB) exceeds plan limit (${planMetadata.limits.storageGB}GB)`);
+    errors.push(
+      `Storage usage (${usage.storageGB}GB) exceeds plan limit (${planMetadata.limits.storageGB}GB)`,
+    );
   }
 
   if (planMetadata.limits.apiCalls && usage.apiCalls > planMetadata.limits.apiCalls) {
-    errors.push(`API calls usage (${usage.apiCalls}) exceeds plan limit (${planMetadata.limits.apiCalls})`);
+    errors.push(
+      `API calls usage (${usage.apiCalls}) exceeds plan limit (${planMetadata.limits.apiCalls})`,
+    );
   }
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
-} 
+}

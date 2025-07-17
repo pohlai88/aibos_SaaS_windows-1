@@ -1,19 +1,19 @@
 import React, { useState, useCallback } from 'react';
 
 // Types
-export type FieldType = 
-  | 'text' 
-  | 'email' 
-  | 'password' 
-  | 'number' 
-  | 'tel' 
-  | 'url' 
-  | 'textarea' 
-  | 'select' 
-  | 'radio' 
-  | 'checkbox' 
-  | 'date' 
-  | 'file' 
+export type FieldType =
+  | 'text'
+  | 'email'
+  | 'password'
+  | 'number'
+  | 'tel'
+  | 'url'
+  | 'textarea'
+  | 'select'
+  | 'radio'
+  | 'checkbox'
+  | 'date'
+  | 'file'
   | 'hidden';
 
 export type FieldOption = {
@@ -85,7 +85,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   showSubmit = true,
   submitLabel = 'Submit',
   showReset = false,
-  resetLabel = 'Reset'
+  resetLabel = 'Reset',
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
@@ -125,48 +125,54 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     return undefined;
   }, []);
 
-  const handleFieldChange = useCallback((fieldId: string, value: any) => {
-    const newValues = { ...values, [fieldId]: value };
-    onValuesChange?.(newValues);
+  const handleFieldChange = useCallback(
+    (fieldId: string, value: any) => {
+      const newValues = { ...values, [fieldId]: value };
+      onValuesChange?.(newValues);
 
-    // Validate the field
-    const field = fields.find(f => f.id === fieldId);
-    if (field) {
-      const error = validateField(field, value);
-      setErrors(prev => ({
-        ...prev,
-        [fieldId]: error || ''
-      }));
-    }
-  }, [values, onValuesChange, fields, validateField]);
-
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validate all fields
-    const newErrors: Record<string, string> = {};
-    let hasErrors = false;
-
-    fields.forEach(field => {
-      if (field.hidden || field.type === 'hidden') return;
-      
-      const error = validateField(field, values[field.id]);
-      if (error) {
-        newErrors[field.id] = error;
-        hasErrors = true;
+      // Validate the field
+      const field = fields.find((f) => f.id === fieldId);
+      if (field) {
+        const error = validateField(field, value);
+        setErrors((prev) => ({
+          ...prev,
+          [fieldId]: error || '',
+        }));
       }
-    });
+    },
+    [values, onValuesChange, fields, validateField],
+  );
 
-    setErrors(newErrors);
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
 
-    if (!hasErrors) {
-      onSubmit?.(values);
-    }
-  }, [fields, values, validateField, onSubmit]);
+      // Validate all fields
+      const newErrors: Record<string, string> = {};
+      let hasErrors = false;
+
+      fields.forEach((field) => {
+        if (field.hidden || field.type === 'hidden') return;
+
+        const error = validateField(field, values[field.id]);
+        if (error) {
+          newErrors[field.id] = error;
+          hasErrors = true;
+        }
+      });
+
+      setErrors(newErrors);
+
+      if (!hasErrors) {
+        onSubmit?.(values);
+      }
+    },
+    [fields, values, validateField, onSubmit],
+  );
 
   const handleReset = useCallback(() => {
     const resetValues: Record<string, any> = {};
-    fields.forEach(field => {
+    fields.forEach((field) => {
       resetValues[field.id] = field.defaultValue || '';
     });
     onValuesChange?.(resetValues);
@@ -174,7 +180,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   }, [fields, onValuesChange]);
 
   const toggleSection = useCallback((sectionId: string) => {
-    setCollapsedSections(prev => {
+    setCollapsedSections((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(sectionId)) {
         newSet.delete(sectionId);
@@ -185,39 +191,42 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     });
   }, []);
 
-  const isFieldVisible = useCallback((field: FormField): boolean => {
-    if (field.hidden) return false;
-    
-    if (field.dependsOn) {
-      const dependentValue = values[field.dependsOn];
-      return dependentValue === field.dependsOnValue;
-    }
-    
-    return true;
-  }, [values]);
+  const isFieldVisible = useCallback(
+    (field: FormField): boolean => {
+      if (field.hidden) return false;
+
+      if (field.dependsOn) {
+        const dependentValue = values[field.dependsOn];
+        return dependentValue === field.dependsOnValue;
+      }
+
+      return true;
+    },
+    [values],
+  );
 
   const getFormClasses = () => {
-    const baseClasses = "space-y-6";
-    
+    const baseClasses = 'space-y-6';
+
     const variantClasses = {
-      default: "",
-      compact: "space-y-4",
-      spacious: "space-y-8"
+      default: '',
+      compact: 'space-y-4',
+      spacious: 'space-y-8',
     };
-    
+
     return `${baseClasses} ${variantClasses[variant]} ${className}`;
   };
 
   const getFieldWrapperClasses = (field: FormField) => {
-    const baseClasses = "space-y-2";
-    
+    const baseClasses = 'space-y-2';
+
     const widthClasses = {
-      full: "col-span-1",
-      half: "col-span-1 md:col-span-2",
-      third: "col-span-1 md:col-span-3",
-      quarter: "col-span-1 md:col-span-4"
+      full: 'col-span-1',
+      half: 'col-span-1 md:col-span-2',
+      third: 'col-span-1 md:col-span-3',
+      quarter: 'col-span-1 md:col-span-4',
     };
-    
+
     return `${baseClasses} ${widthClasses[field.width || 'full']}`;
   };
 
@@ -231,15 +240,18 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       id: field.id,
       name: field.id,
       value: fieldValue,
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+      onChange: (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+      ) => {
+        const value =
+          e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
         handleFieldChange(field.id, value);
       },
       disabled: field.disabled || loading,
       className: `w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
         fieldError ? 'border-red-300' : 'border-gray-300'
       } ${field.disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`,
-      placeholder: field.placeholder
+      placeholder: field.placeholder,
     };
 
     switch (field.type) {
@@ -256,12 +268,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         return (
           <select {...commonProps}>
             <option value="">Select {field.label}</option>
-            {field.options?.map(option => (
-              <option
-                key={option.value}
-                value={option.value}
-                disabled={option.disabled}
-              >
+            {field.options?.map((option) => (
+              <option key={option.value} value={option.value} disabled={option.disabled}>
                 {option.label}
               </option>
             ))}
@@ -271,7 +279,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       case 'radio':
         return (
           <div className="space-y-2">
-            {field.options?.map(option => (
+            {field.options?.map((option) => (
               <label key={option.value} className="flex items-center space-x-2">
                 <input
                   type="radio"
@@ -330,7 +338,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   const renderSection = (section: FormSection) => {
-    const sectionFields = fields.filter(field => field.section === section.id);
+    const sectionFields = fields.filter((field) => field.section === section.id);
     const isCollapsed = collapsedSections.has(section.id);
 
     if (sectionFields.length === 0) return null;
@@ -354,10 +362,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
             </button>
           )}
         </div>
-        
+
         {(!section.collapsible || !isCollapsed) && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {sectionFields.map(field => (
+            {sectionFields.map((field) => (
               <div key={field.id} className={getFieldWrapperClasses(field)}>
                 <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
                   {field.label}
@@ -379,25 +387,21 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   const renderUnsectionedFields = () => {
-    const unsectionedFields = fields.filter(field => !field.section);
-    
+    const unsectionedFields = fields.filter((field) => !field.section);
+
     if (unsectionedFields.length === 0) return null;
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {unsectionedFields.map(field => (
+        {unsectionedFields.map((field) => (
           <div key={field.id} className={getFieldWrapperClasses(field)}>
             <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
               {field.label}
               {field.validation?.required && <span className="text-red-500 ml-1">*</span>}
             </label>
-            {field.description && (
-              <p className="text-xs text-gray-500 mt-1">{field.description}</p>
-            )}
+            {field.description && <p className="text-xs text-gray-500 mt-1">{field.description}</p>}
             {renderField(field)}
-            {errors[field.id] && (
-              <p className="text-sm text-red-600 mt-1">{errors[field.id]}</p>
-            )}
+            {errors[field.id] && <p className="text-sm text-red-600 mt-1">{errors[field.id]}</p>}
           </div>
         ))}
       </div>
@@ -408,10 +412,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     <form onSubmit={handleSubmit} className={getFormClasses()}>
       {/* Render sections */}
       {sections.map(renderSection)}
-      
+
       {/* Render unsectioned fields */}
       {renderUnsectionedFields()}
-      
+
       {/* Form actions */}
       {(showSubmit || showReset) && (
         <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
@@ -440,4 +444,4 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   );
 };
 
-export default FormBuilder; 
+export default FormBuilder;

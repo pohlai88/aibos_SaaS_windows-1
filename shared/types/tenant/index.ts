@@ -1,3 +1,3 @@
-export * from "./tenant";
-export * from "./tenant.enums";
-export * from "./tenant.api"; 
+export * from './tenant';
+export * from './tenant.enums';
+export * from './tenant.api';

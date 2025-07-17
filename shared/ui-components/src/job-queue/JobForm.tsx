@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Plus, 
-  Save, 
-  X, 
-  Clock, 
+import {
+  Plus,
+  Save,
+  X,
+  Clock,
   AlertTriangle,
   Settings,
   Tag,
   FileText,
-  Calendar
+  Calendar,
 } from 'lucide-react';
 import { JobPriority } from './types';
 
@@ -40,7 +40,7 @@ const priorityOptions = [
   { value: JobPriority.NORMAL, label: 'Normal', description: 'Standard tasks' },
   { value: JobPriority.HIGH, label: 'High', description: 'Important tasks' },
   { value: JobPriority.URGENT, label: 'Urgent', description: 'Time-sensitive tasks' },
-  { value: JobPriority.CRITICAL, label: 'Critical', description: 'System-critical tasks' }
+  { value: JobPriority.CRITICAL, label: 'Critical', description: 'System-critical tasks' },
 ];
 
 export const JobForm: React.FC<JobFormProps> = ({
@@ -50,7 +50,7 @@ export const JobForm: React.FC<JobFormProps> = ({
   error = null,
   className = '',
   initialData,
-  showAdvanced = false
+  showAdvanced = false,
 }) => {
   const [formData, setFormData] = useState<JobFormData>({
     name: '',
@@ -62,7 +62,7 @@ export const JobForm: React.FC<JobFormProps> = ({
     timeout: 30000,
     tags: [],
     metadata: {},
-    ...initialData
+    ...initialData,
   });
 
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(showAdvanced);
@@ -73,13 +73,13 @@ export const JobForm: React.FC<JobFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       // Parse JSON data
       const parsedData = JSON.parse(dataInput);
       const jobData = { ...formData, data: parsedData };
       await onSubmit(jobData);
-      
+
       // Reset form on success
       setFormData({
         name: '',
@@ -90,7 +90,7 @@ export const JobForm: React.FC<JobFormProps> = ({
         retryDelay: 5000,
         timeout: 30000,
         tags: [],
-        metadata: {}
+        metadata: {},
       });
       setDataInput('{}');
     } catch (err) {
@@ -100,29 +100,29 @@ export const JobForm: React.FC<JobFormProps> = ({
 
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, newTag.trim()]
+        tags: [...prev.tags, newTag.trim()],
       }));
       setNewTag('');
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
   const addMetadata = () => {
     if (newMetadataKey.trim() && newMetadataValue.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         metadata: {
           ...prev.metadata,
-          [newMetadataKey.trim()]: newMetadataValue.trim()
-        }
+          [newMetadataKey.trim()]: newMetadataValue.trim(),
+        },
       }));
       setNewMetadataKey('');
       setNewMetadataValue('');
@@ -130,7 +130,7 @@ export const JobForm: React.FC<JobFormProps> = ({
   };
 
   const removeMetadata = (keyToRemove: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const newMetadata = { ...prev.metadata };
       delete newMetadata[keyToRemove];
       return { ...prev, metadata: newMetadata };
@@ -189,7 +189,7 @@ export const JobForm: React.FC<JobFormProps> = ({
         {/* Basic Information */}
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-gray-900">Basic Information</h3>
-          
+
           <div>
             <label htmlFor="jobName" className="block text-sm font-medium text-gray-700 mb-2">
               Job Name *
@@ -199,7 +199,7 @@ export const JobForm: React.FC<JobFormProps> = ({
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="Enter job name"
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -212,10 +212,12 @@ export const JobForm: React.FC<JobFormProps> = ({
             <select
               id="jobPriority"
               value={formData.priority}
-              onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as JobPriority }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, priority: e.target.value as JobPriority }))
+              }
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              {priorityOptions.map(option => (
+              {priorityOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label} - {option.description}
                 </option>
@@ -275,7 +277,9 @@ export const JobForm: React.FC<JobFormProps> = ({
                     type="number"
                     min="0"
                     value={formData.delay}
-                    onChange={(e) => setFormData(prev => ({ ...prev, delay: Number(e.target.value) }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, delay: Number(e.target.value) }))
+                    }
                     className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <Clock className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
@@ -284,7 +288,10 @@ export const JobForm: React.FC<JobFormProps> = ({
               </div>
 
               <div>
-                <label htmlFor="jobRetries" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="jobRetries"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Max Retries
                 </label>
                 <input
@@ -293,13 +300,18 @@ export const JobForm: React.FC<JobFormProps> = ({
                   min="0"
                   max="10"
                   value={formData.retries}
-                  onChange={(e) => setFormData(prev => ({ ...prev, retries: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, retries: Number(e.target.value) }))
+                  }
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label htmlFor="jobRetryDelay" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="jobRetryDelay"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Retry Delay (ms)
                 </label>
                 <input
@@ -307,13 +319,18 @@ export const JobForm: React.FC<JobFormProps> = ({
                   type="number"
                   min="1000"
                   value={formData.retryDelay}
-                  onChange={(e) => setFormData(prev => ({ ...prev, retryDelay: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, retryDelay: Number(e.target.value) }))
+                  }
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label htmlFor="jobTimeout" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="jobTimeout"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Timeout (ms)
                 </label>
                 <input
@@ -321,7 +338,9 @@ export const JobForm: React.FC<JobFormProps> = ({
                   type="number"
                   min="1000"
                   value={formData.timeout}
-                  onChange={(e) => setFormData(prev => ({ ...prev, timeout: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, timeout: Number(e.target.value) }))
+                  }
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -329,9 +348,7 @@ export const JobForm: React.FC<JobFormProps> = ({
 
             {/* Tags */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tags
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
               <div className="flex items-center space-x-2 mb-3">
                 <input
                   type="text"
@@ -373,9 +390,7 @@ export const JobForm: React.FC<JobFormProps> = ({
 
             {/* Metadata */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Metadata
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Metadata</label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
                 <input
                   type="text"
@@ -453,4 +468,4 @@ export const JobForm: React.FC<JobFormProps> = ({
       </form>
     </motion.div>
   );
-}; 
+};

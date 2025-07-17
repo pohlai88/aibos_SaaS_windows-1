@@ -6,11 +6,11 @@ interface AppShellProps {
 }
 
 const defaultServices = [
-  { name: "Network", key: "network" },
-  { name: "API", key: "api" },
-  { name: "Database", key: "db" },
-  { name: "Auth", key: "auth" },
-  { name: "Storage", key: "storage" },
+  { name: 'Network', key: 'network' },
+  { name: 'API', key: 'api' },
+  { name: 'Database', key: 'db' },
+  { name: 'Auth', key: 'auth' },
+  { name: 'Storage', key: 'storage' },
 ];
 
 const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
@@ -18,7 +18,7 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
   const [diagnosing, setDiagnosing] = useState(false);
   const [results, setResults] = useState<{ [key: string]: boolean } | null>(null);
   const [networkMs, setNetworkMs] = useState<number | null>(null);
-  
+
   // Overall status: true = all green, false = any red
   const overallStatus = results ? Object.values(results).every(Boolean) : true;
 
@@ -27,18 +27,18 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
     setDiagnosing(true);
     setResults(null);
     setNetworkMs(null);
-    
+
     // Network check
     let networkOk = false;
     let pingMs: number | null = null;
-    
+
     if (navigator.onLine) {
       const start = Date.now();
       try {
         // Use a fast, reliable endpoint (Google DNS)
-        await fetch("https://dns.google/resolve?name=example.com", {
-          method: "GET",
-          cache: "no-store",
+        await fetch('https://dns.google/resolve?name=example.com', {
+          method: 'GET',
+          cache: 'no-store',
         });
         pingMs = Date.now() - start;
         networkOk = true;
@@ -46,21 +46,20 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
         networkOk = false;
       }
     }
-    
+
     setNetworkMs(networkOk && pingMs !== null ? pingMs : null);
-    
+
     // Simulate async checks for other services
     setTimeout(() => {
       // For demo, randomly fail one non-network service 20% of the time
-      const failIndex = Math.random() < 0.2
-        ? 1 + Math.floor(Math.random() * (defaultServices.length - 1))
-        : -1;
-      
+      const failIndex =
+        Math.random() < 0.2 ? 1 + Math.floor(Math.random() * (defaultServices.length - 1)) : -1;
+
       const newResults: { [key: string]: boolean } = { network: networkOk };
       defaultServices.slice(1).forEach((svc, idx) => {
         newResults[svc.key] = failIndex === idx + 1 ? false : true;
       });
-      
+
       setResults(newResults);
       setDiagnosing(false);
     }, 1200);
@@ -70,16 +69,16 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
     <div
       className={`min-h-screen flex flex-col bg-gray-50 font-sans ${className}`}
       style={{
-        background: "var(--gray-1)",
-        fontFamily: "Inter, ui-sans-serif, system-ui",
+        background: 'var(--gray-1)',
+        fontFamily: 'Inter, ui-sans-serif, system-ui',
       }}
     >
       {/* Static Header */}
-      <div 
+      <div
         className="fixed top-0 left-0 w-full z-40 bg-white border-b border-gray-200 shadow-sm"
-        style={{ 
-          borderBottom: "1px solid var(--gray-1)", 
-          boxShadow: "0 1px 4px rgba(0,0,0,0.02)" 
+        style={{
+          borderBottom: '1px solid var(--gray-1)',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.02)',
         }}
       >
         <div className="flex items-center justify-between px-4 py-3">
@@ -89,16 +88,16 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
             </div>
             <span className="text-xl font-bold text-gray-900">AI-BOS</span>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setModalOpen(true)}
               className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
               title="System Status"
             >
-              <div className={`w-3 h-3 rounded-full ${
-                overallStatus ? 'bg-green-500' : 'bg-red-500'
-              }`} />
+              <div
+                className={`w-3 h-3 rounded-full ${overallStatus ? 'bg-green-500' : 'bg-red-500'}`}
+              />
             </button>
           </div>
         </div>
@@ -141,22 +140,18 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
             >
               ×
             </button>
-            
-            <h2 className="text-2xl font-semibold text-gray-900 mb-1">
-              System Status
-            </h2>
-            
-            <p className={`mb-6 text-sm ${
-              overallStatus ? "text-green-600" : "text-red-600"
-            }`}>
-              {overallStatus ? "All systems operational" : "Issues detected"}
+
+            <h2 className="text-2xl font-semibold text-gray-900 mb-1">System Status</h2>
+
+            <p className={`mb-6 text-sm ${overallStatus ? 'text-green-600' : 'text-red-600'}`}>
+              {overallStatus ? 'All systems operational' : 'Issues detected'}
             </p>
-            
+
             <ul className="mb-6 p-0 list-none">
               {defaultServices.map((svc) => (
                 <li key={svc.key} className="flex items-center justify-between mb-3">
                   <span className="text-gray-800">{svc.name}</span>
-                  {svc.key === "network" ? (
+                  {svc.key === 'network' ? (
                     diagnosing ? (
                       <span className="flex items-center gap-2">
                         <span className="text-xs text-gray-500 min-w-8 text-right">…</span>
@@ -165,13 +160,13 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
                     ) : results ? (
                       <span className="flex items-center gap-2">
                         <span className="text-xs text-gray-500 min-w-8 text-right">
-                          {results[svc.key] && networkMs !== null ? `${networkMs} ms` : "N/A"}
+                          {results[svc.key] && networkMs !== null ? `${networkMs} ms` : 'N/A'}
                         </span>
                         <span
                           className={`w-3 h-3 rounded-full ${
-                            results[svc.key] ? "bg-green-500" : "bg-red-500"
+                            results[svc.key] ? 'bg-green-500' : 'bg-red-500'
                           }`}
-                          title={results[svc.key] ? "Online" : "Offline"}
+                          title={results[svc.key] ? 'Online' : 'Offline'}
                         />
                       </span>
                     ) : (
@@ -185,9 +180,9 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
                   ) : results ? (
                     <span
                       className={`w-3 h-3 rounded-full ${
-                        results[svc.key] ? "bg-green-500" : "bg-red-500"
+                        results[svc.key] ? 'bg-green-500' : 'bg-red-500'
                       }`}
-                      title={results[svc.key] ? "Operational" : "Issue"}
+                      title={results[svc.key] ? 'Operational' : 'Issue'}
                     />
                   ) : (
                     <span className="w-3 h-3 rounded-full bg-gray-200" />
@@ -195,24 +190,24 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
                 </li>
               ))}
             </ul>
-            
+
             <button
               className="w-full h-11 rounded-lg bg-blue-600 text-white font-medium text-base border-none cursor-pointer opacity-100 disabled:opacity-60"
               onClick={runDiagnosis}
               disabled={diagnosing}
             >
-              {diagnosing ? "Running system checks…" : "Run Diagnosis"}
+              {diagnosing ? 'Running system checks…' : 'Run Diagnosis'}
             </button>
           </div>
         </div>
       )}
 
       {/* Footer */}
-      <footer 
+      <footer
         className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 px-4 py-2"
-        style={{ 
-          borderTop: "1px solid var(--gray-1)", 
-          boxShadow: "0 -1px 4px rgba(0,0,0,0.02)" 
+        style={{
+          borderTop: '1px solid var(--gray-1)',
+          boxShadow: '0 -1px 4px rgba(0,0,0,0.02)',
         }}
       >
         <div className="flex items-center justify-between text-sm text-gray-600">
@@ -221,15 +216,15 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
             <span>•</span>
             <span>v1.0.0</span>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setModalOpen(true)}
               className="flex items-center space-x-2 text-gray-500 hover:text-gray-700"
             >
-              <div className={`w-2 h-2 rounded-full ${
-                overallStatus ? 'bg-green-500' : 'bg-red-500'
-              }`} />
+              <div
+                className={`w-2 h-2 rounded-full ${overallStatus ? 'bg-green-500' : 'bg-red-500'}`}
+              />
               <span>Status</span>
             </button>
             <span>•</span>
@@ -241,4 +236,4 @@ const AppShell: React.FC<AppShellProps> = ({ children, className = '' }) => {
   );
 };
 
-export default AppShell; 
+export default AppShell;

@@ -1,6 +1,6 @@
 /**
  * AI-BOS AI-Powered Code Generator
- * 
+ *
  * The ultimate code generation system that makes every developer's dream come true.
  * Generate, refactor, test, and deploy code with AI assistance.
  */
@@ -9,23 +9,93 @@ import { AIEngine, AIRequest, AIResponse } from '../engine/AIEngine';
 import { z } from 'zod';
 
 // Code Generation Types
-export type CodeLanguage = 
-  | 'typescript' | 'javascript' | 'python' | 'java' | 'csharp' | 'go' | 'rust'
-  | 'php' | 'ruby' | 'swift' | 'kotlin' | 'dart' | 'r' | 'matlab' | 'julia'
-  | 'sql' | 'graphql' | 'yaml' | 'json' | 'xml' | 'html' | 'css' | 'scss'
-  | 'docker' | 'kubernetes' | 'terraform' | 'ansible' | 'bash' | 'powershell';
+export type CodeLanguage =
+  | 'typescript'
+  | 'javascript'
+  | 'python'
+  | 'java'
+  | 'csharp'
+  | 'go'
+  | 'rust'
+  | 'php'
+  | 'ruby'
+  | 'swift'
+  | 'kotlin'
+  | 'dart'
+  | 'r'
+  | 'matlab'
+  | 'julia'
+  | 'sql'
+  | 'graphql'
+  | 'yaml'
+  | 'json'
+  | 'xml'
+  | 'html'
+  | 'css'
+  | 'scss'
+  | 'docker'
+  | 'kubernetes'
+  | 'terraform'
+  | 'ansible'
+  | 'bash'
+  | 'powershell';
 
-export type CodePattern = 
-  | 'component' | 'service' | 'controller' | 'repository' | 'model' | 'interface'
-  | 'type' | 'enum' | 'function' | 'class' | 'hook' | 'provider' | 'middleware'
-  | 'utility' | 'test' | 'story' | 'documentation' | 'migration' | 'deployment'
-  | 'api' | 'database' | 'cache' | 'queue' | 'websocket' | 'cli' | 'plugin';
+export type CodePattern =
+  | 'component'
+  | 'service'
+  | 'controller'
+  | 'repository'
+  | 'model'
+  | 'interface'
+  | 'type'
+  | 'enum'
+  | 'function'
+  | 'class'
+  | 'hook'
+  | 'provider'
+  | 'middleware'
+  | 'utility'
+  | 'test'
+  | 'story'
+  | 'documentation'
+  | 'migration'
+  | 'deployment'
+  | 'api'
+  | 'database'
+  | 'cache'
+  | 'queue'
+  | 'websocket'
+  | 'cli'
+  | 'plugin';
 
-export type Framework = 
-  | 'react' | 'vue' | 'angular' | 'svelte' | 'next' | 'nuxt' | 'gatsby'
-  | 'express' | 'fastify' | 'koa' | 'nest' | 'django' | 'flask' | 'fastapi'
-  | 'spring' | 'quarkus' | 'micronaut' | 'aspnet' | 'laravel' | 'rails'
-  | 'gin' | 'echo' | 'fiber' | 'actix' | 'rocket' | 'axum' | 'tower';
+export type Framework =
+  | 'react'
+  | 'vue'
+  | 'angular'
+  | 'svelte'
+  | 'next'
+  | 'nuxt'
+  | 'gatsby'
+  | 'express'
+  | 'fastify'
+  | 'koa'
+  | 'nest'
+  | 'django'
+  | 'flask'
+  | 'fastapi'
+  | 'spring'
+  | 'quarkus'
+  | 'micronaut'
+  | 'aspnet'
+  | 'laravel'
+  | 'rails'
+  | 'gin'
+  | 'echo'
+  | 'fiber'
+  | 'actix'
+  | 'rocket'
+  | 'axum'
+  | 'tower';
 
 // Code Generation Request
 export interface CodeGenRequest {
@@ -108,7 +178,7 @@ export interface CodeAnalysis {
 
 /**
  * AI-Powered Code Generator
- * 
+ *
  * Generates production-ready code with AI assistance, following best practices,
  * security guidelines, and performance optimizations.
  */
@@ -121,7 +191,7 @@ export class AICodeGenerator {
     this.aiEngine = aiEngine || new AIEngine();
     this.templates = new Map();
     this.patterns = new Map();
-    
+
     this.initializeTemplates();
     this.initializePatterns();
   }
@@ -131,7 +201,7 @@ export class AICodeGenerator {
    */
   async generateCode(request: CodeGenRequest): Promise<GeneratedCode> {
     const prompt = this.buildGenerationPrompt(request);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-generation',
       prompt,
@@ -139,8 +209,8 @@ export class AICodeGenerator {
       options: {
         model: 'gpt-4',
         temperature: 0.3, // Lower temperature for more consistent code
-        maxTokens: 4000
-      }
+        maxTokens: 4000,
+      },
     });
 
     return this.parseGeneratedCode(aiResponse.content, request);
@@ -151,14 +221,14 @@ export class AICodeGenerator {
    */
   async analyzeCode(code: string, language: CodeLanguage): Promise<CodeAnalysis> {
     const prompt = this.buildAnalysisPrompt(code, language);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-review',
       prompt,
       options: {
         model: 'gpt-4',
-        temperature: 0.2
-      }
+        temperature: 0.2,
+      },
     });
 
     return this.parseCodeAnalysis(aiResponse.content);
@@ -168,24 +238,24 @@ export class AICodeGenerator {
    * Refactor code with AI assistance
    */
   async refactorCode(
-    code: string, 
-    language: CodeLanguage, 
-    goals: string[]
+    code: string,
+    language: CodeLanguage,
+    goals: string[],
   ): Promise<GeneratedCode> {
     const prompt = this.buildRefactorPrompt(code, language, goals);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-generation',
       prompt,
       options: {
         model: 'gpt-4',
-        temperature: 0.3
-      }
+        temperature: 0.3,
+      },
     });
 
     return this.parseGeneratedCode(aiResponse.content, {
       language,
-      pattern: 'utility' as CodePattern
+      pattern: 'utility' as CodePattern,
     });
   }
 
@@ -193,25 +263,25 @@ export class AICodeGenerator {
    * Generate tests for existing code
    */
   async generateTests(
-    code: string, 
-    language: CodeLanguage, 
-    framework?: Framework
+    code: string,
+    language: CodeLanguage,
+    framework?: Framework,
   ): Promise<GeneratedCode> {
     const prompt = this.buildTestGenerationPrompt(code, language, framework);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-generation',
       prompt,
       options: {
         model: 'gpt-4',
-        temperature: 0.3
-      }
+        temperature: 0.3,
+      },
     });
 
     return this.parseGeneratedCode(aiResponse.content, {
       language,
       pattern: 'test' as CodePattern,
-      framework
+      framework,
     });
   }
 
@@ -219,24 +289,24 @@ export class AICodeGenerator {
    * Generate documentation
    */
   async generateDocumentation(
-    code: string, 
-    language: CodeLanguage, 
-    format: 'jsdoc' | 'tsdoc' | 'markdown' | 'asciidoc' = 'markdown'
+    code: string,
+    language: CodeLanguage,
+    format: 'jsdoc' | 'tsdoc' | 'markdown' | 'asciidoc' = 'markdown',
   ): Promise<GeneratedCode> {
     const prompt = this.buildDocumentationPrompt(code, language, format);
-    
+
     const aiResponse = await this.aiEngine.process({
       task: 'code-generation',
       prompt,
       options: {
         model: 'gpt-4',
-        temperature: 0.3
-      }
+        temperature: 0.3,
+      },
     });
 
     return this.parseGeneratedCode(aiResponse.content, {
       language,
-      pattern: 'documentation' as CodePattern
+      pattern: 'documentation' as CodePattern,
     });
   }
 
@@ -244,9 +314,10 @@ export class AICodeGenerator {
    * Build generation prompt
    */
   private buildGenerationPrompt(request: CodeGenRequest): string {
-    const template = this.templates.get(`${request.language}-${request.pattern}`) || 
-                    this.templates.get(`${request.language}-default`);
-    
+    const template =
+      this.templates.get(`${request.language}-${request.pattern}`) ||
+      this.templates.get(`${request.language}-default`);
+
     return `
 Generate production-ready ${request.language} code for a ${request.pattern}.
 
@@ -343,7 +414,11 @@ Include explanations for each major change made.
   /**
    * Build test generation prompt
    */
-  private buildTestGenerationPrompt(code: string, language: CodeLanguage, framework?: Framework): string {
+  private buildTestGenerationPrompt(
+    code: string,
+    language: CodeLanguage,
+    framework?: Framework,
+  ): string {
     return `
 Generate comprehensive tests for the following ${language} code:
 
@@ -399,7 +474,7 @@ Format the documentation according to ${format} standards.
   private parseGeneratedCode(content: string, request: CodeGenRequest): GeneratedCode {
     // Parse the AI response and extract structured code
     const sections = this.extractCodeSections(content);
-    
+
     return {
       code: sections.code || '',
       tests: sections.tests,
@@ -417,8 +492,8 @@ Format the documentation according to ${format} standards.
         estimatedTime: this.estimateDevelopmentTime(sections.code),
         bestPractices: sections.bestPractices || [],
         securityConsiderations: sections.security || [],
-        performanceTips: sections.performance || []
-      }
+        performanceTips: sections.performance || [],
+      },
     };
   }
 
@@ -439,7 +514,7 @@ Format the documentation according to ${format} standards.
    */
   private extractCodeSections(content: string): Record<string, any> {
     const sections: Record<string, any> = {};
-    
+
     // Extract code blocks
     const codeBlocks = content.match(/```[\w]*\n([\s\S]*?)```/g);
     if (codeBlocks) {
@@ -447,11 +522,11 @@ Format the documentation according to ${format} standards.
       sections.tests = codeBlocks[1]?.replace(/```[\w]*\n/, '').replace(/```$/, '');
       sections.documentation = codeBlocks[2]?.replace(/```[\w]*\n/, '').replace(/```$/, '');
     }
-    
+
     // Extract other sections
     const lines = content.split('\n');
     let currentSection = '';
-    
+
     for (const line of lines) {
       if (line.startsWith('## ')) {
         currentSection = line.replace('## ', '').toLowerCase();
@@ -462,7 +537,7 @@ Format the documentation according to ${format} standards.
         sections[currentSection].push(line.trim());
       }
     }
-    
+
     return sections;
   }
 
@@ -474,9 +549,9 @@ Format the documentation according to ${format} standards.
     const functions = (code.match(/function|=>/g) || []).length;
     const classes = (code.match(/class/g) || []).length;
     const imports = (code.match(/import|require/g) || []).length;
-    
+
     const complexity = lines + functions * 2 + classes * 3 + imports;
-    
+
     if (complexity < 50) return 'simple';
     if (complexity < 150) return 'medium';
     return 'complex';
@@ -488,12 +563,16 @@ Format the documentation according to ${format} standards.
   private estimateDevelopmentTime(code: string): number {
     const complexity = this.assessComplexity(code);
     const lines = code.split('\n').length;
-    
+
     switch (complexity) {
-      case 'simple': return Math.max(15, lines * 0.5);
-      case 'medium': return Math.max(30, lines * 0.8);
-      case 'complex': return Math.max(60, lines * 1.2);
-      default: return 30;
+      case 'simple':
+        return Math.max(15, lines * 0.5);
+      case 'medium':
+        return Math.max(30, lines * 0.8);
+      case 'complex':
+        return Math.max(60, lines * 1.2);
+      default:
+        return 30;
     }
   }
 
@@ -502,7 +581,9 @@ Format the documentation according to ${format} standards.
    */
   private initializeTemplates(): void {
     // React Component Template
-    this.templates.set('typescript-component', `
+    this.templates.set(
+      'typescript-component',
+      `
 import React from 'react';
 import { z } from 'zod';
 
@@ -530,10 +611,13 @@ export const ComponentName: React.FC<Props> = (props) => {
 
 // Export for testing
 export default ComponentName;
-`);
+`,
+    );
 
     // Service Template
-    this.templates.set('typescript-service', `
+    this.templates.set(
+      'typescript-service',
+      `
 import { z } from 'zod';
 
 // Service interface
@@ -552,7 +636,8 @@ export class ServiceName implements ServiceInterface {
 
 // Export singleton instance
 export const serviceName = new ServiceName();
-`);
+`,
+    );
 
     // Add more templates for different patterns and languages
   }
@@ -565,15 +650,15 @@ export const serviceName = new ServiceName();
     this.patterns.set('component', {
       includes: ['props', 'state', 'effects', 'handlers'],
       bestPractices: ['separation of concerns', 'reusability', 'accessibility'],
-      testing: ['unit tests', 'integration tests', 'visual regression']
+      testing: ['unit tests', 'integration tests', 'visual regression'],
     });
-    
+
     this.patterns.set('service', {
       includes: ['business logic', 'data access', 'error handling'],
       bestPractices: ['single responsibility', 'dependency injection', 'error boundaries'],
-      testing: ['unit tests', 'mocking', 'integration tests']
+      testing: ['unit tests', 'mocking', 'integration tests'],
     });
-    
+
     // Add more patterns
   }
 
@@ -588,27 +673,27 @@ export const serviceName = new ServiceName();
         metrics: {
           cyclomaticComplexity: 1,
           maintainabilityIndex: 80,
-          technicalDebt: 0
-        }
+          technicalDebt: 0,
+        },
       },
       security: {
         vulnerabilities: [],
         recommendations: [],
-        riskLevel: 'low'
+        riskLevel: 'low',
       },
       performance: {
         bottlenecks: [],
         optimizations: [],
-        estimatedImpact: 'low'
+        estimatedImpact: 'low',
       },
       bestPractices: {
         followed: [],
         missing: [],
-        suggestions: []
-      }
+        suggestions: [],
+      },
     };
   }
 }
 
 // Export singleton instance
-export const aiCodeGenerator = new AICodeGenerator(); 
+export const aiCodeGenerator = new AICodeGenerator();

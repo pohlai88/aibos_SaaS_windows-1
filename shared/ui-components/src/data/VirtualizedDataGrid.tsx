@@ -14,20 +14,20 @@ const usePerformanceMonitor = (componentName: string) => {
     const measureFPS = () => {
       frameCount.current++;
       const currentTime = performance.now();
-      
+
       if (currentTime - lastTime.current >= 1000) {
         fpsRef.current = frameCount.current;
         frameCount.current = 0;
         lastTime.current = currentTime;
-        
+
         if (fpsRef.current < 55) {
           console.warn(`[${componentName}] Low FPS detected: ${fpsRef.current}`);
         }
       }
-      
+
       requestAnimationFrame(measureFPS);
     };
-    
+
     requestAnimationFrame(measureFPS);
   }, [componentName]);
 
@@ -58,27 +58,24 @@ export interface VirtualizedDataGridProps<T = any> extends VariantProps<typeof g
   onRowExpand?: (row: T, index: number) => void;
 }
 
-const gridVariants = cva(
-  'w-full border border-border rounded-lg overflow-hidden',
-  {
-    variants: {
-      variant: {
-        default: 'bg-background',
-        striped: 'bg-background',
-        bordered: 'bg-background',
-      },
-      size: {
-        sm: 'text-sm',
-        md: 'text-base',
-        lg: 'text-lg',
-      },
+const gridVariants = cva('w-full border border-border rounded-lg overflow-hidden', {
+  variants: {
+    variant: {
+      default: 'bg-background',
+      striped: 'bg-background',
+      bordered: 'bg-background',
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'md',
+    size: {
+      sm: 'text-sm',
+      md: 'text-base',
+      lg: 'text-lg',
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+    size: 'md',
+  },
+});
 
 export const VirtualizedDataGrid = <T extends Record<string, any>>({
   data,
@@ -101,12 +98,15 @@ export const VirtualizedDataGrid = <T extends Record<string, any>>({
   const fps = usePerformanceMonitor('VirtualizedDataGrid');
 
   // Calculate dynamic row heights for expanded rows
-  const getRowHeight = useCallback((index: number) => {
-    if (expandedRows.has(index)) {
-      return rowHeight * 3; // Expanded rows are 3x taller
-    }
-    return rowHeight;
-  }, [expandedRows, rowHeight]);
+  const getRowHeight = useCallback(
+    (index: number) => {
+      if (expandedRows.has(index)) {
+        return rowHeight * 3; // Expanded rows are 3x taller
+      }
+      return rowHeight;
+    },
+    [expandedRows, rowHeight],
+  );
 
   // Virtualizer configuration
   const rowVirtualizer = useVirtualizer({
@@ -122,12 +122,12 @@ export const VirtualizedDataGrid = <T extends Record<string, any>>({
 
     const interval = setInterval(() => {
       setIsUpdating(true);
-      
+
       // Simulate real-time data updates (1000+ rows per second)
       const newData = [...realTimeData];
       const updatesPerSecond = 1000;
       const updatesPerInterval = Math.floor(updatesPerSecond * (realTimeInterval / 1000));
-      
+
       for (let i = 0; i < updatesPerInterval; i++) {
         const randomIndex = Math.floor(Math.random() * newData.length);
         if (newData[randomIndex]) {
@@ -138,7 +138,7 @@ export const VirtualizedDataGrid = <T extends Record<string, any>>({
           };
         }
       }
-      
+
       setRealTimeData(newData);
       setIsUpdating(false);
     }, realTimeInterval);
@@ -147,145 +147,135 @@ export const VirtualizedDataGrid = <T extends Record<string, any>>({
   }, [enableRealTime, realTimeInterval, realTimeData]);
 
   // Handle row expansion
-  const handleRowExpand = useCallback((index: number) => {
-    setExpandedRows(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(index)) {
-        newSet.delete(index);
-      } else {
-        newSet.add(index);
-      }
-      return newSet;
-    });
-    onRowExpand?.(realTimeData[index], index);
-  }, [realTimeData, onRowExpand]);
+  const handleRowExpand = useCallback(
+    (index: number) => {
+      setExpandedRows((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(index)) {
+          newSet.delete(index);
+        } else {
+          newSet.add(index);
+        }
+        return newSet;
+      });
+      onRowExpand?.(realTimeData[index], index);
+    },
+    [realTimeData, onRowExpand],
+  );
 
   // Optimized cell renderer with memoization
-  const CellRenderer = useCallback(({ 
-    column, 
-    row, 
-    index, 
-    isExpanded 
-  }: { 
-    column: VirtualizedDataGridProps<T>['columns'][0]; 
-    row: T; 
-    index: number; 
-    isExpanded: boolean; 
-  }) => {
-    const value = column.accessor(row);
-    
-    return (
-      <div
-        className={cn(
-          'p-3 border-r border-border last:border-r-0',
-          'flex items-center justify-between',
-          isExpanded && 'bg-muted/30'
-        )}
-        style={{ width: column.width || 200 }}
-      >
-        <div className="flex-1 min-w-0">
-          {column.cellRenderer ? (
-            column.cellRenderer(value, row, index)
-          ) : (
-            <span className="truncate">{String(value)}</span>
+  const CellRenderer = useCallback(
+    ({
+      column,
+      row,
+      index,
+      isExpanded,
+    }: {
+      column: VirtualizedDataGridProps<T>['columns'][0];
+      row: T;
+      index: number;
+      isExpanded: boolean;
+    }) => {
+      const value = column.accessor(row);
+
+      return (
+        <div
+          className={cn(
+            'p-3 border-r border-border last:border-r-0',
+            'flex items-center justify-between',
+            isExpanded && 'bg-muted/30',
+          )}
+          style={{ width: column.width || 200 }}
+        >
+          <div className="flex-1 min-w-0">
+            {column.cellRenderer ? (
+              column.cellRenderer(value, row, index)
+            ) : (
+              <span className="truncate">{String(value)}</span>
+            )}
+          </div>
+
+          {column.expandable && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRowExpand(index);
+              }}
+              className="ml-2 p-1 rounded hover:bg-muted transition-colors"
+            >
+              <motion.div animate={{ rotate: isExpanded ? 90 : 0 }} transition={{ duration: 0.2 }}>
+                ▶
+              </motion.div>
+            </button>
           )}
         </div>
-        
-        {column.expandable && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleRowExpand(index);
-            }}
-            className="ml-2 p-1 rounded hover:bg-muted transition-colors"
-          >
-            <motion.div
-              animate={{ rotate: isExpanded ? 90 : 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              ▶
-            </motion.div>
-          </button>
-        )}
-      </div>
-    );
-  }, [handleRowExpand]);
+      );
+    },
+    [handleRowExpand],
+  );
 
   // Optimized row renderer
-  const RowRenderer = useCallback(({ 
-    row, 
-    index, 
-    isExpanded 
-  }: { 
-    row: T; 
-    index: number; 
-    isExpanded: boolean; 
-  }) => {
-    const virtualRow = rowVirtualizer.getVirtualItems().find(
-      virtualItem => virtualItem.index === index
-    );
+  const RowRenderer = useCallback(
+    ({ row, index, isExpanded }: { row: T; index: number; isExpanded: boolean }) => {
+      const virtualRow = rowVirtualizer
+        .getVirtualItems()
+        .find((virtualItem) => virtualItem.index === index);
 
-    if (!virtualRow) return null;
+      if (!virtualRow) return null;
 
-    return (
-      <motion.div
-        key={index}
-        initial={enableAnimations ? { opacity: 0, y: 20 } : false}
-        animate={{ opacity: 1, y: 0 }}
-        exit={enableAnimations ? { opacity: 0, y: -20 } : false}
-        transition={{ duration: 0.2 }}
-        className={cn(
-          'flex border-b border-border hover:bg-muted/30 transition-colors',
-          variant === 'striped' && index % 2 === 0 && 'bg-muted/20',
-          isUpdating && 'bg-yellow-50 dark:bg-yellow-900/20'
-        )}
-        style={{
-          height: getRowHeight(index),
-          transform: `translateY(${virtualRow.start}px)`,
-        }}
-        onClick={() => onRowClick?.(row, index)}
-      >
-        {columns.map((column) => (
-          <CellRenderer
-            key={column.key}
-            column={column}
-            row={row}
-            index={index}
-            isExpanded={isExpanded}
-          />
-        ))}
-        
-        {/* Expanded content */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="w-full bg-muted/10 border-t border-border"
-            >
-              <div className="p-4">
-                {columns.find(col => col.nestedRenderer)?.nestedRenderer?.(row, index) || (
-                  <div className="text-sm text-muted-foreground">
-                    Expanded content for row {index}
-                  </div>
-                )}
-              </div>
-            </motion.div>
+      return (
+        <motion.div
+          key={index}
+          initial={enableAnimations ? { opacity: 0, y: 20 } : false}
+          animate={{ opacity: 1, y: 0 }}
+          exit={enableAnimations ? { opacity: 0, y: -20 } : false}
+          transition={{ duration: 0.2 }}
+          className={cn(
+            'flex border-b border-border hover:bg-muted/30 transition-colors',
+            variant === 'striped' && index % 2 === 0 && 'bg-muted/20',
+            isUpdating && 'bg-yellow-50 dark:bg-yellow-900/20',
           )}
-        </AnimatePresence>
-      </motion.div>
-    );
-  }, [
-    rowVirtualizer,
-    columns,
-    getRowHeight,
-    variant,
-    isUpdating,
-    enableAnimations,
-    onRowClick,
-  ]);
+          style={{
+            height: getRowHeight(index),
+            transform: `translateY(${virtualRow.start}px)`,
+          }}
+          onClick={() => onRowClick?.(row, index)}
+        >
+          {columns.map((column) => (
+            <CellRenderer
+              key={column.key}
+              column={column}
+              row={row}
+              index={index}
+              isExpanded={isExpanded}
+            />
+          ))}
+
+          {/* Expanded content */}
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="w-full bg-muted/10 border-t border-border"
+              >
+                <div className="p-4">
+                  {columns.find((col) => col.nestedRenderer)?.nestedRenderer?.(row, index) || (
+                    <div className="text-sm text-muted-foreground">
+                      Expanded content for row {index}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      );
+    },
+    [rowVirtualizer, columns, getRowHeight, variant, isUpdating, enableAnimations, onRowClick],
+  );
 
   // Performance optimization: Memoize virtual items
   const virtualItems = useMemo(() => rowVirtualizer.getVirtualItems(), [rowVirtualizer]);
@@ -319,11 +309,7 @@ export const VirtualizedDataGrid = <T extends Record<string, any>>({
       </div>
 
       {/* Virtualized content */}
-      <div
-        ref={parentRef}
-        className="overflow-auto"
-        style={{ height: '400px' }}
-      >
+      <div ref={parentRef} className="overflow-auto" style={{ height: '400px' }}>
         <div
           style={{
             height: `${rowVirtualizer.getTotalSize()}px`,
@@ -334,7 +320,7 @@ export const VirtualizedDataGrid = <T extends Record<string, any>>({
           {virtualItems.map((virtualRow) => {
             const row = realTimeData[virtualRow.index];
             const isExpanded = expandedRows.has(virtualRow.index);
-            
+
             return (
               <RowRenderer
                 key={virtualRow.index}
@@ -352,14 +338,16 @@ export const VirtualizedDataGrid = <T extends Record<string, any>>({
 
 // Performance test component
 export const VirtualizedDataGridTest: React.FC = () => {
-  const [testData, setTestData] = useState<Array<{
-    id: number;
-    name: string;
-    email: string;
-    status: string;
-    value: number;
-    lastUpdated: string;
-  }>>([]);
+  const [testData, setTestData] = useState<
+    Array<{
+      id: number;
+      name: string;
+      email: string;
+      status: string;
+      value: number;
+      lastUpdated: string;
+    }>
+  >([]);
 
   // Generate test data
   useEffect(() => {
@@ -411,12 +399,14 @@ export const VirtualizedDataGridTest: React.FC = () => {
       accessor: (row: any) => row.status,
       width: 120,
       cellRenderer: (value: any) => (
-        <span className={cn(
-          'px-2 py-1 rounded-full text-xs',
-          value === 'active' && 'bg-green-100 text-green-800',
-          value === 'inactive' && 'bg-red-100 text-red-800',
-          value === 'pending' && 'bg-yellow-100 text-yellow-800',
-        )}>
+        <span
+          className={cn(
+            'px-2 py-1 rounded-full text-xs',
+            value === 'active' && 'bg-green-100 text-green-800',
+            value === 'inactive' && 'bg-red-100 text-red-800',
+            value === 'pending' && 'bg-yellow-100 text-yellow-800',
+          )}
+        >
           {value}
         </span>
       ),
@@ -426,9 +416,7 @@ export const VirtualizedDataGridTest: React.FC = () => {
       header: 'Value',
       accessor: (row: any) => row.value,
       width: 120,
-      cellRenderer: (value: any) => (
-        <span className="font-mono">${value.toFixed(2)}</span>
-      ),
+      cellRenderer: (value: any) => <span className="font-mono">${value.toFixed(2)}</span>,
     },
     {
       key: 'actions',
@@ -443,12 +431,8 @@ export const VirtualizedDataGridTest: React.FC = () => {
             This is expanded content with complex rendering.
           </p>
           <div className="flex gap-2">
-            <button className="px-3 py-1 bg-primary text-white rounded text-sm">
-              Edit
-            </button>
-            <button className="px-3 py-1 bg-red-500 text-white rounded text-sm">
-              Delete
-            </button>
+            <button className="px-3 py-1 bg-primary text-white rounded text-sm">Edit</button>
+            <button className="px-3 py-1 bg-red-500 text-white rounded text-sm">Delete</button>
           </div>
         </div>
       ),
@@ -459,9 +443,10 @@ export const VirtualizedDataGridTest: React.FC = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Virtualized DataGrid Performance Test</h2>
       <p className="text-muted-foreground mb-4">
-        This grid handles 10,000 rows with real-time updates at 1000+ rows/second while maintaining 60 FPS.
+        This grid handles 10,000 rows with real-time updates at 1000+ rows/second while maintaining
+        60 FPS.
       </p>
-      
+
       <VirtualizedDataGrid
         data={testData}
         columns={columns}
@@ -475,4 +460,4 @@ export const VirtualizedDataGridTest: React.FC = () => {
       />
     </div>
   );
-}; 
+};

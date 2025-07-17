@@ -54,7 +54,7 @@ class OfflineConflictResolver {
 
     this.actionQueue.push(offlineAction);
     this.saveToStorage();
-    
+
     if (this.isOnline && !this.syncInProgress) {
       this.syncActions();
     }
@@ -70,7 +70,7 @@ class OfflineConflictResolver {
 
     try {
       const actionsToProcess = [...this.actionQueue];
-      
+
       for (const action of actionsToProcess) {
         await this.processAction(action);
       }
@@ -86,10 +86,10 @@ class OfflineConflictResolver {
     try {
       // Check dependencies
       if (action.dependencies) {
-        const unresolvedDeps = action.dependencies.filter(depId => 
-          this.actionQueue.some(a => a.id === depId)
+        const unresolvedDeps = action.dependencies.filter((depId) =>
+          this.actionQueue.some((a) => a.id === depId),
         );
-        
+
         if (unresolvedDeps.length > 0) {
           return; // Wait for dependencies
         }
@@ -97,10 +97,10 @@ class OfflineConflictResolver {
 
       // Attempt to sync with server
       const result = await this.syncWithServer(action);
-      
+
       if (result.success) {
         // Remove from queue on success
-        this.actionQueue = this.actionQueue.filter(a => a.id !== action.id);
+        this.actionQueue = this.actionQueue.filter((a) => a.id !== action.id);
         this.saveToStorage();
       } else if (result.conflict) {
         // Handle conflict
@@ -112,13 +112,13 @@ class OfflineConflictResolver {
           this.saveToStorage();
         } else {
           // Remove failed action
-          this.actionQueue = this.actionQueue.filter(a => a.id !== action.id);
+          this.actionQueue = this.actionQueue.filter((a) => a.id !== action.id);
           this.saveToStorage();
         }
       }
     } catch (error) {
       console.error(`Failed to process action ${action.id}:`, error);
-      
+
       if (action.retryCount < action.maxRetries) {
         action.retryCount++;
         this.saveToStorage();
@@ -133,11 +133,11 @@ class OfflineConflictResolver {
     serverData?: any;
   }> {
     // Simulate server communication
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Simulate different scenarios
     const random = Math.random();
-    
+
     if (random < 0.7) {
       // Success
       return { success: true };
@@ -148,16 +148,16 @@ class OfflineConflictResolver {
         updatedAt: new Date().toISOString(),
         version: (action.data.version || 0) + 1,
         // Simulate server changes
-        ...(Math.random() > 0.5 && { 
+        ...(Math.random() > 0.5 && {
           status: 'modified',
-          lastModifiedBy: 'server-user'
-        })
+          lastModifiedBy: 'server-user',
+        }),
       };
-      
-      return { 
-        success: false, 
-        conflict: true, 
-        serverData 
+
+      return {
+        success: false,
+        conflict: true,
+        serverData,
       };
     } else {
       // Network error
@@ -168,7 +168,7 @@ class OfflineConflictResolver {
   // Handle conflict resolution
   private async handleConflict(action: OfflineAction, serverData: any): Promise<void> {
     const conflictFields = this.detectConflicts(action.data, serverData);
-    
+
     const conflict: ConflictInfo = {
       actionId: action.id,
       entity: action.entity,
@@ -186,22 +186,22 @@ class OfflineConflictResolver {
   // Detect conflicts between client and server data
   private detectConflicts(clientData: any, serverData: any): string[] {
     const conflicts: string[] = [];
-    
+
     // Compare all fields
     const allFields = new Set([...Object.keys(clientData), ...Object.keys(serverData)]);
-    
+
     for (const field of allFields) {
       if (clientData[field] !== serverData[field]) {
         conflicts.push(field);
       }
     }
-    
+
     return conflicts;
   }
 
   // Resolve conflict
   resolveConflict(actionId: string, strategy: ConflictStrategy, resolvedData?: any): void {
-    const conflict = this.conflicts.find(c => c.actionId === actionId);
+    const conflict = this.conflicts.find((c) => c.actionId === actionId);
     if (!conflict) return;
 
     let finalData: any;
@@ -222,7 +222,7 @@ class OfflineConflictResolver {
     }
 
     // Update the action with resolved data
-    const action = this.actionQueue.find(a => a.id === actionId);
+    const action = this.actionQueue.find((a) => a.id === actionId);
     if (action) {
       action.data = finalData;
       action.retryCount = 0; // Reset retry count
@@ -231,10 +231,10 @@ class OfflineConflictResolver {
     // Mark conflict as resolved
     conflict.resolved = true;
     conflict.strategy = strategy;
-    
+
     // Remove from conflicts list
-    this.conflicts = this.conflicts.filter(c => c.actionId !== actionId);
-    
+    this.conflicts = this.conflicts.filter((c) => c.actionId !== actionId);
+
     this.notifyListeners();
     this.saveToStorage();
 
@@ -247,20 +247,24 @@ class OfflineConflictResolver {
   // Smart data merging
   private mergeData(clientData: any, serverData: any): any {
     const merged = { ...serverData };
-    
+
     // Merge arrays by concatenating unique items
     for (const [key, clientValue] of Object.entries(clientData)) {
       if (Array.isArray(clientValue) && Array.isArray(serverData[key])) {
         merged[key] = [...new Set([...serverData[key], ...clientValue])];
-      } else if (typeof clientValue === 'object' && clientValue !== null && 
-                 typeof serverData[key] === 'object' && serverData[key] !== null) {
+      } else if (
+        typeof clientValue === 'object' &&
+        clientValue !== null &&
+        typeof serverData[key] === 'object' &&
+        serverData[key] !== null
+      ) {
         merged[key] = this.mergeData(clientValue, serverData[key]);
       } else if (serverData[key] === undefined) {
         merged[key] = clientValue;
       }
       // For primitive values, prefer server data (already set above)
     }
-    
+
     return merged;
   }
 
@@ -281,7 +285,7 @@ class OfflineConflictResolver {
   }
 
   private notifyListeners(): void {
-    this.listeners.forEach(listener => listener(this.getConflicts()));
+    this.listeners.forEach((listener) => listener(this.getConflicts()));
   }
 
   // Network status management
@@ -310,11 +314,11 @@ class OfflineConflictResolver {
     try {
       const actionsData = localStorage.getItem('offline-actions');
       const conflictsData = localStorage.getItem('offline-conflicts');
-      
+
       if (actionsData) {
         this.actionQueue = JSON.parse(actionsData);
       }
-      
+
       if (conflictsData) {
         this.conflicts = JSON.parse(conflictsData);
       }
@@ -340,21 +344,18 @@ export interface ConflictResolutionProps extends VariantProps<typeof conflictVar
   className?: string;
 }
 
-const conflictVariants = cva(
-  'border rounded-lg p-4',
-  {
-    variants: {
-      variant: {
-        default: 'border-yellow-200 bg-yellow-50',
-        critical: 'border-red-200 bg-red-50',
-        warning: 'border-orange-200 bg-orange-50',
-      },
+const conflictVariants = cva('border rounded-lg p-4', {
+  variants: {
+    variant: {
+      default: 'border-yellow-200 bg-yellow-50',
+      critical: 'border-red-200 bg-red-50',
+      warning: 'border-orange-200 bg-orange-50',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 export const ConflictResolution: React.FC<ConflictResolutionProps> = ({
   conflict,
@@ -484,9 +485,9 @@ export const OfflineStatusIndicator: React.FC = () => {
 
   useEffect(() => {
     const resolver = new OfflineConflictResolver();
-    
+
     const unsubscribe = resolver.subscribe(setConflicts);
-    
+
     const updatePendingActions = () => {
       setPendingActions(resolver.getPendingActions().length);
     };
@@ -562,7 +563,7 @@ export const OfflineConflictTest: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = resolver.subscribe(setConflicts);
-    
+
     const updatePendingActions = () => {
       setPendingActions(resolver.getPendingActions());
     };
@@ -617,9 +618,11 @@ export const OfflineConflictTest: React.FC = () => {
           <div className="mt-4">
             <h4 className="font-medium mb-2">Pending Actions ({pendingActions.length})</h4>
             <div className="space-y-2">
-              {pendingActions.map(action => (
+              {pendingActions.map((action) => (
                 <div key={action.id} className="p-3 bg-muted rounded text-sm">
-                  <div className="font-medium">{action.type} {action.entity}</div>
+                  <div className="font-medium">
+                    {action.type} {action.entity}
+                  </div>
                   <div className="text-muted-foreground">
                     Retries: {action.retryCount}/{action.maxRetries}
                   </div>
@@ -632,7 +635,7 @@ export const OfflineConflictTest: React.FC = () => {
         <div>
           <h3 className="text-lg font-semibold mb-4">Conflicts ({conflicts.length})</h3>
           <div className="space-y-4">
-            {conflicts.map(conflict => (
+            {conflicts.map((conflict) => (
               <ConflictResolution
                 key={conflict.actionId}
                 conflict={conflict}
@@ -646,4 +649,4 @@ export const OfflineConflictTest: React.FC = () => {
       <OfflineStatusIndicator />
     </div>
   );
-}; 
+};

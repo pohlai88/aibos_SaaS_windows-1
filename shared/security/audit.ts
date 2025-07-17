@@ -16,7 +16,7 @@ export enum SecurityLevel {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export enum ComplianceStandard {
@@ -24,11 +24,11 @@ export enum ComplianceStandard {
   SOC2 = 'soc2',
   PCI_DSS = 'pci_dss',
   GDPR = 'gdpr',
-  PDPA = 'pdpa',  // Malaysian Personal Data Protection Act
-  MFRS = 'mfrs',  // Malaysian Financial Reporting Standards
-  MIA = 'mia',    // Malaysian Institute of Accountants
-  BNM = 'bnm',    // Bank Negara Malaysia
-  LHDN = 'lhdn'   // Lembaga Hasil Dalam Negeri
+  PDPA = 'pdpa', // Malaysian Personal Data Protection Act
+  MFRS = 'mfrs', // Malaysian Financial Reporting Standards
+  MIA = 'mia', // Malaysian Institute of Accountants
+  BNM = 'bnm', // Bank Negara Malaysia
+  LHDN = 'lhdn', // Lembaga Hasil Dalam Negeri
 }
 
 export enum AuditStatus {
@@ -36,7 +36,7 @@ export enum AuditStatus {
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
   FAILED = 'failed',
-  OVERDUE = 'overdue'
+  OVERDUE = 'overdue',
 }
 
 // ============================================================================
@@ -58,7 +58,7 @@ export const SecurityFindingSchema = z.object({
   resolvedAt: z.date().optional(),
   resolvedBy: z.string().uuid().optional(),
   createdAt: z.date(),
-  updatedAt: z.date()
+  updatedAt: z.date(),
 });
 
 export const ComplianceCertificationSchema = z.object({
@@ -75,7 +75,7 @@ export const ComplianceCertificationSchema = z.object({
   lastAuditDate: z.date().optional(),
   nextAuditDate: z.date().optional(),
   createdAt: z.date(),
-  updatedAt: z.date()
+  updatedAt: z.date(),
 });
 
 export const SecurityPolicySchema = z.object({
@@ -89,7 +89,7 @@ export const SecurityPolicySchema = z.object({
   enforcementLevel: z.nativeEnum(SecurityLevel),
   complianceStandards: z.array(z.nativeEnum(ComplianceStandard)),
   createdAt: z.date(),
-  updatedAt: z.date()
+  updatedAt: z.date(),
 });
 
 export const SecurityAuditSchema = z.object({
@@ -105,7 +105,7 @@ export const SecurityAuditSchema = z.object({
   summary: z.string(),
   riskScore: z.number().default(0),
   createdAt: z.date(),
-  updatedAt: z.date()
+  updatedAt: z.date(),
 });
 
 // ============================================================================
@@ -171,12 +171,12 @@ export class SecurityAuditService extends EventEmitter {
           requireLowercase: true,
           requireNumbers: true,
           requireSpecialChars: true,
-          maxAgeDays: 90
+          maxAgeDays: 90,
         },
         enforcementLevel: SecurityLevel.HIGH,
         complianceStandards: [ComplianceStandard.ISO27001, ComplianceStandard.SOC2],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
         id: uuidv4(),
@@ -188,12 +188,12 @@ export class SecurityAuditService extends EventEmitter {
           maxSessionDurationHours: 8,
           idleTimeoutMinutes: 30,
           requireSecureCookies: true,
-          preventSessionFixation: true
+          preventSessionFixation: true,
         },
         enforcementLevel: SecurityLevel.HIGH,
         complianceStandards: [ComplianceStandard.ISO27001, ComplianceStandard.GDPR],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
         id: uuidv4(),
@@ -205,12 +205,12 @@ export class SecurityAuditService extends EventEmitter {
           encryptAtRest: true,
           encryptInTransit: true,
           minTlsVersion: '1.3',
-          encryptionAlgorithm: 'AES-256'
+          encryptionAlgorithm: 'AES-256',
         },
         enforcementLevel: SecurityLevel.CRITICAL,
         complianceStandards: [ComplianceStandard.ISO27001, ComplianceStandard.PCI_DSS],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
         id: uuidv4(),
@@ -222,13 +222,13 @@ export class SecurityAuditService extends EventEmitter {
           requireMfa: true,
           principleOfLeastPrivilege: true,
           regularAccessReviews: true,
-          reviewFrequencyDays: 90
+          reviewFrequencyDays: 90,
         },
         enforcementLevel: SecurityLevel.HIGH,
         complianceStandards: [ComplianceStandard.ISO27001, ComplianceStandard.SOC2],
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ];
 
     for (const policy of defaultPolicies) {
@@ -238,16 +238,22 @@ export class SecurityAuditService extends EventEmitter {
 
   private async scheduleAudits(): Promise<void> {
     // Schedule daily security scans
-    this.auditScheduler = setInterval(async () => {
-      await this.runDailySecurityScan();
-    }, 24 * 60 * 60 * 1000); // 24 hours
+    this.auditScheduler = setInterval(
+      async () => {
+        await this.runDailySecurityScan();
+      },
+      24 * 60 * 60 * 1000,
+    ); // 24 hours
   }
 
   private async startPolicyEnforcement(): Promise<void> {
     // Run policy enforcement every 5 minutes
-    this.policyEnforcer = setInterval(async () => {
-      await this.enforcePoliciesContinuously();
-    }, 5 * 60 * 1000); // 5 minutes
+    this.policyEnforcer = setInterval(
+      async () => {
+        await this.enforcePoliciesContinuously();
+      },
+      5 * 60 * 1000,
+    ); // 5 minutes
   }
 
   // ============================================================================
@@ -258,7 +264,7 @@ export class SecurityAuditService extends EventEmitter {
     tenantId: string,
     auditType: string,
     complianceStandards: ComplianceStandard[],
-    auditor?: string
+    auditor?: string,
   ): Promise<SecurityAudit> {
     const audit: SecurityAudit = {
       id: uuidv4(),
@@ -272,12 +278,12 @@ export class SecurityAuditService extends EventEmitter {
       summary: '',
       riskScore: 0,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.audits.set(audit.id, audit);
     this.emit('audit:created', audit);
-    
+
     return audit;
   }
 
@@ -324,7 +330,7 @@ export class SecurityAuditService extends EventEmitter {
       findings,
       riskScore,
       complianceStatus: this.getComplianceStatus(audit.complianceStandards, findings),
-      recommendations: this.generateRecommendations(findings)
+      recommendations: this.generateRecommendations(findings),
     };
   }
 
@@ -334,27 +340,27 @@ export class SecurityAuditService extends EventEmitter {
 
   private async checkComplianceStandard(
     tenantId: string,
-    standard: ComplianceStandard
+    standard: ComplianceStandard,
   ): Promise<SecurityFinding[]> {
     const findings: SecurityFinding[] = [];
 
     switch (standard) {
       case ComplianceStandard.GDPR:
-        findings.push(...await this.checkGDPRCompliance(tenantId));
+        findings.push(...(await this.checkGDPRCompliance(tenantId)));
         break;
       case ComplianceStandard.PDPA:
-        findings.push(...await this.checkPDPACompliance(tenantId));
+        findings.push(...(await this.checkPDPACompliance(tenantId)));
         break;
       case ComplianceStandard.MIA:
-        findings.push(...await this.checkMIACompliance(tenantId));
+        findings.push(...(await this.checkMIACompliance(tenantId)));
         break;
       case ComplianceStandard.MFRS:
-        findings.push(...await this.checkMFRSCompliance(tenantId));
+        findings.push(...(await this.checkMFRSCompliance(tenantId)));
         break;
       case ComplianceStandard.ISO27001:
       case ComplianceStandard.SOC2:
       case ComplianceStandard.PCI_DSS:
-        findings.push(...await this.checkGeneralCompliance(tenantId, standard));
+        findings.push(...(await this.checkGeneralCompliance(tenantId, standard)));
         break;
     }
 
@@ -376,9 +382,10 @@ export class SecurityAuditService extends EventEmitter {
         securityLevel: SecurityLevel.HIGH,
         complianceStandard: ComplianceStandard.GDPR,
         category: 'data_protection',
-        recommendation: 'Implement comprehensive data protection measures including encryption, access controls, and data minimization',
+        recommendation:
+          'Implement comprehensive data protection measures including encryption, access controls, and data minimization',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
 
@@ -394,9 +401,10 @@ export class SecurityAuditService extends EventEmitter {
         securityLevel: SecurityLevel.HIGH,
         complianceStandard: ComplianceStandard.GDPR,
         category: 'consent_management',
-        recommendation: 'Implement a comprehensive consent management system with granular controls',
+        recommendation:
+          'Implement a comprehensive consent management system with granular controls',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
 
@@ -420,7 +428,7 @@ export class SecurityAuditService extends EventEmitter {
         category: 'data_localization',
         recommendation: 'Ensure data is stored and processed within Malaysia as required by PDPA',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
 
@@ -444,7 +452,7 @@ export class SecurityAuditService extends EventEmitter {
         category: 'audit_trail',
         recommendation: 'Implement comprehensive audit trail for all financial transactions',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
 
@@ -468,7 +476,7 @@ export class SecurityAuditService extends EventEmitter {
         category: 'data_integrity',
         recommendation: 'Implement comprehensive data integrity measures for financial data',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
 
@@ -477,7 +485,7 @@ export class SecurityAuditService extends EventEmitter {
 
   private async checkGeneralCompliance(
     tenantId: string,
-    standard: ComplianceStandard
+    standard: ComplianceStandard,
   ): Promise<SecurityFinding[]> {
     const findings: SecurityFinding[] = [];
 
@@ -534,15 +542,16 @@ export class SecurityAuditService extends EventEmitter {
 
   private async enforcePoliciesContinuously(): Promise<void> {
     const tenantIds = await this.getActiveTenantIds();
-    
+
     for (const tenantId of tenantIds) {
       await this.enforceTenantPolicies(tenantId);
     }
   }
 
   private async enforceTenantPolicies(tenantId: string): Promise<void> {
-    const tenantPolicies = Array.from(this.policies.values())
-      .filter(policy => policy.tenantId === tenantId || policy.tenantId === 'global');
+    const tenantPolicies = Array.from(this.policies.values()).filter(
+      (policy) => policy.tenantId === tenantId || policy.tenantId === 'global',
+    );
 
     for (const policy of tenantPolicies) {
       if (policy.isActive) {
@@ -551,13 +560,16 @@ export class SecurityAuditService extends EventEmitter {
     }
   }
 
-  private async enforcePolicy(tenantId: string, policy: SecurityPolicy): Promise<PolicyEnforcementResult> {
+  private async enforcePolicy(
+    tenantId: string,
+    policy: SecurityPolicy,
+  ): Promise<PolicyEnforcementResult> {
     const result: PolicyEnforcementResult = {
       policyId: policy.id,
       tenantId,
       enforced: false,
       violations: [],
-      actions: []
+      actions: [],
     };
 
     try {
@@ -602,21 +614,28 @@ export class SecurityAuditService extends EventEmitter {
 
   private getSecurityLevelWeight(level: SecurityLevel): number {
     switch (level) {
-      case SecurityLevel.LOW: return 1;
-      case SecurityLevel.MEDIUM: return 3;
-      case SecurityLevel.HIGH: return 7;
-      case SecurityLevel.CRITICAL: return 10;
-      default: return 1;
+      case SecurityLevel.LOW:
+        return 1;
+      case SecurityLevel.MEDIUM:
+        return 3;
+      case SecurityLevel.HIGH:
+        return 7;
+      case SecurityLevel.CRITICAL:
+        return 10;
+      default:
+        return 1;
     }
   }
 
   private generateAuditSummary(
     audit: SecurityAudit,
     findings: SecurityFinding[],
-    riskScore: number
+    riskScore: number,
   ): string {
-    const criticalFindings = findings.filter(f => f.securityLevel === SecurityLevel.CRITICAL).length;
-    const highFindings = findings.filter(f => f.securityLevel === SecurityLevel.HIGH).length;
+    const criticalFindings = findings.filter(
+      (f) => f.securityLevel === SecurityLevel.CRITICAL,
+    ).length;
+    const highFindings = findings.filter((f) => f.securityLevel === SecurityLevel.HIGH).length;
     const totalFindings = findings.length;
 
     return `Security audit completed for tenant ${audit.tenantId}. 
@@ -627,13 +646,15 @@ export class SecurityAuditService extends EventEmitter {
 
   private getComplianceStatus(
     standards: ComplianceStandard[],
-    findings: SecurityFinding[]
+    findings: SecurityFinding[],
   ): Record<ComplianceStandard, boolean> {
     const status: Record<ComplianceStandard, boolean> = {} as any;
-    
+
     for (const standard of standards) {
-      const standardFindings = findings.filter(f => f.complianceStandard === standard);
-      const criticalFindings = standardFindings.filter(f => f.securityLevel === SecurityLevel.CRITICAL);
+      const standardFindings = findings.filter((f) => f.complianceStandard === standard);
+      const criticalFindings = standardFindings.filter(
+        (f) => f.securityLevel === SecurityLevel.CRITICAL,
+      );
       status[standard] = criticalFindings.length === 0;
     }
 
@@ -642,8 +663,10 @@ export class SecurityAuditService extends EventEmitter {
 
   private generateRecommendations(findings: SecurityFinding[]): string[] {
     return findings
-      .filter(f => f.securityLevel === SecurityLevel.HIGH || f.securityLevel === SecurityLevel.CRITICAL)
-      .map(f => f.recommendation)
+      .filter(
+        (f) => f.securityLevel === SecurityLevel.HIGH || f.securityLevel === SecurityLevel.CRITICAL,
+      )
+      .map((f) => f.recommendation)
       .slice(0, 10); // Top 10 recommendations
   }
 
@@ -671,7 +694,10 @@ export class SecurityAuditService extends EventEmitter {
     return [];
   }
 
-  private async enforceAuthenticationPolicy(tenantId: string, policy: SecurityPolicy): Promise<boolean> {
+  private async enforceAuthenticationPolicy(
+    tenantId: string,
+    policy: SecurityPolicy,
+  ): Promise<boolean> {
     // Implementation would enforce authentication policies
     return true;
   }
@@ -681,12 +707,18 @@ export class SecurityAuditService extends EventEmitter {
     return true;
   }
 
-  private async enforceEncryptionPolicy(tenantId: string, policy: SecurityPolicy): Promise<boolean> {
+  private async enforceEncryptionPolicy(
+    tenantId: string,
+    policy: SecurityPolicy,
+  ): Promise<boolean> {
     // Implementation would enforce encryption policies
     return true;
   }
 
-  private async enforceAccessControlPolicy(tenantId: string, policy: SecurityPolicy): Promise<boolean> {
+  private async enforceAccessControlPolicy(
+    tenantId: string,
+    policy: SecurityPolicy,
+  ): Promise<boolean> {
     // Implementation would enforce access control policies
     return true;
   }
@@ -732,20 +764,21 @@ export class SecurityAuditService extends EventEmitter {
 
   async getAuditHistory(tenantId: string, limit: number = 100): Promise<SecurityAudit[]> {
     return Array.from(this.audits.values())
-      .filter(audit => audit.tenantId === tenantId)
+      .filter((audit) => audit.tenantId === tenantId)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, limit);
   }
 
   async getOpenFindings(tenantId: string): Promise<SecurityFinding[]> {
-    return Array.from(this.findings.values())
-      .filter(finding => finding.tenantId === tenantId && !finding.isResolved);
+    return Array.from(this.findings.values()).filter(
+      (finding) => finding.tenantId === tenantId && !finding.isResolved,
+    );
   }
 
   async resolveFinding(
     findingId: string,
     resolvedBy: string,
-    resolutionNotes: string = ''
+    resolutionNotes: string = '',
   ): Promise<SecurityFinding> {
     const finding = this.findings.get(findingId);
     if (!finding) {
@@ -770,7 +803,7 @@ export class SecurityAuditService extends EventEmitter {
     issuedDate: Date,
     expiryDate: Date,
     certifyingBody: string,
-    scope: string
+    scope: string,
   ): Promise<ComplianceCertification> {
     const certification: ComplianceCertification = {
       id: uuidv4(),
@@ -784,7 +817,7 @@ export class SecurityAuditService extends EventEmitter {
       status: 'active',
       auditFrequencyDays: 90,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.certifications.set(certification.id, certification);
@@ -795,8 +828,9 @@ export class SecurityAuditService extends EventEmitter {
 
   async getComplianceReport(tenantId: string): Promise<Record<string, any>> {
     const audits = await this.getAuditHistory(tenantId);
-    const certifications = Array.from(this.certifications.values())
-      .filter(cert => cert.tenantId === tenantId);
+    const certifications = Array.from(this.certifications.values()).filter(
+      (cert) => cert.tenantId === tenantId,
+    );
     const openFindings = await this.getOpenFindings(tenantId);
 
     return {
@@ -807,9 +841,9 @@ export class SecurityAuditService extends EventEmitter {
       riskScore: audits[0]?.riskScore || 0,
       complianceStatus: this.getComplianceStatus(
         audits[0]?.complianceStandards || [],
-        audits[0]?.findings || []
+        audits[0]?.findings || [],
       ),
-      generatedAt: new Date()
+      generatedAt: new Date(),
     };
   }
 
@@ -832,4 +866,4 @@ export class SecurityAuditService extends EventEmitter {
 // EXPORTS
 // ============================================================================
 
-export default SecurityAuditService; 
+export default SecurityAuditService;

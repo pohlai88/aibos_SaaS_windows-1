@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 import { Job, JobStatus, JobPriority } from './types';
 
 export interface JobQueueContextValue {
@@ -41,7 +48,7 @@ export const JobQueueProvider: React.FC<JobQueueProviderProps> = ({
   refreshInterval = 5000,
   apiEndpoint = '/api/jobs',
   enableWebSocket = true,
-  maxJobs = 1000
+  maxJobs = 1000,
 }) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,12 +58,12 @@ export const JobQueueProvider: React.FC<JobQueueProviderProps> = ({
   // Calculate stats
   const stats = {
     total: jobs.length,
-    pending: jobs.filter(job => job.status === JobStatus.PENDING).length,
-    running: jobs.filter(job => job.status === JobStatus.RUNNING).length,
-    completed: jobs.filter(job => job.status === JobStatus.COMPLETED).length,
-    failed: jobs.filter(job => job.status === JobStatus.FAILED).length,
-    retry: jobs.filter(job => job.status === JobStatus.RETRYING).length,
-    cancelled: jobs.filter(job => job.status === JobStatus.CANCELLED).length
+    pending: jobs.filter((job) => job.status === JobStatus.PENDING).length,
+    running: jobs.filter((job) => job.status === JobStatus.RUNNING).length,
+    completed: jobs.filter((job) => job.status === JobStatus.COMPLETED).length,
+    failed: jobs.filter((job) => job.status === JobStatus.FAILED).length,
+    retry: jobs.filter((job) => job.status === JobStatus.RETRYING).length,
+    cancelled: jobs.filter((job) => job.status === JobStatus.CANCELLED).length,
   };
 
   // Fetch jobs from API
@@ -64,13 +71,13 @@ export const JobQueueProvider: React.FC<JobQueueProviderProps> = ({
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const response = await fetch(`${apiEndpoint}?queue=${queueName}&limit=${maxJobs}`);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch jobs: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       setJobs(data.jobs || []);
     } catch (err) {
@@ -87,102 +94,121 @@ export const JobQueueProvider: React.FC<JobQueueProviderProps> = ({
   }, [fetchJobs]);
 
   // Retry a failed job
-  const retryJob = useCallback(async (jobId: string) => {
-    try {
-      const response = await fetch(`${apiEndpoint}/${jobId}/retry`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to retry job: ${response.statusText}`);
+  const retryJob = useCallback(
+    async (jobId: string) => {
+      try {
+        const response = await fetch(`${apiEndpoint}/${jobId}/retry`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to retry job: ${response.statusText}`);
+        }
+
+        // Update local state
+        setJobs((prev) =>
+          prev.map((job) =>
+            job.id === jobId
+              ? { ...job, status: JobStatus.PENDING, retries: job.retries + 1, error: undefined }
+              : job,
+          ),
+        );
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to retry job');
+        console.error('Error retrying job:', err);
       }
-      
-      // Update local state
-      setJobs(prev => prev.map(job => 
-        job.id === jobId 
-          ? { ...job, status: JobStatus.PENDING, retries: job.retries + 1, error: undefined }
-          : job
-      ));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to retry job');
-      console.error('Error retrying job:', err);
-    }
-  }, [apiEndpoint]);
+    },
+    [apiEndpoint],
+  );
 
   // Cancel a job
-  const cancelJob = useCallback(async (jobId: string) => {
-    try {
-      const response = await fetch(`${apiEndpoint}/${jobId}/cancel`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to cancel job: ${response.statusText}`);
+  const cancelJob = useCallback(
+    async (jobId: string) => {
+      try {
+        const response = await fetch(`${apiEndpoint}/${jobId}/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to cancel job: ${response.statusText}`);
+        }
+
+        // Update local state
+        setJobs((prev) =>
+          prev.map((job) =>
+            job.id === jobId
+              ? { ...job, status: JobStatus.CANCELLED, completedAt: new Date() }
+              : job,
+          ),
+        );
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to cancel job');
+        console.error('Error cancelling job:', err);
       }
-      
-      // Update local state
-      setJobs(prev => prev.map(job => 
-        job.id === jobId 
-          ? { ...job, status: JobStatus.CANCELLED, completedAt: new Date() }
-          : job
-      ));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to cancel job');
-      console.error('Error cancelling job:', err);
-    }
-  }, [apiEndpoint]);
+    },
+    [apiEndpoint],
+  );
 
   // Delete a job
-  const deleteJob = useCallback(async (jobId: string) => {
-    try {
-      const response = await fetch(`${apiEndpoint}/${jobId}`, {
-        method: 'DELETE'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to delete job: ${response.statusText}`);
+  const deleteJob = useCallback(
+    async (jobId: string) => {
+      try {
+        const response = await fetch(`${apiEndpoint}/${jobId}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to delete job: ${response.statusText}`);
+        }
+
+        // Remove from local state
+        setJobs((prev) => prev.filter((job) => job.id !== jobId));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to delete job');
+        console.error('Error deleting job:', err);
       }
-      
-      // Remove from local state
-      setJobs(prev => prev.filter(job => job.id !== jobId));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete job');
-      console.error('Error deleting job:', err);
-    }
-  }, [apiEndpoint]);
+    },
+    [apiEndpoint],
+  );
 
   // Add a new job
-  const addJob = useCallback(async (jobConfig: any): Promise<Job> => {
-    try {
-      const response = await fetch(`${apiEndpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...jobConfig, queue: queueName })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to add job: ${response.statusText}`);
+  const addJob = useCallback(
+    async (jobConfig: any): Promise<Job> => {
+      try {
+        const response = await fetch(`${apiEndpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...jobConfig, queue: queueName }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to add job: ${response.statusText}`);
+        }
+
+        const job = await response.json();
+
+        // Add to local state
+        setJobs((prev) => [job, ...prev.slice(0, maxJobs - 1)]);
+
+        return job;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to add job');
+        console.error('Error adding job:', err);
+        throw err;
       }
-      
-      const job = await response.json();
-      
-      // Add to local state
-      setJobs(prev => [job, ...prev.slice(0, maxJobs - 1)]);
-      
-      return job;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add job');
-      console.error('Error adding job:', err);
-      throw err;
-    }
-  }, [apiEndpoint, queueName, maxJobs]);
+    },
+    [apiEndpoint, queueName, maxJobs],
+  );
 
   // Get a specific job
-  const getJob = useCallback((jobId: string): Job | undefined => {
-    return jobs.find(job => job.id === jobId);
-  }, [jobs]);
+  const getJob = useCallback(
+    (jobId: string): Job | undefined => {
+      return jobs.find((job) => job.id === jobId);
+    },
+    [jobs],
+  );
 
   // Clear completed jobs
   const clearCompletedJobs = useCallback(async () => {
@@ -190,15 +216,15 @@ export const JobQueueProvider: React.FC<JobQueueProviderProps> = ({
       const response = await fetch(`${apiEndpoint}/clear-completed`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ queue: queueName })
+        body: JSON.stringify({ queue: queueName }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to clear completed jobs: ${response.statusText}`);
       }
-      
+
       // Remove completed jobs from local state
-      setJobs(prev => prev.filter(job => job.status !== JobStatus.COMPLETED));
+      setJobs((prev) => prev.filter((job) => job.status !== JobStatus.COMPLETED));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to clear completed jobs');
       console.error('Error clearing completed jobs:', err);
@@ -211,15 +237,15 @@ export const JobQueueProvider: React.FC<JobQueueProviderProps> = ({
       const response = await fetch(`${apiEndpoint}/clear-failed`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ queue: queueName })
+        body: JSON.stringify({ queue: queueName }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to clear failed jobs: ${response.statusText}`);
       }
-      
+
       // Remove failed jobs from local state
-      setJobs(prev => prev.filter(job => job.status !== JobStatus.FAILED));
+      setJobs((prev) => prev.filter((job) => job.status !== JobStatus.FAILED));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to clear failed jobs');
       console.error('Error clearing failed jobs:', err);
@@ -240,18 +266,16 @@ export const JobQueueProvider: React.FC<JobQueueProviderProps> = ({
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        
+
         switch (data.type) {
           case 'job_added':
-            setJobs(prev => [data.job, ...prev.slice(0, maxJobs - 1)]);
+            setJobs((prev) => [data.job, ...prev.slice(0, maxJobs - 1)]);
             break;
           case 'job_updated':
-            setJobs(prev => prev.map(job => 
-              job.id === data.job.id ? data.job : job
-            ));
+            setJobs((prev) => prev.map((job) => (job.id === data.job.id ? data.job : job)));
             break;
           case 'job_removed':
-            setJobs(prev => prev.filter(job => job.id !== data.jobId));
+            setJobs((prev) => prev.filter((job) => job.id !== data.jobId));
             break;
           case 'queue_stats':
             // Stats are calculated locally, but we could update them here if needed
@@ -299,14 +323,10 @@ export const JobQueueProvider: React.FC<JobQueueProviderProps> = ({
     addJob,
     getJob,
     clearCompletedJobs,
-    clearFailedJobs
+    clearFailedJobs,
   };
 
-  return (
-    <JobQueueContext.Provider value={contextValue}>
-      {children}
-    </JobQueueContext.Provider>
-  );
+  return <JobQueueContext.Provider value={contextValue}>{children}</JobQueueContext.Provider>;
 };
 
 // Hook to use the job queue context
@@ -316,4 +336,4 @@ export const useJobQueue = (): JobQueueContextValue => {
     throw new Error('useJobQueue must be used within a JobQueueProvider');
   }
   return context;
-}; 
+};

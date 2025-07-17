@@ -2,7 +2,7 @@
 
 /**
  * AI-BOS Shared Library Performance Benchmarking Suite
- * 
+ *
  * This script provides comprehensive performance testing for all major components
  * of the shared library to ensure optimal performance in production environments.
  */
@@ -31,7 +31,7 @@ const DEFAULT_CONFIG: BenchmarkConfig = {
   warmupIterations: 1000,
   timeout: 30000,
   enableDetailedLogging: true,
-  enableMemoryProfiling: true
+  enableMemoryProfiling: true,
 };
 
 // ============================================================================
@@ -101,7 +101,7 @@ class BenchmarkRunner {
   async runBenchmark(
     name: string,
     fn: () => void | Promise<void>,
-    iterations?: number
+    iterations?: number,
   ): Promise<BenchmarkResult> {
     const iterCount = iterations || this.config.iterations;
     const times: number[] = [];
@@ -142,7 +142,7 @@ class BenchmarkRunner {
     const averageTime = totalTime / times.length;
     const minTime = Math.min(...times);
     const maxTime = Math.max(...times);
-    const operationsPerSecond = (1000 / averageTime);
+    const operationsPerSecond = 1000 / averageTime;
 
     return {
       name,
@@ -151,17 +151,22 @@ class BenchmarkRunner {
       minTime,
       maxTime,
       operationsPerSecond,
-      memoryUsage: this.config.enableMemoryProfiling ? {
-        before: memoryBefore,
-        after: memoryAfter,
-        peak: memoryPeak
-      } : undefined,
+      memoryUsage: this.config.enableMemoryProfiling
+        ? {
+            before: memoryBefore,
+            after: memoryAfter,
+            peak: memoryPeak,
+          }
+        : undefined,
       success,
-      error
+      error,
     };
   }
 
-  async runSuite(name: string, benchmarks: Array<{ name: string; fn: () => void | Promise<void> }>): Promise<BenchmarkSuite> {
+  async runSuite(
+    name: string,
+    benchmarks: Array<{ name: string; fn: () => void | Promise<void> }>,
+  ): Promise<BenchmarkSuite> {
     console.log(`\n🚀 Running benchmark suite: ${name}`);
     console.log('='.repeat(60));
 
@@ -175,9 +180,10 @@ class BenchmarkRunner {
     }
 
     const totalTime = performance.now() - startTime;
-    const passedTests = results.filter(r => r.success).length;
-    const failedTests = results.filter(r => !r.success).length;
-    const averageOpsPerSecond = results.reduce((sum, r) => sum + r.operationsPerSecond, 0) / results.length;
+    const passedTests = results.filter((r) => r.success).length;
+    const failedTests = results.filter((r) => !r.success).length;
+    const averageOpsPerSecond =
+      results.reduce((sum, r) => sum + r.operationsPerSecond, 0) / results.length;
 
     const suite: BenchmarkSuite = {
       name,
@@ -187,8 +193,8 @@ class BenchmarkRunner {
         totalTests: results.length,
         passedTests,
         failedTests,
-        averageOpsPerSecond
-      }
+        averageOpsPerSecond,
+      },
     };
 
     this.logSuiteSummary(suite);
@@ -204,7 +210,7 @@ class BenchmarkRunner {
     console.log(`${status} ${result.name}:`);
     console.log(`   Average: ${timeStr} (${opsStr} ops/sec)`);
     console.log(`   Range: ${formatTime(result.minTime)} - ${formatTime(result.maxTime)}`);
-    
+
     if (result.memoryUsage) {
       const memoryDiff = result.memoryUsage.after - result.memoryUsage.before;
       const memoryStr = formatNumber(memoryDiff);
@@ -234,9 +240,11 @@ class BenchmarkRunner {
     for (const suite of this.results) {
       console.log(`\n🏆 ${suite.name.toUpperCase()}`);
       console.log('-'.repeat(40));
-      
-      const sortedResults = [...suite.results].sort((a, b) => b.operationsPerSecond - a.operationsPerSecond);
-      
+
+      const sortedResults = [...suite.results].sort(
+        (a, b) => b.operationsPerSecond - a.operationsPerSecond,
+      );
+
       for (const result of sortedResults) {
         const status = result.success ? '✅' : '❌';
         const opsStr = formatNumber(result.operationsPerSecond);
@@ -245,10 +253,11 @@ class BenchmarkRunner {
     }
 
     // Overall summary
-    const allResults = this.results.flatMap(s => s.results);
+    const allResults = this.results.flatMap((s) => s.results);
     const totalTests = allResults.length;
-    const passedTests = allResults.filter(r => r.success).length;
-    const averageOpsPerSecond = allResults.reduce((sum, r) => sum + r.operationsPerSecond, 0) / allResults.length;
+    const passedTests = allResults.filter((r) => r.success).length;
+    const averageOpsPerSecond =
+      allResults.reduce((sum, r) => sum + r.operationsPerSecond, 0) / allResults.length;
 
     console.log('\n🎯 OVERALL SUMMARY');
     console.log('-'.repeat(40));
@@ -267,24 +276,24 @@ async function runPrimitiveTypeBenchmarks(runner: BenchmarkRunner): Promise<void
   await runner.runSuite('Primitive Type Validation', [
     {
       name: 'UUID Validation',
-      fn: () => isUUID('123e4567-e89b-12d3-a456-426614174000')
+      fn: () => isUUID('123e4567-e89b-12d3-a456-426614174000'),
     },
     {
       name: 'Email Validation',
-      fn: () => isEmail('test@example.com')
+      fn: () => isEmail('test@example.com'),
     },
     {
       name: 'URL Validation',
-      fn: () => isValidURL('https://example.com')
+      fn: () => isValidURL('https://example.com'),
     },
     {
       name: 'Invalid UUID Validation',
-      fn: () => isUUID('invalid-uuid')
+      fn: () => isUUID('invalid-uuid'),
     },
     {
       name: 'Invalid Email Validation',
-      fn: () => isEmail('invalid-email')
-    }
+      fn: () => isEmail('invalid-email'),
+    },
   ]);
 }
 
@@ -295,34 +304,34 @@ async function runCacheBenchmarks(runner: BenchmarkRunner): Promise<void> {
   await runner.runSuite('Cache Performance', [
     {
       name: 'Memory Cache Set',
-      fn: () => memoryCache.set('test-key', testData)
+      fn: () => memoryCache.set('test-key', testData),
     },
     {
       name: 'Memory Cache Get',
-      fn: () => memoryCache.get('test-key')
+      fn: () => memoryCache.get('test-key'),
     },
     {
       name: 'Memory Cache Has',
-      fn: () => memoryCache.has('test-key')
+      fn: () => memoryCache.has('test-key'),
     },
     {
       name: 'Memory Cache Delete',
-      fn: () => memoryCache.delete('test-key')
-    }
+      fn: () => memoryCache.delete('test-key'),
+    },
   ]);
 }
 
 async function runDatabaseBenchmarks(runner: BenchmarkRunner): Promise<void> {
   // Mock database operations for benchmarking
   const mockQuery = async () => {
-    await new Promise(resolve => setTimeout(resolve, 1));
+    await new Promise((resolve) => setTimeout(resolve, 1));
     return { rows: [{ id: 1, name: 'test' }], rowCount: 1 };
   };
 
   await runner.runSuite('Database Operations', [
     {
       name: 'Mock Query Execution',
-      fn: mockQuery
+      fn: mockQuery,
     },
     {
       name: 'Query Builder Construction',
@@ -333,29 +342,29 @@ async function runDatabaseBenchmarks(runner: BenchmarkRunner): Promise<void> {
           .orderBy('created_at', 'DESC')
           .limit(10);
         return builder.build();
-      }
-    }
+      },
+    },
   ]);
 }
 
 async function runSecurityBenchmarks(runner: BenchmarkRunner): Promise<void> {
   const testData = 'sensitive-data-to-encrypt';
-  
+
   await runner.runSuite('Security Operations', [
     {
       name: 'Hash Generation',
       fn: () => {
         // Mock hash operation
         return Buffer.from(testData).toString('base64');
-      }
+      },
     },
     {
       name: 'Encryption Simulation',
       fn: () => {
         // Mock encryption
         return Buffer.from(testData).toString('base64');
-      }
-    }
+      },
+    },
   ]);
 }
 
@@ -369,17 +378,17 @@ async function runMetadataBenchmarks(runner: BenchmarkRunner): Promise<void> {
           name: 'test_field',
           type: 'string',
           required: true,
-          constraints: { maxLength: 255 }
+          constraints: { maxLength: 255 },
         };
-      }
+      },
     },
     {
       name: 'Metadata Validation',
       fn: () => {
         // Mock validation
         return { isValid: true, errors: [] };
-      }
-    }
+      },
+    },
   ]);
 }
 
@@ -395,7 +404,7 @@ async function main(): Promise<void> {
     iterations: 10000,
     warmupIterations: 1000,
     enableDetailedLogging: true,
-    enableMemoryProfiling: true
+    enableMemoryProfiling: true,
   });
 
   try {
@@ -421,4 +430,4 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-export { BenchmarkRunner, BenchmarkResult, BenchmarkSuite }; 
+export { BenchmarkRunner, BenchmarkResult, BenchmarkSuite };

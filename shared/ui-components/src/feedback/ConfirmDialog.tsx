@@ -4,12 +4,12 @@ import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
 import { Badge } from '../primitives/Badge';
 import { Progress } from '../primitives/Progress';
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  Info, 
-  X, 
-  Shield, 
+import {
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  X,
+  Shield,
   Zap,
   Brain,
   TrendingUp,
@@ -18,26 +18,23 @@ import {
   AlertCircle,
   HelpCircle,
   Settings,
-  History
+  History,
 } from 'lucide-react';
 
-const dialogVariants = cva(
-  'fixed inset-0 z-50 flex items-center justify-center p-4',
-  {
-    variants: {
-      variant: {
-        default: '',
-        destructive: '',
-        warning: '',
-        info: '',
-        success: '',
-      },
+const dialogVariants = cva('fixed inset-0 z-50 flex items-center justify-center p-4', {
+  variants: {
+    variant: {
+      default: '',
+      destructive: '',
+      warning: '',
+      info: '',
+      success: '',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 const contentVariants = cva(
   'relative bg-background rounded-lg shadow-lg border border-border max-w-md w-full overflow-hidden',
@@ -53,7 +50,7 @@ const contentVariants = cva(
     defaultVariants: {
       size: 'md',
     },
-  }
+  },
 );
 
 export interface ConfirmAction {
@@ -118,64 +115,72 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
   const [showRiskDetails, setShowRiskDetails] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<ConfirmAction[]>([]);
-  const [usageStats, setUsageStats] = useState<Record<string, { count: number; successRate: number }>>({});
+  const [usageStats, setUsageStats] = useState<
+    Record<string, { count: number; successRate: number }>
+  >({});
 
   // AI-powered action suggestions
   useEffect(() => {
     if (aiFeatures.smartSuggestions && actions.length > 0) {
       const suggestions = actions
-        .filter(action => action.aiScore && action.aiScore > 70)
+        .filter((action) => action.aiScore && action.aiScore > 70)
         .sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0))
         .slice(0, 2);
-      
+
       setAiSuggestions(suggestions);
     }
   }, [actions, aiFeatures.smartSuggestions]);
 
   // AI-powered risk assessment
-  const assessRisk = useCallback((action: ConfirmAction) => {
-    if (!aiFeatures.riskAssessment) return null;
+  const assessRisk = useCallback(
+    (action: ConfirmAction) => {
+      if (!aiFeatures.riskAssessment) return null;
 
-    const baseRisk = action.risk === 'high' ? 80 : action.risk === 'medium' ? 50 : 20;
-    let adjustedRisk = baseRisk;
+      const baseRisk = action.risk === 'high' ? 80 : action.risk === 'medium' ? 50 : 20;
+      let adjustedRisk = baseRisk;
 
-    // Context-based risk adjustment
-    if (context.timeOfDay === 'night' && action.isDestructive) {
-      adjustedRisk += 20;
-    }
-    if (context.riskTolerance === 'low' && baseRisk > 30) {
-      adjustedRisk += 15;
-    }
-    if (context.userRole === 'admin' && action.isDestructive) {
-      adjustedRisk -= 10;
-    }
+      // Context-based risk adjustment
+      if (context.timeOfDay === 'night' && action.isDestructive) {
+        adjustedRisk += 20;
+      }
+      if (context.riskTolerance === 'low' && baseRisk > 30) {
+        adjustedRisk += 15;
+      }
+      if (context.userRole === 'admin' && action.isDestructive) {
+        adjustedRisk -= 10;
+      }
 
-    return Math.min(100, Math.max(0, adjustedRisk));
-  }, [aiFeatures.riskAssessment, context]);
+      return Math.min(100, Math.max(0, adjustedRisk));
+    },
+    [aiFeatures.riskAssessment, context],
+  );
 
   // AI-powered usage optimization
   const getRecommendedAction = useCallback(() => {
     if (!aiFeatures.usageOptimization) return null;
 
     return actions
-      .filter(action => action.usageCount && action.usageCount > 0)
+      .filter((action) => action.usageCount && action.usageCount > 0)
       .sort((a, b) => {
-        const aScore = (a.usageCount || 0) * (a.aiScore || 50) / 100;
-        const bScore = (b.usageCount || 0) * (b.aiScore || 50) / 100;
+        const aScore = ((a.usageCount || 0) * (a.aiScore || 50)) / 100;
+        const bScore = ((b.usageCount || 0) * (b.aiScore || 50)) / 100;
         return bScore - aScore;
       })[0];
   }, [actions, aiFeatures.usageOptimization]);
 
-  const handleActionClick = useCallback((actionId: string) => {
-    const action = actions.find(a => a.id === actionId);
-    
-    if (action?.requiresConfirmation) {
-      setSelectedAction(actionId);
-    } else {
-      onAction(actionId);
-      onClose();
-    }
-  }, [actions, onAction, onClose]);
+  const handleActionClick = useCallback(
+    (actionId: string) => {
+      const action = actions.find((a) => a.id === actionId);
+
+      if (action?.requiresConfirmation) {
+        setSelectedAction(actionId);
+      } else {
+        onAction(actionId);
+        onClose();
+      }
+    },
+    [actions, onAction, onClose],
+  );
 
   const handleConfirmAction = useCallback(() => {
     if (selectedAction) {
@@ -212,32 +217,19 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         onClick={onClose}
         aria-hidden="true"
       />
-      
+
       {/* Dialog */}
       <div className={cn(contentVariants({ size }))}>
         {/* Header */}
         <div className="flex items-start gap-3 p-6 border-b border-border">
-          <div className="flex-shrink-0">
-            {getIconForVariant()}
-          </div>
-          
+          <div className="flex-shrink-0">{getIconForVariant()}</div>
+
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-semibold text-foreground">
-              {title}
-            </h2>
-            {description && (
-              <p className="mt-1 text-sm text-muted-foreground">
-                {description}
-              </p>
-            )}
+            <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+            {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
           </div>
-          
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={onClose}
-            aria-label="Close dialog"
-          >
+
+          <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close dialog">
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -256,9 +248,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
               <div className="space-y-2">
                 {aiSuggestions.map((action) => (
                   <div key={action.id} className="flex items-center justify-between">
-                    <span className="text-sm text-blue-800 dark:text-blue-200">
-                      {action.label}
-                    </span>
+                    <span className="text-sm text-blue-800 dark:text-blue-200">{action.label}</span>
                     <Badge variant="outline" size="sm">
                       {action.aiScore}% confidence
                     </Badge>
@@ -269,49 +259,50 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           )}
 
           {/* Risk Assessment */}
-          {aiFeatures.riskAssessment && actions.some(a => a.risk === 'high' || a.isDestructive) && (
-            <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-              <div className="flex items-center gap-2 mb-2">
-                <Shield className="h-4 w-4 text-yellow-600" />
-                <span className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
-                  Risk Assessment
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowRiskDetails(!showRiskDetails)}
-                >
-                  {showRiskDetails ? 'Hide' : 'Show'} Details
-                </Button>
-              </div>
-              
-              {showRiskDetails && (
-                <div className="space-y-2">
-                  {actions
-                    .filter(action => action.risk === 'high' || action.isDestructive)
-                    .map((action) => {
-                      const riskScore = assessRisk(action);
-                      return (
-                        <div key={action.id} className="space-y-1">
-                          <div className="flex items-center justify-between text-sm">
-                            <span>{action.label}</span>
-                            <Badge 
-                              variant={riskScore && riskScore > 70 ? 'destructive' : 'warning'}
-                              size="sm"
-                            >
-                              {riskScore}% risk
-                            </Badge>
-                          </div>
-                          {riskScore && (
-                            <Progress value={riskScore} size="sm" variant="warning" />
-                          )}
-                        </div>
-                      );
-                    })}
+          {aiFeatures.riskAssessment &&
+            actions.some((a) => a.risk === 'high' || a.isDestructive) && (
+              <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="h-4 w-4 text-yellow-600" />
+                  <span className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+                    Risk Assessment
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowRiskDetails(!showRiskDetails)}
+                  >
+                    {showRiskDetails ? 'Hide' : 'Show'} Details
+                  </Button>
                 </div>
-              )}
-            </div>
-          )}
+
+                {showRiskDetails && (
+                  <div className="space-y-2">
+                    {actions
+                      .filter((action) => action.risk === 'high' || action.isDestructive)
+                      .map((action) => {
+                        const riskScore = assessRisk(action);
+                        return (
+                          <div key={action.id} className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span>{action.label}</span>
+                              <Badge
+                                variant={riskScore && riskScore > 70 ? 'destructive' : 'warning'}
+                                size="sm"
+                              >
+                                {riskScore}% risk
+                              </Badge>
+                            </div>
+                            {riskScore && (
+                              <Progress value={riskScore} size="sm" variant="warning" />
+                            )}
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
+              </div>
+            )}
 
           {/* Usage Analytics */}
           {aiFeatures.usageOptimization && analytics.totalConfirmations && (
@@ -362,7 +353,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             {actions.map((action) => {
               const riskScore = assessRisk(action);
               const isRecommended = recommendedAction?.id === action.id;
-              
+
               return (
                 <div key={action.id} className="space-y-2">
                   <Button
@@ -370,16 +361,14 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                     size="lg"
                     className={cn(
                       'w-full justify-between',
-                      isRecommended && 'ring-2 ring-green-500'
+                      isRecommended && 'ring-2 ring-green-500',
                     )}
                     onClick={() => handleActionClick(action.id)}
                   >
                     <div className="flex items-center gap-2">
                       {action.icon}
                       <span>{action.label}</span>
-                      {action.isRecommended && (
-                        <Star className="h-4 w-4 text-yellow-500" />
-                      )}
+                      {action.isRecommended && <Star className="h-4 w-4 text-yellow-500" />}
                     </div>
                     <div className="flex items-center gap-2">
                       {riskScore && riskScore > 70 && (
@@ -394,11 +383,9 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                       )}
                     </div>
                   </Button>
-                  
+
                   {action.description && (
-                    <p className="text-xs text-muted-foreground ml-4">
-                      {action.description}
-                    </p>
+                    <p className="text-xs text-muted-foreground ml-4">{action.description}</p>
                   )}
                 </div>
               );
@@ -409,7 +396,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           {aiFeatures.contextAware && (
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              AI Context: {context.userRole || 'User'} • {context.riskTolerance || 'Medium'} Risk Tolerance
+              AI Context: {context.userRole || 'User'} • {context.riskTolerance || 'Medium'} Risk
+              Tolerance
             </div>
           )}
         </div>
@@ -450,12 +438,14 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 };
 
 // AI-Powered Confirmation Hook
-export const useAIConfirm = (options: {
-  smartSuggestions?: boolean;
-  riskAssessment?: boolean;
-  usageOptimization?: boolean;
-  contextAware?: boolean;
-} = {}) => {
+export const useAIConfirm = (
+  options: {
+    smartSuggestions?: boolean;
+    riskAssessment?: boolean;
+    usageOptimization?: boolean;
+    contextAware?: boolean;
+  } = {},
+) => {
   const [isOpen, setIsOpen] = useState(false);
   const [config, setConfig] = useState<Partial<ConfirmDialogProps>>({});
 
@@ -474,4 +464,4 @@ export const useAIConfirm = (options: {
     confirm,
     close,
   };
-}; 
+};

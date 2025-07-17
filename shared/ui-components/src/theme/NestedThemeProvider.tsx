@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  ReactNode,
+} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Nested theme context
@@ -53,7 +60,7 @@ const createScopedCSSVariables = (theme: Theme, scope: string): string => {
   const variables = Object.entries(theme.cssVariables)
     .map(([key, value]) => `${key}: ${value};`)
     .join('\n  ');
-  
+
   return `
     [data-theme-scope="${scope}"] {
       ${variables}
@@ -84,36 +91,42 @@ export const NestedThemeProvider: React.FC<NestedThemeProviderProps> = ({
   }, [parentContext, scope]);
 
   // Apply theme to scope
-  const applyTheme = useCallback((themeToApply: Theme) => {
-    if (!enableIsolation) return;
+  const applyTheme = useCallback(
+    (themeToApply: Theme) => {
+      if (!enableIsolation) return;
 
-    // Remove existing style tag for this scope
-    const existingStyle = document.getElementById(`theme-scope-${scope}`);
-    if (existingStyle) {
-      existingStyle.remove();
-    }
+      // Remove existing style tag for this scope
+      const existingStyle = document.getElementById(`theme-scope-${scope}`);
+      if (existingStyle) {
+        existingStyle.remove();
+      }
 
-    // Create new style tag with scoped CSS variables
-    const style = document.createElement('style');
-    style.id = `theme-scope-${scope}`;
-    style.textContent = createScopedCSSVariables(themeToApply, scope);
-    document.head.appendChild(style);
+      // Create new style tag with scoped CSS variables
+      const style = document.createElement('style');
+      style.id = `theme-scope-${scope}`;
+      style.textContent = createScopedCSSVariables(themeToApply, scope);
+      document.head.appendChild(style);
 
-    // Update meta theme-color for this scope
-    const metaThemeColor = document.querySelector(`meta[name="theme-color-${scope}"]`);
-    if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', themeToApply.colors.background);
-    }
-  }, [scope, enableIsolation]);
+      // Update meta theme-color for this scope
+      const metaThemeColor = document.querySelector(`meta[name="theme-color-${scope}"]`);
+      if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', themeToApply.colors.background);
+      }
+    },
+    [scope, enableIsolation],
+  );
 
   // Set theme
-  const setTheme = useCallback((themeId: string) => {
-    // In a real implementation, you'd look up the theme by ID
-    // For now, we'll just update the current theme
-    const newTheme = { ...currentTheme, id: themeId };
-    setCurrentTheme(newTheme);
-    onThemeChange?.(newTheme);
-  }, [currentTheme, onThemeChange]);
+  const setTheme = useCallback(
+    (themeId: string) => {
+      // In a real implementation, you'd look up the theme by ID
+      // For now, we'll just update the current theme
+      const newTheme = { ...currentTheme, id: themeId };
+      setCurrentTheme(newTheme);
+      onThemeChange?.(newTheme);
+    },
+    [currentTheme, onThemeChange],
+  );
 
   // Apply theme when it changes
   useEffect(() => {
@@ -213,7 +226,7 @@ export class MultiTenantThemeManager {
           error: '#DC2626',
           warning: '#D97706',
           success: '#059669',
-          info: '#1E40AF'
+          info: '#1E40AF',
         },
         cssVariables: {
           '--color-primary': '#1E40AF',
@@ -227,8 +240,8 @@ export class MultiTenantThemeManager {
           '--color-error': '#DC2626',
           '--color-warning': '#D97706',
           '--color-success': '#059669',
-          '--color-info': '#1E40AF'
-        }
+          '--color-info': '#1E40AF',
+        },
       },
       {
         id: 'tenant-green',
@@ -247,7 +260,7 @@ export class MultiTenantThemeManager {
           error: '#DC2626',
           warning: '#D97706',
           success: '#059669',
-          info: '#059669'
+          info: '#059669',
         },
         cssVariables: {
           '--color-primary': '#059669',
@@ -261,8 +274,8 @@ export class MultiTenantThemeManager {
           '--color-error': '#DC2626',
           '--color-warning': '#D97706',
           '--color-success': '#059669',
-          '--color-info': '#059669'
-        }
+          '--color-info': '#059669',
+        },
       },
       {
         id: 'tenant-purple',
@@ -281,7 +294,7 @@ export class MultiTenantThemeManager {
           error: '#DC2626',
           warning: '#D97706',
           success: '#059669',
-          info: '#7C3AED'
+          info: '#7C3AED',
         },
         cssVariables: {
           '--color-primary': '#7C3AED',
@@ -295,12 +308,12 @@ export class MultiTenantThemeManager {
           '--color-error': '#DC2626',
           '--color-warning': '#D97706',
           '--color-success': '#059669',
-          '--color-info': '#7C3AED'
-        }
-      }
+          '--color-info': '#7C3AED',
+        },
+      },
     ];
 
-    defaultThemes.forEach(theme => {
+    defaultThemes.forEach((theme) => {
       this.themes.set(theme.id, theme);
     });
   }
@@ -344,7 +357,7 @@ export class MultiTenantThemeManager {
       cssVariables: {
         ...baseTheme.cssVariables,
         ...customizations.cssVariables,
-      }
+      },
     };
 
     this.registerTheme(tenantTheme);
@@ -358,7 +371,7 @@ export class MultiTenantThemeManager {
 
   // Get themes by category
   getThemesByCategory(category: 'light' | 'dark' | 'auto'): Theme[] {
-    return this.getAllThemes().filter(theme => theme.category === category);
+    return this.getAllThemes().filter((theme) => theme.category === category);
   }
 }
 
@@ -416,7 +429,7 @@ export const ThemeScopeSelector: React.FC<{
         onChange={(e) => onThemeChange(e.target.value)}
         className="theme-select"
       >
-        {themes.map(theme => (
+        {themes.map((theme) => (
           <option key={theme.id} value={theme.id}>
             {theme.name}
           </option>
@@ -442,7 +455,7 @@ export const NestedThemePreview: React.FC<{
         border: `1px solid ${theme.colors.border}`,
         borderRadius: '8px',
         padding: '16px',
-        margin: '8px'
+        margin: '8px',
       }}
     >
       <h3 style={{ color: theme.colors.primary }}>{theme.name}</h3>
@@ -466,21 +479,14 @@ export const MultiTenantDemo: React.FC = () => {
   return (
     <div className="multi-tenant-demo">
       <h2>Multi-Tenant Theme Demo</h2>
-      
+
       <div className="theme-selector">
-        <ThemeScopeSelector
-          currentThemeId={currentThemeId}
-          onThemeChange={setCurrentThemeId}
-        />
+        <ThemeScopeSelector currentThemeId={currentThemeId} onThemeChange={setCurrentThemeId} />
       </div>
 
       <div className="tenant-sections">
         {/* Tenant 1 */}
-        <TenantThemeProvider
-          tenantId="tenant1"
-          themeId="tenant-blue"
-          className="tenant-section"
-        >
+        <TenantThemeProvider tenantId="tenant1" themeId="tenant-blue" className="tenant-section">
           <div className="tenant-content">
             <h3>Tenant 1 - Blue Theme</h3>
             <p>This section uses the blue enterprise theme.</p>
@@ -490,11 +496,7 @@ export const MultiTenantDemo: React.FC = () => {
         </TenantThemeProvider>
 
         {/* Tenant 2 */}
-        <TenantThemeProvider
-          tenantId="tenant2"
-          themeId="tenant-green"
-          className="tenant-section"
-        >
+        <TenantThemeProvider tenantId="tenant2" themeId="tenant-green" className="tenant-section">
           <div className="tenant-content">
             <h3>Tenant 2 - Green Theme</h3>
             <p>This section uses the green success theme.</p>
@@ -504,11 +506,7 @@ export const MultiTenantDemo: React.FC = () => {
         </TenantThemeProvider>
 
         {/* Tenant 3 */}
-        <TenantThemeProvider
-          tenantId="tenant3"
-          themeId="tenant-purple"
-          className="tenant-section"
-        >
+        <TenantThemeProvider tenantId="tenant3" themeId="tenant-purple" className="tenant-section">
           <div className="tenant-content">
             <h3>Tenant 3 - Purple Theme</h3>
             <p>This section uses the purple innovation theme.</p>
@@ -519,4 +517,4 @@ export const MultiTenantDemo: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};

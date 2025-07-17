@@ -1,4 +1,4 @@
-import { UserRole } from "../types/user/user.enums";
+import { UserRole } from '../types/user/user.enums';
 
 /**
  * Maps API role strings to strongly-typed UserRole enum values
@@ -8,17 +8,19 @@ import { UserRole } from "../types/user/user.enums";
  */
 export function mapApiRoleToUserRole(input: string): UserRole {
   const roleMap: Readonly<Record<string, UserRole>> = {
-    "SUPER_ADMIN": UserRole.SUPER_ADMIN,
-    "ADMIN": UserRole.ADMIN,
-    "MANAGER": UserRole.MANAGER,
-    "USER": UserRole.USER,
-    "GUEST": UserRole.GUEST
+    SUPER_ADMIN: UserRole.SUPER_ADMIN,
+    ADMIN: UserRole.ADMIN,
+    MANAGER: UserRole.MANAGER,
+    USER: UserRole.USER,
+    GUEST: UserRole.GUEST,
   } as const;
 
   const mappedRole = roleMap[input.toUpperCase()];
 
   if (!mappedRole) {
-    throw new Error(`Invalid role received from API: "${input}". Expected one of: ${Object.keys(roleMap).join(", ")}`);
+    throw new Error(
+      `Invalid role received from API: "${input}". Expected one of: ${Object.keys(roleMap).join(', ')}`,
+    );
   }
 
   return mappedRole;
@@ -29,4 +31,4 @@ export function mapApiRoleToUserRole(input: string): UserRole {
  */
 export function isUserRole(value: string): value is UserRole {
   return Object.values(UserRole).includes(value as UserRole);
-} 
+}

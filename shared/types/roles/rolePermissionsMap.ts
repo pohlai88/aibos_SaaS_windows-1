@@ -1,5 +1,5 @@
-import { UserRole } from "./roles.enums";
-import { Permission, PermissionRegistry } from "./permissions";
+import { UserRole } from './roles.enums';
+import { Permission, PermissionRegistry } from './permissions';
 
 export const rolePermissionsMap: Record<UserRole, Permission[]> = {
   [UserRole.SUPER_ADMIN]: Object.values(Permission),
@@ -29,36 +29,39 @@ export interface RoleMeta {
  */
 export const RoleMetaRegistry: Record<UserRole, RoleMeta> = {
   [UserRole.SUPER_ADMIN]: {
-    label: "Super Administrator",
-    description: "Full system access with all permissions. Can perform any action in the system.",
+    label: 'Super Administrator',
+    description: 'Full system access with all permissions. Can perform any action in the system.',
     level: 100,
-    dangerous: true
+    dangerous: true,
   },
   [UserRole.ADMIN]: {
-    label: "Administrator",
-    description: "Full system access except super admin functions. Can manage users, tenants, billing, and system settings.",
+    label: 'Administrator',
+    description:
+      'Full system access except super admin functions. Can manage users, tenants, billing, and system settings.',
     level: 90,
-    dangerous: true
+    dangerous: true,
   },
   [UserRole.MANAGER]: {
-    label: "Manager",
-    description: "Team and project management. Can manage team members, view analytics, and handle content.",
-    level: 70
+    label: 'Manager',
+    description:
+      'Team and project management. Can manage team members, view analytics, and handle content.',
+    level: 70,
   },
   [UserRole.USER]: {
-    label: "User",
-    description: "Standard user access. Can view and edit own data, create content, and access basic features.",
-    level: 50
+    label: 'User',
+    description:
+      'Standard user access. Can view and edit own data, create content, and access basic features.',
+    level: 50,
   },
   [UserRole.GUEST]: {
-    label: "Guest",
-    description: "Minimal access. Can view public content and create support tickets.",
-    level: 10
-  }
+    label: 'Guest',
+    description: 'Minimal access. Can view public content and create support tickets.',
+    level: 10,
+  },
 };
 
 export function getPermissionsForRole(role: UserRole): Permission[] {
-  return [...rolePermissionsMap[role] || []];
+  return [...(rolePermissionsMap[role] || [])];
 }
 
 /**
@@ -71,21 +74,15 @@ export function roleHasPermission(role: UserRole, permission: Permission): boole
 /**
  * Utility to check if a role has all required permissions
  */
-export function roleHasAllPermissions(
-  role: UserRole,
-  permissions: Permission[]
-): boolean {
-  return permissions.every(p => roleHasPermission(role, p));
+export function roleHasAllPermissions(role: UserRole, permissions: Permission[]): boolean {
+  return permissions.every((p) => roleHasPermission(role, p));
 }
 
 /**
  * Utility to check if a role has any of the required permissions
  */
-export function roleHasAnyPermission(
-  role: UserRole,
-  permissions: Permission[]
-): boolean {
-  return permissions.some(p => roleHasPermission(role, p));
+export function roleHasAnyPermission(role: UserRole, permissions: Permission[]): boolean {
+  return permissions.some((p) => roleHasPermission(role, p));
 }
 
 /**
@@ -151,24 +148,21 @@ export function canManageRole(managerRole: UserRole, targetRole: UserRole): bool
  * Get the minimum role required for a specific permission
  */
 export function getMinimumRoleForPermission(permission: Permission): UserRole | null {
-  const permissionMeta = Object.entries(PermissionRegistry)
-    .find(([perm]) => perm === permission)?.[1];
-  
+  const permissionMeta = Object.entries(PermissionRegistry).find(
+    ([perm]) => perm === permission,
+  )?.[1];
+
   return permissionMeta?.minRole ?? null;
 }
 
 // Validation function to ensure all permissions are properly mapped
 (function validateRolePermissions() {
   const allPermissions = Object.values(Permission);
-  const mappedPermissions = new Set(
-    Object.values(rolePermissionsMap).flat()
-  );
-  
-  const unmappedPermissions = allPermissions.filter(
-    p => !mappedPermissions.has(p)
-  );
-  
+  const mappedPermissions = new Set(Object.values(rolePermissionsMap).flat());
+
+  const unmappedPermissions = allPermissions.filter((p) => !mappedPermissions.has(p));
+
   if (unmappedPermissions.length > 0) {
     console.warn('Unmapped permissions:', unmappedPermissions);
   }
-})(); 
+})();

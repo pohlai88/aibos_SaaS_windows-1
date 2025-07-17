@@ -34,16 +34,6 @@
     "exactOptionalPropertyTypes": false,
     "downlevelIteration": true
   },
-  "include": [
-    "src/**/*",
-    "utils/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx"
-  ]
-} 
+  "include": ["src/**/*", "utils/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"]
+}

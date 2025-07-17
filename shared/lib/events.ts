@@ -1,6 +1,6 @@
 /**
  * AI-BOS Event-Driven Architecture System
- * 
+ *
  * Enterprise-grade event bus with persistence, replay, validation, and real-time streaming
  * for the AI-BOS micro-app platform.
  */
@@ -179,10 +179,10 @@ export class EventSchemaRegistry {
     const key = `${schema.name}:${schema.version}`;
     this.schemas.set(key, schema);
     this.validators.set(key, schema.payload);
-    
-    logger.info('Event schema registered', { 
-      name: schema.name, 
-      version: schema.version 
+
+    logger.info('Event schema registered', {
+      name: schema.name,
+      version: schema.version,
     });
   }
 
@@ -200,7 +200,7 @@ export class EventSchemaRegistry {
   validate(name: string, version: string, payload: any): { valid: boolean; errors?: string[] } {
     const key = `${name}:${version}`;
     const validator = this.validators.get(key);
-    
+
     if (!validator) {
       return { valid: false, errors: ['Schema not found'] };
     }
@@ -210,9 +210,9 @@ export class EventSchemaRegistry {
       return { valid: true };
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return { 
-          valid: false, 
-          errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`) 
+        return {
+          valid: false,
+          errors: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
         };
       }
       return { valid: false, errors: ['Validation error'] };
@@ -259,13 +259,13 @@ export class MemoryEventPersistence implements EventPersistence {
 
   async store(event: EventEnvelope): Promise<void> {
     this.events.set(event.metadata.eventId, event);
-    
+
     // Index by tenant
     if (!this.indexes.has(event.metadata.tenantId)) {
       this.indexes.set(event.metadata.tenantId, new Set());
     }
     this.indexes.get(event.metadata.tenantId)!.add(event.metadata.eventId);
-    
+
     // Index by app
     const appKey = `${event.metadata.tenantId}:${event.metadata.appId}`;
     if (!this.indexes.has(appKey)) {
@@ -280,14 +280,14 @@ export class MemoryEventPersistence implements EventPersistence {
 
   async query(filter: EventFilter, limit: number = 100): Promise<EventEnvelope[]> {
     const results: EventEnvelope[] = [];
-    
+
     for (const event of this.events.values()) {
       if (this.matchesFilter(event, filter)) {
         results.push(event);
         if (results.length >= limit) break;
       }
     }
-    
+
     return results.sort((a, b) => a.metadata.timestamp - b.metadata.timestamp);
   }
 
@@ -295,7 +295,7 @@ export class MemoryEventPersistence implements EventPersistence {
     const event = this.events.get(eventId);
     if (event) {
       this.events.delete(eventId);
-      
+
       // Remove from indexes
       this.indexes.get(event.metadata.tenantId)?.delete(eventId);
       const appKey = `${event.metadata.tenantId}:${event.metadata.appId}`;
@@ -305,14 +305,14 @@ export class MemoryEventPersistence implements EventPersistence {
 
   async cleanup(beforeTimestamp: number): Promise<number> {
     let deleted = 0;
-    
+
     for (const [eventId, event] of this.events.entries()) {
       if (event.metadata.timestamp < beforeTimestamp) {
         await this.delete(eventId);
         deleted++;
       }
     }
-    
+
     return deleted;
   }
 
@@ -320,13 +320,13 @@ export class MemoryEventPersistence implements EventPersistence {
     if (filter.tenantId && event.metadata.tenantId !== filter.tenantId) return false;
     if (filter.appId && event.metadata.appId !== filter.appId) return false;
     if (filter.userId && event.metadata.userId !== filter.userId) return false;
-    
+
     if (filter.tags) {
       for (const [key, value] of Object.entries(filter.tags)) {
         if (event.metadata.tags?.[key] !== value) return false;
       }
     }
-    
+
     return true;
   }
 }
@@ -339,7 +339,10 @@ export class MemoryEventPersistence implements EventPersistence {
  * Dead letter queue for failed events
  */
 export class DeadLetterQueue {
-  private failedEvents = new Map<string, { event: EventEnvelope; error: Error; retries: number; timestamp: number }>();
+  private failedEvents = new Map<
+    string,
+    { event: EventEnvelope; error: Error; retries: number; timestamp: number }
+  >();
   private config: DeadLetterQueueConfig;
 
   constructor(config: DeadLetterQueueConfig) {
@@ -351,7 +354,7 @@ export class DeadLetterQueue {
    */
   async add(event: EventEnvelope, error: Error): Promise<void> {
     const existing = this.failedEvents.get(event.metadata.eventId);
-    
+
     if (existing) {
       existing.retries++;
       existing.error = error;
@@ -361,7 +364,7 @@ export class DeadLetterQueue {
         event,
         error,
         retries: 1,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -369,14 +372,14 @@ export class DeadLetterQueue {
     if (this.failedEvents.size >= this.config.alertThreshold) {
       logger.error('Dead letter queue threshold exceeded', {
         count: this.failedEvents.size,
-        threshold: this.config.alertThreshold
+        threshold: this.config.alertThreshold,
       });
     }
 
     logger.warn('Event added to dead letter queue', {
       eventId: event.metadata.eventId,
       error: error.message,
-      retries: existing?.retries || 1
+      retries: existing?.retries || 1,
     });
   }
 
@@ -391,7 +394,7 @@ export class DeadLetterQueue {
       logger.error('Max retries exceeded for event', {
         eventId,
         retries: failed.retries,
-        maxRetries: this.config.maxRetries
+        maxRetries: this.config.maxRetries,
       });
       return false;
     }
@@ -405,11 +408,11 @@ export class DeadLetterQueue {
       failed.retries++;
       failed.error = error as Error;
       failed.timestamp = Date.now();
-      
+
       logger.warn('Event retry failed', {
         eventId,
         retries: failed.retries,
-        error: (error as Error).message
+        error: (error as Error).message,
       });
       return false;
     }
@@ -418,13 +421,19 @@ export class DeadLetterQueue {
   /**
    * Get failed events
    */
-  getFailedEvents(): Array<{ eventId: string; event: EventEnvelope; error: Error; retries: number; timestamp: number }> {
+  getFailedEvents(): Array<{
+    eventId: string;
+    event: EventEnvelope;
+    error: Error;
+    retries: number;
+    timestamp: number;
+  }> {
     return Array.from(this.failedEvents.entries()).map(([eventId, data]) => ({
       eventId,
       event: data.event,
       error: data.error,
       retries: data.retries,
-      timestamp: data.timestamp
+      timestamp: data.timestamp,
     }));
   }
 
@@ -472,7 +481,7 @@ export class EventBus extends EventEmitter {
       activeSubscriptions: 0,
       failedEvents: 0,
       averageLatency: 0,
-      memoryUsage: 0
+      memoryUsage: 0,
     };
 
     // Initialize persistence
@@ -506,7 +515,7 @@ export class EventBus extends EventEmitter {
   subscribe(
     eventName: string,
     handler: EventHandler,
-    options?: Partial<SubscriptionOptions>
+    options?: Partial<SubscriptionOptions>,
   ): string {
     const subscriptionId = uuidv4();
     const subscription: EventSubscription = {
@@ -518,14 +527,14 @@ export class EventBus extends EventEmitter {
           maxRetries: 3,
           backoffStrategy: 'exponential',
           initialDelay: 1000,
-          maxDelay: 30000
+          maxDelay: 30000,
         },
         timeout: 30000,
         priority: 0,
         batchSize: 1,
         concurrency: 1,
-        ...options
-      }
+        ...options,
+      },
     };
 
     this.subscriptions.set(subscriptionId, subscription);
@@ -534,7 +543,7 @@ export class EventBus extends EventEmitter {
     logger.info('Event subscription created', {
       subscriptionId,
       eventName,
-      options: subscription.options
+      options: subscription.options,
     });
 
     return subscriptionId;
@@ -558,7 +567,7 @@ export class EventBus extends EventEmitter {
   async emit<T>(
     eventName: string,
     payload: T,
-    metadata: Partial<EventMetadata> = {}
+    metadata: Partial<EventMetadata> = {},
   ): Promise<string> {
     const startTime = Date.now();
     const eventId = uuidv4();
@@ -578,22 +587,18 @@ export class EventBus extends EventEmitter {
         tags: metadata.tags,
       },
       payload,
-      schema: `${eventName}:${metadata.version || '1.0'}`
+      schema: `${eventName}:${metadata.version || '1.0'}`,
     };
 
     // Validate event schema
-    const validation = this.schemaRegistry.validate(
-      eventName,
-      metadata.version || '1.0',
-      payload
-    );
+    const validation = this.schemaRegistry.validate(eventName, metadata.version || '1.0', payload);
 
     if (!validation.valid) {
       const error = new Error(`Event validation failed: ${validation.errors?.join(', ')}`);
       logger.error('Event validation failed', {
         eventId,
         eventName,
-        errors: validation.errors
+        errors: validation.errors,
       });
       throw error;
     }
@@ -621,7 +626,7 @@ export class EventBus extends EventEmitter {
       eventId,
       eventName,
       tenantId: event.metadata.tenantId,
-      latency
+      latency,
     });
 
     return eventId;
@@ -633,11 +638,11 @@ export class EventBus extends EventEmitter {
   private async processEvent<T>(event: EventEnvelope<T>): Promise<void> {
     const eventName = event.schema.split(':')[0];
     const subscribers = Array.from(this.subscriptions.values())
-      .filter(sub => sub.eventName === eventName)
+      .filter((sub) => sub.eventName === eventName)
       .sort((a, b) => (b.options?.priority || 0) - (a.options?.priority || 0));
 
-    const promises = subscribers.map(subscription => 
-      this.processSubscription(event, subscription)
+    const promises = subscribers.map((subscription) =>
+      this.processSubscription(event, subscription),
     );
 
     await Promise.allSettled(promises);
@@ -648,7 +653,7 @@ export class EventBus extends EventEmitter {
    */
   private async processSubscription<T>(
     event: EventEnvelope<T>,
-    subscription: EventSubscription
+    subscription: EventSubscription,
   ): Promise<void> {
     const startTime = Date.now();
 
@@ -669,7 +674,7 @@ export class EventBus extends EventEmitter {
       // Execute handler with timeout
       const timeout = subscription.options?.timeout || 30000;
       const handlerPromise = subscription.handler(event);
-      
+
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Handler timeout')), timeout);
       });
@@ -680,9 +685,8 @@ export class EventBus extends EventEmitter {
       logger.debug('Event processed successfully', {
         eventId: event.metadata.eventId,
         subscriptionId: subscription.id,
-        latency
+        latency,
       });
-
     } catch (error) {
       const latency = Date.now() - startTime;
       this.stats.failedEvents++;
@@ -691,7 +695,7 @@ export class EventBus extends EventEmitter {
         eventId: event.metadata.eventId,
         subscriptionId: subscription.id,
         error: (error as Error).message,
-        latency
+        latency,
       });
 
       // Add to dead letter queue if enabled
@@ -713,7 +717,7 @@ export class EventBus extends EventEmitter {
    */
   private async retryEvent<T>(
     event: EventEnvelope<T>,
-    subscription: EventSubscription
+    subscription: EventSubscription,
   ): Promise<void> {
     const retryPolicy = subscription.options?.retryPolicy;
     if (!retryPolicy) return;
@@ -722,7 +726,7 @@ export class EventBus extends EventEmitter {
     // This is a simplified version - in production, you'd want more sophisticated retry logic
     logger.info('Retrying event', {
       eventId: event.metadata.eventId,
-      subscriptionId: subscription.id
+      subscriptionId: subscription.id,
     });
   }
 
@@ -733,13 +737,13 @@ export class EventBus extends EventEmitter {
     if (filter.tenantId && event.metadata.tenantId !== filter.tenantId) return false;
     if (filter.appId && event.metadata.appId !== filter.appId) return false;
     if (filter.userId && event.metadata.userId !== filter.userId) return false;
-    
+
     if (filter.tags) {
       for (const [key, value] of Object.entries(filter.tags)) {
         if (event.metadata.tags?.[key] !== value) return false;
       }
     }
-    
+
     return true;
   }
 
@@ -778,7 +782,7 @@ export class EventBus extends EventEmitter {
    */
   private updateStats(latency: number): void {
     this.stats.totalEvents++;
-    this.stats.averageLatency = 
+    this.stats.averageLatency =
       (this.stats.averageLatency * (this.stats.totalEvents - 1) + latency) / this.stats.totalEvents;
     this.stats.memoryUsage = process.memoryUsage().heapUsed;
   }
@@ -789,14 +793,14 @@ export class EventBus extends EventEmitter {
   private startMetricsCollection(): void {
     setInterval(() => {
       this.stats.eventsPerSecond = this.stats.totalEvents / (Date.now() / 1000);
-      
+
       if (this.config.enableMetrics) {
         monitoring.recordCustomMetric('event_bus_stats', 1, {
           totalEvents: this.stats.totalEvents,
           eventsPerSecond: this.stats.eventsPerSecond,
           activeSubscriptions: this.stats.activeSubscriptions,
           failedEvents: this.stats.failedEvents,
-          averageLatency: this.stats.averageLatency
+          averageLatency: this.stats.averageLatency,
         });
       }
     }, 5000);
@@ -830,14 +834,14 @@ export function createEventSchema<T>(
   name: string,
   version: string,
   payloadSchema: z.ZodSchema<T>,
-  options?: Partial<EventSchema>
+  options?: Partial<EventSchema>,
 ): EventSchema {
   return {
     name,
     version,
     payload: payloadSchema,
     tags: options?.tags,
-    deprecated: options?.deprecated || false
+    deprecated: options?.deprecated || false,
   };
 }
 
@@ -923,53 +927,81 @@ export function event<T>(eventName: string, payload: T): EventBuilder<T> {
  */
 export const CommonEventSchemas = {
   // User events
-  UserCreated: createEventSchema('UserCreated', '1.0', z.object({
-    userId: z.string(),
-    email: z.string().email(),
-    tenantId: z.string(),
-    role: z.string()
-  })),
+  UserCreated: createEventSchema(
+    'UserCreated',
+    '1.0',
+    z.object({
+      userId: z.string(),
+      email: z.string().email(),
+      tenantId: z.string(),
+      role: z.string(),
+    }),
+  ),
 
-  UserUpdated: createEventSchema('UserUpdated', '1.0', z.object({
-    userId: z.string(),
-    changes: z.record(z.any()),
-    tenantId: z.string()
-  })),
+  UserUpdated: createEventSchema(
+    'UserUpdated',
+    '1.0',
+    z.object({
+      userId: z.string(),
+      changes: z.record(z.any()),
+      tenantId: z.string(),
+    }),
+  ),
 
   // App events
-  AppInstalled: createEventSchema('AppInstalled', '1.0', z.object({
-    appId: z.string(),
-    manifestId: z.string(),
-    tenantId: z.string(),
-    version: z.string()
-  })),
+  AppInstalled: createEventSchema(
+    'AppInstalled',
+    '1.0',
+    z.object({
+      appId: z.string(),
+      manifestId: z.string(),
+      tenantId: z.string(),
+      version: z.string(),
+    }),
+  ),
 
-  AppUninstalled: createEventSchema('AppUninstalled', '1.0', z.object({
-    appId: z.string(),
-    tenantId: z.string(),
-    reason: z.string().optional()
-  })),
+  AppUninstalled: createEventSchema(
+    'AppUninstalled',
+    '1.0',
+    z.object({
+      appId: z.string(),
+      tenantId: z.string(),
+      reason: z.string().optional(),
+    }),
+  ),
 
   // Entity events
-  EntityCreated: createEventSchema('EntityCreated', '1.0', z.object({
-    entityId: z.string(),
-    entityType: z.string(),
-    data: z.record(z.any()),
-    tenantId: z.string()
-  })),
+  EntityCreated: createEventSchema(
+    'EntityCreated',
+    '1.0',
+    z.object({
+      entityId: z.string(),
+      entityType: z.string(),
+      data: z.record(z.any()),
+      tenantId: z.string(),
+    }),
+  ),
 
-  EntityUpdated: createEventSchema('EntityUpdated', '1.0', z.object({
-    entityId: z.string(),
-    entityType: z.string(),
-    changes: z.record(z.any()),
-    tenantId: z.string()
-  })),
+  EntityUpdated: createEventSchema(
+    'EntityUpdated',
+    '1.0',
+    z.object({
+      entityId: z.string(),
+      entityType: z.string(),
+      changes: z.record(z.any()),
+      tenantId: z.string(),
+    }),
+  ),
 
-  EntityDeleted: createEventSchema('EntityDeleted', '1.0', z.object({
-    entityId: z.string(),
-    entityType: z.string(),
-    tenantId: z.string()
-  }))
+  EntityDeleted: createEventSchema(
+    'EntityDeleted',
+    '1.0',
+    z.object({
+      entityId: z.string(),
+      entityType: z.string(),
+      tenantId: z.string(),
+    }),
+  ),
 };
 
 // ============================================================================
@@ -984,7 +1016,7 @@ export {
   createEventSchema,
   event,
   EventBuilder,
-  CommonEventSchemas
+  CommonEventSchemas,
 };
 
 export type {
@@ -1000,5 +1032,5 @@ export type {
   DeadLetterQueueConfig,
   EventBusConfig,
   EventSchema,
-  EventStats
-}; 
+  EventStats,
+};

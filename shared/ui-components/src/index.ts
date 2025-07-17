@@ -19,51 +19,51 @@ export { AIAssistant } from './ai-assistant/AIAssistant';
 
 // Component Categories for dynamic loading
 export const COMPONENT_CATEGORIES = {
-  primitives: {
+  'primitives': {
     name: 'Primitives',
     description: 'Basic UI building blocks',
-    components: ['Button', 'Badge', 'Modal', 'Tooltip', 'Skeleton', 'Progress', 'Input']
+    components: ['Button', 'Badge', 'Modal', 'Tooltip', 'Skeleton', 'Progress', 'Input'],
   },
-  feedback: {
+  'feedback': {
     name: 'Feedback',
     description: 'User feedback and notifications',
-    components: ['Toast', 'ConfirmDialog']
+    components: ['Toast', 'ConfirmDialog'],
   },
-  layout: {
+  'layout': {
     name: 'Layout',
     description: 'Layout and navigation components',
-    components: ['Breadcrumb', 'Drawer', 'Tabs']
+    components: ['Breadcrumb', 'Drawer', 'Tabs'],
   },
-  forms: {
+  'forms': {
     name: 'Forms',
     description: 'Form components and builders',
-    components: ['FormBuilder', 'DateTimePicker']
+    components: ['FormBuilder', 'DateTimePicker'],
   },
-  data: {
+  'data': {
     name: 'Data',
     description: 'Data display and management',
-    components: ['DataGrid', 'DataTable', 'ExcelLikeGrid', 'VirtualizedDataGrid']
+    components: ['DataGrid', 'DataTable', 'ExcelLikeGrid', 'VirtualizedDataGrid'],
   },
-  analytics: {
+  'analytics': {
     name: 'Analytics',
     description: 'Analytics and reporting',
-    components: ['AnalyticsDashboard']
+    components: ['AnalyticsDashboard'],
   },
-  performance: {
+  'performance': {
     name: 'Performance',
     description: 'Performance monitoring',
-    components: ['PerformanceDashboard']
+    components: ['PerformanceDashboard'],
   },
   'job-queue': {
     name: 'Job Queue',
     description: 'Background job management',
-    components: ['JobQueueDashboard', 'JobQueueProvider', 'JobForm']
+    components: ['JobQueueDashboard', 'JobQueueProvider', 'JobForm'],
   },
   'ai-assistant': {
     name: 'AI Assistant',
     description: 'AI-powered assistance',
-    components: ['AIAssistant', 'AIAssistantProvider']
-  }
+    components: ['AIAssistant', 'AIAssistantProvider'],
+  },
 } as const;
 
 // Utility function to get components by category
@@ -81,40 +81,40 @@ export const COMPONENT_REGISTRY = {
   Skeleton: () => import('./primitives/Skeleton'),
   Progress: () => import('./primitives/Progress'),
   Input: () => import('./primitives/Input'),
-  
+
   // Feedback
   Toast: () => import('./feedback/Toast'),
   ConfirmDialog: () => import('./feedback/ConfirmDialog'),
-  
+
   // Layout
   Breadcrumb: () => import('./layout/Breadcrumb'),
   Drawer: () => import('./layout/Drawer'),
   Tabs: () => import('./layout/Tabs'),
-  
+
   // Forms
   FormBuilder: () => import('./forms/FormBuilder'),
   DateTimePicker: () => import('./forms/DateTimePicker'),
-  
+
   // Data
   DataGrid: () => import('./data/DataGrid'),
   DataTable: () => import('./data-table/DataTable'),
   ExcelLikeGrid: () => import('./data/ExcelLikeGrid'),
   VirtualizedDataGrid: () => import('./data/VirtualizedDataGrid'),
-  
+
   // Analytics
   AnalyticsDashboard: () => import('./analytics/AnalyticsDashboard'),
-  
+
   // Performance
   PerformanceDashboard: () => import('./performance/PerformanceDashboard'),
-  
+
   // Job Queue
   JobQueueDashboard: () => import('./job-queue/JobQueueDashboard'),
   JobQueueProvider: () => import('./job-queue/JobQueueProvider'),
   JobForm: () => import('./job-queue/JobForm'),
-  
+
   // AI Assistant
   AIAssistant: () => import('./ai-assistant/AIAssistant'),
-  AIAssistantProvider: () => import('./ai-assistant/AIAssistantProvider')
+  AIAssistantProvider: () => import('./ai-assistant/AIAssistantProvider'),
 } as const;
 
 // Dynamic component loader
@@ -139,7 +139,10 @@ export function isComponentAvailable(componentName: string, config: ComponentCon
 }
 
 // Get available components by category
-export function getAvailableComponentsByCategory(category: string, config: ComponentConfig): string[] {
+export function getAvailableComponentsByCategory(
+  category: string,
+  config: ComponentConfig,
+): string[] {
   const categoryComponents = getComponentsByCategory(category);
-  return categoryComponents.filter(component => isComponentAvailable(component, config));
-} 
+  return categoryComponents.filter((component) => isComponentAvailable(component, config));
+}

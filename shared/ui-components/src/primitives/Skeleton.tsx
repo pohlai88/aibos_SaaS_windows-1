@@ -2,27 +2,24 @@ import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
-const skeletonVariants = cva(
-  'animate-pulse rounded-md bg-muted',
-  {
-    variants: {
-      variant: {
-        default: 'bg-muted',
-        dark: 'bg-muted/50',
-        light: 'bg-muted/30',
-      },
-      animation: {
-        pulse: 'animate-pulse',
-        shimmer: 'animate-shimmer',
-        none: '',
-      },
+const skeletonVariants = cva('animate-pulse rounded-md bg-muted', {
+  variants: {
+    variant: {
+      default: 'bg-muted',
+      dark: 'bg-muted/50',
+      light: 'bg-muted/30',
     },
-    defaultVariants: {
-      variant: 'default',
-      animation: 'pulse',
+    animation: {
+      pulse: 'animate-pulse',
+      shimmer: 'animate-shimmer',
+      none: '',
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+    animation: 'pulse',
+  },
+});
 
 export interface SkeletonProps extends VariantProps<typeof skeletonVariants> {
   className?: string;
@@ -57,10 +54,7 @@ export const SkeletonText: React.FC<{
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
           key={i}
-          className={cn(
-            lineHeight,
-            i === lines - 1 && lines > 1 ? 'w-3/4' : 'w-full'
-          )}
+          className={cn(lineHeight, i === lines - 1 && lines > 1 ? 'w-3/4' : 'w-full')}
         />
       ))}
     </div>
@@ -78,11 +72,7 @@ export const SkeletonAvatar: React.FC<{
     xl: 'h-16 w-16',
   };
 
-  return (
-    <Skeleton
-      className={cn('rounded-full', sizeClasses[size], className)}
-    />
-  );
+  return <Skeleton className={cn('rounded-full', sizeClasses[size], className)} />;
 };
 
 export const SkeletonButton: React.FC<{
@@ -101,15 +91,7 @@ export const SkeletonButton: React.FC<{
     outline: 'rounded-md border',
   };
 
-  return (
-    <Skeleton
-      className={cn(
-        sizeClasses[size],
-        variantClasses[variant],
-        className
-      )}
-    />
-  );
+  return <Skeleton className={cn(sizeClasses[size], variantClasses[variant], className)} />;
 };
 
 export const SkeletonCard: React.FC<{
@@ -127,15 +109,9 @@ export const SkeletonCard: React.FC<{
 }) => {
   return (
     <div className={cn('rounded-lg border bg-card p-6', className)}>
-      {showImage && (
-        <Skeleton className="h-48 w-full rounded-md mb-4" />
-      )}
-      {showTitle && (
-        <Skeleton className="h-6 w-3/4 mb-2" />
-      )}
-      {showDescription && (
-        <SkeletonText lines={3} className="mb-4" />
-      )}
+      {showImage && <Skeleton className="h-48 w-full rounded-md mb-4" />}
+      {showTitle && <Skeleton className="h-6 w-3/4 mb-2" />}
+      {showDescription && <SkeletonText lines={3} className="mb-4" />}
       {showActions && (
         <div className="flex space-x-2">
           <SkeletonButton size="sm" />
@@ -169,7 +145,7 @@ export const SkeletonTable: React.FC<{
               className={cn(
                 'h-4 flex-1',
                 colIndex === 0 && 'w-1/3',
-                colIndex === columns - 1 && 'w-1/4'
+                colIndex === columns - 1 && 'w-1/4',
               )}
             />
           ))}
@@ -185,28 +161,18 @@ export const SkeletonList: React.FC<{
   showAvatar?: boolean;
   showTitle?: boolean;
   showDescription?: boolean;
-}> = ({
-  items = 3,
-  className,
-  showAvatar = true,
-  showTitle = true,
-  showDescription = true,
-}) => {
+}> = ({ items = 3, className, showAvatar = true, showTitle = true, showDescription = true }) => {
   return (
     <div className={cn('space-y-4', className)}>
       {Array.from({ length: items }).map((_, i) => (
         <div key={i} className="flex items-start space-x-3">
           {showAvatar && <SkeletonAvatar size="md" />}
           <div className="flex-1 space-y-2">
-            {showTitle && (
-              <Skeleton className="h-4 w-3/4" />
-            )}
-            {showDescription && (
-              <SkeletonText lines={2} />
-            )}
+            {showTitle && <Skeleton className="h-4 w-3/4" />}
+            {showDescription && <SkeletonText lines={2} />}
           </div>
         </div>
       ))}
     </div>
   );
-}; 
+};
