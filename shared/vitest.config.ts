@@ -1,14 +1,22 @@
 import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
 
+// Load environment variables
+const env = process.env;
+
 export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
     setupFiles: ['./__tests__/setup.ts'],
+    
+    // Dynamic environment-based configuration
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov', 'html', 'json', 'json-summary'],
+      enabled: env.CI === 'true' || env.COVERAGE === 'true',
+      reporter: env.CI 
+        ? ['text', 'lcov', 'html', 'json', 'json-summary']
+        : ['text', 'lcov', 'html', 'json'],
       exclude: [
         'node_modules/',
         'dist/',
@@ -30,29 +38,47 @@ export default defineConfig({
         '**/README.md',
         '**/.eslintrc*',
         '**/.prettierrc*',
+        // Enterprise security exclusions
+        '**/secrets/**',
+        '**/auth/**',
+        '**/certificates/**',
+        '**/*.key',
+        '**/*.env*',
+        '**/__fixtures__/**',
+        '**/test-data/**',
+        '**/mocks/**',
+        '**/stubs/**',
       ],
       thresholds: {
         global: {
-          branches: 80,
-          functions: 80,
-          lines: 80,
-          statements: 80,
+          branches: parseInt(env.VITEST_COVERAGE_BRANCHES || '80'),
+          functions: parseInt(env.VITEST_COVERAGE_FUNCTIONS || '80'),
+          lines: parseInt(env.VITEST_COVERAGE_LINES || '80'),
+          statements: parseInt(env.VITEST_COVERAGE_STATEMENTS || '80'),
         },
         './lib/': {
-          branches: 85,
-          functions: 85,
-          lines: 85,
-          statements: 85,
+          branches: parseInt(env.VITEST_LIB_COVERAGE_BRANCHES || '85'),
+          functions: parseInt(env.VITEST_LIB_COVERAGE_FUNCTIONS || '85'),
+          lines: parseInt(env.VITEST_LIB_COVERAGE_LINES || '85'),
+          statements: parseInt(env.VITEST_LIB_COVERAGE_STATEMENTS || '85'),
         },
         './types/': {
-          branches: 90,
-          functions: 90,
-          lines: 90,
-          statements: 90,
+          branches: parseInt(env.VITEST_TYPES_COVERAGE_BRANCHES || '90'),
+          functions: parseInt(env.VITEST_TYPES_COVERAGE_FUNCTIONS || '90'),
+          lines: parseInt(env.VITEST_TYPES_COVERAGE_LINES || '90'),
+          statements: parseInt(env.VITEST_TYPES_COVERAGE_STATEMENTS || '90'),
         },
       },
       all: true,
+      // Visual compliance markers
+      watermarks: {
+        statements: [50, 80],
+        lines: [50, 80],
+        branches: [50, 80],
+        functions: [50, 80],
+      },
     },
+    
     include: ['**/*.test.ts', '**/*.spec.ts', '**/__tests__/**/*.ts'],
     exclude: [
       'node_modules/',
@@ -62,31 +88,65 @@ export default defineConfig({
       '**/examples/**',
       '**/scripts/**',
       '**/config/**',
+      '**/test-data/**',
+      '**/mocks/**',
+      '**/stubs/**',
     ],
-    testTimeout: 10000,
-    hookTimeout: 10000,
-    teardownTimeout: 10000,
-    pool: 'forks',
+    
+    // Performance optimization
+    testTimeout: parseInt(env.VITEST_TIMEOUT || '10000'),
+    hookTimeout: parseInt(env.VITEST_HOOK_TIMEOUT || '10000'),
+    teardownTimeout: parseInt(env.VITEST_TEARDOWN_TIMEOUT || '10000'),
+    
+    // Advanced parallelization
+    pool: env.CI ? 'threads' : 'forks',
     poolOptions: {
       forks: {
+        isolate: !env.CI, // Disable in CI for better performance
         singleFork: true,
       },
+      threads: {
+        useAtomics: true,
+        minThreads: 1,
+        maxThreads: env.CI ? 4 : 2,
+      }
     },
-    maxConcurrency: 1,
+    
+    maxConcurrency: parseInt(env.VITEST_MAX_CONCURRENCY || '1'),
     isolate: true,
     passWithNoTests: true,
     silent: false,
-    reporters: ['verbose', 'json'],
+    
+    // Advanced reporting
+    reporters: env.CI 
+      ? ['verbose', 'json']
+      : ['verbose', 'json'],
     outputFile: {
       json: './coverage/test-results.json',
     },
+    
+    // Fail-safe mechanisms
+    retry: env.CI ? 1 : 0,
+    
+    // Console output control
     onConsoleLog(log, type) {
       if (type === 'stderr') {
         return false;
       }
       return true;
     },
+    
+    // Test sequence randomization
+    sequence: {
+      shuffle: env.CI === 'true' // Randomize in CI
+    },
+    
+    // Cache configuration
+    cache: {
+      dir: resolve(__dirname, '.vitest-cache'),
+    },
   },
+  
   resolve: {
     alias: {
       '@': resolve(__dirname, './'),

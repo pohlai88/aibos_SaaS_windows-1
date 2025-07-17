@@ -23,6 +23,14 @@
     "test:serial": "vitest --pool=forks --maxConcurrency=1",
     "test:fast": "vitest --pool=forks --maxConcurrency=8 --reporter=basic",
     "test:slow": "vitest --pool=forks --maxConcurrency=1 --reporter=verbose",
+    "test:enterprise": "vitest --coverage --reporter=verbose --pool=threads --maxConcurrency=4",
+    "test:benchmark": "vitest --testPathPattern=benchmark",
+    "test:security": "vitest --testPathPattern=security",
+    "test:types": "vitest --testPathPattern=types",
+    "test:lib": "vitest --testPathPattern=lib",
+    "test:validation": "vitest --testPathPattern=validation",
+    "test:utils": "vitest --testPathPattern=utils",
+    "test:all": "npm run test:coverage && npm run test:types && npm run test:lib && npm run test:validation",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
@@ -127,7 +135,8 @@
     "supertest": "^6.3.3",
     "typescript": "^5.2.2",
     "typescript-eslint": "^8.37.0",
-    "vitest": "^1.6.1"
+    "vitest": "^1.6.1",
+    "vitest-sonar-reporter": "^2.0.1"
   },
   "peerDependencies": {
     "react": "^18.2.0",
