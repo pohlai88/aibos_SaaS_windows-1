@@ -86,7 +86,13 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,json}\"",
     "audit": "npm audit --audit-level=critical",
     "audit:full": "npm audit",
+    "audit:ci": "node scripts/npm-audit-ci.js",
+    "audit:enterprise": "NPM_AUDIT_FAIL=true node scripts/npm-audit-ci.js",
     "security:scan": "snyk test --severity-threshold=high",
+    "npm:validate": "node scripts/npm-validator.mjs",
+    "npm:validate:fix": "node scripts/npm-validator.mjs --fix",
+    "npm:audit": "npm audit --audit-level=critical",
+    "npm:ci": "npm ci --prefer-offline --no-audit",
     "clean": "rimraf dist coverage .tsbuildcache",
     "prepublishOnly": "npm run test:ci && npm run build",
     "benchmark": "ts-node scripts/benchmark.ts"

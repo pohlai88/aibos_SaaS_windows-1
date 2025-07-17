@@ -100,3 +100,4 @@ temp/
 !shared/.env.example
 
 ############## SEE CONTRIBUTING.md FOR POLICY ##############
+.reports/
