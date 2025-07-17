@@ -99,25 +99,22 @@ export const measurePerformance = async (fn: () => Promise<any>) => {
   };
 };
 
-export const expectPerformance = async (
-  fn: () => Promise<any>,
-  maxDuration: number
-) => {
+export const expectPerformance = async (fn: () => Promise<any>, maxDuration: number) => {
   const { result, duration } = await measurePerformance(fn);
   expect(duration).toBeLessThan(maxDuration);
   return result;
 };
 
 // Async testing helpers
-export const waitFor = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+export const waitFor = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const retry = async (
   fn: () => Promise<any>,
   maxAttempts: number = 3,
-  delay: number = 100
+  delay: number = 100,
 ) => {
   let lastError: Error;
-  
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await fn();
@@ -136,24 +133,24 @@ export const createTestDatabase = () => ({
   users: new Map(),
   tenants: new Map(),
   events: new Map(),
-  
+
   async query(sql: string, params: any[] = []) {
     // Simple in-memory database for testing
     return { rows: [], rowCount: 0 };
   },
-  
+
   async one(sql: string, params: any[] = []) {
     return null;
   },
-  
+
   async many(sql: string, params: any[] = []) {
     return [];
   },
-  
+
   async none(sql: string, params: any[] = []) {
     return null;
   },
-  
+
   async tx(callback: (tx: any) => Promise<any>) {
     return await callback(this);
   },
@@ -163,21 +160,21 @@ export const createTestDatabase = () => ({
 export const createTestEventBus = () => {
   const listeners = new Map<string, Function[]>();
   const events: any[] = [];
-  
+
   return {
     async emit(eventType: string, eventData: any) {
       events.push({ eventType, eventData, timestamp: new Date() });
       const eventListeners = listeners.get(eventType) || [];
-      await Promise.all(eventListeners.map(listener => listener(eventData)));
+      await Promise.all(eventListeners.map((listener) => listener(eventData)));
     },
-    
+
     on(eventType: string, listener: Function) {
       if (!listeners.has(eventType)) {
         listeners.set(eventType, []);
       }
       listeners.get(eventType)!.push(listener);
     },
-    
+
     off(eventType: string, listener: Function) {
       const eventListeners = listeners.get(eventType) || [];
       const index = eventListeners.indexOf(listener);
@@ -185,11 +182,11 @@ export const createTestEventBus = () => {
         eventListeners.splice(index, 1);
       }
     },
-    
+
     getEvents() {
       return [...events];
     },
-    
+
     clear() {
       listeners.clear();
       events.length = 0;
@@ -208,11 +205,14 @@ export const createTestSecurityContext = () => ({
 });
 
 // Validation testing helpers
-export const testValidationSchema = (schema: any, testCases: Array<{
-  input: any;
-  shouldPass: boolean;
-  expectedError?: string;
-}>) => {
+export const testValidationSchema = (
+  schema: any,
+  testCases: Array<{
+    input: any;
+    shouldPass: boolean;
+    expectedError?: string;
+  }>,
+) => {
   testCases.forEach(({ input, shouldPass, expectedError }, index) => {
     if (shouldPass) {
       expect(() => schema.parse(input)).not.toThrow();
@@ -229,7 +229,7 @@ export const testValidationSchema = (schema: any, testCases: Array<{
 // Logger testing helpers
 export const createTestLogger = () => {
   const logs: Array<{ level: string; message: string; context?: any }> = [];
-  
+
   return {
     info: (message: string, context?: any) => {
       logs.push({ level: 'info', message, context });
@@ -247,7 +247,7 @@ export const createTestLogger = () => {
       logs.push({ level: 'trace', message, context });
     },
     getLogs: () => [...logs],
-    clear: () => logs.length = 0,
+    clear: () => (logs.length = 0),
   };
 };
 
@@ -272,4 +272,4 @@ export default {
   createTestSecurityContext,
   testValidationSchema,
   createTestLogger,
-}; 
+};

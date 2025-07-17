@@ -93,6 +93,9 @@
     "npm:validate:fix": "node scripts/npm-validator.mjs --fix",
     "npm:audit": "npm audit --audit-level=critical",
     "npm:ci": "npm ci --prefer-offline --no-audit",
+    "zero-error": "node scripts/zero-error.mjs",
+    "self-heal": "node scripts/zero-error.mjs",
+    "optimize": "node scripts/zero-error.mjs --optimize-only",
     "clean": "rimraf dist coverage .tsbuildcache",
     "prepublishOnly": "npm run test:ci && npm run build",
     "benchmark": "ts-node scripts/benchmark.ts"

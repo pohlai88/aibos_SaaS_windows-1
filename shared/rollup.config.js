@@ -8,18 +8,18 @@ import { defineConfig } from 'rollup';
 const sharedPlugins = [
   nodeResolve({
     preferBuiltins: true,
-    exportConditions: ['node', 'import', 'require']
+    exportConditions: ['node', 'import', 'require'],
   }),
   commonjs({
     ignoreDynamicRequires: true,
-    esmExternals: true
+    esmExternals: true,
   }),
   typescript({
     tsconfig: './tsconfig.json',
     declaration: true,
     declarationDir: './dist',
-    exclude: ['**/*.test.ts', '**/*.spec.ts', '**/__tests__/**']
-  })
+    exclude: ['**/*.test.ts', '**/*.spec.ts', '**/__tests__/**'],
+  }),
 ];
 
 // Production plugins
@@ -28,14 +28,14 @@ const productionPlugins = [
     compress: {
       drop_console: true,
       drop_debugger: true,
-      pure_funcs: ['console.log', 'console.info', 'console.debug']
+      pure_funcs: ['console.log', 'console.info', 'console.debug'],
     },
     mangle: {
       properties: {
-        regex: /^_/
-      }
-    }
-  })
+        regex: /^_/,
+      },
+    },
+  }),
 ];
 
 export default defineConfig([
@@ -50,7 +50,7 @@ export default defineConfig([
         exports: 'named',
         generatedCode: 'es2015',
         preserveModules: true,
-        preserveModulesRoot: '.'
+        preserveModulesRoot: '.',
       },
       {
         file: 'dist/index.cjs',
@@ -58,16 +58,16 @@ export default defineConfig([
         sourcemap: true,
         exports: 'named',
         plugins: productionPlugins,
-        generatedCode: 'es2015'
-      }
+        generatedCode: 'es2015',
+      },
     ],
     plugins: sharedPlugins,
     external: ['zod', 'redis', 'pg', 'express', 'jose', 'stripe'],
     treeshake: {
       moduleSideEffects: false,
       propertyReadSideEffects: false,
-      unknownGlobalSideEffects: false
-    }
+      unknownGlobalSideEffects: false,
+    },
   },
 
   // Types utilities
@@ -80,18 +80,18 @@ export default defineConfig([
       exports: 'auto',
       generatedCode: 'es2015',
       preserveModules: true,
-      preserveModulesRoot: 'types'
+      preserveModulesRoot: 'types',
     },
     plugins: [
       ...sharedPlugins,
       typescript({
-        declarationDir: './dist/types'
-      })
+        declarationDir: './dist/types',
+      }),
     ],
     external: ['zod'],
     treeshake: {
-      moduleSideEffects: false
-    }
+      moduleSideEffects: false,
+    },
   },
 
   // Library utilities
@@ -104,18 +104,18 @@ export default defineConfig([
       exports: 'auto',
       generatedCode: 'es2015',
       preserveModules: true,
-      preserveModulesRoot: 'lib'
+      preserveModulesRoot: 'lib',
     },
     plugins: [
       ...sharedPlugins,
       typescript({
-        declarationDir: './dist/lib'
-      })
+        declarationDir: './dist/lib',
+      }),
     ],
     external: ['zod', 'redis', 'pg'],
     treeshake: {
-      moduleSideEffects: false
-    }
+      moduleSideEffects: false,
+    },
   },
 
   // Shared utilities
@@ -128,18 +128,18 @@ export default defineConfig([
       exports: 'auto',
       generatedCode: 'es2015',
       preserveModules: true,
-      preserveModulesRoot: 'utils'
+      preserveModulesRoot: 'utils',
     },
     plugins: [
       ...sharedPlugins,
       typescript({
-        declarationDir: './dist/utils'
-      })
+        declarationDir: './dist/utils',
+      }),
     ],
     external: ['zod'],
     treeshake: {
-      moduleSideEffects: false
-    }
+      moduleSideEffects: false,
+    },
   },
 
   // Validation helpers
@@ -152,18 +152,18 @@ export default defineConfig([
       exports: 'auto',
       generatedCode: 'es2015',
       preserveModules: true,
-      preserveModulesRoot: 'validation'
+      preserveModulesRoot: 'validation',
     },
     plugins: [
       ...sharedPlugins,
       typescript({
-        declarationDir: './dist/validation'
-      })
+        declarationDir: './dist/validation',
+      }),
     ],
     external: ['zod'],
     treeshake: {
-      moduleSideEffects: false
-    }
+      moduleSideEffects: false,
+    },
   },
 
   // Metadata types
@@ -176,17 +176,17 @@ export default defineConfig([
       exports: 'auto',
       generatedCode: 'es2015',
       preserveModules: true,
-      preserveModulesRoot: 'types/metadata'
+      preserveModulesRoot: 'types/metadata',
     },
     plugins: [
       ...sharedPlugins,
       typescript({
-        declarationDir: './dist/types/metadata'
-      })
+        declarationDir: './dist/types/metadata',
+      }),
     ],
     external: ['zod'],
     treeshake: {
-      moduleSideEffects: false
-    }
-  }
+      moduleSideEffects: false,
+    },
+  },
 ]);

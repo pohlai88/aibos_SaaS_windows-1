@@ -13,4 +13,4 @@ export default {
     allowUnusedLabels: false,
     allowUnreachableCode: false,
   },
-}; 
+};

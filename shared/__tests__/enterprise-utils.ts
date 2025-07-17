@@ -44,9 +44,9 @@ export class PerformanceTester {
   }
 
   getAverageDuration(name: string): number {
-    const measurements = this.measurements.filter(m => m.name === name);
+    const measurements = this.measurements.filter((m) => m.name === name);
     if (measurements.length === 0) return 0;
-    
+
     const total = measurements.reduce((sum, m) => sum + m.duration, 0);
     return total / measurements.length;
   }
@@ -63,16 +63,19 @@ export class LoadTester {
   async runConcurrent<T>(
     count: number,
     fn: () => Promise<T>,
-    options: { delay?: number; maxConcurrency?: number } = {}
+    options: { delay?: number; maxConcurrency?: number } = {},
   ): Promise<T[]> {
     const { delay = 0, maxConcurrency = 10 } = options;
     const results: T[] = [];
-    const chunks = this.chunkArray(Array.from({ length: count }, (_, i) => i), maxConcurrency);
+    const chunks = this.chunkArray(
+      Array.from({ length: count }, (_, i) => i),
+      maxConcurrency,
+    );
 
     for (const chunk of chunks) {
       const chunkPromises = chunk.map(async (_, index) => {
         if (delay > 0) {
-          await new Promise(resolve => setTimeout(resolve, delay * index));
+          await new Promise((resolve) => setTimeout(resolve, delay * index));
         }
         return await fn();
       });
@@ -230,11 +233,14 @@ export class SecurityTester {
  * Data validation testing utilities
  */
 export class ValidationTester {
-  testBoundaryConditions(fn: (input: any) => any, testCases: Array<{
-    input: any;
-    shouldPass: boolean;
-    description: string;
-  }>) {
+  testBoundaryConditions(
+    fn: (input: any) => any,
+    testCases: Array<{
+      input: any;
+      shouldPass: boolean;
+      description: string;
+    }>,
+  ) {
     testCases.forEach(({ input, shouldPass, description }) => {
       it(`should handle boundary condition: ${description}`, () => {
         if (shouldPass) {
@@ -290,22 +296,22 @@ export class MemoryTester {
   endTracking() {
     const finalMemory = process.memoryUsage().heapUsed;
     const memoryUsed = finalMemory - this.initialMemory;
-    
+
     // Log memory usage (in MB)
     console.log(`Memory used: ${(memoryUsed / 1024 / 1024).toFixed(2)} MB`);
-    
+
     return memoryUsed;
   }
 
   testMemoryLeak(fn: () => void, iterations: number = 1000) {
     this.startTracking();
-    
+
     for (let i = 0; i < iterations; i++) {
       fn();
     }
-    
+
     const memoryUsed = this.endTracking();
-    
+
     // If memory usage is more than 10MB, it might be a leak
     const memoryMB = memoryUsed / 1024 / 1024;
     expect(memoryMB).toBeLessThan(10);
@@ -319,13 +325,13 @@ export class ConcurrencyTester {
   async testRaceConditions(fn: () => Promise<any>, concurrentCalls: number = 10) {
     const promises = Array.from({ length: concurrentCalls }, () => fn());
     const results = await Promise.all(promises);
-    
+
     // All results should be consistent
     const firstResult = results[0];
     results.forEach((result, index) => {
       expect(result).toEqual(firstResult);
     });
-    
+
     return results;
   }
 
@@ -333,9 +339,9 @@ export class ConcurrencyTester {
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('Deadlock detected')), timeout);
     });
-    
+
     const resultPromise = fn();
-    
+
     await Promise.race([resultPromise, timeoutPromise]);
   }
 }
@@ -356,4 +362,4 @@ beforeEach(() => {
 afterEach(() => {
   // Clean up any global state
   vi.clearAllMocks();
-}); 
+});

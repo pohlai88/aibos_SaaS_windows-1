@@ -9,7 +9,7 @@ import {
   DeviceId,
   TokenId,
   isActiveSession,
-  isExpiredToken
+  isExpiredToken,
 } from '../../types/auth/auth';
 import { User } from '../../types/user/user';
 import { Tenant } from '../../types/tenant/tenant';
@@ -29,7 +29,7 @@ expectType<AuthSession>({
   lastActivity: new Date(),
   isActive: true,
   sessionId: 'session-123',
-  loginMethod: 'password'
+  loginMethod: 'password',
 });
 
 // Test TokenPayload type
@@ -44,7 +44,7 @@ expectType<TokenPayload>({
   aud: 'api.example.com',
   iss: 'auth.example.com',
   deviceId: 'device-123',
-  sessionId: 'session-123'
+  sessionId: 'session-123',
 });
 
 // Test DeviceInfo type
@@ -61,7 +61,7 @@ expectType<DeviceInfo>({
   isTablet: false,
   isDesktop: true,
   fingerprint: 'device-fingerprint',
-  lastSeen: new Date()
+  lastSeen: new Date(),
 });
 
 // Test GeoLocation type
@@ -71,7 +71,7 @@ expectType<GeoLocation>({
   city: 'San Francisco',
   latitude: 37.7749,
   longitude: -122.4194,
-  timezone: 'America/Los_Angeles'
+  timezone: 'America/Los_Angeles',
 });
 
 // Test utility types
@@ -86,13 +86,13 @@ expectType<boolean>(isExpiredToken({} as TokenPayload));
 // Test error cases - should fail type checking
 expectError<AuthSession>({
   // Missing required fields
-  user: {} as User
+  user: {} as User,
   // Missing tenant, token, issuedAt, expiresAt, authType, sessionId, isActive
 });
 
 expectError<TokenPayload>({
   // Missing required fields
-  sub: 'user-123'
+  sub: 'user-123',
   // Missing authType, iat, exp, jti, tokenType
 });
 
@@ -103,4 +103,4 @@ expectType<DeviceType>(DeviceType.TABLET);
 expectType<DeviceType>(DeviceType.UNKNOWN);
 
 // Test that invalid enum values are rejected
-expectError<DeviceType>('invalid-device-type'); 
+expectError<DeviceType>('invalid-device-type');

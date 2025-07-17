@@ -5,7 +5,7 @@ beforeAll(() => {
   // Set test environment
   process.env.NODE_ENV = 'test';
   process.env.LOG_LEVEL = 'error';
-  
+
   // Mock console methods to reduce noise in tests
   vi.spyOn(console, 'log').mockImplementation(() => {});
   vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -22,7 +22,7 @@ afterAll(() => {
 beforeEach(() => {
   // Clear all mocks before each test
   vi.clearAllMocks();
-  
+
   // Reset environment variables
   process.env.NODE_ENV = 'test';
   process.env.LOG_LEVEL = 'error';
@@ -58,14 +58,14 @@ export const createMockResponse = (overrides = {}) => {
     getHeader: vi.fn(),
     ...overrides,
   };
-  
+
   // Mock Express response methods
   res.status.mockReturnValue(res);
   res.json.mockReturnValue(res);
   res.send.mockReturnValue(res);
   res.end.mockReturnValue(res);
   res.setHeader.mockReturnValue(res);
-  
+
   return res;
 };
 
@@ -218,4 +218,4 @@ process.env = {
 };
 
 // Export test utilities
-export * from './utils'; 
+export * from './utils';

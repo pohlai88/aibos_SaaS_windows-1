@@ -18,12 +18,14 @@ The CI pipeline includes a dedicated `security-validation` job that runs before 
 ### 2. Validation Scripts
 
 #### Bash Script (`scripts/validate-secrets.sh`)
+
 - Cross-platform validation script
 - Checks for common secret patterns
 - Provides detailed error messages and remediation steps
 - Used in CI/CD and local development
 
 #### PowerShell Script (`scripts/validate-secrets.ps1`)
+
 - Windows-specific validation script
 - Same functionality as bash script
 - Used as fallback in Windows CI environments
@@ -73,12 +75,14 @@ test:
 ### Local Development
 
 1. **Install Husky** (if not already installed):
+
    ```bash
    npm install --save-dev husky
    npx husky install
    ```
 
 2. **Manual Validation**:
+
    ```bash
    # Run bash script
    chmod +x scripts/validate-secrets.sh
@@ -105,6 +109,7 @@ The validation runs automatically on:
 ### Common Issues and Solutions
 
 #### Build Artifacts in Git
+
 ```bash
 # Error: Found build artifacts in git!
 git rm -r --cached node_modules dist build .next coverage
@@ -112,6 +117,7 @@ git commit -m "Remove build artifacts from git"
 ```
 
 #### Environment Files in Git
+
 ```bash
 # Error: Found environment files in git!
 git rm --cached *.env *.local *.secret
@@ -119,6 +125,7 @@ git commit -m "Remove environment files from git"
 ```
 
 #### Hardcoded Secrets
+
 ```bash
 # Error: Potential hardcoded passwords/API keys found
 # Solution: Move to environment variables
@@ -216,4 +223,4 @@ Planned improvements:
 - **Real-time** validation in IDEs
 - **Advanced** credential scanning
 - **Custom** validation rules per project
-- **Performance** optimization for large repositories 
+- **Performance** optimization for large repositories

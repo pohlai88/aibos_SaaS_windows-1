@@ -206,6 +206,7 @@ The `npm:validate` script checks:
 ### Environment-Specific Configuration
 
 #### Development
+
 ```bash
 # Override for development
 loglevel=warn
@@ -214,6 +215,7 @@ ignore-scripts=false
 ```
 
 #### Production
+
 ```bash
 # Production overrides
 loglevel=error
@@ -227,19 +229,21 @@ ci=true
 ### Common Issues
 
 1. **Peer dependency conflicts**
+
    ```bash
    # Check peer dependencies
    npm ls
-   
+
    # Resolve conflicts
    npm install --legacy-peer-deps=false
    ```
 
 2. **Cache issues**
+
    ```bash
    # Clear cache
    npm cache clean --force
-   
+
    # Verify cache location
    npm config get cache
    ```
@@ -253,19 +257,21 @@ ci=true
 ### Performance Optimization
 
 1. **Cache optimization**
+
    ```bash
    # Use isolated cache
    npm config set cache .aibos-npm-cache
-   
+
    # Prefer offline when possible
    npm config set prefer-offline true
    ```
 
 2. **Network optimization**
+
    ```bash
    # Control concurrency
    npm config set maxsockets 3
-   
+
    # Configure retries
    npm config set fetch-retries 2
    ```
@@ -319,17 +325,20 @@ npm config set registry https://registry.npmjs.org/
 ### From Default Configuration
 
 1. **Backup current config**
+
    ```bash
    cp ~/.npmrc ~/.npmrc.backup
    ```
 
 2. **Apply enterprise settings**
+
    ```bash
    # Copy the enterprise .npmrc
    cp .npmrc ~/.npmrc
    ```
 
 3. **Validate configuration**
+
    ```bash
    npm run npm:validate
    ```
@@ -343,6 +352,7 @@ npm config set registry https://registry.npmjs.org/
 ### From Legacy Configuration
 
 1. **Remove deprecated settings**
+
    ```bash
    # Remove old settings
    npm config delete legacy-peer-deps
@@ -350,6 +360,7 @@ npm config set registry https://registry.npmjs.org/
    ```
 
 2. **Update to new format**
+
    ```bash
    # Use new lockfile version
    npm config set lockfile-version 3
@@ -373,4 +384,4 @@ For issues with the AI-BOS npm configuration:
 1. Run `npm run npm:validate` to identify issues
 2. Check the troubleshooting section above
 3. Review the validation report in `npm-config-validation-report.json`
-4. Contact the AI-BOS team for enterprise-specific issues 
+4. Contact the AI-BOS team for enterprise-specific issues

@@ -14,7 +14,7 @@ const CONFIG = {
   FAIL_ON_VULNERABILITIES: process.env.NPM_AUDIT_FAIL === 'true',
   MAX_RETRIES: 3,
   RETRY_DELAY: 5000,
-  OUTPUT_FILE: 'npm-audit-report.json'
+  OUTPUT_FILE: 'npm-audit-report.json',
 };
 
 class NpmAuditCI {
@@ -25,7 +25,7 @@ class NpmAuditCI {
 
   async run() {
     console.log('🔒 AI-BOS npm Audit CI - Enterprise Security Validation');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
 
     try {
       // Validate .npmrc configuration
@@ -49,7 +49,6 @@ class NpmAuditCI {
       }
 
       console.log('✅ npm Audit CI completed successfully');
-
     } catch (error) {
       console.error('💥 npm Audit CI failed:', error.message);
       process.exit(1);
@@ -69,12 +68,10 @@ class NpmAuditCI {
       'audit-level=critical',
       'engine-strict=true',
       'strict-peer-dependencies=true',
-      'save-exact=true'
+      'save-exact=true',
     ];
 
-    const missingSettings = requiredSettings.filter(setting =>
-      !npmrc.includes(setting)
-    );
+    const missingSettings = requiredSettings.filter((setting) => !npmrc.includes(setting));
 
     if (missingSettings.length > 0) {
       console.warn('⚠️  Missing recommended .npmrc settings:', missingSettings);
@@ -96,14 +93,13 @@ class NpmAuditCI {
 
         console.log('✅ npm audit completed successfully');
         return;
-
       } catch (error) {
         if (attempt === CONFIG.MAX_RETRIES) {
           throw new Error(`npm audit failed after ${CONFIG.MAX_RETRIES} attempts`);
         }
 
         console.log(`⚠️  Attempt ${attempt} failed, retrying in ${CONFIG.RETRY_DELAY}ms...`);
-        await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
+        await new Promise((resolve) => setTimeout(resolve, CONFIG.RETRY_DELAY));
       }
     }
   }
@@ -126,9 +122,14 @@ class NpmAuditCI {
     }, {});
 
     Object.entries(bySeverity).forEach(([severity, count]) => {
-      const icon = severity === 'critical' ? '🔴' :
-                   severity === 'high' ? '🟠' :
-                   severity === 'moderate' ? '🟡' : '🔵';
+      const icon =
+        severity === 'critical'
+          ? '🔴'
+          : severity === 'high'
+            ? '🟠'
+            : severity === 'moderate'
+              ? '🟡'
+              : '🔵';
       console.log(`${icon} ${severity.toUpperCase()}: ${count}`);
     });
   }
@@ -145,16 +146,16 @@ class NpmAuditCI {
           version: vuln.version,
           title: vuln.title,
           description: vuln.description?.substring(0, 200) + '...',
-          recommendation: vuln.recommendation
+          recommendation: vuln.recommendation,
         });
         return acc;
       }, {}),
       summary: {
-        critical: this.vulnerabilities.filter(v => v.severity === 'critical').length,
-        high: this.vulnerabilities.filter(v => v.severity === 'high').length,
-        moderate: this.vulnerabilities.filter(v => v.severity === 'moderate').length,
-        low: this.vulnerabilities.filter(v => v.severity === 'low').length
-      }
+        critical: this.vulnerabilities.filter((v) => v.severity === 'critical').length,
+        high: this.vulnerabilities.filter((v) => v.severity === 'high').length,
+        moderate: this.vulnerabilities.filter((v) => v.severity === 'moderate').length,
+        low: this.vulnerabilities.filter((v) => v.severity === 'low').length,
+      },
     };
 
     const reportFile = 'npm-audit-report-detailed.json';
@@ -163,14 +164,14 @@ class NpmAuditCI {
   }
 
   checkEnterpriseThresholds() {
-    const criticalCount = this.vulnerabilities.filter(v => v.severity === 'critical').length;
-    const highCount = this.vulnerabilities.filter(v => v.severity === 'high').length;
+    const criticalCount = this.vulnerabilities.filter((v) => v.severity === 'critical').length;
+    const highCount = this.vulnerabilities.filter((v) => v.severity === 'high').length;
 
     // Enterprise thresholds
     const thresholds = {
-      critical: 0,  // Zero tolerance for critical
-      high: 5,      // Max 5 high severity
-      moderate: 20  // Max 20 moderate severity
+      critical: 0, // Zero tolerance for critical
+      high: 5, // Max 5 high severity
+      moderate: 20, // Max 20 moderate severity
     };
 
     const violations = [];
@@ -185,7 +186,7 @@ class NpmAuditCI {
 
     if (violations.length > 0) {
       console.error('🚨 Enterprise thresholds exceeded:');
-      violations.forEach(v => console.error(`   ${v}`));
+      violations.forEach((v) => console.error(`   ${v}`));
       return true;
     }
 
@@ -196,7 +197,7 @@ class NpmAuditCI {
 
 // Run the audit
 const auditor = new NpmAuditCI();
-auditor.run().catch(error => {
+auditor.run().catch((error) => {
   console.error('💥 Fatal error:', error);
   process.exit(1);
 });

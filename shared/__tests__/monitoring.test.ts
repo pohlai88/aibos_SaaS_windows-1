@@ -335,7 +335,7 @@ describe('Global Monitoring Instance', () => {
 describe('Request Monitoring Middleware', () => {
   let mockReq: any;
   let mockRes: any;
-      let mockNext: Mock;
+  let mockNext: Mock;
 
   beforeEach(() => {
     mockReq = {
@@ -367,7 +367,7 @@ describe('Request Monitoring Middleware', () => {
 
 describe('Database Monitoring Wrapper', () => {
   it('should monitor successful database operations', async () => {
-          const mockOperation = vi.fn().mockResolvedValue('success');
+    const mockOperation = vi.fn().mockResolvedValue('success');
 
     const result = await monitorDatabaseOperation('SELECT', 'users', mockOperation);
 
@@ -376,7 +376,7 @@ describe('Database Monitoring Wrapper', () => {
   });
 
   it('should monitor failed database operations', async () => {
-          const mockOperation = vi.fn().mockRejectedValue(new Error('Database error'));
+    const mockOperation = vi.fn().mockRejectedValue(new Error('Database error'));
 
     await expect(monitorDatabaseOperation('SELECT', 'users', mockOperation)).rejects.toThrow(
       'Database error',

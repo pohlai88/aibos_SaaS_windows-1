@@ -4,7 +4,7 @@ import { AuthType, TokenType } from './auth.enums';
 
 /**
  * Core authentication types for the AI-BOS platform
- * 
+ *
  * @example
  * ```typescript
  * const session: AuthSession = {
@@ -22,7 +22,7 @@ import { AuthType, TokenType } from './auth.enums';
 
 /**
  * Represents an active authentication session for a user
- * 
+ *
  * @property user - The authenticated user
  * @property tenant - The tenant context for the session
  * @property token - JWT or session token
@@ -55,7 +55,7 @@ export interface AuthSession {
 
 /**
  * JWT token payload structure
- * 
+ *
  * @example
  * ```typescript
  * const payload: TokenPayload = {
@@ -85,7 +85,7 @@ export interface TokenPayload {
 
 /**
  * Device information for security and analytics
- * 
+ *
  * @example
  * ```typescript
  * const deviceInfo: DeviceInfo = {
@@ -118,7 +118,7 @@ export interface DeviceInfo {
 
 /**
  * Geographic location information
- * 
+ *
  * @example
  * ```typescript
  * const location: GeoLocation = {
@@ -163,10 +163,10 @@ export type TokenId = string & { readonly __brand: 'TokenId' };
 
 /**
  * Checks if a session is currently active
- * 
+ *
  * @param session - The session to check
  * @returns true if the session is active and not expired
- * 
+ *
  * @example
  * ```typescript
  * if (isActiveSession(session)) {
@@ -180,10 +180,10 @@ export const isActiveSession = (session: AuthSession): boolean => {
 
 /**
  * Checks if a token payload has expired
- * 
+ *
  * @param payload - The token payload to check
  * @returns true if the token has expired
- * 
+ *
  * @example
  * ```typescript
  * if (isExpiredToken(payload)) {
@@ -197,7 +197,7 @@ export const isExpiredToken = (payload: TokenPayload): boolean => {
 
 /**
  * Type guard for AuthSession
- * 
+ *
  * @param value - Value to check
  * @returns true if value is a valid AuthSession
  */
@@ -218,7 +218,7 @@ export const isAuthSession = (value: unknown): value is AuthSession => {
 
 /**
  * Type guard for TokenPayload
- * 
+ *
  * @param value - Value to check
  * @returns true if value is a valid TokenPayload
  */

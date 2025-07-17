@@ -60,9 +60,7 @@
       "maxsockets": 3,
       "node-gyp": "C:\\Users\\dlbja\\AppData\\Roaming\\npm\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
       "npm-version": "10.8.0",
-      "omit": [
-        "optional"
-      ],
+      "omit": ["optional"],
       "package-lock-only": true,
       "prefer-dedupe": true,
       "prefer-offline": true,
@@ -164,9 +162,7 @@
       "long": false,
       "message": "%s",
       "node-options": null,
-      "noproxy": [
-        ""
-      ],
+      "noproxy": [""],
       "omit-lockfile-registry-resolved": false,
       "only": null,
       "optional": null,

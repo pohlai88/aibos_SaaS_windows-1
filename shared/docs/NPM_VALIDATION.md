@@ -15,6 +15,7 @@ This guide describes how to enforce, validate, and auto-remediate npm configurat
 - Fails with exit code 1 if any setting is non-compliant.
 
 **Example Output:**
+
 ```
 === NPM Configuration Validation ===
 Checked 38 enterprise requirements
@@ -23,6 +24,7 @@ Checked 38 enterprise requirements
 ```
 
 **If there are mismatches:**
+
 ```
 ❌ Validation failed:
 - audit-level (.npmrc): Expected "critical", got "moderate"
@@ -40,6 +42,7 @@ Checked 38 enterprise requirements
 - Safe to run repeatedly.
 
 **Example Output:**
+
 ```
 === NPM Configuration Auto-Remediator ===
 🔧 Remediating 2 settings in .npmrc...
@@ -89,4 +92,4 @@ Checked 38 enterprise requirements
 
 ## 8. Support
 
-- For issues, review the validation report and consult the AI-BOS DevOps team. 
+- For issues, review the validation report and consult the AI-BOS DevOps team.

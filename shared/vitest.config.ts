@@ -9,12 +9,12 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     setupFiles: ['./__tests__/setup.ts'],
-    
+
     // Dynamic environment-based configuration
     coverage: {
       provider: 'v8',
       enabled: env.CI === 'true' || env.COVERAGE === 'true',
-      reporter: env.CI 
+      reporter: env.CI
         ? ['text', 'lcov', 'html', 'json', 'json-summary']
         : ['text', 'lcov', 'html', 'json'],
       exclude: [
@@ -50,7 +50,7 @@ export default defineConfig({
         '**/stubs/**',
       ],
       thresholds: {
-        global: {
+        'global': {
           branches: parseInt(env.VITEST_COVERAGE_BRANCHES || '80'),
           functions: parseInt(env.VITEST_COVERAGE_FUNCTIONS || '80'),
           lines: parseInt(env.VITEST_COVERAGE_LINES || '80'),
@@ -78,7 +78,7 @@ export default defineConfig({
         functions: [50, 80],
       },
     },
-    
+
     include: ['**/*.test.ts', '**/*.spec.ts', '**/__tests__/**/*.ts'],
     exclude: [
       'node_modules/',
@@ -92,12 +92,12 @@ export default defineConfig({
       '**/mocks/**',
       '**/stubs/**',
     ],
-    
+
     // Performance optimization
     testTimeout: parseInt(env.VITEST_TIMEOUT || '10000'),
     hookTimeout: parseInt(env.VITEST_HOOK_TIMEOUT || '10000'),
     teardownTimeout: parseInt(env.VITEST_TEARDOWN_TIMEOUT || '10000'),
-    
+
     // Advanced parallelization
     pool: env.CI ? 'threads' : 'forks',
     poolOptions: {
@@ -109,25 +109,23 @@ export default defineConfig({
         useAtomics: true,
         minThreads: 1,
         maxThreads: env.CI ? 4 : 2,
-      }
+      },
     },
-    
+
     maxConcurrency: parseInt(env.VITEST_MAX_CONCURRENCY || '1'),
     isolate: true,
     passWithNoTests: true,
     silent: false,
-    
+
     // Advanced reporting
-    reporters: env.CI 
-      ? ['verbose', 'json']
-      : ['verbose', 'json'],
+    reporters: env.CI ? ['verbose', 'json'] : ['verbose', 'json'],
     outputFile: {
       json: './coverage/test-results.json',
     },
-    
+
     // Fail-safe mechanisms
     retry: env.CI ? 1 : 0,
-    
+
     // Console output control
     onConsoleLog(log, type) {
       if (type === 'stderr') {
@@ -135,18 +133,18 @@ export default defineConfig({
       }
       return true;
     },
-    
+
     // Test sequence randomization
     sequence: {
-      shuffle: env.CI === 'true' // Randomize in CI
+      shuffle: env.CI === 'true', // Randomize in CI
     },
-    
+
     // Cache configuration
     cache: {
       dir: resolve(__dirname, '.vitest-cache'),
     },
   },
-  
+
   resolve: {
     alias: {
       '@': resolve(__dirname, './'),

@@ -117,10 +117,10 @@ export default tseslint.config(
           extendDefaults: true,
           types: {
             '{}': {
-              message: 'Use Record<string, unknown> instead'
-            }
-          }
-        }
+              message: 'Use Record<string, unknown> instead',
+            },
+          },
+        },
       ],
       '@typescript-eslint/prefer-readonly': 'error',
       '@typescript-eslint/prefer-readonly-parameter-types': 'error',
@@ -370,8 +370,6 @@ export default tseslint.config(
       ],
     },
   },
-
-
 
   // Configuration files
   {
