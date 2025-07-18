@@ -1,3 +1,9 @@
+import { Tooltip } from '../primitives/Tooltip';
+import { Progress } from '../primitives/Progress';
+import { Modal } from '../primitives/Modal';
+import { Input } from '../primitives/Input';
+import { Button } from '../primitives/Button';
+import { Badge } from '../primitives/Badge';
 // Primitives - Core UI Components
 export { Button } from './Button';
 export { Badge } from './Badge';
