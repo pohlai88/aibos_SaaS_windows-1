@@ -1,5 +1,5 @@
-import { Subscription } from '../types/billing/subscription';
-import { Currency } from '../types/billing/currency.enums';
+import type { Subscription } from '../types/billing/subscription';
+import type { Currency } from '../types/billing/currency.enums';
 import { CurrencyUtils } from '../types/billing/currency.enums';
 import { SubscriptionPlan, BillingInterval } from '../types/billing/billing.enums';
 

@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { UserRole } from '../types/user/user.enums';
-import { User } from '../types/user/user';
-import { ISODate } from '../types/primitives';
+import type { User } from '../types/user/user';
 
 const EmailSchema = z
   .string()

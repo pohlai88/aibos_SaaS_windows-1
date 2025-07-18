@@ -5,7 +5,7 @@
  * Generate, refactor, test, and deploy code with AI assistance.
  */
 
-import { AIEngine, AIRequest, AIResponse } from '../engine/AIEngine';
+import type { AIEngine, AIRequest, AIResponse  } from '../engine/AIEngine';
 import { z } from 'zod';
 
 // Code Generation Types
@@ -205,7 +205,7 @@ export class AICodeGenerator {
     const aiResponse = await this.aiEngine.process({
       task: 'code-generation',
       prompt,
-      context: request.context,
+      context: request.context as PromptContext,
       options: {
         model: 'gpt-4',
         temperature: 0.3, // Lower temperature for more consistent code

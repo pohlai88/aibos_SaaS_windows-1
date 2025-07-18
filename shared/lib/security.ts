@@ -120,7 +120,7 @@ export const ValidationSchemas = {
     .string()
     .min(1, 'String cannot be empty')
     .max(1000, 'String too long')
-    .regex(/^[a-zA-Z0-9\s\-_.,!?@#$%^&*()+=:;'"`~<>[\]{}|\\/]+$/, 'Contains unsafe characters'),
+    .regex(/^[a-zA-Z0-9\s\-_.,!?@#$%^&*()+=:;'"`~[\]{}|\\/]+$/, 'Contains unsafe characters'),
 };
 
 /**

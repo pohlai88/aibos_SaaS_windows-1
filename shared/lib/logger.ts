@@ -244,19 +244,37 @@ export class Logger {
     childLogger.requestId = this.requestId;
     childLogger.sessionId = this.sessionId;
 
-    // Merge context in log methods
-    const originalMethods = ['error', 'warn', 'info', 'debug', 'trace'];
-    originalMethods.forEach((method) => {
-      const original = this[method as keyof Logger] as Function;
-      childLogger[method as keyof Logger] = (
-        message: string,
-        context?: LogContext,
-        ...args: any[]
-      ) => {
-        const mergedContext = { ...additionalContext, ...context };
-        return original.call(this, message, mergedContext, ...args);
-      };
-    });
+    // Override log methods to include additional context
+    const originalTrace = childLogger.trace.bind(childLogger);
+    const originalDebug = childLogger.debug.bind(childLogger);
+    const originalInfo = childLogger.info.bind(childLogger);
+    const originalWarn = childLogger.warn.bind(childLogger);
+    const originalError = childLogger.error.bind(childLogger);
+
+    childLogger.trace = (message: string, context?: LogContext, data?: any) => {
+      const mergedContext = { ...additionalContext, ...context };
+      return originalTrace(message, mergedContext, data);
+    };
+
+    childLogger.debug = (message: string, context?: LogContext, data?: any) => {
+      const mergedContext = { ...additionalContext, ...context };
+      return originalDebug(message, mergedContext, data);
+    };
+
+    childLogger.info = (message: string, context?: LogContext, data?: any) => {
+      const mergedContext = { ...additionalContext, ...context };
+      return originalInfo(message, mergedContext, data);
+    };
+
+    childLogger.warn = (message: string, context?: LogContext, data?: any) => {
+      const mergedContext = { ...additionalContext, ...context };
+      return originalWarn(message, mergedContext, data);
+    };
+
+    childLogger.error = (message: string, context?: LogContext, error?: Error, data?: any) => {
+      const mergedContext = { ...additionalContext, ...context };
+      return originalError(message, mergedContext, error, data);
+    };
 
     return childLogger;
   }

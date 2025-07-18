@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Email, PasswordSchema } from './auth';
+import type { Email, PasswordSchema  } from './auth';
 
 export namespace PasswordReset {
   export interface Request {

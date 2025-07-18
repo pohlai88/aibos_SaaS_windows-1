@@ -462,7 +462,7 @@ export function Spotlight({
               )}
             </div>
 
-            {/* Search History */}
+            {/* Search Clock */}
             {enableHistory && searchHistory.length > 0 && !query && (
               <div className="spotlight-history">
                 <h4>Recent Searches</h4>

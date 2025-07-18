@@ -1,7 +1,9 @@
-import React, { forwardRef, ButtonHTMLAttributes, ReactNode } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import React, { forwardRef } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
-import { Loader2, LucideIcon } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
@@ -43,7 +45,7 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'size'>,
     VariantProps<typeof buttonVariants> {
   children?: ReactNode;
   leftIcon?: LucideIcon;
@@ -52,6 +54,8 @@ export interface ButtonProps
   loadingText?: string;
   fullWidth?: boolean;
   asChild?: boolean;
+  variant?: NonNullable<VariantProps<typeof buttonVariants>["variant"]>;
+  size?: NonNullable<VariantProps<typeof buttonVariants>["size"]>;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(

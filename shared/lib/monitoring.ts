@@ -410,6 +410,13 @@ export class ApplicationMonitor {
   }
 
   /**
+   * Record a custom metric
+   */
+  recordCustomMetric(name: string, value: number, labels: MetricLabels = {}): void {
+    this.performance.setGauge(name, value, labels);
+  }
+
+  /**
    * Get performance metrics
    */
   getPerformanceMetrics(): PerformanceMonitor {

@@ -1008,29 +1008,4 @@ export const CommonEventSchemas = {
 // EXPORTS
 // ============================================================================
 
-export {
-  EventBus,
-  EventSchemaRegistry,
-  DeadLetterQueue,
-  MemoryEventPersistence,
-  createEventSchema,
-  event,
-  EventBuilder,
-  CommonEventSchemas,
-};
-
-export type {
-  EventEnvelope,
-  EventMetadata,
-  EventSubscription,
-  EventHandler,
-  EventFilter,
-  SubscriptionOptions,
-  RetryPolicy,
-  EventPersistenceConfig,
-  EventReplayConfig,
-  DeadLetterQueueConfig,
-  EventBusConfig,
-  EventSchema,
-  EventStats,
-};
+// All exports are already declared inline above

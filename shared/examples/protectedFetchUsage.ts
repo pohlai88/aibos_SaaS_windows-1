@@ -1,7 +1,7 @@
-import { protectedFetch, protectedApi, setUserContext } from '../utils/protectedFetch';
-import { Permission } from '../types/roles/permissions';
-import { User } from '../types/user/user';
-import { UserRole } from '../types/roles/roles.enums';
+import type { protectedFetch, protectedApi, setUserContext  } from '../utils/protectedFetch';
+import type { Permission } from '../types/roles/permissions';
+import type { User } from '../types/user/user';
+import type { UserRole } from '../types/roles/roles.enums';
 
 // Example user context implementation
 class ExampleUserContext {

@@ -1,6 +1,7 @@
 import { Permission } from '../types/roles/permissions';
-import { User } from '../types/user/user';
-import { apiFetcher, ApiFetcherConfig } from './apiFetcher';
+import type { User } from '../types/user/user';
+import { apiFetcher } from './apiFetcher';
+import type { ApiFetcherConfig } from './apiFetcher';
 import { requirePermission } from './permissionUtils';
 
 /**
@@ -79,7 +80,7 @@ export const protectedApi = {
       requiredPermissions,
       {
         method: 'POST',
-        body: data ? JSON.stringify(data) : undefined,
+        body: data ? JSON.stringify(data) : null,
       },
       config,
     ),
@@ -95,7 +96,7 @@ export const protectedApi = {
       requiredPermissions,
       {
         method: 'PUT',
-        body: data ? JSON.stringify(data) : undefined,
+        body: data ? JSON.stringify(data) : null,
       },
       config,
     ),
@@ -111,7 +112,7 @@ export const protectedApi = {
       requiredPermissions,
       {
         method: 'PATCH',
-        body: data ? JSON.stringify(data) : undefined,
+        body: data ? JSON.stringify(data) : null,
       },
       config,
     ),

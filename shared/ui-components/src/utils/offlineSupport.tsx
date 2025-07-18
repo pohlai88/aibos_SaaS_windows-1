@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import type { useState, useEffect, useCallback  } from 'react';
 
 export interface OfflineState {
   isOnline: boolean;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const progressVariants = cva('relative w-full overflow-hidden rounded-full bg-secondary', {

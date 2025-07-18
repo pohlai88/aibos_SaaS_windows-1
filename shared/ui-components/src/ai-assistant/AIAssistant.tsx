@@ -1,32 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Send,
-  Mic,
-  MicOff,
-  Bot,
-  User,
-  Sparkles,
-  Settings,
-  Download,
-  Share2,
-  Copy,
-  Edit3,
-  Trash2,
-  Volume2,
-  VolumeX,
-  Camera,
-  FileText,
-  Code,
-  Image,
-  Video,
-  Brain,
-  Zap,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-} from 'lucide-react';
+import { Send, Mic, MicOff, Bot, Sparkles, Settings, Download, Share2, Copy, Edit3, Trash2, Volume2, VolumeX, Camera, FileText, Code, Image, Video, Circle, Zap, Clock, CheckCircle, AlertCircle, Loader2,  } from 'lucide-react';
+import type { User } from 'lucide-react';
 
 export interface AIMessage {
   id: string;

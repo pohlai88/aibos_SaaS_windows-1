@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { TenantStatus, SubscriptionPlan } from '@shared/types/tenant/tenant.enums';
-import { ISODate } from '../types/primitives';
+import { TenantStatus, SubscriptionPlan } from '../types/tenant/tenant.enums';
+import type { ISODate } from '../types/primitives';
 
 // Reusable schemas
 const EmailSchema = z

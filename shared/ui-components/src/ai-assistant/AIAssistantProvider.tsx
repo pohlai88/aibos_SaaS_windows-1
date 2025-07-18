@@ -4,8 +4,8 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  ReactNode,
 } from 'react';
+import type { ReactNode } from 'react';
 import { AIMessage } from './AIAssistant';
 
 export interface Conversation {

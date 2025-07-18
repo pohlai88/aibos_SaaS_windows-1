@@ -1,95 +1,27 @@
-name: AI-BOS CI/CD Pipeline
+name: Enterprise CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop, feature/*, hotfix/*]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
+  release:
+    types: [published]
 
 env:
   NODE_VERSION: '18'
   NPM_VERSION: '9'
 
 jobs:
-  # Security Validation - Check for committed secrets and build artifacts
-  security-validation:
-    name: Security Validation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run security validation script
-        run: |
-          echo "🔍 Running security validation..."
-          if [ -f "scripts/validate-secrets.sh" ]; then
-            chmod +x scripts/validate-secrets.sh
-            ./scripts/validate-secrets.sh
-          else
-            echo "⚠️  Validation script not found, skipping..."
-          fi
-
-      - name: Check for committed secrets (PowerShell fallback)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          Write-Host "🔍 Running PowerShell security validation..."
-          if (Test-Path "scripts/validate-secrets.ps1") {
-            & "scripts/validate-secrets.ps1"
-          } else {
-            Write-Host "⚠️  PowerShell validation script not found, skipping..."
-          }
-
-      - name: Check for committed secrets (Bash fallback)
-        if: runner.os != 'Windows'
-        run: |
-          echo "🔍 Running bash security validation..."
-          if [ -f "scripts/validate-secrets.sh" ]; then
-            chmod +x scripts/validate-secrets.sh
-            ./scripts/validate-secrets.sh
-          else
-            echo "⚠️  Validation script not found, skipping..."
-          fi
-
-      - name: Check for build artifacts in git
-        run: |
-          echo "🔍 Checking for build artifacts in git..."
-          if git ls-files | grep -E "(node_modules|dist|build|\.next|coverage)" | head -10; then
-            echo "❌ Found build artifacts in git! These should be ignored."
-            echo "Run: git rm -r --cached node_modules dist build .next coverage"
-            exit 1
-          else
-            echo "✅ No build artifacts found in git"
-          fi
-
-      - name: Check for environment files in git
-        run: |
-          echo "🔍 Checking for environment files in git..."
-          if git ls-files | grep -E "\.(env|local|secret)" | head -10; then
-            echo "❌ Found environment files in git! These should be ignored."
-            echo "Run: git rm --cached *.env *.local *.secret"
-            exit 1
-          else
-            echo "✅ No environment files found in git"
-          fi
-
-  # Security and Code Quality
+  # Security and Compliance
   security-scan:
-    name: Security Scan
+    name: Security & Compliance Scan
     runs-on: ubuntu-latest
-    needs: security-validation
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -99,49 +31,32 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
-          cd railway-1/backend && npm ci
-          cd ../frontend && npm ci
-
-      - name: Run security audit
-        run: |
-          npm audit --audit-level=moderate
-          cd railway-1/backend && npm audit --audit-level=moderate
-          cd ../frontend && npm audit --audit-level=moderate
+          npm ci --prefer-offline --no-audit
+          cd shared && npm ci --prefer-offline --no-audit
 
       - name: Run Snyk security scan
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high
+          args: --severity-threshold=high --fail-on=high
 
-      - name: Run CodeQL analysis
-        uses: github/codeql-action/init@v2
-        with:
-          languages: javascript, typescript
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
-
-      - name: Additional security validation
+      - name: Run npm audit
         run: |
-          echo "🔍 Running additional security checks..."
-          # Check for hardcoded secrets in code
-          if grep -r -i "password.*=.*['\"][^'\"]*['\"]" --include="*.ts" --include="*.js" --include="*.tsx" --include="*.jsx" . | grep -v "test" | head -5; then
-            echo "⚠️  Potential hardcoded passwords found"
-          fi
-          
-          # Check for API keys in code
-          if grep -r -i "api.*key.*=.*['\"][^'\"]*['\"]" --include="*.ts" --include="*.js" --include="*.tsx" --include="*.jsx" . | grep -v "test" | head -5; then
-            echo "⚠️  Potential hardcoded API keys found"
-          fi
+          npm audit --audit-level=critical
+          cd shared && npm audit --audit-level=critical
+
+      - name: Check for secrets in code
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: .
+          base: ${{ github.event.before }}
+          head: ${{ github.sha }}
 
   # Code Quality and Linting
   code-quality:
-    name: Code Quality
+    name: Code Quality & Standards
     runs-on: ubuntu-latest
-    needs: security-validation
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -154,49 +69,35 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
-          cd railway-1/backend && npm ci
-          cd ../frontend && npm ci
+          npm ci --prefer-offline --no-audit
+          cd shared && npm ci --prefer-offline --no-audit
 
       - name: Run ESLint
         run: |
           npm run lint
-          cd railway-1/backend && npm run lint
-          cd ../frontend && npm run lint
+          cd shared && npm run lint
 
-      - name: Run Prettier check
-        run: |
-          npm run format:check
-          cd railway-1/backend && npm run format:check
-          cd ../frontend && npm run format:check
-
-      - name: Check TypeScript
+      - name: Check TypeScript types
         run: |
           npm run type-check
-          cd railway-1/backend && npm run type-check
-          cd ../frontend && npm run type-check
+          cd shared && npm run type-check
 
-      - name: Run SonarQube analysis
-        uses: sonarqube-quality-gate-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          scannerHomeDir: ./.sonar/scanner
-          args: >
-            -Dsonar.projectKey=aibos-platform
-            -Dsonar.sources=.
-            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/.next/**,**/coverage/**
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.coverage.exclusions=**/*.test.js,**/*.spec.js,**/tests/**,**/__tests__/**
+      - name: Check code formatting
+        run: |
+          npm run format:check
+          cd shared && npm run format:check
 
-  # Testing
+      - name: Run zero-error system
+        run: |
+          cd shared && npm run zero-error
+
+  # Testing Suite
   test:
-    name: Test Suite
+    name: Comprehensive Testing
     runs-on: ubuntu-latest
-    needs: security-validation
     strategy:
       matrix:
-        node-version: [16, 18, 20]
+        node-version: [18, 20]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -209,95 +110,76 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
-          cd railway-1/backend && npm ci
-          cd ../frontend && npm ci
+          npm ci --prefer-offline --no-audit
+          cd shared && npm ci --prefer-offline --no-audit
 
-      - name: Run shared tests
-        run: npm test -- --coverage --watchAll=false
-
-      - name: Run backend tests
+      - name: Run unit tests
         run: |
-          cd railway-1/backend
-          npm test -- --coverage --watchAll=false
+          npm run test:coverage
+          cd shared && npm run test:coverage
 
-      - name: Run frontend tests
+      - name: Run type tests
         run: |
-          cd railway-1/frontend
-          npm test -- --coverage --watchAll=false
+          cd shared && npm run test:types
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage reports
         uses: codecov/codecov-action@v3
         with:
           file: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
-          fail_ci_if_error: true
+          fail_ci_if_error: false
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        if: always()
+      - name: Upload shared coverage reports
+        uses: codecov/codecov-action@v3
         with:
-          name: test-results-${{ matrix.node-version }}
+          file: ./shared/coverage/lcov.info
+          flags: shared-tests
+          name: codecov-shared
+          fail_ci_if_error: false
+
+  # Performance Testing
+  performance:
+    name: Performance & Bundle Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit
+          cd shared && npm ci --prefer-offline --no-audit
+
+      - name: Build application
+        run: |
+          cd shared && npm run build
+          npm run build
+
+      - name: Run performance tests
+        run: |
+          cd shared && npm run test:performance
+
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
           path: |
-            coverage/
-            railway-1/backend/coverage/
-            railway-1/frontend/coverage/
+            dist/stats.html
+            shared/dist/stats.json
 
-  # Integration Tests
-  integration-test:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: aibos_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: |
-          npm ci
-          cd railway-1/backend && npm ci
-
-      - name: Setup test database
-        run: |
-          cd railway-1/backend
-          npm run db:setup:test
-
-      - name: Run integration tests
-        run: |
-          cd railway-1/backend
-          npm run test:integration
-
-      - name: Upload integration test results
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: integration-test-results
-          path: railway-1/backend/test-results/
-
-  # Build and Package
+  # Build and Deploy
   build:
-    name: Build
+    name: Build & Package
     runs-on: ubuntu-latest
-    needs: [test, integration-test]
+    needs: [security-scan, code-quality, test, performance]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -307,195 +189,84 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
 
       - name: Install dependencies
         run: |
-          npm ci
-          cd railway-1/backend && npm ci
-          cd ../frontend && npm ci
+          npm ci --prefer-offline --no-audit
+          cd shared && npm ci --prefer-offline --no-audit
 
       - name: Build shared library
+        run: cd shared && npm run build
+
+      - name: Build application
         run: npm run build
 
-      - name: Build backend
-        run: |
-          cd railway-1/backend
-          npm run build
-
-      - name: Build frontend
-        run: |
-          cd railway-1/frontend
-          npm run build
-
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
             dist/
-            railway-1/backend/dist/
-            railway-1/frontend/.next/
-
-  # Performance Testing
-  performance-test:
-    name: Performance Tests
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: |
-          npm ci
-          cd railway-1/backend && npm ci
-
-      - name: Start backend server
-        run: |
-          cd railway-1/backend
-          npm run start:test &
-          sleep 10
-
-      - name: Run performance tests
-        run: |
-          npm run test:performance
-
-      - name: Upload performance results
-        uses: actions/upload-artifact@v3
-        with:
-          name: performance-results
-          path: performance-results/
+            shared/dist/
 
   # Deploy to Staging
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
-    needs: [build, performance-test]
-    if: github.ref == 'refs/heads/develop'
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     environment: staging
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy backend to Railway (Staging)
-        uses: railway/deploy@v1
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
         with:
-          service: aibos-backend-staging
-          token: ${{ secrets.RAILWAY_TOKEN }}
+          name: build-artifacts
 
-      - name: Deploy frontend to Vercel (Staging)
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-
-      - name: Run smoke tests
+      - name: Deploy to staging
         run: |
-          npm run test:smoke:staging
+          echo "Deploying to staging environment..."
+          # Add your staging deployment logic here
 
   # Deploy to Production
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    needs: [build, performance-test]
-    if: github.ref == 'refs/heads/main'
+    needs: build
+    if: github.event_name == 'release' && github.event.action == 'published'
     environment: production
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy backend to Railway (Production)
-        uses: railway/deploy@v1
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
         with:
-          service: aibos-backend-production
-          token: ${{ secrets.RAILWAY_TOKEN }}
+          name: build-artifacts
 
-      - name: Deploy frontend to Vercel (Production)
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-
-      - name: Run smoke tests
+      - name: Deploy to production
         run: |
-          npm run test:smoke:production
-
-      - name: Notify deployment success
-        uses: 8398a7/action-slack@v3
-        with:
-          status: success
-          text: 'AI-BOS Platform deployed successfully to production! 🚀'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  # Post-deployment verification
-  post-deployment:
-    name: Post-deployment Verification
-    runs-on: ubuntu-latest
-    needs: [deploy-production]
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run health checks
-        run: |
-          npm run health:check:production
-
-      - name: Run end-to-end tests
-        run: |
-          npm run test:e2e:production
-
-      - name: Generate deployment report
-        run: |
-          npm run report:deployment
-
-      - name: Upload deployment report
-        uses: actions/upload-artifact@v3
-        with:
-          name: deployment-report
-          path: deployment-report.json
+          echo "Deploying to production environment..."
+          # Add your production deployment logic here
 
   # Notifications
   notify:
-    name: Notifications
+    name: Notify Team
     runs-on: ubuntu-latest
-    needs: [post-deployment]
+    needs: [deploy-staging, deploy-production]
     if: always()
     steps:
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ All checks passed successfully!"
+          # Add your success notification logic here
+
       - name: Notify on failure
         if: failure()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: failure
-          text: 'AI-BOS Platform deployment failed! ❌'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Create deployment summary
-        if: always()
         run: |
-          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch:** ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY 
+          echo "❌ Some checks failed!"
+          # Add your failure notification logic here

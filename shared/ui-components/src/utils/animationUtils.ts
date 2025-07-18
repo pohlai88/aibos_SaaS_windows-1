@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import type { useEffect, useState  } from 'react';
 
 // Check if user prefers reduced motion
 export const prefersReducedMotion = (): boolean => {

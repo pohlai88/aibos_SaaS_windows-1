@@ -27,35 +27,33 @@ class ZeroErrorSystem {
 
   async run() {
     console.log('🚀 AI-BOS Zero-Error Self-Healing System');
-    console.log('=' .repeat(60));
-
+    console.log('='.repeat(60));
     try {
       // Ensure reports directory exists
       this.ensureReportsDir();
-
-      // Phase 1: Self-Healing (Auto-fix everything possible)
+      console.log('--- PHASE 1: Self-Healing START ---');
       await this.phase1SelfHealing();
-
-      // Phase 2: Validation & Issue Detection
+      console.log('--- PHASE 1: Self-Healing END ---');
+      console.log('--- PHASE 2: Validation & Issue Detection START ---');
       await this.phase2Validation();
-
-      // Phase 3: Manual Intervention Detection
+      console.log('--- PHASE 2: Validation & Issue Detection END ---');
+      console.log('--- PHASE 3: Manual Intervention Detection START ---');
       await this.phase3ManualDetection();
-
-      // Phase 4: Optimization Suggestions
+      console.log('--- PHASE 3: Manual Intervention Detection END ---');
+      console.log('--- PHASE 4: Optimization Suggestions START ---');
       await this.phase4Optimization();
-
-      // Phase 5: Generate Reports & Next Steps
+      console.log('--- PHASE 4: Optimization Suggestions END ---');
+      console.log('--- PHASE 5: Reporting START ---');
       await this.phase5Reporting();
-
-      // Phase 6: Auto-CI/CD Integration (if no manual fixes needed)
+      console.log('--- PHASE 5: Reporting END ---');
       if (this.manualRequired.length === 0) {
+        console.log('--- PHASE 6: Auto-CI/CD Integration START ---');
         await this.phase6AutoCICD();
+        console.log('--- PHASE 6: Auto-CI/CD Integration END ---');
       }
-
     } catch (error) {
-      console.error('💥 Zero-Error System failed:', error.message);
-      this.logIssue('SYSTEM_ERROR', error.message, 'CRITICAL');
+      console.error('💥 Zero-Error System failed:', error);
+      this.logIssue('SYSTEM_ERROR', error.stack || error.message, 'CRITICAL');
       await this.generateEmergencyReport();
       process.exit(1);
     }
@@ -96,7 +94,7 @@ class ZeroErrorSystem {
     for (const step of autoFixSteps) {
       try {
         console.log(`  🔧 ${step.description}...`);
-        execSync(step.command, { stdio: 'pipe' });
+        execSync(step.command, { stdio: 'inherit' });
         this.autoFixed.push({
           step: step.name,
           description: step.description,
@@ -149,7 +147,7 @@ class ZeroErrorSystem {
     for (const step of validationSteps) {
       try {
         console.log(`  🔍 ${step.description}...`);
-        execSync(step.command, { stdio: 'pipe' });
+        execSync(step.command, { stdio: 'inherit' });
         console.log(`  ✅ ${step.description} - PASSED`);
       } catch (error) {
         console.log(`  ❌ ${step.description} - FAILED`);
@@ -274,7 +272,7 @@ class ZeroErrorSystem {
     for (const step of cicdSteps) {
       try {
         console.log(`  🔄 ${step}...`);
-        execSync(step, { stdio: 'pipe' });
+        execSync(step, { stdio: 'inherit' });
         console.log(`  ✅ ${step} - COMPLETED`);
       } catch (error) {
         console.log(`  ⚠️  ${step} - SKIPPED (manual intervention may be required)`);

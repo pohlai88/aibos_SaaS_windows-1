@@ -981,18 +981,15 @@ export class CurrencyConversionService {
 const price: Money = { amount: 1234.56, currency: Currency.USD };
 
 // Format price for display
-console.log(CurrencyUtils.format(price.amount, price.currency)); // "$1,234.56"
+// CurrencyUtils.format(price.amount, price.currency); // "$1,234.56"
 
 // Southeast Asian currency examples
-console.log(CurrencyUtils.format(50000, Currency.MYR)); // "RM50,000.00"
-console.log(CurrencyUtils.format(1500, Currency.THB)); // "฿1,500.00"
-console.log(CurrencyUtils.format(1000000, Currency.IDR)); // "Rp1.000.000"
-console.log(CurrencyUtils.format(25000, Currency.VND)); // "25.000₫"
+// CurrencyUtils.format(50000, Currency.MYR); // "RM50,000.00"
+// CurrencyUtils.format(1500, Currency.THB); // "฿1,500.00"
+// CurrencyUtils.format(1000000, Currency.IDR); // "Rp1.000.000"
+// CurrencyUtils.format(25000, Currency.VND); // "25.000₫"
 
 // Get Southeast Asian currencies
 const seaCurrencies = CurrencyUtils.getSoutheastAsianCurrencies();
-console.log(
-  'Southeast Asian currencies:',
-  seaCurrencies.map((c) => c.isoCode),
-);
+// seaCurrencies.map((c) => c.isoCode);
 // ["MYR", "SGD", "THB", "IDR", "PHP", "VND", "BND", "KHR", "LAK", "MMK"]

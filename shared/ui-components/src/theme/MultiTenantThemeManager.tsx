@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 // CSS Variable scope manager

@@ -1,4 +1,4 @@
-import { UserRole } from './roles.enums';
+import type { UserRole } from './roles.enums';
 
 /**
  * Core system permissions

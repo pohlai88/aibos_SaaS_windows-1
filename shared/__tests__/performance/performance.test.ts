@@ -10,11 +10,10 @@ import { MemoryCache, RedisCache, MultiLevelCache } from '../../lib/cache';
 import { DatabaseManager, DatabaseUtils } from '../../lib/database';
 import { SecurityManager } from '../../lib/security';
 import { isUUID, isEmail, isValidURL } from '../../types/primitives';
-import {
-  createMetadataField,
+import type { createMetadataField,
   MetadataFieldType,
   MetadataValidationRule,
-} from '../../types/metadata';
+ } from '../../types/metadata';
 
 // ============================================================================
 // PERFORMANCE CONSTANTS

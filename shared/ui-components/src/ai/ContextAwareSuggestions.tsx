@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 // Suggestion context interface

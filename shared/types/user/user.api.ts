@@ -1,5 +1,5 @@
-import { User } from './user';
-import { ISODate } from '../primitives';
+import type { User } from './user';
+import type { ISODate } from '../primitives';
 
 // Base response interface to ensure consistency
 interface BaseResponse {

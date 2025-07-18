@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { SubscriptionPlan, BillingInterval } from './billing.enums';
-import { Currency } from './currency.enums';
+import type { Currency } from './currency.enums';
 
 /**
  * Feature interface for structured feature definitions

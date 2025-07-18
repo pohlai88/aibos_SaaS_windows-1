@@ -4,8 +4,8 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  ReactNode,
 } from 'react';
+import type { ReactNode } from 'react';
 import { Job, JobStatus, JobPriority } from './types';
 
 export interface JobQueueContextValue {

@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info, Loader2 } from 'lucide-react';
 import { Button } from '../primitives/Button';

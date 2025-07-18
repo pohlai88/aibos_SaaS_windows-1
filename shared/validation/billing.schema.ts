@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { SubscriptionPlan, BillingInterval, PlanFeature } from '../types/billing/billing.enums';
-import { ISODate } from '../types/primitives';
+import type { ISODate } from '../types/primitives';
 
 /**
  * Billing validation schemas

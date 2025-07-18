@@ -6,8 +6,7 @@
  * manifest management, and entity operations.
  */
 
-import {
-  initializeAibosSystems,
+import type { initializeAibosSystems,
   createAibosApp,
   EventBus,
   ManifestValidator,
@@ -17,7 +16,7 @@ import {
   createEntityFilter,
   event,
   CommonEventSchemas,
-} from '../lib';
+ } from '../lib';
 import { z } from 'zod';
 
 // ============================================================================

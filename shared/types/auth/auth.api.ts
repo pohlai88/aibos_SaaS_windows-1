@@ -1,6 +1,6 @@
-import { ApiResponse, ApiErrorResponse } from '../api';
+import type { ApiResponse, ApiErrorResponse  } from '../api';
 import { AuthSession, TokenPayload, DeviceInfo } from './auth';
-import { ApiErrorCode } from '../api.errors';
+import type { ApiErrorCode } from '../api.errors';
 import { MfaMethod, AuthProvider } from './auth.enums';
 
 /**

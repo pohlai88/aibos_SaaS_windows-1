@@ -1,5 +1,4 @@
-import {
-  checkPermission,
+import type { checkPermission,
   handleFeatureByPermission,
   getValueByPermission,
   handlePermissionWithCallbacks,
@@ -10,9 +9,9 @@ import {
   hasAnyPermission,
   PermissionUser,
   PermissionHandlerOptions,
-} from '../utils/permissionHandlers';
-import { Permission } from '../types/roles/permissions';
-import { UserRole } from '../types/roles/roles.enums';
+ } from '../utils/permissionHandlers';
+import type { Permission } from '../types/roles/permissions';
+import type { UserRole } from '../types/roles/roles.enums';
 
 // Example user objects
 const adminUser: PermissionUser = {

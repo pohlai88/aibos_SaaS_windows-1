@@ -22,7 +22,7 @@ export const hexToRgb = (hex: string): [number, number, number] => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!result) throw new Error(`Invalid hex color: ${hex}`);
 
-  return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)];
+  return [parseInt(result[1]!, 16), parseInt(result[2]!, 16), parseInt(result[3]!, 16)];
 };
 
 // Convert RGB to hex
@@ -42,7 +42,7 @@ export const getRelativeLuminance = (r: number, g: number, b: number): number =>
     return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
   });
 
-  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+  return 0.2126 * (rs ?? 0) + 0.7152 * (gs ?? 0) + 0.0722 * (bs ?? 0);
 };
 
 // Calculate contrast ratio between two colors
@@ -123,8 +123,11 @@ export const findAccessibleTextColor = (
   return textColor;
 };
 
-// Generate accessible color palette
-export const generateAccessiblePalette = (baseColor: string, variants: number = 9): string[] => {
+// Generate accessible color palette (basic version)
+export const generateBasicAccessiblePalette = (
+  baseColor: string,
+  variants: number = 9,
+): string[] => {
   const [r, g, b] = hexToRgb(baseColor);
   const palette: string[] = [];
 
@@ -159,7 +162,7 @@ export const validateComponentColors = (
     issues.push(
       `Text contrast ratio ${textContrast.ratio.toFixed(2)} is below WCAG AA standard (4.5)`,
     );
-    suggestions.text = findAccessibleTextColor(background, WCAG_THRESHOLDS.AA);
+    suggestions['text'] = findAccessibleTextColor(background, WCAG_THRESHOLDS.AA);
   }
 
   // Check border contrast if provided
@@ -169,7 +172,7 @@ export const validateComponentColors = (
       issues.push(
         `Border contrast ratio ${borderContrast.ratio.toFixed(2)} is below WCAG AA standard (4.5)`,
       );
-      suggestions.border = findAccessibleTextColor(background, WCAG_THRESHOLDS.AA);
+      suggestions['border'] = findAccessibleTextColor(background, WCAG_THRESHOLDS.AA);
     }
   }
 
@@ -180,7 +183,7 @@ export const validateComponentColors = (
       issues.push(
         `Accent contrast ratio ${accentContrast.ratio.toFixed(2)} is below WCAG AA standard (4.5)`,
       );
-      suggestions.accent = findAccessibleTextColor(background, WCAG_THRESHOLDS.AA);
+      suggestions['accent'] = findAccessibleTextColor(background, WCAG_THRESHOLDS.AA);
     }
   }
 
@@ -256,10 +259,10 @@ export const simulateColorBlindness = (
     ],
   };
 
-  const matrix = matrices[type];
-  const newR = r * matrix[0][0] + g * matrix[0][1] + b * matrix[0][2];
-  const newG = r * matrix[1][0] + g * matrix[1][1] + b * matrix[1][2];
-  const newB = r * matrix[2][0] + g * matrix[2][1] + b * matrix[2][2];
+  const matrix = matrices[type]!;
+  const newR = r * matrix[0]![0]! + g * matrix[0]![1]! + b * matrix[0]![2]!;
+  const newG = r * matrix[1]![0]! + g * matrix[1]![1]! + b * matrix[1]![2]!;
+  const newB = r * matrix[2]![0]! + g * matrix[2]![1]! + b * matrix[2]![2]!;
 
   return rgbToHex(
     Math.max(0, Math.min(255, newR)),
@@ -293,8 +296,8 @@ export const checkColorBlindnessAccessibility = (
       ];
 
       for (const type of types) {
-        const sim1 = simulateColorBlindness(color1, type);
-        const sim2 = simulateColorBlindness(color2, type);
+        const sim1 = simulateColorBlindness(color1!, type);
+        const sim2 = simulateColorBlindness(color2!, type);
         const contrast = getContrastRatio(sim1, sim2);
 
         if (contrast < 2.0) {
@@ -398,7 +401,7 @@ export const generateAccessiblePalette = (
     includeSemantic = true,
   } = options;
 
-  const palette = generateAccessiblePalette(baseColor, variants);
+  const palette = generateBasicAccessiblePalette(baseColor, variants);
 
   if (ensureContrast) {
     // Ensure all colors meet contrast requirements

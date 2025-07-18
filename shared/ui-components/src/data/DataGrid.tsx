@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
 import { Input } from '../primitives/Input';
@@ -22,7 +22,7 @@ import {
   SortAsc,
   SortDesc,
   RefreshCw,
-  Brain,
+  Circle,
   Zap,
   TrendingUp,
   AlertTriangle,
@@ -531,7 +531,7 @@ export const DataGrid = <T extends Record<string, any>>({
 
                 {aiFeatures.smartSorting && getSmartSorting(column) && (
                   <Tooltip content={`AI suggests ${getSmartSorting(column)} sorting`}>
-                    <Brain className="h-3 w-3 text-blue-500" />
+                    <Circle className="h-3 w-3 text-blue-500" />
                   </Tooltip>
                 )}
               </div>

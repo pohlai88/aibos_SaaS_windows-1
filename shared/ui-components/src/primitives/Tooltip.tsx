@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect, ReactNode } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const tooltipVariants = cva(
@@ -54,6 +55,9 @@ export interface TooltipProps extends VariantProps<typeof tooltipVariants> {
   interactive?: boolean;
   onShow?: () => void;
   onHide?: () => void;
+  variant?: NonNullable<VariantProps<typeof tooltipVariants>["variant"]>;
+  size?: NonNullable<VariantProps<typeof tooltipVariants>["size"]>;
+  placement?: NonNullable<VariantProps<typeof tooltipVariants>["placement"]>;
 }
 
 export const Tooltip: React.FC<TooltipProps> = ({

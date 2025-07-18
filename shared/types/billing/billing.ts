@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UUID, ISODate } from '../primitives';
+import type { UUID, ISODate } from '../primitives';
 import {
   SubscriptionPlan,
   BillingInterval,

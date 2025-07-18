@@ -1,6 +1,5 @@
-import { expectType, expectError } from 'tsd';
-import {
-  AuthSession,
+import type { expectType, expectError  } from 'tsd';
+import type { AuthSession,
   TokenPayload,
   DeviceInfo,
   GeoLocation,
@@ -10,10 +9,10 @@ import {
   TokenId,
   isActiveSession,
   isExpiredToken,
-} from '../../types/auth/auth';
-import { User } from '../../types/user/user';
-import { Tenant } from '../../types/tenant/tenant';
-import { AuthType, TokenType } from '../../types/auth/auth.enums';
+ } from '../../types/auth/auth';
+import type { User } from '../../types/user/user';
+import type { Tenant } from '../../types/tenant/tenant';
+import type { AuthType, TokenType  } from '../../types/auth/auth.enums';
 
 // Test AuthSession type
 expectType<AuthSession>({

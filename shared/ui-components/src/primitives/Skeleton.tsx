@@ -1,5 +1,5 @@
 import React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const skeletonVariants = cva('animate-pulse rounded-md bg-muted', {
@@ -24,6 +24,8 @@ const skeletonVariants = cva('animate-pulse rounded-md bg-muted', {
 export interface SkeletonProps extends VariantProps<typeof skeletonVariants> {
   className?: string;
   style?: React.CSSProperties;
+  variant?: NonNullable<VariantProps<typeof skeletonVariants>["variant"]>;
+  animation?: NonNullable<VariantProps<typeof skeletonVariants>["animation"]>;
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, ReactNode } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import React, { useState, useEffect, useCallback } from 'react';
+import type { ReactNode } from 'react';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
 import { Badge } from '../primitives/Badge';
@@ -11,14 +12,14 @@ import {
   X,
   Shield,
   Zap,
-  Brain,
+  Circle,
   TrendingUp,
   Clock,
   Star,
   AlertCircle,
   HelpCircle,
   Settings,
-  History,
+  Clock,
 } from 'lucide-react';
 
 const dialogVariants = cva('fixed inset-0 z-50 flex items-center justify-center p-4', {
@@ -240,7 +241,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           {aiFeatures.smartSuggestions && aiSuggestions.length > 0 && (
             <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="flex items-center gap-2 mb-2">
-                <Brain className="h-4 w-4 text-blue-600" />
+                <Circle className="h-4 w-4 text-blue-600" />
                 <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
                   AI Recommendations
                 </span>

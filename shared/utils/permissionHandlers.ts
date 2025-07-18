@@ -1,7 +1,8 @@
 import { hasPermission, canPerformAction } from './permissionUtils';
-import { Permission, PermissionCheck } from '../types/roles/permissions';
+import { Permission } from '../types/roles/permissions';
+import type { PermissionCheck } from '../types/roles/permissions';
 import { UserRole } from '../types/roles/roles.enums';
-import { logger } from './logger';
+import { logger } from '../lib/logger';
 
 /**
  * User interface for permission checking

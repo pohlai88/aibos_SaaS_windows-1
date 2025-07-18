@@ -7,7 +7,8 @@ import React, {
   createContext,
   useContext,
 } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { ReactNode } from 'react';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
 import { Badge } from '../primitives/Badge';
@@ -17,12 +18,12 @@ import {
   Plus,
   MoreHorizontal,
   Settings,
-  History,
+  Clock,
   Star,
   Clock,
   TrendingUp,
   Zap,
-  Brain,
+  Circle,
 } from 'lucide-react';
 
 const tabsVariants = cva('flex items-center border-b border-border', {
@@ -400,7 +401,7 @@ export const Tabs: React.FC<TabsProps> = ({
             {aiFeatures.usageAnalytics && (
               <Tooltip content="AI Usage Analytics">
                 <Button variant="ghost" size="icon-sm">
-                  <Brain className="h-4 w-4" />
+                  <Circle className="h-4 w-4" />
                 </Button>
               </Tooltip>
             )}

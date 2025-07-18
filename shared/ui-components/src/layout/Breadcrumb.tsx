@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, ReactNode } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import React, { useState, useEffect, useCallback } from 'react';
+import type { ReactNode } from 'react';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
 import { Tooltip } from '../primitives/Tooltip';
@@ -14,9 +15,9 @@ import {
   Clock,
   Star,
   TrendingUp,
-  Brain,
+  Circle,
   Zap,
-  History,
+  Clock,
 } from 'lucide-react';
 
 const breadcrumbVariants = cva('flex items-center space-x-1 text-sm', {
@@ -226,7 +227,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
               onClick={() => setShowSuggestions(!showSuggestions)}
               aria-label="Show suggestions"
             >
-              <Brain className="h-4 w-4" />
+              <Circle className="h-4 w-4" />
             </Button>
           )}
 
@@ -334,7 +335,7 @@ export const useAIBreadcrumb = (
       {
         id: 'suggestion-2',
         label: 'Recently visited',
-        icon: <History className="h-3 w-3" />,
+        icon: <Clock className="h-3 w-3" />,
         metadata: { priority: 2 },
       },
     ];

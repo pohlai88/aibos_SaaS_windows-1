@@ -1,7 +1,8 @@
-import { Tenant, TenantMember, TenantInvitation } from './tenant';
-import { ApiResponse, PaginatedApiResponse, ApiErrorResponse } from '../api';
-import { ApiErrorCode } from '../api.errors';
-import { UserRole } from '../user/user.enums';
+import { TenantMember, TenantInvitation } from './tenant';
+import type { Tenant } from './tenant';
+import type { ApiResponse, PaginatedApiResponse, ApiErrorResponse  } from '../api';
+import type { ApiErrorCode } from '../api.errors';
+import type { UserRole } from '../user/user.enums';
 
 /**
  * Tenant API response types

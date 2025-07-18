@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
 import { Input } from '../primitives/Input';
@@ -16,7 +16,7 @@ import {
   Save,
   Download,
   Upload,
-  Brain,
+  Circle,
   Zap,
   AlertTriangle,
   CheckCircle,

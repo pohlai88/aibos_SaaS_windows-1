@@ -1,4 +1,4 @@
-import { SubscriptionPlan } from '@shared/types/tenant/tenant.enums';
+import { SubscriptionPlan } from '../types/tenant/tenant.enums';
 
 /**
  * Maps API plan strings to strongly-typed SubscriptionPlan enum values
@@ -18,7 +18,7 @@ export function mapApiPlanToSubscriptionPlan(input: string): SubscriptionPlan {
   const mappedPlan = planMap[normalizedInput];
 
   if (!mappedPlan) {
-    throw new Error(`Invalid subscription plan received: "${input}". 
+    throw new Error(`Invalid subscription plan received: "${input}".
       Expected one of: ${Object.keys(planMap).join(', ')}`);
   }
 

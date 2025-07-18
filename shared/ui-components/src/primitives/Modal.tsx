@@ -1,6 +1,7 @@
-import React, { forwardRef, useEffect, useRef, ReactNode } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { X } from 'lucide-react';
 import { Button } from './Button';
@@ -50,7 +51,7 @@ export interface ModalProps extends VariantProps<typeof modalVariants> {
   showCloseButton?: boolean;
   closeOnBackdropClick?: boolean;
   closeOnEscape?: boolean;
-  size?: VariantProps<typeof contentVariants>['size'];
+  size?: NonNullable<VariantProps<typeof contentVariants>["size"]>;
   className?: string;
   contentClassName?: string;
   headerClassName?: string;
@@ -60,6 +61,7 @@ export interface ModalProps extends VariantProps<typeof modalVariants> {
   preventScroll?: boolean;
   initialFocus?: React.RefObject<HTMLElement>;
   finalFocus?: React.RefObject<HTMLElement>;
+  variant?: NonNullable<VariantProps<typeof modalVariants>["variant"]>;
 }
 
 const Modal = forwardRef<HTMLDivElement, ModalProps>(

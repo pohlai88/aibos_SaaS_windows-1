@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 
 // Memory leak prevention utilities
 export interface CleanupFunction {
@@ -30,7 +30,10 @@ export const useMemoryManager = (): MemoryManager => {
     // Execute all cleanup functions in reverse order
     for (let i = cleanupFunctions.current.length - 1; i >= 0; i--) {
       try {
-        cleanupFunctions.current[i]();
+        const cleanupFn = cleanupFunctions.current[i];
+        if (cleanupFn) {
+          cleanupFn();
+        }
       } catch (error) {
         console.warn('Error during cleanup:', error);
       }
@@ -237,10 +240,10 @@ export const useSafeResizeObserver = (callback: ResizeObserverCallback) => {
 
 // Safe mutation observer
 export const useSafeMutationObserver = (
-  callback: MutationObserverCallback,
+  callback: (mutations: MutationRecord[], observer: MutationObserver) => void,
   options?: MutationObserverInit,
 ) => {
-  return useSafeObserver(() => new MutationObserver(callback, options));
+  return useSafeObserver(() => new MutationObserver(callback));
 };
 
 // Safe portal management
@@ -299,12 +302,12 @@ export const useSafeFocusTrap = (enabled: boolean = true) => {
           if (event.shiftKey) {
             if (document.activeElement === firstElement) {
               event.preventDefault();
-              lastElement.focus();
+              lastElement?.focus();
             }
           } else {
             if (document.activeElement === lastElement) {
               event.preventDefault();
-              firstElement.focus();
+              firstElement?.focus();
             }
           }
         }
@@ -475,7 +478,7 @@ export const useSafeEscapeKeyListener = (callback: () => void) => {
 export const useMemoryLeakDetection = (componentName: string) => {
   const memoryManager = useMemoryManager();
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     useEffect(() => {
       console.log(`[Memory] ${componentName} mounted`);
 
@@ -493,7 +496,7 @@ export const useMemoryMonitoring = (componentName: string) => {
   const memoryManager = useMemoryManager();
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && 'memory' in performance) {
+    if (process.env['NODE_ENV'] === 'development' && 'memory' in performance) {
       const startMemory = (performance as any).memory.usedJSHeapSize;
 
       memoryManager.addCleanup(() => {

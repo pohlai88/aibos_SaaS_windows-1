@@ -66,6 +66,7 @@ pids/
 *.tsbuildinfo
 .npm/
 .yarn-integrity
+.aibos-npm-cache/
 
 ############## IDEs & OS ##############
 .vscode/

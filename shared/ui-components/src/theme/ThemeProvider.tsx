@@ -6,6 +6,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Theme types
@@ -220,7 +221,7 @@ const THEMES: Theme[] = [
 
 // Theme provider props
 interface ThemeProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
   defaultTheme?: string;
   storageKey?: string;
   enableSystemTheme?: boolean;

@@ -1,7 +1,9 @@
 import React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
-import { X, LucideIcon } from 'lucide-react';
+import { X } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 const badgeVariants = cva(
   'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
@@ -48,7 +50,7 @@ const badgeVariants = cva(
 );
 
 export interface BadgeProps extends VariantProps<typeof badgeVariants> {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   icon?: LucideIcon;
   iconPosition?: 'left' | 'right';
@@ -57,6 +59,8 @@ export interface BadgeProps extends VariantProps<typeof badgeVariants> {
   dot?: boolean;
   dotColor?: string;
   pulse?: boolean;
+  variant?: NonNullable<VariantProps<typeof badgeVariants>["variant"]>;
+  size?: NonNullable<VariantProps<typeof badgeVariants>["size"]>;
 }
 
 export const Badge: React.FC<BadgeProps> = ({

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef  } from 'react';
 
 // Check if we're running on the client
 export const isClient = typeof window !== 'undefined';
@@ -201,9 +201,12 @@ export const useIntersectionObserver = (options: IntersectionObserverInit = {}) 
   useEffect(() => {
     if (!isMounted || !elementRef.current) return;
 
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsIntersecting(entry.isIntersecting);
-      setEntry(entry);
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        setIsIntersecting(entry.isIntersecting);
+        setEntry(entry);
+      }
     }, options);
 
     observer.observe(elementRef.current);
@@ -383,13 +386,15 @@ export const useNetworkStatus = () => {
 
 // Safe battery status
 export const useBatteryStatus = () => {
-  const [battery, setBattery] = useState<BatteryManager | null>(null);
+  const [battery, setBattery] = useState<any | null>(null);
   const isMounted = useIsMounted();
 
   useEffect(() => {
     if (!isMounted || !('getBattery' in navigator)) return;
 
-    (navigator as any).getBattery().then((batteryManager: BatteryManager) => {
+    let cleanup: (() => void) | undefined;
+
+    (navigator as any).getBattery().then((batteryManager: any) => {
       setBattery(batteryManager);
 
       const updateBatteryInfo = () => {
@@ -399,11 +404,13 @@ export const useBatteryStatus = () => {
       batteryManager.addEventListener('levelchange', updateBatteryInfo);
       batteryManager.addEventListener('chargingchange', updateBatteryInfo);
 
-      return () => {
+      cleanup = () => {
         batteryManager.removeEventListener('levelchange', updateBatteryInfo);
         batteryManager.removeEventListener('chargingchange', updateBatteryInfo);
       };
     });
+
+    return cleanup;
   }, [isMounted]);
 
   return battery;

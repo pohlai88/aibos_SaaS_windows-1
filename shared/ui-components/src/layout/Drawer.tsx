@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef, ReactNode, useCallback } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import type { ReactNode } from 'react';
+import type { cva, type VariantProps  } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 import { Button } from '../primitives/Button';
 import {
   ChevronLeft,
   ChevronRight,
-  PanelLeftClose,
-  PanelLeftOpen,
+  PanelLeft,
+  PanelRight,
   Settings,
-  Smartphone,
+  Phone,
   Monitor,
   Tablet,
   X,
@@ -325,9 +326,9 @@ export const Drawer: React.FC<DrawerProps> = ({
                   aria-label={isCollapsed ? 'Expand drawer' : 'Collapse drawer'}
                 >
                   {isCollapsed ? (
-                    <PanelLeftOpen className="h-4 w-4" />
+                    <PanelRight className="h-4 w-4" />
                   ) : (
-                    <PanelLeftClose className="h-4 w-4" />
+                    <PanelLeft className="h-4 w-4" />
                   )}
                 </Button>
               )}

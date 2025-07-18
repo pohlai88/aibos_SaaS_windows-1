@@ -1,13 +1,13 @@
-import {
-  ApiResponse,
+import type { ApiResponse,
   PaginatedResponse,
   PaginatedApiResponse,
   ApiError as ApiErrorType,
   StandardApiError,
   PaginationParams,
   PaginationQueryParams,
-} from '@shared/types/api';
-import { ApiErrorCode, CommonErrors } from '@shared/types/api.errors';
+ } from '../types/api';
+import type { ApiErrorCode  } from '../types/api.errors';
+import type { CommonErrors  } from '../types/api.errors';
 
 /**
  * API Error class for handling API-specific errors
@@ -350,7 +350,7 @@ export const defaultApiFetcher = {
       url,
       {
         method: 'POST',
-        body: data ? JSON.stringify(data) : undefined,
+        body: data ? JSON.stringify(data) : null,
       },
       config,
     ),
@@ -360,7 +360,7 @@ export const defaultApiFetcher = {
       url,
       {
         method: 'PUT',
-        body: data ? JSON.stringify(data) : undefined,
+        body: data ? JSON.stringify(data) : null,
       },
       config,
     ),
@@ -370,7 +370,7 @@ export const defaultApiFetcher = {
       url,
       {
         method: 'PATCH',
-        body: data ? JSON.stringify(data) : undefined,
+        body: data ? JSON.stringify(data) : null,
       },
       config,
     ),

@@ -1,5 +1,5 @@
-import { UserRole } from '../types/roles/roles.enums';
-import { Permission } from '../types/roles/permissions';
+import type { UserRole } from '../types/roles/roles.enums';
+import type { Permission } from '../types/roles/permissions';
 import { rolePermissionsMap } from '../types/roles/rolePermissionsMap';
 
 export function hasPermission(role: UserRole, permission: Permission | Permission[]): boolean {

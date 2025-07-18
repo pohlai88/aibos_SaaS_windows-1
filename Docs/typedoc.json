@@ -1,0 +1,10 @@
+{
+  "entryPoints": ["../src/index.ts", "../shared/index.ts"],
+  "out": "../docs/api",
+  "tsconfig": "../tsconfig.json",
+  "exclude": ["**/*.test.ts", "**/__tests__/**"],
+  "includeVersion": true,
+  "readme": "../README.md",
+  "plugin": ["typedoc-plugin-markdown"],
+  "hideGenerator": true
+}

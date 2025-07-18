@@ -4,8 +4,8 @@ import React, {
   useEffect,
   useState,
   useCallback,
-  ReactNode,
 } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Nested theme context

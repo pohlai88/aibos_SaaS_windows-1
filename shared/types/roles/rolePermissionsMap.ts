@@ -1,5 +1,6 @@
-import { UserRole } from './roles.enums';
-import { Permission, PermissionRegistry } from './permissions';
+import type { UserRole } from './roles.enums';
+import { PermissionRegistry } from './permissions';
+import type { Permission } from './permissions';
 
 export const rolePermissionsMap: Record<UserRole, Permission[]> = {
   [UserRole.SUPER_ADMIN]: Object.values(Permission),
@@ -163,6 +164,7 @@ export function getMinimumRoleForPermission(permission: Permission): UserRole | 
   const unmappedPermissions = allPermissions.filter((p) => !mappedPermissions.has(p));
 
   if (unmappedPermissions.length > 0) {
-    console.warn('Unmapped permissions:', unmappedPermissions);
+    // Log unmapped permissions for development (remove in production)
+    // console.warn('Unmapped permissions:', unmappedPermissions);
   }
 })();

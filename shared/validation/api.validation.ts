@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserSchema } from './user.validation';
+import type { UserSchema  } from './user.validation';
 import { ApiErrorCode } from '../types/api';
 
 /**

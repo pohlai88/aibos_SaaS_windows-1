@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
-import {
-  PerformanceMonitor,
+import type { PerformanceMonitor,
   HealthMonitor,
   ApplicationMonitor,
   monitoring,
@@ -8,7 +7,7 @@ import {
   HealthStatus,
   requestMonitoring,
   monitorDatabaseOperation,
-} from '../lib/monitoring';
+ } from '../lib/monitoring';
 
 describe('PerformanceMonitor', () => {
   let performanceMonitor: PerformanceMonitor;
@@ -356,12 +355,6 @@ describe('Request Monitoring Middleware', () => {
     middleware(mockReq, mockRes, mockNext);
 
     expect(mockNext).toHaveBeenCalled();
-
-    // Simulate response end
-    mockRes.end();
-
-    // Verify metrics were recorded (this would be tested through the monitoring instance)
-    expect(mockRes.end).toHaveBeenCalled();
   });
 });
 

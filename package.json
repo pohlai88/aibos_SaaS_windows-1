@@ -1,197 +1,120 @@
 {
-  "name": "aibos-platform",
+  "name": "@aibos/saas-clean",
   "version": "1.0.0",
+  "description": "AI-BOS: The Windows OS for SaaS - Revolutionary meta-platform where micro-apps plug in seamlessly",
   "type": "module",
-  "description": "AI-BOS: The Windows OS for SaaS - Unified platform for micro-apps",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
-    "test:ci": "vitest --ci --coverage --reporter=verbose --outputFile=coverage/test-results.json",
-    "test:ui": "vitest --ui",
-    "test:integration": "vitest --testPathPattern=integration",
-    "test:e2e": "vitest --testPathPattern=e2e",
-    "test:performance": "vitest --testPathPattern=performance",
-    "test:unit": "vitest --testPathPattern=unit",
-    "test:smoke": "vitest --testPathPattern=smoke",
-    "test:debug": "vitest --inspect-brk",
-    "test:parallel": "vitest --pool=forks --maxConcurrency=4",
-    "test:serial": "vitest --pool=forks --maxConcurrency=1",
-    "test:fast": "vitest --pool=forks --maxConcurrency=8 --reporter=basic",
-    "test:slow": "vitest --pool=forks --maxConcurrency=1 --reporter=verbose",
-    "test:enterprise": "vitest --coverage --reporter=verbose --pool=threads --maxConcurrency=4",
-    "test:benchmark": "vitest --testPathPattern=benchmark",
-    "test:security": "vitest --testPathPattern=security",
-    "test:types": "vitest --testPathPattern=types",
-    "test:lib": "vitest --testPathPattern=lib",
-    "test:validation": "vitest --testPathPattern=validation",
-    "test:utils": "vitest --testPathPattern=utils",
-    "test:all": "npm run test:coverage && npm run test:types && npm run test:lib && npm run test:validation",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "type-check": "tsc --noEmit",
-    "security:audit": "npm audit --audit-level=moderate",
-    "security:scan": "snyk test",
-    "health:check:production": "node scripts/health-check.js",
-    "report:deployment": "node scripts/generate-deployment-report.js",
-    "clean": "rimraf dist coverage .nyc_output",
-    "prebuild": "npm run clean",
-    "prepublishOnly": "npm run test:ci && npm run build",
-    "prepare": "husky install"
-  },
-  "keywords": [
-    "saas",
-    "platform",
-    "micro-apps",
-    "event-driven",
-    "typescript",
-    "enterprise",
-    "multi-tenant",
-    "ai-powered"
-  ],
-  "author": "AI-BOS Team",
-  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aibos-platform/aibos-platform.git"
+    "url": "https://github.com/aibos/platform.git"
   },
   "bugs": {
-    "url": "https://github.com/aibos-platform/aibos-platform/issues"
+    "url": "https://github.com/aibos/platform/issues"
   },
-  "homepage": "https://aibos-platform.com",
+  "homepage": "https://aibos.dev",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:shared": "cd shared && npm run build",
+    "preview": "vite preview",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "clean": "rimraf dist node_modules/.cache",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.3.2",
+    "@tanstack/react-query": "^5.8.4",
+    "axios": "^1.6.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "framer-motion": "^10.16.5",
+    "fuse.js": "^7.0.0",
+    "lucide-react": "^0.294.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "react-hook-form": "^7.48.2",
+    "react-router-dom": "^6.20.1",
+    "recharts": "^2.8.0",
+    "tailwind-merge": "^2.0.0",
+    "zod": "^3.22.4",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react": "4.7.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-boundaries": "^4.2.0",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "4.6.2",
+    "eslint-plugin-react-refresh": "0.4.20",
+    "eslint-plugin-security": "^3.0.1",
+    "husky": "^8.0.3",
+    "jsdom": "^23.0.1",
+    "lint-staged": "^15.2.0",
+    "postcss": "^8.4.31",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "rollup-plugin-visualizer": "6.0.3",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vite-plugin-compression2": "2.2.0",
+    "vite-plugin-pwa": "1.0.1",
+    "vitest": "^1.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,jsx,json,md}": [
+      "prettier --write"
+    ]
+  },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
   },
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "compression": "^1.7.4",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "express-rate-limit": "^7.1.5",
-    "express-validator": "^7.0.1",
-    "helmet": "^7.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "prom-client": "^15.0.0",
-    "sanitize-html": "^2.11.0",
-    "sqlstring": "^2.3.3",
-    "uuid": "^9.0.1",
-    "winston": "^3.11.0",
-    "xss": "^1.0.14",
-    "zod": "^3.22.4"
-  },
-  "devDependencies": {
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^14.5.1",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/compression": "^1.7.5",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/node": "^20.8.10",
-    "@types/supertest": "^2.0.16",
-    "@types/uuid": "^9.0.7",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
-    "@vitest/coverage-v8": "^1.6.1",
-    "@vitest/ui": "^1.6.1",
-    "artillery": "^2.0.0-27",
-    "autocannon": "^7.12.0",
-    "codecov": "^3.8.3",
-    "cypress": "^13.6.0",
-    "eslint": "^8.52.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-boundaries": "^5.0.1",
-    "eslint-plugin-deprecation": "^3.0.0",
-    "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsdoc": "^51.4.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-perfectionist": "^4.15.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-regexp": "^2.9.0",
-    "eslint-plugin-security": "^1.7.1",
-    "eslint-plugin-sonarjs": "^3.0.0",
-    "eslint-plugin-testing-library": "^7.6.0",
-    "eslint-plugin-unicorn": "^56.0.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^14.0.1",
-    "nyc": "^15.1.0",
-    "playwright": "^1.39.0",
-    "prettier": "^3.0.3",
-    "rimraf": "^5.0.5",
-    "snyk": "^1.1230.0",
-    "sonarqube-scanner": "^3.3.0",
-    "supertest": "^6.3.3",
-    "typescript": "^5.2.2",
-    "typescript-eslint": "^8.37.0",
-    "vitest": "^1.6.1",
-    "vitest-sonar-reporter": "^2.0.1"
-  },
-  "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "eslint:recommended",
-      "@typescript-eslint/recommended",
-      "prettier"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "env": {
-      "node": true,
-      "es2022": true
-    },
-    "rules": {
-      "@typescript-eslint/no-unused-vars": "error",
-      "@typescript-eslint/explicit-function-return-type": "warn",
-      "@typescript-eslint/no-explicit-any": "warn"
-    }
-  },
-  "prettier": {
-    "semi": true,
-    "trailingComma": "es5",
-    "singleQuote": true,
-    "printWidth": 100,
-    "tabWidth": 2,
-    "useTabs": false
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run test:ci"
-    }
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "files": [
-    "dist/**/*",
-    "README.md",
-    "LICENSE"
+  "keywords": [
+    "saas",
+    "typescript",
+    "react",
+    "tailwindcss",
+    "modern",
+    "ai",
+    "platform",
+    "micro-apps",
+    "microservices",
+    "realtime",
+    "enterprise",
+    "multi-tenant",
+    "event-bus",
+    "window-manager",
+    "operating-system",
+    "web-os",
+    "supabase",
+    "nextjs"
   ],
-  "sideEffects": false
+  "author": "AIBOS Team <team@aibos.dev>",
+  "license": "MIT"
 }

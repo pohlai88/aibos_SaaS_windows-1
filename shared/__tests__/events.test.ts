@@ -4,8 +4,7 @@
  * Comprehensive test suite for the AI-BOS event-driven architecture
  */
 
-import {
-  EventBus,
+import type { EventBus,
   EventSchemaRegistry,
   DeadLetterQueue,
   MemoryEventPersistence,
@@ -15,7 +14,7 @@ import {
   EventBusConfig,
   EventEnvelope,
   EventMetadata,
-} from '../lib/events';
+ } from '../lib/events';
 import { z } from 'zod';
 
 describe('Event System', () => {
@@ -45,6 +44,17 @@ describe('Event System', () => {
     schemaRegistry = new EventSchemaRegistry();
     deadLetterQueue = new DeadLetterQueue(config.deadLetterQueue!);
     persistence = new MemoryEventPersistence();
+
+    // Register default test schema
+    const testSchema = createEventSchema(
+      'TestEvent',
+      '1.0',
+      z.object({
+        message: z.string().optional(),
+        timestamp: z.number().optional(),
+      }),
+    );
+    eventBus.registerSchema(testSchema);
   });
 
   afterEach(async () => {

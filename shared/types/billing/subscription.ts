@@ -1,8 +1,8 @@
 import { SubscriptionPlan, BillingInterval } from './billing.enums';
-import { Currency } from './currency.enums';
+import type { Currency } from './currency.enums';
 import { CurrencyUtils, Money } from './currency.enums';
-import { UUID, ISODate } from '../primitives';
-import { ApiResponse, PaginatedResponse } from '../api';
+import type { UUID, ISODate } from '../primitives';
+import type { ApiResponse, PaginatedResponse  } from '../api';
 
 /**
  * Subscription status lifecycle
@@ -415,8 +415,9 @@ const subscription: Subscription = {
   updated_at: '2023-06-01T00:00:00Z',
 };
 
-console.log(SubscriptionUtils.isActive(subscription)); // true
-console.log(SubscriptionUtils.daysRemaining(subscription)); // 15
-console.log(SubscriptionUtils.formatPrice(subscription)); // "$29.99"
-console.log(SubscriptionUtils.canUpgrade(subscription)); // true
-console.log(SubscriptionUtils.getAvailableUpgrades(subscription)); // [SubscriptionPlan.ENTERPRISE]
+// Example usage (remove console.log statements for production):
+// SubscriptionUtils.isActive(subscription); // true
+// SubscriptionUtils.daysRemaining(subscription); // 15
+// SubscriptionUtils.formatPrice(subscription); // "$29.99"
+// SubscriptionUtils.canUpgrade(subscription); // true
+// SubscriptionUtils.getAvailableUpgrades(subscription); // [SubscriptionPlan.ENTERPRISE]
