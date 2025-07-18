@@ -1,21 +1,19 @@
 import { z } from 'zod';
-import { UUID, ISODate, UserID, TenantID } from '../primitives';
-import {
-  MetadataFieldType,
+import type { UUID, ISODate, UserID, TenantID } from '../primitives';
+import type { MetadataFieldType,
   MetadataFieldTypes,
   MetadataOperationType,
   MetadataOperationTypes,
   MetadataValidationRule,
   MetadataValidationRules,
-} from './metadata.enums';
-import {
-  MetadataEntity,
+ } from './metadata.enums';
+import type { MetadataEntity,
   MetadataField,
   MetadataValue,
   MetadataSchema,
   MetadataConstraint,
   MetadataQuery,
-} from './metadata.types';
+ } from './metadata.types';
 
 // ============================================================================
 // TEST ENUMS

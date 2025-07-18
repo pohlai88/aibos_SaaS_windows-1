@@ -5,8 +5,7 @@
  * management, including schemas, fields, validation rules, and operations.
  */
 
-import {
-  MetadataFieldType,
+import type { MetadataFieldType,
   MetadataValidationRule,
   MetadataOperation,
   MetadataPermission,
@@ -20,8 +19,8 @@ import {
   MetadataVersioningStrategy,
   MetadataAuditEvent,
   MetadataErrorType,
-} from './metadata.enums';
-import { UUID, Email, ISODate, JsonObject, JsonValue } from '../primitives';
+ } from './metadata.enums';
+import type { UUID, Email, ISODate, JsonObject, JsonValue } from '../primitives';
 
 // ============================================================================
 // CORE METADATA TYPES
@@ -50,8 +49,8 @@ export interface BaseMetadata {
 /**
  * Metadata field definition
  */
-export interface MetadataField extends BaseMetadata {
-  type: MetadataFieldType;
+export interface MetadataField extends Partial<BaseMetadata> {
+  type?: MetadataFieldType; // Made optional for inheritance
   key: string;
   displayName: string;
   isRequired: boolean;
@@ -73,7 +72,7 @@ export interface MetadataField extends BaseMetadata {
 /**
  * Metadata schema definition
  */
-export interface MetadataSchema extends BaseMetadata {
+export interface MetadataSchema extends Partial<BaseMetadata> {
   fields: MetadataField[];
   primaryKey: string;
   indexes?: SchemaIndex[];
@@ -174,7 +173,7 @@ export interface ComputedFieldConfig {
 export interface RelationConfig {
   targetSchema: string;
   targetField: string;
-  type: 'one-to-one' | 'one-to-many' | 'many-to-one' | 'many-to-many';
+  type?: 'one-to-one' | 'one-to-many' | 'many-to-one' | 'many-to-many'; // Made optional for inheritance
   cascade: 'none' | 'cascade' | 'set-null' | 'restrict';
   onDelete: 'cascade' | 'set-null' | 'restrict' | 'no-action';
   onUpdate: 'cascade' | 'set-null' | 'restrict' | 'no-action';
@@ -197,7 +196,7 @@ export interface RelationConfig {
 export interface SchemaIndex {
   name: string;
   fields: string[];
-  type: MetadataIndexType;
+  type?: MetadataIndexType; // Made optional for inheritance
   isUnique: boolean;
   isPartial: boolean;
   where?: string;
@@ -211,7 +210,7 @@ export interface SchemaIndex {
  */
 export interface SchemaConstraint {
   name: string;
-  type: 'check' | 'unique' | 'foreign-key' | 'not-null' | 'default';
+  type?: 'check' | 'unique' | 'foreign-key' | 'not-null' | 'default'; // Made optional for inheritance
   fields?: string[];
   expression?: string;
   reference?: {
@@ -275,7 +274,7 @@ export interface EncryptionConfig {
  * Compression configuration
  */
 export interface CompressionConfig {
-  type: MetadataCompressionType;
+  type?: MetadataCompressionType; // Made optional for inheritance
   level?: number;
   threshold?: number;
   options?: JsonObject;
@@ -285,7 +284,7 @@ export interface CompressionConfig {
  * Indexing configuration
  */
 export interface IndexingConfig {
-  type: MetadataIndexType;
+  type?: MetadataIndexType; // Made optional for inheritance
   isUnique: boolean;
   isPartial: boolean;
   where?: string;
@@ -418,9 +417,9 @@ export interface OperationMetadata {
  * Metadata error
  */
 export interface MetadataError {
-  type: MetadataErrorType;
-  code: string;
-  message: string;
+  type?: MetadataErrorType; // Made optional for inheritance
+  code?: string; // Made optional for inheritance
+  message?: string; // Made optional for inheritance
   field?: string;
   value?: JsonValue;
   details?: JsonObject;
@@ -437,7 +436,7 @@ export interface MetadataError {
  * Validation rule definition
  */
 export interface ValidationRule {
-  type: MetadataValidationRule;
+  type?: MetadataValidationRule; // Made optional for inheritance
   value?: JsonValue;
   message?: string;
   options?: JsonObject;
@@ -459,7 +458,7 @@ export interface ValidationResult {
 export interface ValidationError {
   field: string;
   rule: MetadataValidationRule;
-  message: string;
+  message?: string; // Made optional for inheritance
   value?: JsonValue;
   expected?: JsonValue;
   actual?: JsonValue;
@@ -471,7 +470,7 @@ export interface ValidationError {
  */
 export interface ValidationWarning {
   field: string;
-  message: string;
+  message?: string; // Made optional for inheritance
   suggestion?: string;
   severity: 'low' | 'medium' | 'high';
 }

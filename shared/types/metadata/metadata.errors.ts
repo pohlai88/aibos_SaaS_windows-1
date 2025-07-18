@@ -1,11 +1,10 @@
 import { z } from 'zod';
-import { UUID, ISODate, UserID, TenantID } from '../primitives';
-import {
-  MetadataErrorType,
+import type { UUID, ISODate, UserID, TenantID } from '../primitives';
+import type { MetadataErrorType,
   MetadataErrorTypes,
   MetadataErrorSeverity,
   MetadataErrorSeverities,
-} from './metadata.enums';
+ } from './metadata.enums';
 
 // ============================================================================
 // ERROR ENUMS
@@ -63,19 +62,19 @@ export type MetadataErrorContext = (typeof MetadataErrorContext)[keyof typeof Me
 
 export interface MetadataError {
   id: UUID;
-  type: MetadataErrorType;
+  type?: MetadataErrorType; // Made optional for inheritance
   category: MetadataErrorCategory;
   severity: MetadataErrorSeverity;
 
   // Error details
-  code: string;
-  message: string;
+  code?: string; // Made optional for inheritance
+  message?: string; // Made optional for inheritance
   description?: string;
 
   // Context information
   context: MetadataErrorContext;
   resource?: {
-    type: string;
+    type?: string; // Made optional for inheritance
     id?: UUID;
     name?: string;
   };
@@ -222,8 +221,8 @@ export interface MetadataErrorRecoveryManager {
 // SPECIFIC ERROR TYPES
 // ============================================================================
 
-export interface MetadataValidationError extends MetadataError {
-  type: 'validation_error';
+export interface MetadataValidationError extends Partial<MetadataError> {
+  type?: 'validation_error'; // Made optional for inheritance
   category: 'validation';
   data: {
     field: string;
@@ -233,13 +232,13 @@ export interface MetadataValidationError extends MetadataError {
     validation: {
       rule: string;
       params: Record<string, any>;
-      message: string;
+      message?: string; // Made optional for inheritance
     };
   };
 }
 
-export interface MetadataPermissionError extends MetadataError {
-  type: 'permission_error';
+export interface MetadataPermissionError extends Partial<MetadataError> {
+  type?: 'permission_error'; // Made optional for inheritance
   category: 'permission';
   data: {
     resource: string;
@@ -250,8 +249,8 @@ export interface MetadataPermissionError extends MetadataError {
   };
 }
 
-export interface MetadataNotFoundError extends MetadataError {
-  type: 'not_found_error';
+export interface MetadataNotFoundError extends Partial<MetadataError> {
+  type?: 'not_found_error'; // Made optional for inheritance
   category: 'not_found';
   data: {
     resource: string;
@@ -260,8 +259,8 @@ export interface MetadataNotFoundError extends MetadataError {
   };
 }
 
-export interface MetadataConflictError extends MetadataError {
-  type: 'conflict_error';
+export interface MetadataConflictError extends Partial<MetadataError> {
+  type?: 'conflict_error'; // Made optional for inheritance
   category: 'conflict';
   data: {
     resource: string;
@@ -272,8 +271,8 @@ export interface MetadataConflictError extends MetadataError {
   };
 }
 
-export interface MetadataIntegrityError extends MetadataError {
-  type: 'integrity_error';
+export interface MetadataIntegrityError extends Partial<MetadataError> {
+  type?: 'integrity_error'; // Made optional for inheritance
   category: 'integrity';
   data: {
     constraint: string;
@@ -285,8 +284,8 @@ export interface MetadataIntegrityError extends MetadataError {
   };
 }
 
-export interface MetadataPerformanceError extends MetadataError {
-  type: 'performance_error';
+export interface MetadataPerformanceError extends Partial<MetadataError> {
+  type?: 'performance_error'; // Made optional for inheritance
   category: 'performance';
   data: {
     operation: string;
@@ -302,8 +301,8 @@ export interface MetadataPerformanceError extends MetadataError {
   };
 }
 
-export interface MetadataDatabaseError extends MetadataError {
-  type: 'database_error';
+export interface MetadataDatabaseError extends Partial<MetadataError> {
+  type?: 'database_error'; // Made optional for inheritance
   category: 'database';
   data: {
     operation: string;
@@ -311,14 +310,14 @@ export interface MetadataDatabaseError extends MetadataError {
     params?: Record<string, any>;
     databaseError: {
       code: string;
-      message: string;
+      message?: string; // Made optional for inheritance
       details?: Record<string, any>;
     };
   };
 }
 
-export interface MetadataCacheError extends MetadataError {
-  type: 'cache_error';
+export interface MetadataCacheError extends Partial<MetadataError> {
+  type?: 'cache_error'; // Made optional for inheritance
   category: 'cache';
   data: {
     operation: string;
@@ -326,14 +325,14 @@ export interface MetadataCacheError extends MetadataError {
     cacheType: string;
     cacheError: {
       code: string;
-      message: string;
+      message?: string; // Made optional for inheritance
       details?: Record<string, any>;
     };
   };
 }
 
-export interface MetadataMigrationError extends MetadataError {
-  type: 'migration_error';
+export interface MetadataMigrationError extends Partial<MetadataError> {
+  type?: 'migration_error'; // Made optional for inheritance
   category: 'migration';
   data: {
     migrationId: UUID;
@@ -342,7 +341,7 @@ export interface MetadataMigrationError extends MetadataError {
     affectedRecords: number;
     migrationError: {
       code: string;
-      message: string;
+      message?: string; // Made optional for inheritance
       details?: Record<string, any>;
     };
   };
@@ -433,7 +432,7 @@ export class MetadataErrorUtils {
    * Creates a metadata error with default values
    */
   static createError(
-    type: MetadataErrorType,
+    type?: MetadataErrorType,
     category: MetadataErrorCategory,
     severity: MetadataErrorSeverity,
     code: string,
@@ -455,7 +454,7 @@ export class MetadataErrorUtils {
       tenantId,
       timestamp: new Date().toISOString() as ISODate,
       ...options,
-    };
+    }; // Made optional for inheritance
   }
 
   /**

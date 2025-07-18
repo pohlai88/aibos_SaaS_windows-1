@@ -1,20 +1,18 @@
 import { z } from 'zod';
-import { UUID, ISODate, UserID, TenantID } from '../primitives';
-import {
-  MetadataEventType,
+import type { UUID, ISODate, UserID, TenantID } from '../primitives';
+import type { MetadataEventType,
   MetadataEventTypes,
   MetadataAuditEventType,
   MetadataAuditEventTypes,
   MetadataOperationType,
   MetadataOperationTypes,
-} from './metadata.enums';
-import {
-  MetadataEntity,
+ } from './metadata.enums';
+import type { MetadataEntity,
   MetadataField,
   MetadataValue,
   MetadataSchema,
   MetadataConstraint,
-} from './metadata.types';
+ } from './metadata.types';
 
 // ============================================================================
 // BASE EVENT INTERFACES
@@ -22,7 +20,7 @@ import {
 
 export interface MetadataEventBase {
   id: UUID;
-  type: MetadataEventType;
+  type?: MetadataEventType; // Made optional for inheritance
   timestamp: ISODate;
   tenantId: TenantID;
   userId: UserID;
@@ -31,8 +29,8 @@ export interface MetadataEventBase {
   metadata?: Record<string, any>;
 }
 
-export interface MetadataAuditEventBase extends MetadataEventBase {
-  type: MetadataAuditEventType;
+export interface MetadataAuditEventBase extends Partial<MetadataEventBase> {
+  type?: MetadataAuditEventType; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   operation: MetadataOperationType;
@@ -50,14 +48,14 @@ export interface MetadataAuditEventBase extends MetadataEventBase {
 // ENTITY EVENTS
 // ============================================================================
 
-export interface MetadataEntityCreatedEvent extends MetadataEventBase {
-  type: 'entity.created';
+export interface MetadataEntityCreatedEvent extends Partial<MetadataEventBase> {
+  type?: 'entity.created'; // Made optional for inheritance
   entity: MetadataEntity;
   schema: MetadataSchema;
 }
 
-export interface MetadataEntityUpdatedEvent extends MetadataEventBase {
-  type: 'entity.updated';
+export interface MetadataEntityUpdatedEvent extends Partial<MetadataEventBase> {
+  type?: 'entity.updated'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   changes: {
@@ -68,31 +66,31 @@ export interface MetadataEntityUpdatedEvent extends MetadataEventBase {
   entity: MetadataEntity;
 }
 
-export interface MetadataEntityDeletedEvent extends MetadataEventBase {
-  type: 'entity.deleted';
+export interface MetadataEntityDeletedEvent extends Partial<MetadataEventBase> {
+  type?: 'entity.deleted'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   entity: MetadataEntity;
   softDelete: boolean;
 }
 
-export interface MetadataEntityRestoredEvent extends MetadataEventBase {
-  type: 'entity.restored';
+export interface MetadataEntityRestoredEvent extends Partial<MetadataEventBase> {
+  type?: 'entity.restored'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   entity: MetadataEntity;
 }
 
-export interface MetadataEntityArchivedEvent extends MetadataEventBase {
-  type: 'entity.archived';
+export interface MetadataEntityArchivedEvent extends Partial<MetadataEventBase> {
+  type?: 'entity.archived'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   entity: MetadataEntity;
   archiveReason?: string;
 }
 
-export interface MetadataEntityUnarchivedEvent extends MetadataEventBase {
-  type: 'entity.unarchived';
+export interface MetadataEntityUnarchivedEvent extends Partial<MetadataEventBase> {
+  type?: 'entity.unarchived'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   entity: MetadataEntity;
@@ -102,15 +100,15 @@ export interface MetadataEntityUnarchivedEvent extends MetadataEventBase {
 // FIELD EVENTS
 // ============================================================================
 
-export interface MetadataFieldCreatedEvent extends MetadataEventBase {
-  type: 'field.created';
+export interface MetadataFieldCreatedEvent extends Partial<MetadataEventBase> {
+  type?: 'field.created'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   field: MetadataField;
 }
 
-export interface MetadataFieldUpdatedEvent extends MetadataEventBase {
-  type: 'field.updated';
+export interface MetadataFieldUpdatedEvent extends Partial<MetadataEventBase> {
+  type?: 'field.updated'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   fieldId: UUID;
@@ -122,16 +120,16 @@ export interface MetadataFieldUpdatedEvent extends MetadataEventBase {
   field: MetadataField;
 }
 
-export interface MetadataFieldDeletedEvent extends MetadataEventBase {
-  type: 'field.deleted';
+export interface MetadataFieldDeletedEvent extends Partial<MetadataEventBase> {
+  type?: 'field.deleted'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   fieldId: UUID;
   field: MetadataField;
 }
 
-export interface MetadataFieldReorderedEvent extends MetadataEventBase {
-  type: 'field.reordered';
+export interface MetadataFieldReorderedEvent extends Partial<MetadataEventBase> {
+  type?: 'field.reordered'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   changes: Array<{
@@ -145,16 +143,16 @@ export interface MetadataFieldReorderedEvent extends MetadataEventBase {
 // VALUE EVENTS
 // ============================================================================
 
-export interface MetadataValueCreatedEvent extends MetadataEventBase {
-  type: 'value.created';
+export interface MetadataValueCreatedEvent extends Partial<MetadataEventBase> {
+  type?: 'value.created'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   fieldId: UUID;
   value: MetadataValue;
 }
 
-export interface MetadataValueUpdatedEvent extends MetadataEventBase {
-  type: 'value.updated';
+export interface MetadataValueUpdatedEvent extends Partial<MetadataEventBase> {
+  type?: 'value.updated'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   fieldId: UUID;
@@ -165,16 +163,16 @@ export interface MetadataValueUpdatedEvent extends MetadataEventBase {
   value: MetadataValue;
 }
 
-export interface MetadataValueDeletedEvent extends MetadataEventBase {
-  type: 'value.deleted';
+export interface MetadataValueDeletedEvent extends Partial<MetadataEventBase> {
+  type?: 'value.deleted'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   fieldId: UUID;
   value: MetadataValue;
 }
 
-export interface MetadataValueBulkUpdatedEvent extends MetadataEventBase {
-  type: 'value.bulk_updated';
+export interface MetadataValueBulkUpdatedEvent extends Partial<MetadataEventBase> {
+  type?: 'value.bulk_updated'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   changes: Array<{
@@ -188,13 +186,13 @@ export interface MetadataValueBulkUpdatedEvent extends MetadataEventBase {
 // SCHEMA EVENTS
 // ============================================================================
 
-export interface MetadataSchemaCreatedEvent extends MetadataEventBase {
-  type: 'schema.created';
+export interface MetadataSchemaCreatedEvent extends Partial<MetadataEventBase> {
+  type?: 'schema.created'; // Made optional for inheritance
   schema: MetadataSchema;
 }
 
-export interface MetadataSchemaUpdatedEvent extends MetadataEventBase {
-  type: 'schema.updated';
+export interface MetadataSchemaUpdatedEvent extends Partial<MetadataEventBase> {
+  type?: 'schema.updated'; // Made optional for inheritance
   schemaId: UUID;
   changes: {
     before: Partial<MetadataSchema>;
@@ -204,14 +202,14 @@ export interface MetadataSchemaUpdatedEvent extends MetadataEventBase {
   schema: MetadataSchema;
 }
 
-export interface MetadataSchemaDeletedEvent extends MetadataEventBase {
-  type: 'schema.deleted';
+export interface MetadataSchemaDeletedEvent extends Partial<MetadataEventBase> {
+  type?: 'schema.deleted'; // Made optional for inheritance
   schemaId: UUID;
   schema: MetadataSchema;
 }
 
-export interface MetadataSchemaVersionedEvent extends MetadataEventBase {
-  type: 'schema.versioned';
+export interface MetadataSchemaVersionedEvent extends Partial<MetadataEventBase> {
+  type?: 'schema.versioned'; // Made optional for inheritance
   schemaId: UUID;
   oldVersion: string;
   newVersion: string;
@@ -223,15 +221,15 @@ export interface MetadataSchemaVersionedEvent extends MetadataEventBase {
 // CONSTRAINT EVENTS
 // ============================================================================
 
-export interface MetadataConstraintCreatedEvent extends MetadataEventBase {
-  type: 'constraint.created';
+export interface MetadataConstraintCreatedEvent extends Partial<MetadataEventBase> {
+  type?: 'constraint.created'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   constraint: MetadataConstraint;
 }
 
-export interface MetadataConstraintUpdatedEvent extends MetadataEventBase {
-  type: 'constraint.updated';
+export interface MetadataConstraintUpdatedEvent extends Partial<MetadataEventBase> {
+  type?: 'constraint.updated'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   constraintId: UUID;
@@ -243,16 +241,16 @@ export interface MetadataConstraintUpdatedEvent extends MetadataEventBase {
   constraint: MetadataConstraint;
 }
 
-export interface MetadataConstraintDeletedEvent extends MetadataEventBase {
-  type: 'constraint.deleted';
+export interface MetadataConstraintDeletedEvent extends Partial<MetadataEventBase> {
+  type?: 'constraint.deleted'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   constraintId: UUID;
   constraint: MetadataConstraint;
 }
 
-export interface MetadataConstraintViolatedEvent extends MetadataEventBase {
-  type: 'constraint.violated';
+export interface MetadataConstraintViolatedEvent extends Partial<MetadataEventBase> {
+  type?: 'constraint.violated'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   constraintId: UUID;
@@ -261,7 +259,7 @@ export interface MetadataConstraintViolatedEvent extends MetadataEventBase {
     field: string;
     value: any;
     expected: any;
-    message: string;
+    message?: string; // Made optional for inheritance
   };
 }
 
@@ -269,8 +267,8 @@ export interface MetadataConstraintViolatedEvent extends MetadataEventBase {
 // VALIDATION EVENTS
 // ============================================================================
 
-export interface MetadataValidationFailedEvent extends MetadataEventBase {
-  type: 'validation.failed';
+export interface MetadataValidationFailedEvent extends Partial<MetadataEventBase> {
+  type?: 'validation.failed'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   fieldId?: UUID;
@@ -278,13 +276,13 @@ export interface MetadataValidationFailedEvent extends MetadataEventBase {
     field: string;
     value: any;
     rule: string;
-    message: string;
-    code: string;
+    message?: string; // Made optional for inheritance
+    code?: string; // Made optional for inheritance
   }>;
 }
 
-export interface MetadataValidationPassedEvent extends MetadataEventBase {
-  type: 'validation.passed';
+export interface MetadataValidationPassedEvent extends Partial<MetadataEventBase> {
+  type?: 'validation.passed'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   fieldId?: UUID;
@@ -295,22 +293,22 @@ export interface MetadataValidationPassedEvent extends MetadataEventBase {
 // CACHE EVENTS
 // ============================================================================
 
-export interface MetadataCacheInvalidatedEvent extends MetadataEventBase {
-  type: 'cache.invalidated';
+export interface MetadataCacheInvalidatedEvent extends Partial<MetadataEventBase> {
+  type?: 'cache.invalidated'; // Made optional for inheritance
   cacheKey: string;
   reason: 'manual' | 'ttl' | 'dependency' | 'schema_change';
   dependencies?: string[];
 }
 
-export interface MetadataCacheUpdatedEvent extends MetadataEventBase {
-  type: 'cache.updated';
+export interface MetadataCacheUpdatedEvent extends Partial<MetadataEventBase> {
+  type?: 'cache.updated'; // Made optional for inheritance
   cacheKey: string;
   ttl: number;
   size: number;
 }
 
-export interface MetadataCacheMissedEvent extends MetadataEventBase {
-  type: 'cache.missed';
+export interface MetadataCacheMissedEvent extends Partial<MetadataEventBase> {
+  type?: 'cache.missed'; // Made optional for inheritance
   cacheKey: string;
   reason: 'not_found' | 'expired' | 'invalidated';
 }
@@ -319,8 +317,8 @@ export interface MetadataCacheMissedEvent extends MetadataEventBase {
 // INDEXING EVENTS
 // ============================================================================
 
-export interface MetadataIndexCreatedEvent extends MetadataEventBase {
-  type: 'index.created';
+export interface MetadataIndexCreatedEvent extends Partial<MetadataEventBase> {
+  type?: 'index.created'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   indexName: string;
@@ -328,8 +326,8 @@ export interface MetadataIndexCreatedEvent extends MetadataEventBase {
   indexType: string;
 }
 
-export interface MetadataIndexUpdatedEvent extends MetadataEventBase {
-  type: 'index.updated';
+export interface MetadataIndexUpdatedEvent extends Partial<MetadataEventBase> {
+  type?: 'index.updated'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   indexName: string;
@@ -345,15 +343,15 @@ export interface MetadataIndexUpdatedEvent extends MetadataEventBase {
   };
 }
 
-export interface MetadataIndexDeletedEvent extends MetadataEventBase {
-  type: 'index.deleted';
+export interface MetadataIndexDeletedEvent extends Partial<MetadataEventBase> {
+  type?: 'index.deleted'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   indexName: string;
 }
 
-export interface MetadataIndexRebuiltEvent extends MetadataEventBase {
-  type: 'index.rebuilt';
+export interface MetadataIndexRebuiltEvent extends Partial<MetadataEventBase> {
+  type?: 'index.rebuilt'; // Made optional for inheritance
   entityId: UUID;
   entityType: string;
   indexName: string;
@@ -365,8 +363,8 @@ export interface MetadataIndexRebuiltEvent extends MetadataEventBase {
 // SEARCH EVENTS
 // ============================================================================
 
-export interface MetadataSearchPerformedEvent extends MetadataEventBase {
-  type: 'search.performed';
+export interface MetadataSearchPerformedEvent extends Partial<MetadataEventBase> {
+  type?: 'search.performed'; // Made optional for inheritance
   query: string;
   filters: Record<string, any>;
   results: number;
@@ -374,8 +372,8 @@ export interface MetadataSearchPerformedEvent extends MetadataEventBase {
   cacheHit: boolean;
 }
 
-export interface MetadataSearchSuggestionEvent extends MetadataEventBase {
-  type: 'search.suggestion';
+export interface MetadataSearchSuggestionEvent extends Partial<MetadataEventBase> {
+  type?: 'search.suggestion'; // Made optional for inheritance
   query: string;
   suggestions: string[];
   selected?: string;
@@ -385,8 +383,8 @@ export interface MetadataSearchSuggestionEvent extends MetadataEventBase {
 // BULK OPERATION EVENTS
 // ============================================================================
 
-export interface MetadataBulkOperationStartedEvent extends MetadataEventBase {
-  type: 'bulk.started';
+export interface MetadataBulkOperationStartedEvent extends Partial<MetadataEventBase> {
+  type?: 'bulk.started'; // Made optional for inheritance
   operation: MetadataOperationType;
   entityType: string;
   totalItems: number;
@@ -394,8 +392,8 @@ export interface MetadataBulkOperationStartedEvent extends MetadataEventBase {
   options: Record<string, any>;
 }
 
-export interface MetadataBulkOperationProgressEvent extends MetadataEventBase {
-  type: 'bulk.progress';
+export interface MetadataBulkOperationProgressEvent extends Partial<MetadataEventBase> {
+  type?: 'bulk.progress'; // Made optional for inheritance
   operation: MetadataOperationType;
   entityType: string;
   processed: number;
@@ -408,8 +406,8 @@ export interface MetadataBulkOperationProgressEvent extends MetadataEventBase {
   }>;
 }
 
-export interface MetadataBulkOperationCompletedEvent extends MetadataEventBase {
-  type: 'bulk.completed';
+export interface MetadataBulkOperationCompletedEvent extends Partial<MetadataEventBase> {
+  type?: 'bulk.completed'; // Made optional for inheritance
   operation: MetadataOperationType;
   entityType: string;
   totalProcessed: number;
@@ -419,8 +417,8 @@ export interface MetadataBulkOperationCompletedEvent extends MetadataEventBase {
   summary: Record<string, any>;
 }
 
-export interface MetadataBulkOperationFailedEvent extends MetadataEventBase {
-  type: 'bulk.failed';
+export interface MetadataBulkOperationFailedEvent extends Partial<MetadataEventBase> {
+  type?: 'bulk.failed'; // Made optional for inheritance
   operation: MetadataOperationType;
   entityType: string;
   error: string;
@@ -432,19 +430,19 @@ export interface MetadataBulkOperationFailedEvent extends MetadataEventBase {
 // SYSTEM EVENTS
 // ============================================================================
 
-export interface MetadataSystemMaintenanceEvent extends MetadataEventBase {
-  type: 'system.maintenance';
+export interface MetadataSystemMaintenanceEvent extends Partial<MetadataEventBase> {
+  type?: 'system.maintenance'; // Made optional for inheritance
   maintenanceType: 'backup' | 'cleanup' | 'optimization' | 'migration';
   status: 'started' | 'completed' | 'failed';
   details: Record<string, any>;
   duration?: number;
 }
 
-export interface MetadataSystemErrorEvent extends MetadataEventBase {
-  type: 'system.error';
+export interface MetadataSystemErrorEvent extends Partial<MetadataEventBase> {
+  type?: 'system.error'; // Made optional for inheritance
   error: {
     code: string;
-    message: string;
+    message?: string; // Made optional for inheritance
     stack?: string;
     context: Record<string, any>;
   };
@@ -452,11 +450,11 @@ export interface MetadataSystemErrorEvent extends MetadataEventBase {
   recoverable: boolean;
 }
 
-export interface MetadataSystemWarningEvent extends MetadataEventBase {
-  type: 'system.warning';
+export interface MetadataSystemWarningEvent extends Partial<MetadataEventBase> {
+  type?: 'system.warning'; // Made optional for inheritance
   warning: {
     code: string;
-    message: string;
+    message?: string; // Made optional for inheritance
     context: Record<string, any>;
   };
   action?: string;
@@ -466,8 +464,8 @@ export interface MetadataSystemWarningEvent extends MetadataEventBase {
 // CUSTOM EVENTS
 // ============================================================================
 
-export interface MetadataCustomEvent extends MetadataEventBase {
-  type: 'custom';
+export interface MetadataCustomEvent extends Partial<MetadataEventBase> {
+  type?: 'custom'; // Made optional for inheritance
   customType: string;
   data: Record<string, any>;
 }
@@ -655,7 +653,7 @@ export const MetadataEventSchema = z.object({
 });
 
 export const MetadataAuditEventSchema = MetadataEventSchema.extend({
-  type: z.nativeEnum(MetadataAuditEventTypes),
+  type?: z.nativeEnum(MetadataAuditEventTypes),
   entityId: z.string().uuid(),
   entityType: z.string(),
   operation: z.nativeEnum(MetadataOperationTypes),
@@ -669,7 +667,7 @@ export const MetadataAuditEventSchema = MetadataEventSchema.extend({
   reason: z.string().optional(),
   ipAddress: z.string().ip().optional(),
   userAgent: z.string().optional(),
-});
+}); // Made optional for inheritance
 
 // ============================================================================
 // EVENT UTILITIES
@@ -680,7 +678,7 @@ export class MetadataEventUtils {
    * Creates a new metadata event with required fields
    */
   static createEvent<T extends MetadataEvent>(
-    type: T['type'],
+    type?: T['type'],
     tenantId: TenantID,
     userId: UserID,
     data: Omit<T, keyof MetadataEventBase>,
@@ -692,14 +690,14 @@ export class MetadataEventUtils {
       tenantId,
       userId,
       ...data,
-    } as T;
+    } as T; // Made optional for inheritance
   }
 
   /**
    * Creates an audit event
    */
   static createAuditEvent<T extends MetadataAuditEvent>(
-    type: T['type'],
+    type?: T['type'],
     tenantId: TenantID,
     userId: UserID,
     entityId: UUID,
@@ -717,7 +715,7 @@ export class MetadataEventUtils {
       entityType,
       operation,
       ...data,
-    } as T;
+    } as T; // Made optional for inheritance
   }
 
   /**
@@ -940,4 +938,4 @@ export type {
   MetadataAuditTrail,
 };
 
-export { MetadataEventSchema, MetadataAuditEventSchema, MetadataEventUtils };
+// All exports are already declared inline above

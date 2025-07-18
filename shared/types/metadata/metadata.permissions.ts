@@ -1,19 +1,17 @@
 import { z } from 'zod';
-import { UUID, UserID, TenantID, ISODate } from '../primitives';
-import {
-  MetadataPermissionType,
+import type { UUID, UserID, TenantID, ISODate } from '../primitives';
+import type { MetadataPermissionType,
   MetadataPermissionTypes,
   MetadataOperationType,
   MetadataOperationTypes,
   MetadataFieldType,
   MetadataFieldTypes,
-} from './metadata.enums';
-import {
-  MetadataEntity,
+ } from './metadata.enums';
+import type { MetadataEntity,
   MetadataField,
   MetadataSchema,
   MetadataConstraint,
-} from './metadata.types';
+ } from './metadata.types';
 
 // ============================================================================
 // PERMISSION ENUMS
@@ -87,7 +85,7 @@ export interface MetadataPermission {
   id: UUID;
   name: string;
   description?: string;
-  type: MetadataPermissionType;
+  type?: MetadataPermissionType; // Made optional for inheritance
   scope: MetadataPermissionScope;
   effect: MetadataPermissionEffect;
 
@@ -130,7 +128,7 @@ export interface MetadataPermission {
 }
 
 export interface MetadataPermissionConditionConfig {
-  type: MetadataPermissionCondition;
+  type?: MetadataPermissionCondition; // Made optional for inheritance
   operator:
     | 'equals'
     | 'not_equals'
@@ -237,7 +235,7 @@ export interface MetadataAccessPolicy {
   id: UUID;
   name: string;
   description?: string;
-  type: 'allow' | 'deny' | 'conditional';
+  type?: 'allow' | 'deny' | 'conditional'; // Made optional for inheritance
 
   // Matching criteria
   resourceType?: string;
@@ -284,12 +282,12 @@ export interface MetadataFieldPermission {
     write?: boolean;
     required?: boolean;
     mask?: {
-      type: 'partial' | 'full' | 'hash' | 'custom';
+      type?: 'partial' | 'full' | 'hash' | 'custom'; // Made optional for inheritance
       pattern?: string;
       replacement?: string;
     };
     transform?: {
-      type: 'encrypt' | 'hash' | 'format' | 'custom';
+      type?: 'encrypt' | 'hash' | 'format' | 'custom'; // Made optional for inheritance
       options?: Record<string, any>;
     };
     validation?: {

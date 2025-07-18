@@ -1,18 +1,16 @@
 import { z } from 'zod';
-import { UUID, ISODate, TenantID } from '../primitives';
-import {
-  MetadataCacheType,
+import type { UUID, ISODate, TenantID } from '../primitives';
+import type { MetadataCacheType,
   MetadataCacheTypes,
   MetadataCacheStrategy,
   MetadataCacheStrategies,
-} from './metadata.enums';
-import {
-  MetadataEntity,
+ } from './metadata.enums';
+import type { MetadataEntity,
   MetadataField,
   MetadataSchema,
   MetadataValue,
   MetadataQuery,
-} from './metadata.types';
+ } from './metadata.types';
 
 // ============================================================================
 // CACHE ENUMS
@@ -72,7 +70,7 @@ export interface MetadataCacheEntry<T = any> {
 export interface MetadataCacheConfig {
   // Basic configuration
   name: string;
-  type: MetadataCacheType;
+  type?: MetadataCacheType; // Made optional for inheritance
   level: MetadataCacheLevel;
   strategy: MetadataCacheStrategy;
 
@@ -189,7 +187,7 @@ export interface MetadataCacheMetrics {
 
 export interface MetadataCacheOperation {
   id: UUID;
-  type: 'get' | 'set' | 'delete' | 'clear' | 'invalidate';
+  type?: 'get' | 'set' | 'delete' | 'clear' | 'invalidate'; // Made optional for inheritance
   key: string;
   timestamp: ISODate;
   duration: number;
@@ -244,7 +242,7 @@ export interface MetadataCacheDependency {
   id: UUID;
   key: string;
   dependencies: string[];
-  type: 'strong' | 'weak' | 'conditional';
+  type?: 'strong' | 'weak' | 'conditional'; // Made optional for inheritance
   cascade: boolean;
   tenantId: TenantID;
   createdAt: ISODate;

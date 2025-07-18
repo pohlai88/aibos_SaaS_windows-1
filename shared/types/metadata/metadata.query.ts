@@ -1,20 +1,18 @@
 import { z } from 'zod';
-import {
-  MetadataFieldType,
+import type { MetadataFieldType,
   MetadataFieldTypes,
   MetadataOperationType,
   MetadataOperationTypes,
   MetadataValidationRule,
   MetadataValidationRules,
-} from './metadata.enums';
-import {
-  MetadataField,
+ } from './metadata.enums';
+import type { MetadataField,
   MetadataEntity,
   MetadataValue,
   MetadataFieldConfig,
   MetadataConstraint,
   MetadataComputedField,
-} from './metadata.types';
+ } from './metadata.types';
 
 // ============================================================================
 // QUERY OPERATORS
@@ -674,23 +672,4 @@ export class MetadataQueryUtils {
 // EXPORTS
 // ============================================================================
 
-export type {
-  MetadataQueryCondition,
-  MetadataQueryConditionGroup,
-  MetadataQueryFilter,
-  MetadataSortField,
-  MetadataPagination,
-  MetadataPaginationResult,
-  MetadataAggregation,
-  MetadataQuery,
-  MetadataQueryResult,
-};
-
-export {
-  MetadataQueryOperator,
-  MetadataSortOrder,
-  MetadataAggregationType,
-  MetadataQueryBuilder,
-  MetadataQuerySchema,
-  MetadataQueryUtils,
-};
+// All exports are already declared inline above

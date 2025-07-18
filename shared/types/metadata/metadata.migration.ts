@@ -1,19 +1,17 @@
 import { z } from 'zod';
-import { UUID, ISODate, UserID, TenantID } from '../primitives';
-import {
-  MetadataMigrationType,
+import type { UUID, ISODate, UserID, TenantID } from '../primitives';
+import type { MetadataMigrationType,
   MetadataMigrationTypes,
   MetadataMigrationStatus,
   MetadataMigrationStatuses,
   MetadataMigrationStrategy,
   MetadataMigrationStrategies,
-} from './metadata.enums';
-import {
-  MetadataSchema,
+ } from './metadata.enums';
+import type { MetadataSchema,
   MetadataField,
   MetadataEntity,
   MetadataConstraint,
-} from './metadata.types';
+ } from './metadata.types';
 
 // ============================================================================
 // MIGRATION ENUMS
@@ -57,7 +55,7 @@ export interface MetadataMigration {
   name: string;
   description?: string;
   version: string;
-  type: MetadataMigrationType;
+  type?: MetadataMigrationType; // Made optional for inheritance
   direction: MetadataMigrationDirection;
 
   // Schema changes
@@ -145,12 +143,12 @@ export interface MetadataMigrationExecution {
     recordsFailed: number;
     errors: Array<{
       code: string;
-      message: string;
+      message?: string; // Made optional for inheritance
       details?: Record<string, any>;
     }>;
     warnings: Array<{
       code: string;
-      message: string;
+      message?: string; // Made optional for inheritance
       details?: Record<string, any>;
     }>;
   };
@@ -162,8 +160,8 @@ export interface MetadataMigrationExecution {
     rollbackAt?: ISODate;
     rollbackDuration?: number;
     rollbackErrors?: Array<{
-      code: string;
-      message: string;
+      code?: string; // Made optional for inheritance
+      message?: string; // Made optional for inheritance
       details?: Record<string, any>;
     }>;
   };
@@ -235,7 +233,7 @@ export interface MetadataMigrationBackup {
   executionId: UUID;
 
   // Backup details
-  type: 'full' | 'incremental' | 'schema_only';
+  type?: 'full' | 'incremental' | 'schema_only'; // Made optional for inheritance
   location: string;
   size: number;
   checksum: string;
@@ -268,7 +266,7 @@ export interface MetadataMigrationValidation {
   isValid: boolean;
   errors: Array<{
     code: string;
-    message: string;
+    message?: string; // Made optional for inheritance
     field?: string;
     severity: 'error' | 'warning' | 'info';
     details?: Record<string, any>;
@@ -760,11 +758,11 @@ export class MetadataMigrationUtils {
     const isHighRisk = migration.type === 'data_migration' || migration.type === 'bulk_operation';
 
     return {
-      type: isHighRisk ? 'full' : 'incremental',
+      type?: isHighRisk ? 'full' : 'incremental',
       location: `backups/migrations/${migration.id}`,
       compression: true,
       encryption: isHighRisk,
-    };
+    }; // Made optional for inheritance
   }
 
   /**
