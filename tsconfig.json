@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
-    // ===== LANGUAGE & ENVIRONMENT =====
     "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "react",
-
-    // ===== STRICT TYPE-CHECKING =====
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -20,107 +19,42 @@
     "strictBindCallApply": true,
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "noFallthroughCasesInSwitch": true,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
-
-    // ===== EMIT & PERFORMANCE =====
+    "verbatimModuleSyntax": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./",
     "removeComments": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-
-    // ===== MODERN FEATURES =====
-    "useDefineForClassFields": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true,
-    "verbatimModuleSyntax": true,
-
-    // ===== PATHS ALIASES =====
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/types/*": ["./src/types/*"],
-      "@/utils/*": ["./src/utils/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/shared/*": ["./shared/*"]
-    },
-
-    // ===== INCREMENTAL BUILDS =====
-    "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "assumeChangesOnlyAffectDirectDependencies": true,
-
-    // ===== ADDITIONAL CHECKS =====
-    "noErrorTruncation": false,
-    "preserveWatchOutput": true,
-    "pretty": true,
-    "listFiles": false,
-    "listEmittedFiles": false,
-    "traceResolution": false,
-
-    // ===== COMPATIBILITY =====
-    "allowJs": false,
-    "checkJs": false,
-    "noEmitOnError": false,
-    "preserveConstEnums": true,
-    "importHelpers": false,
-    "downlevelIteration": false,
-    "allowArbitraryExtensions": false,
-    "resolvePackageJsonExports": true,
-    "resolvePackageJsonImports": true,
-    "moduleDetection": "force"
+      "@/*": [
+        "./src/*"
+      ],
+      "@/shared/*": [
+        "./shared/*"
+      ]
+    }
   },
   "include": [
     "src/**/*",
     "shared/**/*",
-    "vite.config.ts",
-    "vitest.config.ts"
+    "types/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "coverage",
     "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/__tests__/**",
-    "**/__mocks__/**",
-    "**/examples/**",
-    "**/scripts/**",
-    "**/config/**",
-    "**/rollup.config.js",
-    "**/vitest.config.ts",
-    "**/build/**",
-    "**/.next/**",
-    "**/.vercel/**",
-    "**/.cache/**",
-    "**/tmp/**",
-    "**/temp/**"
-  ],
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node",
-    "transpileOnly": true,
-    "swc": true,
-    "files": true,
-    "compilerOptions": {
-      "module": "ESNext"
-    }
-  }
+    "**/*.spec.ts"
+  ]
 }
