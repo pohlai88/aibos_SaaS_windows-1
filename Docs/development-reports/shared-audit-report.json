@@ -1,0 +1,575 @@
+{
+  "metadata": {
+    "timestamp": "2025-07-18T10:20:18.484Z",
+    "duration": "47.30s",
+    "version": "2.0.0",
+    "environment": {
+      "node": "v22.16.0",
+      "os": "win32",
+      "ci": false,
+      "autoFix": true
+    },
+    "options": {
+      "autoFix": true,
+      "ciMode": false,
+      "failOnCritical": false,
+      "verbose": true,
+      "maxConcurrency": 3
+    }
+  },
+  "summary": {
+    "overallStatus": "SECURITY_RISK",
+    "totalIssues": 6,
+    "criticalIssues": 0,
+    "securityIssues": 1,
+    "fixableIssues": 0,
+    "autoFixedIssues": 0,
+    "checksPerformed": 25,
+    "successRate": 64
+  },
+  "results": {
+    "structure": [
+      {
+        "item": "package.json",
+        "description": "Required - Package configuration",
+        "exists": true,
+        "status": "PASS",
+        "required": true
+      },
+      {
+        "item": "tsconfig.json",
+        "description": "Required - TypeScript configuration",
+        "exists": true,
+        "status": "PASS",
+        "required": true
+      },
+      {
+        "item": "index.ts",
+        "description": "Required - Main entry point",
+        "exists": true,
+        "status": "PASS",
+        "required": true
+      },
+      {
+        "item": "lib/",
+        "description": "Required - Core library functions",
+        "exists": true,
+        "status": "PASS",
+        "required": true
+      },
+      {
+        "item": "types/",
+        "description": "Required - Type definitions",
+        "exists": true,
+        "status": "PASS",
+        "required": true
+      },
+      {
+        "item": "ui-components/",
+        "description": "Required - UI component library",
+        "exists": true,
+        "status": "PASS",
+        "required": true
+      },
+      {
+        "item": "validation/",
+        "description": "Required - Validation schemas",
+        "exists": true,
+        "status": "PASS",
+        "required": true
+      },
+      {
+        "item": "utils/",
+        "description": "Required - Utility functions",
+        "exists": true,
+        "status": "PASS",
+        "required": true
+      },
+      {
+        "item": "security/",
+        "description": "Required - Security utilities",
+        "exists": true,
+        "status": "PASS",
+        "required": true
+      },
+      {
+        "item": "examples/",
+        "description": "Recommended - Usage examples",
+        "exists": true,
+        "status": "PASS",
+        "required": false
+      },
+      {
+        "item": "README.md",
+        "description": "Recommended - Documentation",
+        "exists": true,
+        "status": "PASS",
+        "required": false
+      },
+      {
+        "item": "__tests__/",
+        "description": "Recommended - Test files",
+        "exists": true,
+        "status": "PASS",
+        "required": false
+      },
+      {
+        "item": ".github/",
+        "description": "Optional - GitHub workflows",
+        "exists": false,
+        "status": "WARN",
+        "required": false
+      }
+    ],
+    "typescript": [
+      {
+        "test": "TypeScript Compilation",
+        "status": "FAIL",
+        "errors": 0,
+        "warnings": 0,
+        "details": "\u001b[96mai/src/codegen/AICodeGenerator.ts\u001b[0m:\u001b[93m8\u001b[0m:\u001b[93m25\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS6196: \u001b[0m'AIRequest' is declared but never used.\r\n\r\n\u001b[7m8\u001b[0m import type { AIEngine, AIRequest, AIResponse  } from '../engine/AIEngine';\r\n\u001b[7m \u001b[0m \u001b[91m                        ~~~~~~~~~\u001b[0m\r\n\r\n\u001b[96mai/src/codegen/AICodeGenerator.ts\u001b[0m:\u001b[93m8\u001b[0m:\u001b[93m36\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS6196: \u001b[0m'AIResponse' is declared but never used.\r\n\r\n\u001b[7m8\u001b[0m import type { AIEngine, AIRequest, AIResponse  } from '../engine/AIEngine';\r\n\u001b[7m \u001b[0m \u001b[91m                                   ~~~~~~~~~~\u001b[0m\r\n\r",
+        "severity": "medium"
+      },
+      {
+        "test": "TSConfig Validation",
+        "status": "FAIL",
+        "details": "Invalid JSON: Expected property name or '}' in JSON at position 31 (line 3 column 5)"
+      }
+    ],
+    "exports": [
+      {
+        "file": "index.ts",
+        "duplicateExports": 0,
+        "circularImports": 0,
+        "invalidPaths": 8,
+        "status": "FAIL",
+        "details": {
+          "duplicates": [],
+          "circular": [],
+          "invalid": [
+            "/examples/index",
+            "/ai/engine/AIEngine",
+            "/ai/codegen/AICodeGenerator",
+            "/collaboration/engine/CollaborationEngine",
+            "/devtools/assistant/AIDevAssistant",
+            "/devtools/cli/AIBOSCLI",
+            "/compliance/index",
+            "/monitoring/index"
+          ]
+        }
+      },
+      {
+        "file": "lib/index.ts",
+        "duplicateExports": 6,
+        "circularImports": 0,
+        "invalidPaths": 1,
+        "status": "FAIL",
+        "details": {
+          "duplicates": [
+            "EntityIndex",
+            "EntityConstraint",
+            "ValidationError",
+            "ValidationWarning",
+            "EventMetadata",
+            "EventHandler"
+          ],
+          "circular": [],
+          "invalid": [
+            "/types"
+          ]
+        }
+      },
+      {
+        "file": "types/index.ts",
+        "duplicateExports": 0,
+        "circularImports": 0,
+        "invalidPaths": 0,
+        "status": "PASS",
+        "details": {
+          "duplicates": [],
+          "circular": [],
+          "invalid": []
+        }
+      },
+      {
+        "file": "ui-components/src/index.ts",
+        "duplicateExports": 0,
+        "circularImports": 0,
+        "invalidPaths": 0,
+        "status": "PASS",
+        "details": {
+          "duplicates": [],
+          "circular": [],
+          "invalid": []
+        }
+      }
+    ],
+    "dependencies": [
+      {
+        "test": "Production Dependencies",
+        "status": "PASS",
+        "details": "All dependencies resolved"
+      }
+    ],
+    "tests": [
+      {
+        "test": "Test Infrastructure",
+        "status": "PASS",
+        "details": "Test scripts configured",
+        "hasTests": true,
+        "hasTestScript": "vitest run"
+      }
+    ],
+    "documentation": [
+      {
+        "file": "README.md",
+        "exists": true,
+        "wordCount": 1826,
+        "quality": "EXCELLENT",
+        "status": "PASS"
+      },
+      {
+        "file": "CHANGELOG.md",
+        "exists": false,
+        "status": "FAIL"
+      },
+      {
+        "file": "API.md",
+        "exists": false,
+        "status": "FAIL"
+      },
+      {
+        "file": "CONTRIBUTING.md",
+        "exists": false,
+        "status": "FAIL"
+      }
+    ],
+    "performance": [
+      {
+        "check": "Bundle Size Analysis",
+        "status": "PASS",
+        "details": "Bundle sizes: 0mB, 0mB, 0mB, 0mB, 0mB, 0mB, 0mB"
+      },
+      {
+        "check": "Dependency Count",
+        "status": "PASS",
+        "details": "11 production deps, 34 dev deps",
+        "metrics": {
+          "production": 11,
+          "development": 34
+        }
+      }
+    ],
+    "security": [
+      {
+        "check": "Sensitive Data Exposure",
+        "status": "ERROR",
+        "severity": "unknown",
+        "error": {
+          "timestamp": "2025-07-18T10:19:48.999Z",
+          "context": "Security check: Sensitive Data Exposure",
+          "error": "Command failed: grep -r -i \"password\\|secret\\|token\\|api.key\\|private.key\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true\n'grep' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n",
+          "code": "UNKNOWN",
+          "stack": [
+            "Error: Command failed: grep -r -i \"password\\|secret\\|token\\|api.key\\|private.key\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true",
+            "'grep' is not recognized as an internal or external command,\r",
+            "operable program or batch file.\r"
+          ],
+          "level": "medium",
+          "action": "manual_review",
+          "priority": 4,
+          "autoFixScript": null,
+          "severity": 65
+        },
+        "details": "Check failed: Command failed: grep -r -i \"password\\|secret\\|token\\|api.key\\|private.key\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true\n'grep' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+      },
+      {
+        "check": "Hardcoded Credentials",
+        "status": "ERROR",
+        "severity": "unknown",
+        "error": {
+          "timestamp": "2025-07-18T10:19:49.036Z",
+          "context": "Security check: Hardcoded Credentials",
+          "error": "Command failed: grep -r -E \"(password|secret|token)\\s*[:=]\\s*['\\\"][^'\\\"\\s]{8,}\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true\n'grep' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n",
+          "code": "UNKNOWN",
+          "stack": [
+            "Error: Command failed: grep -r -E \"(password|secret|token)\\s*[:=]\\s*['\\\"][^'\\\"\\s]{8,}\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true",
+            "'grep' is not recognized as an internal or external command,\r",
+            "operable program or batch file.\r"
+          ],
+          "level": "medium",
+          "action": "manual_review",
+          "priority": 4,
+          "autoFixScript": null,
+          "severity": 65
+        },
+        "details": "Check failed: Command failed: grep -r -E \"(password|secret|token)\\s*[:=]\\s*['\\\"][^'\\\"\\s]{8,}\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true\n'grep' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+      },
+      {
+        "check": "Dependency Vulnerabilities",
+        "status": "FAIL",
+        "severity": "high",
+        "findings": {
+          "info": 0,
+          "low": 0,
+          "moderate": 4,
+          "high": 0,
+          "critical": 0,
+          "total": 4
+        },
+        "details": "Multiple security issues found"
+      },
+      {
+        "check": "Unsafe File Permissions",
+        "status": "ERROR",
+        "severity": "unknown",
+        "error": {
+          "timestamp": "2025-07-18T10:19:52.322Z",
+          "context": "Security check: Unsafe File Permissions",
+          "error": "Command failed: find . -type f -perm -002 -not -path \"./node_modules/*\" || true\nAccess denied - .\r\nFile not found - -TYPE\r\nFile not found - F\r\nFile not found - -PERM\r\nFile not found - -002\r\nFile not found - -NOT\r\nFile not found - -PATH\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n",
+          "code": "UNKNOWN",
+          "stack": [
+            "Error: Command failed: find . -type f -perm -002 -not -path \"./node_modules/*\" || true",
+            "Access denied - .\r",
+            "File not found - -TYPE\r"
+          ],
+          "level": "medium",
+          "action": "manual_review",
+          "priority": 4,
+          "autoFixScript": null,
+          "severity": 65
+        },
+        "details": "Check failed: Command failed: find . -type f -perm -002 -not -path \"./node_modules/*\" || true\nAccess denied - .\r\nFile not found - -TYPE\r\nFile not found - F\r\nFile not found - -PERM\r\nFile not found - -002\r\nFile not found - -NOT\r\nFile not found - -PATH\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+      },
+      {
+        "check": "HTTPS URL Check",
+        "status": "ERROR",
+        "severity": "unknown",
+        "error": {
+          "timestamp": "2025-07-18T10:19:52.370Z",
+          "context": "Security check: HTTPS URL Check",
+          "error": "Command failed: grep -r \"http://\" --include=\"*.ts\" --include=\"*.js\" --include=\"*.json\" --exclude-dir=node_modules . || true\n'grep' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n",
+          "code": "UNKNOWN",
+          "stack": [
+            "Error: Command failed: grep -r \"http://\" --include=\"*.ts\" --include=\"*.js\" --include=\"*.json\" --exclude-dir=node_modules . || true",
+            "'grep' is not recognized as an internal or external command,\r",
+            "operable program or batch file.\r"
+          ],
+          "level": "medium",
+          "action": "manual_review",
+          "priority": 4,
+          "autoFixScript": null,
+          "severity": 65
+        },
+        "details": "Check failed: Command failed: grep -r \"http://\" --include=\"*.ts\" --include=\"*.js\" --include=\"*.json\" --exclude-dir=node_modules . || true\n'grep' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+      }
+    ],
+    "errors": [
+      {
+        "timestamp": "2025-07-18T10:19:48.942Z",
+        "context": "TypeScript compilation",
+        "error": "Command failed: npx tsc --noEmit --listFiles",
+        "code": "UNKNOWN",
+        "stack": [
+          "Error: Command failed: npx tsc --noEmit --listFiles",
+          "    at genericNodeError (node:internal/errors:983:15)",
+          "    at wrappedFn (node:internal/errors:537:14)"
+        ],
+        "level": "medium",
+        "action": "manual_review",
+        "priority": 4,
+        "autoFixScript": null,
+        "severity": 60
+      },
+      {
+        "timestamp": "2025-07-18T10:19:48.951Z",
+        "context": "TSConfig validation",
+        "error": "Expected property name or '}' in JSON at position 31 (line 3 column 5)",
+        "code": "UNKNOWN",
+        "stack": [
+          "SyntaxError: Expected property name or '}' in JSON at position 31 (line 3 column 5)",
+          "    at JSON.parse (<anonymous>)",
+          "    at EnhancedSharedDirectoryAudit.auditTSConfig (file:///C:/Users/dlbja/OneDrive/Documents/aibos_SaaS_windows-1-1/scripts/shared-audit-enhanced.mjs:408:29)"
+        ],
+        "level": "medium",
+        "action": "manual_review",
+        "priority": 4,
+        "autoFixScript": null,
+        "severity": 50
+      },
+      {
+        "timestamp": "2025-07-18T10:19:48.999Z",
+        "context": "Security check: Sensitive Data Exposure",
+        "error": "Command failed: grep -r -i \"password\\|secret\\|token\\|api.key\\|private.key\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true\n'grep' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n",
+        "code": "UNKNOWN",
+        "stack": [
+          "Error: Command failed: grep -r -i \"password\\|secret\\|token\\|api.key\\|private.key\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true",
+          "'grep' is not recognized as an internal or external command,\r",
+          "operable program or batch file.\r"
+        ],
+        "level": "medium",
+        "action": "manual_review",
+        "priority": 4,
+        "autoFixScript": null,
+        "severity": 65
+      },
+      {
+        "timestamp": "2025-07-18T10:19:49.036Z",
+        "context": "Security check: Hardcoded Credentials",
+        "error": "Command failed: grep -r -E \"(password|secret|token)\\s*[:=]\\s*['\\\"][^'\\\"\\s]{8,}\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true\n'grep' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n",
+        "code": "UNKNOWN",
+        "stack": [
+          "Error: Command failed: grep -r -E \"(password|secret|token)\\s*[:=]\\s*['\\\"][^'\\\"\\s]{8,}\" --include=\"*.ts\" --include=\"*.js\" --exclude-dir=node_modules . || true",
+          "'grep' is not recognized as an internal or external command,\r",
+          "operable program or batch file.\r"
+        ],
+        "level": "medium",
+        "action": "manual_review",
+        "priority": 4,
+        "autoFixScript": null,
+        "severity": 65
+      },
+      {
+        "timestamp": "2025-07-18T10:19:52.322Z",
+        "context": "Security check: Unsafe File Permissions",
+        "error": "Command failed: find . -type f -perm -002 -not -path \"./node_modules/*\" || true\nAccess denied - .\r\nFile not found - -TYPE\r\nFile not found - F\r\nFile not found - -PERM\r\nFile not found - -002\r\nFile not found - -NOT\r\nFile not found - -PATH\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n",
+        "code": "UNKNOWN",
+        "stack": [
+          "Error: Command failed: find . -type f -perm -002 -not -path \"./node_modules/*\" || true",
+          "Access denied - .\r",
+          "File not found - -TYPE\r"
+        ],
+        "level": "medium",
+        "action": "manual_review",
+        "priority": 4,
+        "autoFixScript": null,
+        "severity": 65
+      },
+      {
+        "timestamp": "2025-07-18T10:19:52.370Z",
+        "context": "Security check: HTTPS URL Check",
+        "error": "Command failed: grep -r \"http://\" --include=\"*.ts\" --include=\"*.js\" --include=\"*.json\" --exclude-dir=node_modules . || true\n'grep' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n'true' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n",
+        "code": "UNKNOWN",
+        "stack": [
+          "Error: Command failed: grep -r \"http://\" --include=\"*.ts\" --include=\"*.js\" --include=\"*.json\" --exclude-dir=node_modules . || true",
+          "'grep' is not recognized as an internal or external command,\r",
+          "operable program or batch file.\r"
+        ],
+        "level": "medium",
+        "action": "manual_review",
+        "priority": 4,
+        "autoFixScript": null,
+        "severity": 65
+      }
+    ]
+  },
+  "issues": [
+    "TypeScript compilation: 0 errors, 0 warnings",
+    "Invalid tsconfig.json: Expected property name or '}' in JSON at position 31 (line 3 column 5)",
+    "index.ts: 8 invalid import paths",
+    "lib/index.ts: 6 duplicate exports",
+    "lib/index.ts: 1 invalid import paths",
+    "Security: Dependency Vulnerabilities - high severity"
+  ],
+  "suggestedFixes": [
+    "Fix TypeScript compilation errors",
+    "Fix tsconfig.json syntax errors",
+    "Fix import paths in index.ts",
+    "Fix duplicate exports in lib/index.ts",
+    "Fix import paths in lib/index.ts",
+    "Review and remediate dependency vulnerabilities"
+  ],
+  "actions": {
+    "immediate": [
+      "No immediate critical actions required",
+      "Continue with recommended improvements"
+    ],
+    "recommended": [
+      "🔧 Fix TypeScript compilation errors before deployment",
+      "🔒 Address security vulnerabilities immediately",
+      "📦 Resolve duplicate exports to prevent build issues"
+    ],
+    "longTerm": [
+      "📈 Implement weekly automated audit schedule",
+      "🔄 Set up continuous security monitoring",
+      "📊 Add performance benchmarking and regression testing",
+      "📚 Create comprehensive developer documentation",
+      "🤖 Implement automated dependency updates",
+      "🔍 Add code quality metrics tracking"
+    ]
+  },
+  "ci": {
+    "exitCode": 0,
+    "config": {
+      "github": {
+        "workflow": {
+          "name": "Shared Library Audit",
+          "on": [
+            "push",
+            "pull_request"
+          ],
+          "jobs": {
+            "audit": {
+              "runs-on": "ubuntu-latest",
+              "steps": [
+                {
+                  "uses": "actions/checkout@v3"
+                },
+                {
+                  "uses": "actions/setup-node@v3",
+                  "with": {
+                    "node-version": "18"
+                  }
+                },
+                {
+                  "run": "npm ci"
+                },
+                {
+                  "run": "node scripts/shared-audit-enhanced.mjs --ci --fail-on-critical"
+                },
+                {
+                  "uses": "actions/upload-artifact@v3",
+                  "if": "always()",
+                  "with": {
+                    "name": "audit-report",
+                    "path": "shared-audit-report.json"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "gitlab": {
+        "audit": {
+          "stage": "test",
+          "script": [
+            "npm ci",
+            "node scripts/shared-audit-enhanced.mjs --ci --fail-on-critical"
+          ],
+          "artifacts": {
+            "reports": {
+              "junit": "shared-audit-report.xml"
+            },
+            "paths": [
+              "shared-audit-report.json"
+            ]
+          }
+        }
+      }
+    },
+    "recommendations": [
+      "Add shared library audit to CI pipeline",
+      "Set up automated security scanning",
+      "Configure performance regression testing",
+      "Implement automated dependency updates"
+    ]
+  },
+  "metrics": {
+    "duration": 47.303367599999994,
+    "totalChecks": 25,
+    "passedChecks": 16,
+    "failedChecks": 4,
+    "autoFixedIssues": 0
+  }
+}
