@@ -191,7 +191,7 @@ export function AppWindow({ window }: AppWindowProps) {
         <div className="flex items-center space-x-2">
           <span className="text-sm font-medium text-gray-700">{window.title}</span>
         </div>
-        
+
         <div className="flex items-center space-x-1">
           <button
             onClick={() => minimizeWindow(window.id)}
@@ -201,7 +201,7 @@ export function AppWindow({ window }: AppWindowProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
             </svg>
           </button>
-          
+
           <button
             onClick={() => maximizeWindow(window.id)}
             className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded"
@@ -210,7 +210,7 @@ export function AppWindow({ window }: AppWindowProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
             </svg>
           </button>
-          
+
           <button
             onClick={() => closeWindow(window.id)}
             className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-red-600 hover:bg-red-100 rounded"
@@ -228,4 +228,4 @@ export function AppWindow({ window }: AppWindowProps) {
       </div>
     </div>
   );
-} 
+}
