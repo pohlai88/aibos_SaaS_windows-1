@@ -2,15 +2,15 @@ const express = require('express');
 const router = express.Router();
 
 // Import shared library components
-const { 
-  auth, 
-  user, 
-  tenant, 
-  security, 
-  validation, 
+const {
+  auth,
+  user,
+  tenant,
+  security,
+  validation,
   logger,
-  events 
-} = require('@aibos/shared');
+  events
+} = require('../../../shared');
 
 // Database connection
 const { db } = require('../utils/supabase');
@@ -19,13 +19,13 @@ const { db } = require('../utils/supabase');
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     // Validate input using shared validation
     const validationResult = validation.auth.validateLogin({ email, password });
     if (!validationResult.success) {
-      return res.status(400).json({ 
-        success: false, 
-        error: validationResult.error 
+      return res.status(400).json({
+        success: false,
+        error: validationResult.error
       });
     }
 
@@ -49,20 +49,20 @@ router.post('/login', async (req, res) => {
 
     if (!loginResult.success) {
       // Log failed login
-      logger.warn('Login failed', { 
-        email, 
+      logger.warn('Login failed', {
+        email,
         reason: loginResult.error,
-        ip: req.ip 
+        ip: req.ip
       });
-      
+
       return res.status(401).json(loginResult);
     }
 
     // Log successful login
-    logger.info('Login successful', { 
-      email, 
+    logger.info('Login successful', {
+      email,
       userId: loginResult.data.user.user_id,
-      tenantId: loginResult.data.tenant.tenant_id 
+      tenantId: loginResult.data.tenant.tenant_id
     });
 
     // Emit login event
@@ -77,9 +77,9 @@ router.post('/login', async (req, res) => {
 
   } catch (error) {
     logger.error('Login error', { error: error.message, stack: error.stack });
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal server error' 
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
     });
   }
 });
@@ -88,27 +88,27 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name, tenant_name } = req.body;
-    
+
     // Validate input using shared validation
-    const validationResult = validation.auth.validateRegistration({ 
-      email, 
-      password, 
-      name, 
-      tenant_name 
+    const validationResult = validation.auth.validateRegistration({
+      email,
+      password,
+      name,
+      tenant_name
     });
-    
+
     if (!validationResult.success) {
-      return res.status(400).json({ 
-        success: false, 
-        error: validationResult.error 
+      return res.status(400).json({
+        success: false,
+        error: validationResult.error
       });
     }
 
     // Log registration attempt
-    logger.info('Registration attempt', { 
-      email, 
+    logger.info('Registration attempt', {
+      email,
       tenant_name,
-      ip: req.ip 
+      ip: req.ip
     });
 
     // Use shared registration logic
@@ -123,18 +123,18 @@ router.post('/register', async (req, res) => {
     });
 
     if (!registrationResult.success) {
-      logger.warn('Registration failed', { 
-        email, 
-        reason: registrationResult.error 
+      logger.warn('Registration failed', {
+        email,
+        reason: registrationResult.error
       });
       return res.status(400).json(registrationResult);
     }
 
     // Log successful registration
-    logger.info('Registration successful', { 
-      email, 
+    logger.info('Registration successful', {
+      email,
       userId: registrationResult.data.user.user_id,
-      tenantId: registrationResult.data.tenant.tenant_id 
+      tenantId: registrationResult.data.tenant.tenant_id
     });
 
     // Emit registration event
@@ -150,9 +150,9 @@ router.post('/register', async (req, res) => {
 
   } catch (error) {
     logger.error('Registration error', { error: error.message, stack: error.stack });
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal server error' 
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
     });
   }
 });
@@ -161,11 +161,11 @@ router.post('/register', async (req, res) => {
 router.get('/me', async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    
+
     if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'No token provided' 
+      return res.status(401).json({
+        success: false,
+        error: 'No token provided'
       });
     }
 
@@ -197,9 +197,9 @@ router.get('/me', async (req, res) => {
     }
 
     // Log user data access
-    logger.info('User data accessed', { 
+    logger.info('User data accessed', {
       userId: verifyResult.data.user_id,
-      tenantId: verifyResult.data.tenant_id 
+      tenantId: verifyResult.data.tenant_id
     });
 
     res.json({
@@ -212,9 +212,9 @@ router.get('/me', async (req, res) => {
 
   } catch (error) {
     logger.error('Get user error', { error: error.message, stack: error.stack });
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal server error' 
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
     });
   }
 });
@@ -223,25 +223,25 @@ router.get('/me', async (req, res) => {
 router.post('/logout', async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    
+
     if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'No token provided' 
+      return res.status(401).json({
+        success: false,
+        error: 'No token provided'
       });
     }
 
     // Use shared auth to verify and invalidate token
     const logoutResult = await auth.logout(token);
-    
+
     if (!logoutResult.success) {
       return res.status(401).json(logoutResult);
     }
 
     // Log logout
-    logger.info('User logged out', { 
+    logger.info('User logged out', {
       userId: logoutResult.data.user_id,
-      tenantId: logoutResult.data.tenant_id 
+      tenantId: logoutResult.data.tenant_id
     });
 
     // Emit logout event
@@ -255,9 +255,9 @@ router.post('/logout', async (req, res) => {
 
   } catch (error) {
     logger.error('Logout error', { error: error.message, stack: error.stack });
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal server error' 
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
     });
   }
 });
@@ -266,20 +266,20 @@ router.post('/logout', async (req, res) => {
 router.get('/audit', async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    
+
     if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'No token provided' 
+      return res.status(401).json({
+        success: false,
+        error: 'No token provided'
       });
     }
 
     // Verify admin permissions
     const verifyResult = await auth.verifyToken(token);
     if (!verifyResult.success || verifyResult.data.role !== 'admin') {
-      return res.status(403).json({ 
-        success: false, 
-        error: 'Admin access required' 
+      return res.status(403).json({
+        success: false,
+        error: 'Admin access required'
       });
     }
 
@@ -293,9 +293,9 @@ router.get('/audit', async (req, res) => {
 
   } catch (error) {
     logger.error('Audit error', { error: error.message, stack: error.stack });
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal server error' 
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
     });
   }
 });
@@ -307,7 +307,7 @@ async function handleDefaultUserLogin(email, password, req) {
     let userResult = await db.getUserByEmail(email);
     let user = userResult.data;
     let tenant;
-    
+
     if (!user) {
       // Create tenant using shared tenant management
       const tenantResult = await tenant.createTenant({
@@ -316,13 +316,13 @@ async function handleDefaultUserLogin(email, password, req) {
         settings: {},
         db
       });
-      
+
       if (!tenantResult.success) {
         return { success: false, error: 'Failed to create tenant' };
       }
-      
+
       tenant = tenantResult.data;
-      
+
       // Create user using shared user management
       const userResult = await user.createUser({
         email,
@@ -333,11 +333,11 @@ async function handleDefaultUserLogin(email, password, req) {
         password,
         db
       });
-      
+
       if (!userResult.success) {
         return { success: false, error: 'Failed to create user' };
       }
-      
+
       user = userResult.data;
     } else {
       // Get tenant
@@ -345,11 +345,11 @@ async function handleDefaultUserLogin(email, password, req) {
         tenantId: user.tenant_id,
         db
       });
-      
+
       if (!tenantResult.success) {
         return { success: false, error: 'Tenant not found' };
       }
-      
+
       tenant = tenantResult.data;
     }
 
@@ -391,4 +391,4 @@ async function handleDefaultUserLogin(email, password, req) {
   }
 }
 
-module.exports = router; 
+module.exports = router;

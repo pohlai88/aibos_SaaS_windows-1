@@ -14,59 +14,91 @@ class RealtimeClient {
 
   connect(url?: string | null): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      console.log('WebSocket already connected');
+      console.log('🔌 WebSocket already connected');
       return;
     }
 
     const wsUrl = url || this.getWebSocketUrl();
-    this.ws = new WebSocket(wsUrl);
+    console.log('🔌 Attempting WebSocket connection to:', wsUrl);
 
-    this.ws.onopen = () => {
-      console.log('🔌 WebSocket connected');
-      this.isConnected = true;
-      this.reconnectAttempts = 0;
-      this.notifyConnectionHandlers('connected');
-    };
+    try {
+      this.ws = new WebSocket(wsUrl);
 
-    this.ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        this.handleMessage(message);
-      } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
-      }
-    };
+      this.ws.onopen = () => {
+        console.log('✅ WebSocket connected successfully');
+        this.isConnected = true;
+        this.reconnectAttempts = 0;
+        this.notifyConnectionHandlers('connected');
+      };
 
-    this.ws.onclose = (event) => {
-      console.log('🔌 WebSocket disconnected:', event.code, event.reason);
-      this.isConnected = false;
-      this.notifyConnectionHandlers('disconnected');
-      
-      if (this.reconnectAttempts < this.maxReconnectAttempts) {
-        this.scheduleReconnect();
-      }
-    };
+      this.ws.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          console.log('📨 WebSocket message received:', message.type);
+          this.handleMessage(message);
+        } catch (error) {
+          console.error('❌ Error parsing WebSocket message:', error);
+        }
+      };
 
-    this.ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      this.ws.onclose = (event) => {
+        console.log('🔌 WebSocket disconnected:', event.code, event.reason);
+        this.isConnected = false;
+        this.notifyConnectionHandlers('disconnected');
+
+        // Handle different close codes
+        if (event.code === 1006) {
+          console.warn('⚠️ Abnormal closure detected - possible network issue');
+        } else if (event.code === 1000) {
+          console.log('✅ Normal closure');
+        } else {
+          console.warn(`⚠️ WebSocket closed with code: ${event.code}`);
+        }
+
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+          this.scheduleReconnect();
+        } else {
+          console.error('❌ Max reconnection attempts reached');
+        }
+      };
+
+      this.ws.onerror = (error) => {
+        console.error('❌ WebSocket error:', error);
+        this.notifyErrorHandlers(error);
+      };
+    } catch (error) {
+      console.error('❌ Failed to create WebSocket connection:', error);
       this.notifyErrorHandlers(error);
-    };
+    }
   }
 
   private getWebSocketUrl(): string {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = process.env.NEXT_PUBLIC_API_URL || window.location.host;
-    return `${protocol}//${host.replace('http://', '').replace('https://', '')}`;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || window.location.host;
+
+    // Extract host and port from API URL
+    let host: string;
+    if (apiUrl.startsWith('http://') || apiUrl.startsWith('https://')) {
+      host = apiUrl.replace('http://', '').replace('https://', '');
+    } else {
+      host = apiUrl;
+    }
+
+    // Ensure we're connecting to the WebSocket endpoint
+    const wsUrl = `${protocol}//${host}`;
+    console.log('🔌 WebSocket URL:', wsUrl);
+    return wsUrl;
   }
 
   private scheduleReconnect(): void {
     this.reconnectAttempts++;
-    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
-    
-    console.log(`🔄 Scheduling reconnect attempt ${this.reconnectAttempts} in ${delay}ms`);
-    
+    const delay = Math.min(this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1), 30000);
+
+    console.log(`🔄 Scheduling reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`);
+
     setTimeout(() => {
       if (!this.isConnected) {
+        console.log(`🔄 Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
         this.connect();
       }
     }, delay);
@@ -88,11 +120,11 @@ class RealtimeClient {
 
   subscribe(channel: string, event: string, handler: Function): () => void {
     const subscriptionKey = `${channel}:${event}`;
-    
+
     if (!this.subscriptions.has(subscriptionKey)) {
       this.subscriptions.set(subscriptionKey, new Set());
     }
-    
+
     this.subscriptions.get(subscriptionKey)!.add(handler);
 
     if (this.isConnected) {
@@ -109,13 +141,13 @@ class RealtimeClient {
   unsubscribe(channel: string, event: string, handler: Function): void {
     const subscriptionKey = `${channel}:${event}`;
     const handlers = this.subscriptions.get(subscriptionKey);
-    
+
     if (handlers) {
       handlers.delete(handler);
-      
+
       if (handlers.size === 0) {
         this.subscriptions.delete(subscriptionKey);
-        
+
         if (this.isConnected) {
           this.send({
             type: 'unsubscribe',
@@ -193,7 +225,7 @@ class RealtimeClient {
   private handleEvent(channel: string, event: string, data: any): void {
     const subscriptionKey = `${channel}:${event}`;
     const handlers = this.subscriptions.get(subscriptionKey);
-    
+
     if (handlers) {
       handlers.forEach(handler => {
         try {
@@ -257,4 +289,4 @@ class RealtimeClient {
 // Create a singleton instance
 const realtimeClient = new RealtimeClient();
 
-export default realtimeClient; 
+export default realtimeClient;

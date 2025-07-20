@@ -1,10 +1,10 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 15000, // Increased timeout
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,28 +13,62 @@ export const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('aibos_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('aibos_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
-  (error) => {
+  (error: AxiosError) => {
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
 
-// Response interceptor to handle auth errors
+// Response interceptor to handle auth errors and network issues
+// Add connection status checker
+export const checkConnection = async () => {
+  try {
+    const response = await api.get('/health', { timeout: 5000 });
+    return { connected: true, status: response.status };
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError;
+    return { 
+      connected: false, 
+      error: axiosError.code === 'NETWORK_ERROR' ? 'Server unreachable' : axiosError.message 
+    };
+  }
+};
+
+// Enhanced response interceptor
 api.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
+  (error: AxiosError) => {
+    console.error('API Error:', error);
+    
     if (error.response?.status === 401) {
-      // Token is invalid, clear it
-      localStorage.removeItem('aibos_token');
-      window.location.href = '/';
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('aibos_token');
+        if (window.location.pathname !== '/') {
+          window.location.href = '/';
+        }
+      }
     }
+    
+    // Enhanced network error handling
+    if (!error.response) {
+      (error as any).code = 'NETWORK_ERROR';
+      if (error.code === 'ECONNREFUSED') {
+        error.message = 'Unable to connect to server. Please check if the backend is running.';
+      } else {
+        error.message = 'Network Error: Unable to connect to server. Please check your internet connection.';
+      }
+    }
+    
     return Promise.reject(error);
   }
 );
@@ -113,4 +147,4 @@ export const entitiesAPI = {
   
   deleteRecord: (name: string, id: string, tenant_id: string) => 
     api.delete(`/entities/${name}/${id}`, { params: { tenant_id } }),
-}; 
+};

@@ -10,13 +10,39 @@ class RealtimeService {
   }
 
   initialize(server) {
-    this.wss = new WebSocket.Server({ server });
-    
+    this.wss = new WebSocket.Server({
+      server,
+      // Add CORS support for WebSocket connections
+      verifyClient: (info, callback) => {
+        const origin = info.origin || info.req.headers.origin;
+        console.log('🔍 WebSocket connection attempt from:', origin);
+
+        // Allow all origins in development, or specific origins in production
+        const allowedOrigins = [
+          'http://localhost:3000',
+          'https://aibos-saas-windows-1.vercel.app',
+          process.env.FRONTEND_URL
+        ].filter(Boolean);
+
+        if (process.env.NODE_ENV === 'development' || allowedOrigins.includes(origin)) {
+          callback(true);
+        } else {
+          console.warn('⚠️ WebSocket connection rejected from:', origin);
+          callback(false, 403, 'Forbidden');
+        }
+      }
+    });
+
     this.wss.on('connection', (ws, req) => {
+      console.log('🔗 New WebSocket connection from:', req.headers.origin || 'unknown');
       this.handleConnection(ws, req);
     });
 
-    console.log('🔌 Realtime service initialized');
+    this.wss.on('error', (error) => {
+      console.error('❌ WebSocket server error:', error);
+    });
+
+    console.log('🔌 Realtime service initialized with CORS support');
     this.setupSupabaseRealtime();
   }
 
@@ -28,29 +54,32 @@ class RealtimeService {
       tenantId: null,
       userId: null,
       subscriptions: new Set(),
-      connectedAt: new Date()
+      connectedAt: new Date(),
+      userAgent: req.headers['user-agent'] || 'unknown'
     };
 
     this.clients.set(clientId, client);
 
-    console.log(`🔗 Client connected: ${clientId}`);
+    console.log(`🔗 Client connected: ${clientId} (${this.clients.size} total connections)`);
 
     ws.on('message', (message) => {
       try {
         const data = JSON.parse(message);
+        console.log(`📨 Message from ${clientId}:`, data.type);
         this.handleMessage(clientId, data);
       } catch (error) {
-        console.error('Error parsing message:', error);
+        console.error(`❌ Error parsing message from ${clientId}:`, error);
         this.sendError(clientId, 'Invalid message format');
       }
     });
 
-    ws.on('close', () => {
+    ws.on('close', (code, reason) => {
+      console.log(`🔌 Client ${clientId} disconnected: code=${code}, reason=${reason || 'none'}`);
       this.handleDisconnection(clientId);
     });
 
     ws.on('error', (error) => {
-      console.error(`WebSocket error for client ${clientId}:`, error);
+      console.error(`❌ WebSocket error for client ${clientId}:`, error);
       this.handleDisconnection(clientId);
     });
 
@@ -58,7 +87,11 @@ class RealtimeService {
     this.sendToClient(clientId, {
       type: 'connected',
       clientId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      serverInfo: {
+        version: '1.0.0',
+        uptime: process.uptime()
+      }
     });
   }
 
@@ -120,9 +153,9 @@ class RealtimeService {
 
     const { channel, event } = data;
     const subscriptionKey = `${channel}:${event}`;
-    
+
     client.subscriptions.add(subscriptionKey);
-    
+
     console.log(`📡 Client ${clientId} subscribed to ${subscriptionKey}`);
 
     this.sendToClient(clientId, {
@@ -139,9 +172,9 @@ class RealtimeService {
 
     const { channel, event } = data;
     const subscriptionKey = `${channel}:${event}`;
-    
+
     client.subscriptions.delete(subscriptionKey);
-    
+
     console.log(`📡 Client ${clientId} unsubscribed from ${subscriptionKey}`);
 
     this.sendToClient(clientId, {
@@ -160,7 +193,7 @@ class RealtimeService {
     }
 
     const { channel, event, payload } = data;
-    
+
     // Publish to all clients in the same tenant subscribed to this channel/event
     this.publishToTenant(client.tenantId, {
       type: 'event',
@@ -227,12 +260,12 @@ class RealtimeService {
   subscribeToTableChanges(tableName) {
     const subscription = supabase
       .channel(`public:${tableName}`)
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
-          table: tableName 
-        }, 
+      .on('postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: tableName
+        },
         (payload) => {
           this.handleSupabaseChange(tableName, payload);
         }
@@ -245,7 +278,7 @@ class RealtimeService {
 
   handleSupabaseChange(tableName, payload) {
     const { eventType, new: newRecord, old: oldRecord } = payload;
-    
+
     // Extract tenant_id from the record
     const tenantId = newRecord?.tenant_id || oldRecord?.tenant_id;
     if (!tenantId) return;
@@ -264,7 +297,7 @@ class RealtimeService {
 
     // Publish to all clients in the affected tenant
     this.publishToTenant(tenantId, eventMessage);
-    
+
     console.log(`📊 Database change: ${eventType} on ${tableName} for tenant ${tenantId}`);
   }
 
@@ -320,4 +353,4 @@ class RealtimeService {
   }
 }
 
-module.exports = new RealtimeService(); 
+module.exports = new RealtimeService();
