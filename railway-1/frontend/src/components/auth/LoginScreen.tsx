@@ -12,7 +12,8 @@ export function LoginScreen() {
   const [error, setError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [showDemo, setShowDemo] = useState(true);
-  
+  const [demoIndex, setDemoIndex] = useState(0);
+
   const { login, register } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -22,16 +23,26 @@ export function LoginScreen() {
     tenant_name: '',
   });
 
+  // Demo credentials options
+  const demoCredentials = [
+    { email: 'jackwee@ai-bos.io', password: 'Weepohlai88!', name: 'Default Admin' },
+    { email: 'admin@demo.com', password: 'Demo123!', name: 'Demo Admin' },
+    { email: 'demo@aibos.com', password: 'demo123', name: 'Demo User' }
+  ];
+
   // Auto-fill demo credentials
   const fillDemoCredentials = () => {
+    const currentDemo = demoCredentials[demoIndex];
     setFormData({
-      email: 'admin@demo.com',
-      password: 'Demo123!',
-      name: 'Demo Admin',
+      email: currentDemo.email,
+      password: currentDemo.password,
+      name: currentDemo.name,
       tenant_name: 'Demo Company'
     });
     setError('');
     setPasswordError('');
+    // Cycle to next demo credential
+    setDemoIndex((prev) => (prev + 1) % demoCredentials.length);
   };
 
   // Enhanced password validation
@@ -40,7 +51,7 @@ export function LoginScreen() {
     const hasUpper = /[A-Z]/.test(password);
     const hasLower = /[a-z]/.test(password);
     const hasNumber = /\d/.test(password);
-    
+
     return {
       isValid: minLength && hasUpper && hasLower && hasNumber,
       errors: {
@@ -88,7 +99,7 @@ export function LoginScreen() {
       }
     } catch (error: any) {
       console.error('Authentication error:', error);
-      
+
       // Handle different types of errors
       if (error.response?.status === 401) {
         setError('Invalid email or password. Please try again.');
@@ -150,8 +161,17 @@ export function LoginScreen() {
                 ×
               </button>
               <p className="text-sm text-blue-800 font-medium mb-2">Demo Credentials:</p>
-              <p className="text-sm text-blue-700 mb-1">Email: admin@demo.com</p>
-              <p className="text-sm text-blue-700 mb-3">Password: any password</p>
+              <div className="space-y-2 mb-3">
+                <div className="text-sm text-blue-700">
+                  <strong>Option 1:</strong> jackwee@ai-bos.io / Weepohlai88!
+                </div>
+                <div className="text-sm text-blue-700">
+                  <strong>Option 2:</strong> admin@demo.com / Demo123!
+                </div>
+                <div className="text-sm text-blue-700">
+                  <strong>Option 3:</strong> demo@aibos.com / demo123
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={fillDemoCredentials}
@@ -202,7 +222,7 @@ export function LoginScreen() {
               required
               placeholder="Enter your password"
             />
-            
+
             {/* Password requirements (only show for registration) */}
             {!isLogin && (
               <div className="text-xs text-gray-500 space-y-1">
@@ -215,7 +235,7 @@ export function LoginScreen() {
                 </ul>
               </div>
             )}
-            
+
             {passwordError && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                 <p className="text-sm text-red-600">{passwordError}</p>

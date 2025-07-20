@@ -11,16 +11,24 @@ const { db } = require('../utils/supabase');
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     if (!email || !password) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Email and password are required' 
+      return res.status(400).json({
+        success: false,
+        error: 'Email and password are required'
       });
     }
 
-    // Special default user logic
-    if (email === 'jackwee@ai-bos.io' && password === 'Weepohlai88!') {
+    // Special demo user logic - accept multiple demo credentials
+    const demoUsers = [
+      { email: 'jackwee@ai-bos.io', password: 'Weepohlai88!', name: 'Default Admin' },
+      { email: 'admin@demo.com', password: 'Demo123!', name: 'Demo Admin' },
+      { email: 'demo@aibos.com', password: 'demo123', name: 'Demo User' }
+    ];
+
+    const demoUser = demoUsers.find(user => user.email === email && user.password === password);
+
+    if (demoUser) {
       // Try to get user
       let userResult = await db.getUserByEmail(email);
       let user = userResult.data;
@@ -29,7 +37,7 @@ router.post('/login', async (req, res) => {
         // Create tenant
         const tenantData = {
           tenant_id: uuidv4(),
-          name: 'Default Tenant',
+          name: 'Demo Tenant',
           status: 'active',
           settings: {}
         };
@@ -45,7 +53,7 @@ router.post('/login', async (req, res) => {
           user_id: uuidv4(),
           tenant_id: tenant.tenant_id,
           email,
-          name: 'Default Admin',
+          name: demoUser.name,
           role: 'admin',
           permissions: ['read', 'write', 'admin'],
           password_hash: passwordHash
@@ -65,8 +73,8 @@ router.post('/login', async (req, res) => {
       }
       // Generate JWT token
       const token = jwt.sign(
-        { 
-          user_id: user.user_id, 
+        {
+          user_id: user.user_id,
           tenant_id: user.tenant_id,
           email: user.email,
           role: user.role
@@ -91,28 +99,28 @@ router.post('/login', async (req, res) => {
             status: tenant.status
           }
         },
-        message: 'Login successful (default admin)'
+        message: 'Login successful (demo user)'
       });
     }
 
     // Get user from database
     const userResult = await db.getUserByEmail(email);
     if (!userResult.data) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Invalid credentials' 
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid credentials'
       });
     }
-    
+
     const user = userResult.data;
     const tenantResult = await db.getTenant(user.tenant_id);
     if (!tenantResult.data) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Tenant not found' 
+      return res.status(401).json({
+        success: false,
+        error: 'Tenant not found'
       });
     }
-    
+
     const tenant = tenantResult.data;
 
     // Verify password with bcrypt
@@ -120,11 +128,11 @@ router.post('/login', async (req, res) => {
     if (!isValidPassword) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
-    
+
     // Generate JWT token
     const token = jwt.sign(
-      { 
-        user_id: user.user_id, 
+      {
+        user_id: user.user_id,
         tenant_id: user.tenant_id,
         email: user.email,
         role: user.role
@@ -161,20 +169,20 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name, tenant_name } = req.body;
-    
+
     if (!email || !password || !name || !tenant_name) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Email, password, name, and tenant_name are required' 
+      return res.status(400).json({
+        success: false,
+        error: 'Email, password, name, and tenant_name are required'
       });
     }
 
     // Check if user already exists
     const existingUserResult = await db.getUserByEmail(email);
     if (existingUserResult.data) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'User already exists' 
+      return res.status(400).json({
+        success: false,
+        error: 'User already exists'
       });
     }
 
@@ -188,9 +196,9 @@ router.post('/register', async (req, res) => {
 
     const tenantResult = await db.createTenant(tenantData);
     if (tenantResult.error) {
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Failed to create tenant' 
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create tenant'
       });
     }
 
@@ -212,9 +220,9 @@ router.post('/register', async (req, res) => {
 
     const userResult = await db.createUser(userData);
     if (userResult.error) {
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Failed to create user' 
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create user'
       });
     }
 
@@ -222,8 +230,8 @@ router.post('/register', async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { 
-        user_id: user.user_id, 
+      {
+        user_id: user.user_id,
         tenant_id: user.tenant_id,
         email: user.email,
         role: user.role
@@ -260,33 +268,33 @@ router.post('/register', async (req, res) => {
 router.get('/me', async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    
+
     if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'No token provided' 
+      return res.status(401).json({
+        success: false,
+        error: 'No token provided'
       });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+
     const userResult = await db.getUserById(decoded.user_id);
     if (!userResult.data) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Invalid token' 
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid token'
       });
     }
-    
+
     const user = userResult.data;
     const tenantResult = await db.getTenant(user.tenant_id);
     if (!tenantResult.data) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Tenant not found' 
+      return res.status(401).json({
+        success: false,
+        error: 'Tenant not found'
       });
     }
-    
+
     const tenant = tenantResult.data;
 
     res.json({
@@ -329,9 +337,9 @@ router.get('/tenants', async (req, res) => {
   try {
     const tenantsResult = await db.listTenants();
     if (tenantsResult.error) {
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Failed to fetch tenants' 
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch tenants'
       });
     }
 
@@ -351,11 +359,11 @@ router.get('/tenants', async (req, res) => {
 router.get('/users', async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    
+
     if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'No token provided' 
+      return res.status(401).json({
+        success: false,
+        error: 'No token provided'
       });
     }
 
@@ -365,9 +373,9 @@ router.get('/users', async (req, res) => {
     // Get all users and filter by tenant
     const usersResult = await db.listUsers();
     if (usersResult.error) {
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Failed to fetch users' 
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch users'
       });
     }
 
@@ -392,4 +400,4 @@ router.get('/users', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;
