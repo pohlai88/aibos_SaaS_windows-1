@@ -27,7 +27,7 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [recognition, setRecognition] = useState<any>(null);
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
   const [isSupported, setIsSupported] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -35,64 +35,75 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
   // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        const recognitionInstance = new SpeechRecognition();
-        recognitionInstance.continuous = true;
-        recognitionInstance.interimResults = true;
-        recognitionInstance.lang = 'en-US';
+      // Check for speech recognition support
+      const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-        recognitionInstance.onstart = () => {
-          setIsListening(true);
-          setIsProcessing(false);
-        };
+      if (SpeechRecognitionAPI) {
+        try {
+          const recognitionInstance = new SpeechRecognitionAPI();
+          recognitionInstance.continuous = true;
+          recognitionInstance.interimResults = true;
+          recognitionInstance.lang = 'en-US';
 
-        recognitionInstance.onresult = (event: any) => {
-          let finalTranscript = '';
-          let interimTranscript = '';
+          recognitionInstance.onstart = () => {
+            setIsListening(true);
+            setIsProcessing(false);
+          };
 
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            const transcript = event.results[i][0].transcript;
-            if (event.results[i].isFinal) {
-              finalTranscript += transcript;
-            } else {
-              interimTranscript += transcript;
+          recognitionInstance.onresult = (event: any) => {
+            let finalTranscript = '';
+            let interimTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              const transcript = event.results[i][0].transcript;
+              if (event.results[i].isFinal) {
+                finalTranscript += transcript;
+              } else {
+                interimTranscript += transcript;
+              }
             }
-          }
 
-          const fullTranscript = finalTranscript + interimTranscript;
-          setTranscript(fullTranscript);
+            const fullTranscript = finalTranscript + interimTranscript;
+            setTranscript(fullTranscript);
 
-          // Check for wake word
-          if (fullTranscript.toLowerCase().includes(wakeWord.toLowerCase())) {
-            handleWakeWord();
-          }
+            // Check for wake word
+            if (fullTranscript.toLowerCase().includes(wakeWord.toLowerCase())) {
+              handleWakeWord();
+            }
 
-          // Process commands
-          if (finalTranscript) {
-            processCommand(finalTranscript);
-          }
-        };
+            // Process commands
+            if (finalTranscript) {
+              processCommand(finalTranscript);
+            }
+          };
 
-        recognitionInstance.onerror = (event: any) => {
-          console.error('Speech recognition error:', event.error);
-          setIsListening(false);
-          setIsProcessing(false);
-        };
+          recognitionInstance.onerror = (event: any) => {
+            console.error('Speech recognition error:', event.error);
+            setIsListening(false);
+            setIsProcessing(false);
+          };
 
-        recognitionInstance.onend = () => {
-          setIsListening(false);
-        };
+          recognitionInstance.onend = () => {
+            setIsListening(false);
+          };
 
-        setRecognition(recognitionInstance);
-        setIsSupported(true);
+          setRecognition(recognitionInstance);
+          setIsSupported(true);
+        } catch (error) {
+          console.error('Failed to initialize speech recognition:', error);
+          setIsSupported(false);
+        }
+      } else {
+        setIsSupported(false);
       }
     }
   }, [wakeWord]);
 
   const handleWakeWord = () => {
     if (audioRef.current) {
-      audioRef.current.play();
+      audioRef.current.play().catch(() => {
+        // Ignore audio play errors
+      });
     }
     setIsProcessing(true);
     setTranscript('');
@@ -148,7 +159,7 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
 
   const interpretWithAI = (command: string) => {
     // AI-powered command interpretation
-    const actions = {
+    const actions: Record<string, () => void> = {
       'create': () => console.log('Creating...'),
       'show': () => console.log('Showing...'),
       'generate': () => console.log('Generating...'),
@@ -160,7 +171,7 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
       command.toLowerCase().includes(key)
     );
 
-    return actions[action as keyof typeof actions] || (() => console.log('Command not understood'));
+    return actions[action || ''] || (() => console.log('Command not understood'));
   };
 
   const generateSuggestions = () => {
@@ -196,7 +207,9 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
     document.body.appendChild(feedback);
 
     setTimeout(() => {
-      document.body.removeChild(feedback);
+      if (document.body.contains(feedback)) {
+        document.body.removeChild(feedback);
+      }
     }, 2000);
   };
 
