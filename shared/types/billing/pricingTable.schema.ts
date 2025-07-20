@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { SubscriptionPlan, BillingInterval } from './billing.enums';
-import type { Currency } from './currency.enums';
+import { Currency } from './currency.enums';
 
 /**
  * Feature interface for structured feature definitions
@@ -175,11 +175,7 @@ export function getActivePricing(table: PricingTable): ActivePricingTable {
   return table.filter((entry) => entry.isActive !== false) as ActivePricingTable;
 }
 
-export function calculateMonthlyEquivalent(entry: PricingTableEntry): number {
-  return entry.interval === BillingInterval.YEARLY ? entry.price / 12 : entry.price;
-}
-
-export function calculateSavingsPercentage(
+export function calculateSavingsPercentageFromEntries(
   annualEntry: PricingTableEntry,
   monthlyEntry: PricingTableEntry,
 ): number {

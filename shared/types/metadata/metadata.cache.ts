@@ -1,16 +1,14 @@
 import { z } from 'zod';
 import type { UUID, ISODate, TenantID } from '../primitives';
-import type { MetadataCacheType,
-  MetadataCacheTypes,
-  MetadataCacheStrategy,
-  MetadataCacheStrategies,
- } from './metadata.enums';
-import type { MetadataEntity,
+import { MetadataCacheTypes, MetadataCacheStrategies } from './metadata.enums';
+import type { MetadataCacheType, MetadataCacheStrategy } from './metadata.enums';
+import type {
+  MetadataEntity,
   MetadataField,
   MetadataSchema,
   MetadataValue,
   MetadataQuery,
- } from './metadata.types';
+} from './metadata.types';
 
 // ============================================================================
 // CACHE ENUMS
@@ -813,12 +811,4 @@ export type {
   MetadataCacheStrategyExecutor,
 };
 
-export {
-  MetadataCacheLevel,
-  MetadataCacheStatus,
-  MetadataCacheEvictionPolicy,
-  MetadataCacheConfigSchema,
-  MetadataCacheEntrySchema,
-  MetadataCacheInvalidationRuleSchema,
-  MetadataCacheUtils,
-};
+// All exports are already defined above as individual exports

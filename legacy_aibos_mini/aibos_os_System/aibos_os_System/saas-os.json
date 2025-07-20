@@ -1,0 +1,112 @@
+{
+  "name": "ai-bos-os",
+  "version": "1.0.0",
+  "description": "AI-BOS SaaS Operating System Configuration",
+  
+  "os": {
+    "runtime": {
+      "nodeVersion": "20.19.4",
+      "tsVersion": "5.3.2",
+      "esmOnly": true,
+      "pnpmVersion": "8.10.0"
+    },
+    
+    "architecture": {
+      "monorepo": true,
+      "buildTool": "turbo",
+      "packageManager": "pnpm",
+      "workspaceStructure": {
+        "apps": "./apps/*",
+        "packages": "./packages/*"
+      }
+    },
+    
+    "quality": {
+      "linting": {
+        "eslint": "8.54.0",
+        "prettier": "3.1.0",
+        "typescript": "5.3.2"
+      },
+      "testing": {
+        "framework": "jest",
+        "coverage": 80,
+        "e2e": "playwright"
+      },
+      "validation": {
+        "typeCheck": true,
+        "strictMode": true,
+        "noCommonJS": true
+      }
+    },
+    
+    "packages": {
+      "core": [
+        "@aibos/core-types",
+        "@aibos/database",
+        "@aibos/auth-sdk",
+        "@aibos/ui-components"
+      ],
+      "domain": [
+        "@aibos/ledger-sdk",
+        "@aibos/crm-sdk",
+        "@aibos/hr-sdk",
+        "@aibos/workflow-sdk",
+        "@aibos/procurement-sdk",
+        "@aibos/tax-sdk"
+      ],
+      "apps": [
+        "@aibos/admin-app",
+        "@aibos/customer-portal",
+        "@aibos/api-gateway"
+      ]
+    },
+    
+    "security": {
+      "auth": "supabase",
+      "encryption": "at-rest-and-transit",
+      "multiTenancy": true,
+      "auditLogging": true
+    },
+    
+    "performance": {
+      "bundleSize": "<500KB",
+      "apiResponse": "<200ms",
+      "lighthouseScore": ">90"
+    },
+    
+    "compliance": {
+      "gdpr": true,
+      "sox": true,
+      "soc2": true,
+      "iso27001": true
+    },
+    
+    "monitoring": {
+      "errorTracking": "sentry",
+      "performance": "apm",
+      "logging": "structured",
+      "healthChecks": true
+    }
+  },
+  
+  "cli": {
+    "commands": {
+      "check": "Validate OS compliance",
+      "build": "Build packages and apps",
+      "test": "Run tests with coverage",
+      "lint": "Check code quality",
+      "validate": "Full validation pipeline",
+      "status": "Show system status",
+      "doctor": "Diagnose issues",
+      "update": "Update OS components"
+    }
+  },
+  
+  "registry": {
+    "metadata": {
+      "enabled": true,
+      "path": "./packages/metadata-registry",
+      "schema": "openapi-3.0"
+    }
+  }
+} 

@@ -1,23 +1,32 @@
-import { Tooltip } from '../primitives/Tooltip';
-import { Progress } from '../primitives/Progress';
-import { Modal } from '../primitives/Modal';
-import { Input } from '../primitives/Input';
-import { Button } from '../primitives/Button';
-import { Badge } from '../primitives/Badge';
-// Primitives - Core UI Components
-export { Button } from './Button';
-export { Badge } from './Badge';
-export { Modal } from './Modal';
-export { Tooltip } from './Tooltip';
-export { Skeleton } from './Skeleton';
-export { Progress } from './Progress';
-export { Input } from './Input';
+/**
+ * Enterprise UI Primitives
+ * Basic UI components with enterprise compliance and performance features
+ *
+ * @author AI-BOS Team
+ * @version 1.0.0
+ * @license MIT
+ */
 
-// Re-export types
-export type { ButtonProps } from './Button';
-export type { BadgeProps } from './Badge';
-export type { ModalProps } from './Modal';
-export type { TooltipProps } from './Tooltip';
-export type { SkeletonProps } from './Skeleton';
-export type { ProgressProps } from './Progress';
-export type { InputProps } from './Input';
+// Primitives
+export { default as Button, buttonVariants } from './Button/Button';
+export { Input, inputVariants } from './Input/Input';
+export { Modal } from './Modal/Modal';
+export { default as Badge, type BadgeProps } from './Badge/Badge';
+export { Select, type SelectProps, type SelectOption } from './Select/Select';
+export { Checkbox, type CheckboxProps } from './Checkbox/Checkbox';
+export { Radio, type RadioProps } from './Radio/Radio';
+export { Textarea, type TextareaProps } from './Textarea/Textarea';
+export { Alert, type AlertProps } from './Alert/Alert';
+export {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  type CardProps,
+  type CardHeaderProps,
+  type CardContentProps,
+  type CardFooterProps
+} from './Card/Card';
+export { Avatar, type AvatarProps } from './Avatar/Avatar';
+export { Tooltip, type TooltipProps } from './Tooltip/Tooltip';
+export { Progress, type ProgressProps } from './Progress/Progress';

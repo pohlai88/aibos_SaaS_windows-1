@@ -1,6 +1,6 @@
 import { SubscriptionPlan, BillingInterval } from '../types/billing/billing.enums';
-import type { Currency } from '../types/billing/currency.enums';
-import { Feature, PricingTableEntry } from '../types/billing/pricingTable.schema';
+import { Currency } from '../types/billing/currency.enums';
+import type { Feature, PricingTableEntry } from '../types/billing/pricingTable.schema';
 
 /**
  * Predefined features available across all plans

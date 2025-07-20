@@ -113,27 +113,11 @@ export { userRoleMapper } from './userRoleMapper';
 // TYPE EXPORTS
 // ============================================================================
 
-// Re-export common types for convenience
+// Re-export additional types for convenience (avoiding duplicates)
 export type {
-  // Event types
-  EventEnvelope,
-  EventMetadata,
-  EventHandler,
-
-  // Manifest types
-  AppManifest,
-  ManifestEntity,
-  ManifestEvent,
-
-  // Entity types
-  EntityInstance,
-  EntityMetadata,
-  EntityFilter,
-  EntityOperationResult,
-
-  // Common types
-  ValidationError,
-  ValidationWarning,
+  // Common types not already exported elsewhere
+  ValidationResult,
+  OperationStatus,
 } from './types';
 
 // ============================================================================

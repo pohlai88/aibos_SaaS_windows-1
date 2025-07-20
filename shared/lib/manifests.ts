@@ -991,7 +991,7 @@ export function createEntity(name: string): {
 // EXPORTS
 // ============================================================================
 
-export { ManifestValidator, ManifestProcessor, ManifestBuilder, createManifest, createEntity };
+// All exports are already defined above as individual exports
 
 export type {
   AppManifest,

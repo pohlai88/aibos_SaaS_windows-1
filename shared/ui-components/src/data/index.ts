@@ -1,5 +1,10 @@
-// Revolutionary Data Components with AI-Powered Intelligence
+// Data Components
+export { default as DataTable } from './DataTable/DataTable';
 
-// Enterprise-Grade Data Grid
-export { DataGrid } from './DataGrid';
-export type { DataGridProps, Column } from './DataGrid';
+// Data Types
+export type {
+  Column,
+  SortConfig,
+  FilterConfig,
+  DataTableProps
+} from './DataTable/DataTable';

@@ -1,4 +1,6 @@
+// Auto-generated index file - User Types
+// Export all user-related types and utilities
+
 export * from './user';
-export * from './user.enums';
 export * from './user.api';
-export type { UUID, ISODate } from '../primitives';
+export * from './user.enums';

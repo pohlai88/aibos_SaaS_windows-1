@@ -5,15 +5,19 @@
  * ensuring type safety and proper field-specific configurations.
  */
 
-import type { MetadataFieldType,
-  MetadataValidationRule,
-  MetadataStatus,
-  MetadataSource,
-  MetadataCategory,
- } from './metadata.enums';
-import { UUID, JsonValue, JsonObject, Percentage, CurrencyAmount, Integer, Float,  } from '../primitives';
+import { MetadataStatus, MetadataSource, MetadataCategory } from './metadata.enums';
+import type { MetadataFieldType, MetadataValidationRule } from './metadata.enums';
+import type {
+  UUID,
+  JsonValue,
+  JsonObject,
+  Percentage,
+  CurrencyAmount,
+  Integer,
+  Float,
+} from '../primitives';
 import type { ISODate } from '../primitives';
-import type { FieldTypeToTS  } from './metadata.mapping';
+import type { FieldTypeToTS } from './metadata.mapping';
 
 // ============================================================================
 // BASE FIELD INTERFACES

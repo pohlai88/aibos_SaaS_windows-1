@@ -1,10 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
-import type { RateLimiter,
+import type { Mock } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import {
+  RateLimiter,
   SecurityUtils,
   SecurityMiddleware,
   ValidationSchemas,
   security,
- } from '../lib/security';
+} from '../lib/security';
 
 describe('RateLimiter', () => {
   let rateLimiter: RateLimiter;

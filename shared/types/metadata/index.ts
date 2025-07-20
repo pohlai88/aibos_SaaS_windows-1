@@ -151,7 +151,6 @@ export type {
 // Event system types
 export type {
   MetadataEvent,
-  MetadataAuditEvent,
   MetadataEventHandler,
   MetadataEventFilter,
   MetadataEventSubscription,
@@ -193,7 +192,6 @@ export type {
   MetadataCacheSetOptions,
   MetadataCacheGetOptions,
   MetadataCacheManager,
-  MetadataCacheStrategy,
   MetadataCacheStrategyExecutor,
   MetadataCacheUtils,
 } from './metadata.cache';
@@ -224,7 +222,7 @@ export type {
 
 // Error handling types
 export type {
-  MetadataError as MetadataErrorType,
+  MetadataError as MetadataSystemError,
   MetadataErrorReport,
   MetadataErrorHandler,
   MetadataErrorRecoveryManager,

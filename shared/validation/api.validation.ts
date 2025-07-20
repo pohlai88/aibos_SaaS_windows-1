@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import type { UserSchema  } from './user.validation';
-import { ApiErrorCode } from '../types/api';
+import { UserSchema } from './user.validation';
+import type { ApiErrorCode } from '../types/api';
 
 /**
  * API Error validation schema

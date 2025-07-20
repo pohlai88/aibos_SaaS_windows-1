@@ -1,7 +1,7 @@
-// Role enums and types
-export * from './roles.enums';
-export * from './permissions';
-export * from './roles.api';
+// Auto-generated index file - Roles Types
+// Export all roles-related types and utilities
 
-// Role permission mappings
+export * from './permissions';
 export * from './rolePermissionsMap';
+export * from './roles.api';
+export * from './roles.enums';

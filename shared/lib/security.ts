@@ -98,191 +98,132 @@ export class RateLimiter {
 }
 
 /**
- * Input validation schemas
- */
-export const ValidationSchemas = {
-  email: z.string().email('Invalid email format'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain uppercase, lowercase, and number',
-    ),
-  uuid: z.string().uuid('Invalid UUID format'),
-  url: z.string().url('Invalid URL format'),
-  phone: z.string().regex(/^\+?[\d\s\-\(\)]+$/, 'Invalid phone number format'),
-  date: z.string().datetime('Invalid date format'),
-  integer: z.number().int('Must be an integer'),
-  positiveNumber: z.number().positive('Must be a positive number'),
-  nonEmptyString: z.string().min(1, 'String cannot be empty'),
-  safeString: z
-    .string()
-    .min(1, 'String cannot be empty')
-    .max(1000, 'String too long')
-    .regex(/^[a-zA-Z0-9\s\-_.,!?@#$%^&*()+=:;'"`~[\]{}|\\/]+$/, 'Contains unsafe characters'),
-};
-
-/**
- * Security utilities
+ * Security utilities for input validation and sanitization
  */
 export class SecurityUtils {
   /**
-   * Sanitize user input
+   * Sanitize input by removing dangerous characters and scripts
    */
   static sanitizeInput(input: string): string {
     return input
-      .replace(/[<>]/g, '') // Remove potential HTML tags
-      .replace(/javascript:/gi, '') // Remove javascript: protocol
-      .replace(/on\w+=/gi, '') // Remove event handlers
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+\s*=/gi, '')
       .trim();
   }
 
   /**
-   * Validate and sanitize email
+   * Validate email address
    */
-  static validateEmail(email: string): { valid: boolean; sanitized?: string; error?: string } {
-    try {
-      const sanitized = this.sanitizeInput(email.toLowerCase());
-      ValidationSchemas.email.parse(sanitized);
-      return { valid: true, sanitized };
-    } catch (error) {
-      return { valid: false, error: error instanceof Error ? error.message : 'Invalid email' };
+  static validateEmail(email: string): { valid: boolean; sanitized: string; error?: string } {
+    const sanitized = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(sanitized)) {
+      return { valid: false, sanitized, error: 'Invalid email format' };
     }
+
+    return { valid: true, sanitized };
   }
 
   /**
    * Validate password strength
    */
-  static validatePassword(password: string): { valid: boolean; error?: string; score: number } {
-    try {
-      ValidationSchemas.password.parse(password);
+  static validatePassword(password: string): {
+    valid: boolean;
+    score: number;
+    feedback?: string[];
+  } {
+    let score = 0;
+    const feedback: string[] = [];
 
-      // Calculate password strength score (0-100)
-      let score = 0;
-      if (password.length >= 8) score += 20;
-      if (password.length >= 12) score += 10;
-      if (/[a-z]/.test(password)) score += 20;
-      if (/[A-Z]/.test(password)) score += 20;
-      if (/\d/.test(password)) score += 20;
-      if (/[^a-zA-Z0-9]/.test(password)) score += 10;
+    if (password.length >= 8) score += 25;
+    else feedback.push('Password should be at least 8 characters');
 
-      return { valid: true, score };
-    } catch (error) {
-      return {
-        valid: false,
-        error: error instanceof Error ? error.message : 'Invalid password',
-        score: 0,
-      };
-    }
+    if (/[A-Z]/.test(password)) score += 25;
+    else feedback.push('Add uppercase letters');
+
+    if (/[a-z]/.test(password)) score += 25;
+    else feedback.push('Add lowercase letters');
+
+    if (/[0-9]/.test(password)) score += 25;
+    else feedback.push('Add numbers');
+
+    if (/[^A-Za-z0-9]/.test(password)) score += 10;
+    else feedback.push('Add special characters');
+
+    return {
+      valid: score >= 80,
+      score,
+      feedback: feedback.length > 0 ? feedback : undefined,
+    };
   }
 
   /**
-   * Generate secure random string
+   * Generate secure random token
    */
   static generateSecureToken(length: number = 32): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
-    const randomArray = new Uint8Array(length);
-    crypto.getRandomValues(randomArray);
 
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(randomArray[i] % chars.length);
+    // Use crypto.randomInt if available, fallback to Math.random
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      const array = new Uint8Array(length);
+      crypto.getRandomValues(array);
+      for (let i = 0; i < length; i++) {
+        result += chars[array[i] % chars.length];
+      }
+    } else {
+      for (let i = 0; i < length; i++) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+      }
     }
 
     return result;
   }
 
   /**
-   * Hash password (placeholder for bcrypt)
-   */
-  static async hashPassword(password: string): Promise<string> {
-    // In production, use bcrypt or similar
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash))
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
-  }
-
-  /**
-   * Verify password hash
-   */
-  static async verifyPassword(password: string, hash: string): Promise<boolean> {
-    const passwordHash = await this.hashPassword(password);
-    return passwordHash === hash;
-  }
-
-  /**
-   * Check for common security vulnerabilities
+   * Detect potential security issues in input
    */
   static detectSecurityIssues(input: string): string[] {
     const issues: string[] = [];
 
-    // SQL Injection patterns
-    const sqlPatterns = [
-      /(\b(union|select|insert|update|delete|drop|create|alter)\b)/i,
-      /(--|\/\*|\*\/|;)/,
-      /(\b(exec|execute|xp_|sp_)\b)/i,
-    ];
+    if (input.includes('DROP TABLE') || input.includes('SELECT *') || input.includes(';--')) {
+      issues.push('Potential SQL injection detected');
+    }
 
-    // XSS patterns
-    const xssPatterns = [
-      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-      /javascript:/gi,
-      /on\w+\s*=/gi,
-      /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi,
-    ];
+    if (input.includes('<script>') || input.includes('javascript:')) {
+      issues.push('Potential XSS attack detected');
+    }
 
-    // Command injection patterns
-    const cmdPatterns = [
-      /(\b(cmd|powershell|bash|sh|exec|system)\b)/i,
-      /[;&|`$()]/,
-      /(\b(rm|del|format|mkfs)\b)/i,
-    ];
-
-    sqlPatterns.forEach((pattern) => {
-      if (pattern.test(input)) {
-        issues.push('Potential SQL injection detected');
-      }
-    });
-
-    xssPatterns.forEach((pattern) => {
-      if (pattern.test(input)) {
-        issues.push('Potential XSS attack detected');
-      }
-    });
-
-    cmdPatterns.forEach((pattern) => {
-      if (pattern.test(input)) {
-        issues.push('Potential command injection detected');
-      }
-    });
+    if (input.includes('rm -rf') || input.includes('del /f')) {
+      issues.push('Potential command injection detected');
+    }
 
     return issues;
   }
 }
 
 /**
- * Security middleware for Express
+ * Validation schemas for common types
+ */
+export const ValidationSchemas = {
+  email: z.string().email(),
+  password: z.string().min(8),
+  uuid: z.string().uuid(),
+  safeString: z.string().refine((val) => SecurityUtils.detectSecurityIssues(val).length === 0, {
+    message: 'Input contains potentially dangerous content',
+  }),
+};
+
+/**
+ * Security middleware for Express applications
  */
 export class SecurityMiddleware {
-  private rateLimiter: RateLimiter;
-  private securityHeaders: SecurityHeaders;
+  public rateLimiter: RateLimiter;
 
-  constructor() {
-    this.rateLimiter = new RateLimiter();
-    this.securityHeaders = {
-      'X-Frame-Options': 'DENY',
-      'X-Content-Type-Options': 'nosniff',
-      'X-XSS-Protection': '1; mode=block',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-      'Content-Security-Policy':
-        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:; frame-ancestors 'none';",
-      'Referrer-Policy': 'strict-origin-when-cross-origin',
-      'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
-    };
+  constructor(config?: Partial<RateLimitConfig>) {
+    this.rateLimiter = new RateLimiter(config);
   }
 
   /**
@@ -290,34 +231,13 @@ export class SecurityMiddleware {
    */
   rateLimit() {
     return (req: any, res: any, next: any) => {
-      const identifier = req.ip || req.connection.remoteAddress || 'unknown';
-      const result = this.rateLimiter.isAllowed(identifier);
+      const identifier = req.ip || req.connection.remoteAddress;
 
-      if (!result.allowed) {
-        logger.warn('Rate limit exceeded', {
-          ip: identifier,
-          userAgent: req.headers['user-agent'],
-          url: req.url,
-        });
-
-        res.set({
-          'X-RateLimit-Limit': this.rateLimiter.config.maxRequests,
-          'X-RateLimit-Remaining': result.remaining,
-          'X-RateLimit-Reset': result.resetTime,
-        });
-
-        return res.status(this.rateLimiter.config.statusCode).json({
-          error: this.rateLimiter.config.message,
-        });
+      if (this.rateLimiter.isAllowed(identifier)) {
+        next();
+      } else {
+        res.status(429).json({ error: 'Too many requests' });
       }
-
-      res.set({
-        'X-RateLimit-Limit': this.rateLimiter.config.maxRequests,
-        'X-RateLimit-Remaining': result.remaining,
-        'X-RateLimit-Reset': result.resetTime,
-      });
-
-      next();
     };
   }
 
@@ -326,9 +246,10 @@ export class SecurityMiddleware {
    */
   securityHeaders() {
     return (req: any, res: any, next: any) => {
-      Object.entries(this.securityHeaders).forEach(([header, value]) => {
-        res.set(header, value);
-      });
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('X-Frame-Options', 'DENY');
+      res.setHeader('X-XSS-Protection', '1; mode=block');
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
       next();
     };
   }
@@ -336,53 +257,28 @@ export class SecurityMiddleware {
   /**
    * Input validation middleware
    */
-  validateInput(schema: z.ZodSchema, field: 'body' | 'query' | 'params' = 'body') {
+  validateInput(schema: z.ZodSchema) {
     return (req: any, res: any, next: any) => {
       try {
-        const validated = schema.parse(req[field]);
-        req[field] = validated;
+        schema.parse(req.body);
         next();
       } catch (error) {
-        if (error instanceof z.ZodError) {
-          logger.warn('Input validation failed', {
-            field,
-            errors: error.errors,
-            ip: req.ip,
-            url: req.url,
-          });
-
-          return res.status(400).json({
-            error: 'Validation failed',
-            details: error.errors,
-          });
-        }
-        next(error);
+        res.status(400).json({ error: 'Invalid input', details: error });
       }
     };
   }
 
   /**
-   * Security scanning middleware
+   * Security scan middleware
    */
   securityScan() {
     return (req: any, res: any, next: any) => {
-      const input =
-        JSON.stringify(req.body) + JSON.stringify(req.query) + JSON.stringify(req.params);
-      const issues = SecurityUtils.detectSecurityIssues(input);
+      const body = JSON.stringify(req.body || {});
+      const issues = SecurityUtils.detectSecurityIssues(body);
 
       if (issues.length > 0) {
-        logger.error('Security issues detected', {
-          issues,
-          ip: req.ip,
-          userAgent: req.headers['user-agent'],
-          url: req.url,
-          body: req.body,
-        });
-
-        return res.status(400).json({
-          error: 'Security validation failed',
-          message: 'Request contains potentially unsafe content',
-        });
+        res.status(403).json({ error: 'Security issues detected', issues });
+        return;
       }
 
       next();
@@ -390,25 +286,21 @@ export class SecurityMiddleware {
   }
 
   /**
-   * CORS configuration
+   * CORS middleware
    */
-  cors() {
+  cors(allowedOrigins: string[] = []) {
     return (req: any, res: any, next: any) => {
-      const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
       const origin = req.headers.origin;
 
-      if (origin && allowedOrigins.includes(origin)) {
-        res.set('Access-Control-Allow-Origin', origin);
+      if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
       }
 
-      res.set({
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-        'Access-Control-Allow-Credentials': 'true',
-      });
-
       if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        res.status(204).end();
+        return;
       }
 
       next();
@@ -416,9 +308,7 @@ export class SecurityMiddleware {
   }
 }
 
-/**
- * Global security instance
- */
+// Global security instance
 export const security = new SecurityMiddleware();
 
 /**

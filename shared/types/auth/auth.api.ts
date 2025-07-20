@@ -1,7 +1,7 @@
-import type { ApiResponse, ApiErrorResponse  } from '../api';
-import { AuthSession, TokenPayload, DeviceInfo } from './auth';
+import type { ApiResponse, ApiErrorResponse } from '../api';
+import type { AuthSession, TokenPayload, DeviceInfo } from './auth';
 import type { ApiErrorCode } from '../api.errors';
-import { MfaMethod, AuthProvider } from './auth.enums';
+import type { MfaMethod, AuthProvider } from './auth.enums';
 
 /**
  * Authentication API response types

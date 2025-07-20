@@ -1,18 +1,22 @@
 import { z } from 'zod';
 import type { UUID, ISODate, UserID, TenantID } from '../primitives';
-import type { MetadataEventType,
+import {
   MetadataEventTypes,
-  MetadataAuditEventType,
   MetadataAuditEventTypes,
-  MetadataOperationType,
   MetadataOperationTypes,
- } from './metadata.enums';
-import type { MetadataEntity,
+} from './metadata.enums';
+import type {
+  MetadataEventType,
+  MetadataAuditEventType,
+  MetadataOperationType,
+} from './metadata.enums';
+import type {
+  MetadataEntity,
   MetadataField,
   MetadataValue,
   MetadataSchema,
   MetadataConstraint,
- } from './metadata.types';
+} from './metadata.types';
 
 // ============================================================================
 // BASE EVENT INTERFACES
@@ -653,7 +657,7 @@ export const MetadataEventSchema = z.object({
 });
 
 export const MetadataAuditEventSchema = MetadataEventSchema.extend({
-  type?: z.nativeEnum(MetadataAuditEventTypes),
+  type: z.nativeEnum(MetadataAuditEventTypes).optional(),
   entityId: z.string().uuid(),
   entityType: z.string(),
   operation: z.nativeEnum(MetadataOperationTypes),

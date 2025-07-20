@@ -7,11 +7,13 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import ora from 'ora';
+import ora, { Ora } from 'ora';
 import inquirer from 'inquirer';
 import { AIDevAssistant } from '../assistant/AIDevAssistant';
 import { AICodeGenerator } from '../../ai/codegen/AICodeGenerator';
 import { z } from 'zod';
+import fs from 'fs';
+import path from 'path';
 
 // CLI Configuration
 export interface CLIConfig {
@@ -36,6 +38,42 @@ export interface ProjectTemplate {
   estimatedTime: number;
 }
 
+interface DebugSession {
+  error: string;
+  analysis: {
+    severity: string;
+    rootCause: string;
+    impact: string;
+    suggestedFixes: string[];
+  };
+  solution: {
+    code?: string;
+  };
+}
+
+interface LearningSession {
+  estimatedDuration: number;
+  content: string;
+  exercises: string[];
+  quiz: Array<{
+    question: string;
+    options: string[];
+  }>;
+}
+
+interface AIResponse {
+  answer: string;
+  reasoning?: string;
+  alternatives?: string[];
+  nextSteps?: string[];
+}
+
+interface CodeGenerationResult {
+  code: string;
+  tests?: string;
+  documentation?: string;
+}
+
 /**
  * AI-BOS CLI - The Ultimate Developer CLI
  */
@@ -44,7 +82,7 @@ export class AIBOSCLI {
   private assistant: AIDevAssistant;
   private codeGenerator: AICodeGenerator;
   private config: CLIConfig;
-  private spinner: ora.Ora;
+  private spinner: Ora;
 
   constructor() {
     this.program = new Command();
@@ -61,7 +99,7 @@ export class AIBOSCLI {
    */
   async run(): Promise<void> {
     try {
-      await this.program.parseAsync();
+      await this.program.parseAsync(process.argv);
     } catch (error) {
       console.error(chalk.red('❌ CLI Error:'), error);
       process.exit(1);
@@ -112,7 +150,7 @@ export class AIBOSCLI {
       .option('-l, --language <language>', 'Programming language')
       .option('-f, --framework <framework>', 'Framework to use')
       .option('-y, --yes', 'Skip prompts and use defaults')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.initProject(options);
       });
 
@@ -144,7 +182,7 @@ export class AIBOSCLI {
       .option('-l, --language <language>', 'Programming language')
       .option('-d, --description <description>', 'Code description')
       .option('-o, --output <file>', 'Output file path')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.generateCode(options);
       });
 
@@ -153,7 +191,7 @@ export class AIBOSCLI {
       .description('Get code completion suggestions')
       .option('-f, --file <file>', 'File to complete')
       .option('-p, --position <position>', 'Cursor position (line:column)')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.completeCode(options);
       });
 
@@ -162,7 +200,7 @@ export class AIBOSCLI {
       .description('Refactor code with AI assistance')
       .option('-f, --file <file>', 'File to refactor')
       .option('-g, --goals <goals>', 'Refactoring goals (comma-separated)')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.refactorCode(options);
       });
   }
@@ -175,9 +213,9 @@ export class AIBOSCLI {
 
     ai.command('ask')
       .description('Ask AI for development help')
-      .argument('<question>', 'Your question')
+      .argument('[question]', 'Your question')
       .option('-c, --context <context>', 'Additional context')
-      .action(async (question, options) => {
+      .action(async (question: string, options: any) => {
         await this.askAI(question, options);
       });
 
@@ -185,7 +223,7 @@ export class AIBOSCLI {
       .description('Explain code with AI')
       .option('-f, --file <file>', 'File to explain')
       .option('-c, --code <code>', 'Code snippet to explain')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.explainCode(options);
       });
 
@@ -193,7 +231,7 @@ export class AIBOSCLI {
       .description('Debug code with AI assistance')
       .option('-f, --file <file>', 'File to debug')
       .option('-e, --error <error>', 'Error message')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.debugCode(options);
       });
   }
@@ -209,7 +247,7 @@ export class AIBOSCLI {
       .description('Start development environment')
       .option('-p, --port <port>', 'Port number')
       .option('-h, --host <host>', 'Host address')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.startDevEnvironment(options);
       });
 
@@ -218,7 +256,7 @@ export class AIBOSCLI {
       .description('Run tests with AI assistance')
       .option('-w, --watch', 'Watch mode')
       .option('-c, --coverage', 'Generate coverage report')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.runTests(options);
       });
 
@@ -227,7 +265,7 @@ export class AIBOSCLI {
       .description('Build project with optimizations')
       .option('-p, --production', 'Production build')
       .option('-a, --analyze', 'Analyze bundle')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.buildProject(options);
       });
   }
@@ -243,7 +281,7 @@ export class AIBOSCLI {
       .description('Analyze code for security issues')
       .option('-f, --file <file>', 'File to analyze')
       .option('-d, --directory <dir>', 'Directory to analyze')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.analyzeSecurity(options);
       });
 
@@ -252,7 +290,7 @@ export class AIBOSCLI {
       .description('Analyze code for performance issues')
       .option('-f, --file <file>', 'File to analyze')
       .option('-d, --directory <dir>', 'Directory to analyze')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.analyzePerformance(options);
       });
 
@@ -261,7 +299,7 @@ export class AIBOSCLI {
       .description('Analyze code quality')
       .option('-f, --file <file>', 'File to analyze')
       .option('-d, --directory <dir>', 'Directory to analyze')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.analyzeQuality(options);
       });
   }
@@ -275,9 +313,9 @@ export class AIBOSCLI {
     learn
       .command('topic')
       .description('Learn about a specific topic')
-      .argument('<topic>', 'Topic to learn about')
+      .argument('[topic]', 'Topic to learn about')
       .option('-d, --difficulty <level>', 'Difficulty level (beginner/intermediate/advanced)')
-      .action(async (topic, options) => {
+      .action(async (topic: string, options: any) => {
         await this.learnTopic(topic, options);
       });
 
@@ -286,7 +324,7 @@ export class AIBOSCLI {
       .description('Take a learning quiz')
       .option('-t, --topic <topic>', 'Quiz topic')
       .option('-d, --difficulty <level>', 'Difficulty level')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.takeQuiz(options);
       });
 
@@ -295,7 +333,7 @@ export class AIBOSCLI {
       .description('Practice coding exercises')
       .option('-l, --language <language>', 'Programming language')
       .option('-d, --difficulty <level>', 'Difficulty level')
-      .action(async (options) => {
+      .action(async (options: any) => {
         await this.practiceCoding(options);
       });
   }
@@ -309,17 +347,17 @@ export class AIBOSCLI {
     config
       .command('set')
       .description('Set configuration value')
-      .argument('<key>', 'Configuration key')
-      .argument('<value>', 'Configuration value')
-      .action(async (key, value) => {
+      .argument('[key]', 'Configuration key')
+      .argument('[value]', 'Configuration value')
+      .action(async (key: string, value: string) => {
         await this.setConfig(key, value);
       });
 
     config
       .command('get')
       .description('Get configuration value')
-      .argument('<key>', 'Configuration key')
-      .action(async (key) => {
+      .argument('[key]', 'Configuration key')
+      .action(async (key: string) => {
         await this.getConfig(key);
       });
 
@@ -394,7 +432,7 @@ export class AIBOSCLI {
     try {
       // Get AI recommendations
       const response = await this.assistant.getArchitectureRecommendations(answers.description, {
-        projectType: answers.type as any,
+        projectType: answers.type,
         language: answers.language,
       });
 
@@ -480,7 +518,7 @@ export class AIBOSCLI {
     this.spinner.start('Getting AI assistance...');
 
     try {
-      const response = await this.assistant.getAssistance({
+      const response: AIResponse = await this.assistant.getAssistance({
         type: 'learning',
         query: question,
         context: {
@@ -549,7 +587,7 @@ export class AIBOSCLI {
       const code = options.file ? await this.readFile(options.file) : '';
       const error = options.error || 'Unknown error';
 
-      const debugSession = await this.assistant.debugCode(error, code, {
+      const debugSession: DebugSession = await this.assistant.debugCode(error, code, {
         projectType: 'fullstack',
         language: this.config.defaultLanguage,
       });
@@ -588,7 +626,7 @@ export class AIBOSCLI {
     try {
       const difficulty = options.difficulty || 'intermediate';
 
-      const learningSession = await this.assistant.getLearningContent(topic, difficulty as any, {
+      const learningSession: LearningSession = await this.assistant.getLearningContent(topic, difficulty, {
         projectType: 'fullstack',
         language: this.config.defaultLanguage,
       });
@@ -702,14 +740,26 @@ export class AIBOSCLI {
     console.log('Creating project based on AI recommendations...');
   }
 
-  private async saveToFile(path: string, content: string): Promise<void> {
-    // Implementation for saving content to file
-    console.log(`Saving to ${path}...`);
+  private async saveToFile(filePath: string, content: string): Promise<void> {
+    try {
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(filePath, content);
+    } catch (error) {
+      console.error(chalk.red(`Failed to save file: ${filePath}`), error);
+      throw error;
+    }
   }
 
-  private async readFile(path: string): Promise<string> {
-    // Implementation for reading file content
-    return '';
+  private async readFile(filePath: string): Promise<string> {
+    try {
+      return fs.readFileSync(filePath, 'utf-8');
+    } catch (error) {
+      console.error(chalk.red(`Failed to read file: ${filePath}`), error);
+      throw error;
+    }
   }
 
   // Additional command implementations

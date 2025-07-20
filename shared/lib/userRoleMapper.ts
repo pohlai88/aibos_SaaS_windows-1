@@ -1,4 +1,4 @@
-import type { UserRole } from '../types/user/user.enums';
+import { UserRole } from '../types/user/user.enums';
 
 /**
  * Maps API role strings to strongly-typed UserRole enum values

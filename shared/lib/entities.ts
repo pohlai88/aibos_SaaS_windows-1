@@ -5,9 +5,9 @@
  * for the AI-BOS micro-app platform.
  */
 
-import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { EventBus, EventEnvelope } from './events';
+import type { EventBus } from './events';
+import { EventEnvelope } from './events';
 import { logger } from './logger';
 import { monitoring } from './monitoring';
 import { cache } from './cache';
@@ -1278,7 +1278,7 @@ export function createEntityFilter(): {
 // EXPORTS
 // ============================================================================
 
-export { EntityManager, EntityValidator, createEntityFilter };
+// All exports are already defined above as individual exports
 
 export type {
   EntityInstance,

@@ -6,7 +6,7 @@ declare module 'class-variance-authority' {
 }
 
 declare module 'lucide-react' {
-  import * as React from 'react';
+  import type * as React from 'react';
   export const Loader2: React.FC<any>;
   export const X: React.FC<any>;
   export const Activity: React.FC<any>;
@@ -33,7 +33,7 @@ declare module 'lucide-react' {
 }
 
 declare module 'framer-motion' {
-  import * as React from 'react';
+  import type * as React from 'react';
   export const motion: any;
   export const AnimatePresence: React.FC<any>;
 }
@@ -44,7 +44,7 @@ declare module 'fuse.js' {
 }
 
 declare module 'recharts' {
-  import * as React from 'react';
+  import type * as React from 'react';
   export const LineChart: React.FC<any>;
   export const Line: React.FC<any>;
   export const AreaChart: React.FC<any>;

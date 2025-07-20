@@ -1,12 +1,7 @@
 import { z } from 'zod';
 import type { UUID, ISODate } from '../primitives';
-import {
-  SubscriptionPlan,
-  BillingInterval,
-  PlanFeature,
-  BillingCycle,
-  PlanPrice,
-} from './billing.enums';
+import type { SubscriptionPlan, BillingInterval } from './billing.enums';
+import { PlanFeature, BillingCycle, PlanPrice } from './billing.enums';
 
 /**
  * Core billing types

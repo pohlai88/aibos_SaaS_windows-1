@@ -1,0 +1,28 @@
+{
+  "id": "metadata-registry",
+  "name": "Metadata Registry",
+  "version": "1.0.0",
+  "description": "Hybrid metadata management system for enterprise governance and SaaS platform readiness",
+  "category": "governance",
+  "tags": ["metadata", "governance", "compliance", "enterprise", "saas"],
+  "author": "AI-BOS Team",
+  "license": "MIT",
+  "entryComponent": "MetadataRegistryDashboard",
+  "permissions": [
+    "database:read",
+    "database:write",
+    "metadata:manage",
+    "governance:access"
+  ],
+  "dependencies": {
+    "@aibos/ledger-sdk": "^1.0.0",
+    "@aibos/core-types": "^1.0.0"
+  },
+  "features": {
+    "hybridMetadata": true,
+    "smartSuggestions": true,
+    "complianceTracking": true,
+    "governanceMetrics": true,
+    "apiIntegration": true
+  }
+}

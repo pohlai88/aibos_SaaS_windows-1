@@ -1,10 +1,8 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import type { UUID, ISODate } from '../primitives';
-import type { TenantStatus, SubscriptionPlan, TaxIdType  } from './tenant.enums';
-import type { TenantSchema,
-  CreateTenantSchema,
-  UpdateTenantSchema,
- } from '@shared/validation/tenant.schema';
+import type { TenantStatus, SubscriptionPlan, TaxIdType } from './tenant.enums';
+import { TenantSchema } from '@shared/validation/tenant.schema';
+import type { CreateTenantSchema, UpdateTenantSchema } from '@shared/validation/tenant.schema';
 
 // Re-export enums for convenient access
 export { TenantStatus, SubscriptionPlan, TaxIdType };

@@ -543,7 +543,7 @@ export class EventBus extends EventEmitter {
     logger.info('Event subscription created', {
       subscriptionId,
       eventName,
-      options: subscription.options,
+      options: subscription.options || undefined,
     });
 
     return subscriptionId;

@@ -19,8 +19,8 @@ export interface CacheConfig {
   maxSize: number; // Maximum number of entries
   cleanupInterval: number; // Cleanup interval in milliseconds
   enableStats: boolean; // Enable cache statistics
-  redisUrl?: string; // Redis connection URL
-  redisOptions?: any; // Redis connection options
+  redisUrl?: string; // Redis connection URL (server-side only)
+  redisOptions?: any; // Redis connection options (server-side only)
 }
 
 /**
@@ -42,7 +42,7 @@ export interface CacheStats {
 export type CacheKeyGenerator = (...args: any[]) => string;
 
 /**
- * Memory-based cache implementation
+ * Memory-based cache implementation (Browser-safe)
  */
 export class MemoryCache {
   private cache: Map<string, CacheEntry> = new Map();
@@ -205,6 +205,7 @@ export class MemoryCache {
     if (oldestKey) {
       this.cache.delete(oldestKey);
       this.stats.evictions++;
+      this.stats.size = this.cache.size;
     }
   }
 
@@ -220,49 +221,86 @@ export class MemoryCache {
    * Start cleanup timer
    */
   private startCleanup(): void {
-    if (this.cleanupTimer) {
-      clearInterval(this.cleanupTimer);
+    if (typeof window !== 'undefined') {
+      // Browser environment - use setInterval
+      this.cleanupTimer = setInterval(() => {
+        this.cleanup();
+      }, this.config.cleanupInterval) as any;
+    } else {
+      // Node.js environment - use NodeJS.Timeout
+      this.cleanupTimer = setInterval(() => {
+        this.cleanup();
+      }, this.config.cleanupInterval);
     }
-
-    this.cleanupTimer = setInterval(() => {
-      this.cleanup();
-    }, this.config.cleanupInterval);
   }
 
   /**
-   * Clean up expired entries
+   * Cleanup expired entries
    */
   private cleanup(): void {
     const now = Date.now();
-    let cleaned = 0;
-
     for (const [key, entry] of this.cache.entries()) {
-      if (this.isExpired(entry)) {
+      if (now - entry.timestamp > entry.ttl) {
         this.cache.delete(key);
-        cleaned++;
+        this.stats.evictions++;
       }
     }
-
-    if (cleaned > 0) {
-      this.stats.size = this.cache.size;
-      logger.debug(`Cache cleanup: removed ${cleaned} expired entries`);
-    }
+    this.stats.size = this.cache.size;
   }
 
   /**
-   * Destroy cache and cleanup resources
+   * Destroy cache and cleanup
    */
   destroy(): void {
     if (this.cleanupTimer) {
-      clearInterval(this.cleanupTimer);
-      this.cleanupTimer = null;
+      if (typeof window !== 'undefined') {
+        clearInterval(this.cleanupTimer as any);
+      } else {
+        clearInterval(this.cleanupTimer);
+      }
     }
     this.clear();
   }
 }
 
 /**
- * Redis cache implementation
+ * Browser-safe cache implementation
+ * Uses only memory cache for browser environments
+ */
+export class BrowserSafeCache {
+  private memoryCache: MemoryCache;
+
+  constructor(config: Partial<CacheConfig> = {}) {
+    this.memoryCache = new MemoryCache(config);
+  }
+
+  async set<T>(key: string, value: T, ttl?: number): Promise<void> {
+    this.memoryCache.set(key, value, ttl);
+  }
+
+  async get<T>(key: string): Promise<T | null> {
+    return this.memoryCache.get<T>(key);
+  }
+
+  async delete(key: string): Promise<boolean> {
+    return this.memoryCache.delete(key);
+  }
+
+  async clear(): Promise<void> {
+    this.memoryCache.clear();
+  }
+
+  getStats(): CacheStats {
+    return this.memoryCache.getStats();
+  }
+
+  async destroy(): Promise<void> {
+    this.memoryCache.destroy();
+  }
+}
+
+/**
+ * Server-side Redis cache (only available in Node.js)
  */
 export class RedisCache {
   private redis: any;
@@ -282,154 +320,110 @@ export class RedisCache {
       hitRate: 0,
     };
 
-    if (config.redisUrl) {
+    // Only initialize Redis in server environment
+    if (typeof window === 'undefined' && config.redisUrl) {
       this.connect();
     }
   }
 
-  /**
-   * Connect to Redis
-   */
   private async connect(): Promise<void> {
     try {
-      // Dynamic import to avoid requiring redis in non-Redis environments
+      // Dynamic import to avoid browser issues
       const { createClient } = await import('redis');
-
       this.redis = createClient({
         url: this.config.redisUrl,
         ...this.config.redisOptions,
       });
 
-      this.redis.on('error', (err: Error) => {
-        logger.error('Redis connection error', { error: err.message });
-        this.isConnected = false;
-      });
-
-      this.redis.on('connect', () => {
-        logger.info('Redis connected successfully');
-        this.isConnected = true;
-      });
-
       await this.redis.connect();
+      this.isConnected = true;
+      logger.info('Redis cache connected');
     } catch (error) {
-      logger.error('Failed to connect to Redis', { error });
+      logger.error('Failed to connect to Redis:', error);
       this.isConnected = false;
     }
   }
 
-  /**
-   * Set a value in Redis cache
-   */
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-    if (!this.isConnected) {
-      logger.warn('Redis not connected, skipping set operation');
-      return;
-    }
+    if (!this.isConnected) return;
 
     try {
-      const serialized = JSON.stringify(value);
-      const ttlSeconds = Math.floor((ttl || this.config.defaultTTL) / 1000);
-
-      await this.redis.setEx(key, ttlSeconds, serialized);
+      await this.redis.set(key, JSON.stringify(value), 'PX', ttl || this.config.defaultTTL);
       this.stats.sets++;
+      this.stats.size++;
     } catch (error) {
-      logger.error('Redis set operation failed', { key, error });
+      logger.error('Redis set error:', error);
     }
   }
 
-  /**
-   * Get a value from Redis cache
-   */
   async get<T>(key: string): Promise<T | null> {
-    if (!this.isConnected) {
-      logger.warn('Redis not connected, returning null');
-      this.stats.misses++;
-      this.updateHitRate();
-      return null;
-    }
+    if (!this.isConnected) return null;
 
     try {
       const value = await this.redis.get(key);
-
-      if (value === null) {
+      if (value) {
+        this.stats.hits++;
+        this.updateHitRate();
+        return JSON.parse(value);
+      } else {
         this.stats.misses++;
         this.updateHitRate();
         return null;
       }
-
-      this.stats.hits++;
-      this.updateHitRate();
-      return JSON.parse(value);
     } catch (error) {
-      logger.error('Redis get operation failed', { key, error });
+      logger.error('Redis get error:', error);
       this.stats.misses++;
       this.updateHitRate();
       return null;
     }
   }
 
-  /**
-   * Delete a key from Redis cache
-   */
   async delete(key: string): Promise<boolean> {
-    if (!this.isConnected) {
-      return false;
-    }
+    if (!this.isConnected) return false;
 
     try {
       const result = await this.redis.del(key);
-      this.stats.deletes++;
+      if (result > 0) {
+        this.stats.deletes++;
+        this.stats.size--;
+      }
       return result > 0;
     } catch (error) {
-      logger.error('Redis delete operation failed', { key, error });
+      logger.error('Redis delete error:', error);
       return false;
     }
   }
 
-  /**
-   * Clear all keys (use with caution)
-   */
   async clear(): Promise<void> {
-    if (!this.isConnected) {
-      return;
-    }
+    if (!this.isConnected) return;
 
     try {
-      await this.redis.flushDb();
-      logger.info('Redis cache cleared');
+      await this.redis.flushdb();
+      this.stats.size = 0;
     } catch (error) {
-      logger.error('Redis clear operation failed', { error });
+      logger.error('Redis clear error:', error);
     }
   }
 
-  /**
-   * Get cache statistics
-   */
   getStats(): CacheStats {
     return { ...this.stats };
   }
 
-  /**
-   * Update hit rate
-   */
   private updateHitRate(): void {
     const total = this.stats.hits + this.stats.misses;
     this.stats.hitRate = total > 0 ? this.stats.hits / total : 0;
   }
 
-  /**
-   * Disconnect from Redis
-   */
   async disconnect(): Promise<void> {
-    if (this.redis) {
-      await this.redis.quit();
+    if (this.isConnected && this.redis) {
+      await this.redis.disconnect();
       this.isConnected = false;
     }
   }
 }
 
 /**
- * Multi-level cache implementation
+ * Multi-level cache (Memory + Redis)
  */
 export class MultiLevelCache {
   private l1Cache: MemoryCache;
@@ -438,20 +432,14 @@ export class MultiLevelCache {
 
   constructor(config: CacheConfig) {
     this.config = config;
-    this.l1Cache = new MemoryCache({
-      defaultTTL: Math.min(config.defaultTTL, 60 * 1000), // L1 cache shorter TTL
-      maxSize: Math.min(config.maxSize, 100), // L1 cache smaller size
-      ...config,
-    });
+    this.l1Cache = new MemoryCache(config);
 
-    if (config.redisUrl) {
+    // Only create Redis cache in server environment
+    if (typeof window === 'undefined' && config.redisUrl) {
       this.l2Cache = new RedisCache(config);
     }
   }
 
-  /**
-   * Set value in both cache levels
-   */
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
     // Set in L1 cache
     this.l1Cache.set(key, value, ttl);
@@ -462,9 +450,6 @@ export class MultiLevelCache {
     }
   }
 
-  /**
-   * Get value from cache (L1 first, then L2)
-   */
   async get<T>(key: string): Promise<T | null> {
     // Try L1 cache first
     const l1Value = this.l1Cache.get<T>(key);
@@ -476,7 +461,7 @@ export class MultiLevelCache {
     if (this.l2Cache) {
       const l2Value = await this.l2Cache.get<T>(key);
       if (l2Value !== null) {
-        // Populate L1 cache with L2 value
+        // Populate L1 cache
         this.l1Cache.set(key, l2Value);
         return l2Value;
       }
@@ -485,18 +470,12 @@ export class MultiLevelCache {
     return null;
   }
 
-  /**
-   * Delete from both cache levels
-   */
   async delete(key: string): Promise<boolean> {
     const l1Deleted = this.l1Cache.delete(key);
     const l2Deleted = this.l2Cache ? await this.l2Cache.delete(key) : false;
     return l1Deleted || l2Deleted;
   }
 
-  /**
-   * Clear both cache levels
-   */
   async clear(): Promise<void> {
     this.l1Cache.clear();
     if (this.l2Cache) {
@@ -504,9 +483,6 @@ export class MultiLevelCache {
     }
   }
 
-  /**
-   * Get combined statistics
-   */
   getStats(): { l1: CacheStats; l2: CacheStats | null } {
     return {
       l1: this.l1Cache.getStats(),
@@ -514,9 +490,6 @@ export class MultiLevelCache {
     };
   }
 
-  /**
-   * Destroy cache and cleanup resources
-   */
   async destroy(): Promise<void> {
     this.l1Cache.destroy();
     if (this.l2Cache) {
@@ -534,51 +507,34 @@ export function Cached(ttl?: number, keyGenerator?: CacheKeyGenerator) {
     const cache = new MemoryCache();
 
     descriptor.value = async function (...args: any[]) {
-      const key = keyGenerator
-        ? keyGenerator(...args)
-        : `${target.constructor.name}:${propertyName}:${JSON.stringify(args)}`;
+      const key = keyGenerator ? keyGenerator(...args) : `${propertyName}:${JSON.stringify(args)}`;
 
-      // Try to get from cache
-      const cached = cache.get(key);
-      if (cached !== null) {
-        return cached;
+      let result = cache.get(key);
+      if (result === null) {
+        result = await method.apply(this, args);
+        cache.set(key, result, ttl);
       }
 
-      // Execute method and cache result
-      const result = await method.apply(this, args);
-      cache.set(key, result, ttl);
       return result;
     };
   };
 }
 
 /**
- * Global cache instances
- */
-export const memoryCache = new MemoryCache();
-export const multiLevelCache = new MultiLevelCache({
-  defaultTTL: 5 * 60 * 1000,
-  maxSize: 1000,
-  cleanupInterval: 60 * 1000,
-  enableStats: true,
-  redisUrl: process.env.REDIS_URL,
-});
-
-/**
  * Cache utilities
  */
 export class CacheUtils {
   /**
-   * Generate cache key from function and arguments
+   * Generate cache key
    */
   static generateKey(prefix: string, ...args: any[]): string {
-    return `${prefix}:${args
-      .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : String(arg)))
-      .join(':')}`;
+    return `${prefix}:${args.map(arg =>
+      typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+    ).join(':')}`;
   }
 
   /**
-   * Cache function result
+   * Cached function wrapper
    */
   static async cached<T>(
     cache: MemoryCache | RedisCache | MultiLevelCache,
@@ -586,44 +542,50 @@ export class CacheUtils {
     fn: () => Promise<T>,
     ttl?: number,
   ): Promise<T> {
-    const cached = await cache.get<T>(key);
-    if (cached !== null) {
-      return cached;
+    let result = await cache.get<T>(key);
+    if (result === null) {
+      result = await fn();
+      await cache.set(key, result, ttl);
     }
-
-    const result = await fn();
-    await cache.set(key, result, ttl);
     return result;
   }
 
   /**
-   * Batch cache operations
+   * Batch get from cache
    */
   static async batchGet<T>(
     cache: MemoryCache | RedisCache | MultiLevelCache,
     keys: string[],
   ): Promise<Map<string, T>> {
-    const results = new Map<string, T>();
+    const result = new Map<string, T>();
 
     for (const key of keys) {
       const value = await cache.get<T>(key);
       if (value !== null) {
-        results.set(key, value);
+        result.set(key, value);
       }
     }
 
-    return results;
+    return result;
   }
 
   /**
-   * Batch set operations
+   * Batch set to cache
    */
   static async batchSet<T>(
     cache: MemoryCache | RedisCache | MultiLevelCache,
     entries: Array<{ key: string; value: T; ttl?: number }>,
   ): Promise<void> {
-    for (const { key, value, ttl } of entries) {
-      await cache.set(key, value, ttl);
+    for (const entry of entries) {
+      await cache.set(entry.key, entry.value, entry.ttl);
     }
   }
 }
+
+// Export default cache instance for browser environments
+export const defaultCache = typeof window !== 'undefined'
+  ? new BrowserSafeCache()
+  : new MemoryCache();
+
+// Export cache types
+export type { CacheEntry, CacheConfig, CacheStats, CacheKeyGenerator };

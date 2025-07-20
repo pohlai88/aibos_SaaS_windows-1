@@ -5,14 +5,16 @@
  * and actual TypeScript types, along with type guards and utility functions.
  */
 
-import type { MetadataFieldType,
+import {
+  MetadataFieldType,
   MetadataValidationRule,
   MetadataOperation,
   MetadataStatus,
   MetadataSource,
   MetadataCategory,
- } from './metadata.enums';
-import type { UUID,
+} from './metadata.enums';
+import type {
+  UUID,
   Email,
   URL,
   PhoneNumber,
@@ -42,7 +44,7 @@ import type { UUID,
   HttpMethod,
   HttpStatus,
   ContentType,
- } from '../primitives';
+} from '../primitives';
 
 // ============================================================================
 // TYPE MAPPING DEFINITIONS

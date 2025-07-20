@@ -1,5 +1,5 @@
 import { getPermissionMeta } from '../roles/permissions';
-import type { Permission } from '../roles/permissions';
+import { Permission } from '../roles/permissions';
 import type { PermissionCheck } from '../roles/permissions';
 import type { UserRole } from './user.enums';
 import { rolePermissionsMap, getRoleMeta } from '../roles/rolePermissionsMap';

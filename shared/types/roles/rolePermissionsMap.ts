@@ -1,6 +1,6 @@
-import type { UserRole } from './roles.enums';
+import { UserRole } from './roles.enums';
 import { PermissionRegistry } from './permissions';
-import type { Permission } from './permissions';
+import { Permission } from './permissions';
 
 export const rolePermissionsMap: Record<UserRole, Permission[]> = {
   [UserRole.SUPER_ADMIN]: Object.values(Permission),

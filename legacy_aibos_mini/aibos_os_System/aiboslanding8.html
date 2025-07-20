@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-BOS | Minimalist Intro</title>
+    <meta name="description" content="AI-BOS - don't talk to me, until you need it.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; }
+        body {
+            font-family: 'SF Pro Text', 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at top center, #1d1d1f 0%, #121212 100%);
+            color: #f5f5f7;
+            min-height: 100vh;
+            min-width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 70%);
+            z-index: 1;
+        }
+        .container {
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+        }
+        .text {
+            font-size: clamp(40px, 6vw, 64px);
+            font-weight: 600;
+            line-height: 1.1;
+            letter-spacing: -0.022em;
+            margin: 0 0 12px 0;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            transition: opacity 0.7s, transform 0.7s;
+        }
+        .nowrap {
+            white-space: nowrap;
+            display: inline-block;
+        }
+        .final-ai-bos {
+            font-size: clamp(48px, 8vw, 80px);
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+            opacity: 0;
+            transform: scale(0.97) translateY(20px);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+        .final-ai-bos.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+        .tagline {
+            font-size: 22px;
+            font-weight: 400;
+            color: #b0b0b5;
+            margin-top: 18px;
+            opacity: 0;
+            transition: opacity 1s 0.3s;
+            letter-spacing: 0.01em;
+        }
+        .tagline.show { opacity: 1; }
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: currentColor;
+            animation: blink 1.2s infinite;
+            margin-left: 3px;
+            border-radius: 1px;
+        }
+        @keyframes blink {
+            0%, 60% { opacity: 1; }
+            61%, 100% { opacity: 0; }
+        }
+        @media (max-width: 600px) {
+            .container { min-height: 80vh; }
+            .text, .final-ai-bos { font-size: clamp(28px, 8vw, 40px); }
+            .tagline { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text" id="mainText"></div>
+        <div class="final-ai-bos" id="finalAI_BOS">AI-BOS</div>
+        <div class="tagline" id="tagline">don't talk to me, until you need it</div>
+    </div>
+    <script>
+        class MinimalAppleExperience {
+            constructor() {
+                this.lines = [
+                    "Life is messy.",
+                    "<span class='nowrap'>Work doesn't have to be.</span>"
+                ];
+                this.currentLine = 0;
+                this.currentChar = 0;
+                this.content = '';
+                this.speed = 80;
+                this.pause = 1100;
+                this.mainText = document.getElementById('mainText');
+                this.finalAI_BOS = document.getElementById('finalAI_BOS');
+                this.tagline = document.getElementById('tagline');
+                this.finalAI_BOS.addEventListener('click', () => this.enter());
+                document.addEventListener('click', () => this.skipToEnd());
+                this.start();
+            }
+            start() { this.type(); }
+            skipToEnd() {
+                const highestId = window.setTimeout(() => {
+                    for (let i = highestId; i >= 0; i--) { window.clearTimeout(i); }
+                }, 0);
+                this.mainText.innerHTML = '';
+                this.mainText.style.opacity = '0';
+                this.finalAI_BOS.classList.add('show');
+                setTimeout(() => { this.tagline.classList.add('show'); }, 400);
+            }
+            type() {
+                if (this.currentLine < this.lines.length) {
+                    const line = this.lines[this.currentLine];
+                    if (line.includes('<span')) {
+                        this.content += line + '<br>';
+                        this.mainText.innerHTML = this.content + '<span class="cursor"></span>';
+                        this.currentChar = 0;
+                        this.currentLine++;
+                        setTimeout(() => this.type(), this.pause);
+                    } else if (this.currentChar < line.length) {
+                        this.content += line.charAt(this.currentChar);
+                        this.mainText.innerHTML = this.content + '<span class="cursor"></span>';
+                        this.currentChar++;
+                        setTimeout(() => this.type(), this.speed);
+                    } else {
+                        this.content += '<br>';
+                        this.currentChar = 0;
+                        this.currentLine++;
+                        setTimeout(() => this.type(), this.pause);
+                    }
+                } else {
+                    setTimeout(() => {
+                        this.mainText.style.opacity = '0';
+                        setTimeout(() => {
+                            this.mainText.style.display = 'none';
+                            this.finalAI_BOS.classList.add('show');
+                            setTimeout(() => { this.tagline.classList.add('show'); }, 400);
+                        }, 600);
+                    }, 900);
+                }
+            }
+            enter() { /* No action, just a placeholder for click */ }
+        }
+        document.addEventListener('DOMContentLoaded', () => { new MinimalAppleExperience(); });
+        document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+    </script>
+</body>
+</html>

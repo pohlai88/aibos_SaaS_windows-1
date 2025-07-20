@@ -1,5 +1,5 @@
 import { hasPermission, canPerformAction } from './permissionUtils';
-import { Permission } from '../types/roles/permissions';
+import type { Permission } from '../types/roles/permissions';
 import type { PermissionCheck } from '../types/roles/permissions';
 import { UserRole } from '../types/roles/roles.enums';
 import { logger } from '../lib/logger';

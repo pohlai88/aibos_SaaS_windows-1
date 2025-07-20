@@ -1,4 +1,5 @@
-import type { chromium, FullConfig  } from '@playwright/test';
+import { chromium } from '@playwright/test';
+import type { FullConfig } from '@playwright/test';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 

@@ -5,8 +5,8 @@
  * Real-time code assistance, debugging, optimization, and learning.
  */
 
-import { AIEngine } from '../../ai/engine/AIEngine';
-import { AICodeGenerator } from '../../ai/codegen/AICodeGenerator';
+import { AIEngine } from '../../ai/src/engine/AIEngine';
+import { AICodeGenerator } from '../../ai/src/codegen/AICodeGenerator';
 import { z } from 'zod';
 
 // Development Context

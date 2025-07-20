@@ -5,7 +5,8 @@
  * CRDT-based synchronization, presence awareness, and AI-powered assistance.
  */
 
-import { io, Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { IndexeddbPersistence } from 'y-indexeddb';
@@ -433,7 +434,7 @@ export class CollaborationEngine {
       const context = {
         sessionType: session.type,
         participants: this.getParticipants(sessionId),
-        content: content,
+        content,
       };
 
       const suggestions = await this.aiAssistant.suggestImprovements(content, context);

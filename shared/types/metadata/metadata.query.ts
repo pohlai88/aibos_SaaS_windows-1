@@ -1,18 +1,20 @@
 import { z } from 'zod';
-import type { MetadataFieldType,
+import type {
+  MetadataFieldType,
   MetadataFieldTypes,
   MetadataOperationType,
   MetadataOperationTypes,
   MetadataValidationRule,
   MetadataValidationRules,
- } from './metadata.enums';
-import type { MetadataField,
+} from './metadata.enums';
+import type {
+  MetadataField,
   MetadataEntity,
   MetadataValue,
   MetadataFieldConfig,
   MetadataConstraint,
   MetadataComputedField,
- } from './metadata.types';
+} from './metadata.types';
 
 // ============================================================================
 // QUERY OPERATORS

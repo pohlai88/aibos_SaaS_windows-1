@@ -1,0 +1,73 @@
+{
+  "id": "cid-dashboard",
+  "name": "CID Dashboard",
+  "version": "1.0.0",
+  "description": "Comprehensive Customer Intelligence Dashboard with analytics, module management, and AI Co-Pilot integration",
+  "author": "AI-BOS Team",
+  "category": "reporting",
+  "tags": ["dashboard", "analytics", "admin", "cid", "intelligence", "reporting"],
+  "dependencies": [
+    "@aibos/auth-sdk",
+    "@aibos/core-types",
+    "@aibos/ui-components",
+    "@aibos/database"
+  ],
+  "requirements": {
+    "nodeVersion": ">=20.0.0",
+    "typescriptVersion": ">=5.3.2",
+    "aiBosVersion": ">=1.0.0",
+    "dependencies": {
+      "react": ">=18.2.0",
+      "next": ">=14.0.3"
+    },
+    "peerDependencies": {
+      "@aibos/auth-sdk": "workspace:*",
+      "@aibos/core-types": "workspace:*"
+    }
+  },
+  "permissions": {
+    "fileSystem": ["read", "write"],
+    "network": ["http", "https"],
+    "database": ["read", "write"],
+    "api": ["analytics", "users", "modules"]
+  },
+  "entryPoints": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "import": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+      },
+      "./components": {
+        "import": "./dist/components/index.js",
+        "types": "./dist/components/index.d.ts"
+      }
+    }
+  },
+  "metadata": {
+    "screenshots": [
+      "./assets/dashboard-overview.png",
+      "./assets/module-store.png",
+      "./assets/analytics-view.png"
+    ],
+    "documentation": "./README.md",
+    "changelog": "./CHANGELOG.md",
+    "license": "MIT",
+    "homepage": "https://ai-bos.com/modules/cid-dashboard",
+    "repository": "https://github.com/ai-bos/cid-dashboard",
+    "features": [
+      "Real-time analytics dashboard",
+      "Module ecosystem management",
+      "AI Co-Pilot integration",
+      "System governance tools",
+      "Revenue metrics tracking",
+      "User management interface"
+    ]
+  },
+  "createdAt": "2024-12-19T00:00:00.000Z",
+  "updatedAt": "2024-12-19T00:00:00.000Z",
+  "downloads": 0,
+  "rating": 5.0,
+  "status": "published"
+}

@@ -1,10 +1,7 @@
 import { z } from 'zod';
 import type { UUID, ISODate, UserID, TenantID } from '../primitives';
-import type { MetadataErrorType,
-  MetadataErrorTypes,
-  MetadataErrorSeverity,
-  MetadataErrorSeverities,
- } from './metadata.enums';
+import { MetadataErrorTypes, MetadataErrorSeverities } from './metadata.enums';
+import type { MetadataErrorType, MetadataErrorSeverity } from './metadata.enums';
 
 // ============================================================================
 // ERROR ENUMS
@@ -878,11 +875,4 @@ export type {
   MetadataMigrationError,
 };
 
-export {
-  MetadataErrorCategory,
-  MetadataErrorRecoveryStrategy,
-  MetadataErrorContext,
-  MetadataErrorSchema,
-  MetadataErrorReportSchema,
-  MetadataErrorUtils,
-};
+// All exports are already defined above as individual exports

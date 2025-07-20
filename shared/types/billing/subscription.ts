@@ -1,8 +1,9 @@
 import { SubscriptionPlan, BillingInterval } from './billing.enums';
-import type { Currency } from './currency.enums';
-import { CurrencyUtils, Money } from './currency.enums';
+import type { Money } from './currency.enums';
+import { Currency } from './currency.enums';
+import { CurrencyUtils } from './currency.enums';
 import type { UUID, ISODate } from '../primitives';
-import type { ApiResponse, PaginatedResponse  } from '../api';
+import type { ApiResponse, PaginatedResponse } from '../api';
 
 /**
  * Subscription status lifecycle

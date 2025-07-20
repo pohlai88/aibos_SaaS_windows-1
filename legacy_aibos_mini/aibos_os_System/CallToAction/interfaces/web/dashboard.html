@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-BOS OS Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            500: '#8b5cf6'
+                        },
+                        danger: {
+                            500: '#ef4444'
+                        },
+                        warning: {
+                            500: '#f59e0b'
+                        },
+                        success: {
+                            500: '#10b981'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .sidebar-item:hover .sidebar-icon {
+            transform: translateX(3px);
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .module-badge {
+            font-size: 0.65rem;
+        }
+        .code-block {
+            font-family: 'Courier New', monospace;
+            background-color: #1e293b;
+            color: #f8fafc;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="hidden md:flex md:flex-shrink-0">
+            <div class="flex flex-col w-64 border-r border-gray-200 bg-white">
+                <div class="flex items-center h-16 px-4 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold">AI</div>
+                        <span class="ml-2 text-lg font-semibold text-gray-800">AI-BOS OS</span>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-grow overflow-y-auto">
+                    <nav class="flex-1 px-2 py-4 space-y-1">
+                        <!-- Overview -->
+                        <div>
+                            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-2">Overview</div>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-white bg-primary-600 group">
+                                <i class="fas fa-tachometer-alt mr-3 text-primary-200"></i>
+                                Dashboard Home
+                            </a>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-chart-line mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                System Analytics
+                            </a>
+                        </div>
+
+                        <!-- Module Ecosystem -->
+                        <div>
+                            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-2">Module Ecosystem</div>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-store mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Module Store
+                            </a>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-cube mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Installed Modules
+                            </a>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-code-branch mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Module Dependencies
+                            </a>
+                        </div>
+
+                        <!-- AI Co-Pilot -->
+                        <div>
+                            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-2">AI Co-Pilot</div>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-robot mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Code Analysis
+                            </a>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-shield-alt mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Compliance Checks
+                            </a>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-lightbulb mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Suggestions
+                            </a>
+                        </div>
+
+                        <!-- System Governance -->
+                        <div>
+                            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-2">System Governance</div>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-server mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Infrastructure
+                            </a>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-shield-virus mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Security Center
+                            </a>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-tasks mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                API Gateway
+                            </a>
+                        </div>
+
+                        <!-- Developer Tools -->
+                        <div>
+                            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-2">Developer Tools</div>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-terminal mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                CLI Interface
+                            </a>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-code mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Module SDK
+                            </a>
+                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 group">
+                                <i class="fas fa-book mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                                Documentation
+                            </a>
+                        </div>
+                    </nav>
+                </div>
+                <div class="p-4 border-t border-gray-200">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-700">Admin User</p>
+                            <p class="text-xs font-medium text-gray-500">Owner & Developer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200 bg-white">
+                <div class="flex items-center">
+                    <button class="md:hidden text-gray-500 focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="ml-4 relative">
+                        <div class="relative">
+                            <input type="text" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Search modules, analytics...">
+                            <div class="absolute left-3 top-2.5 text-gray-400">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="relative text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <i class="fas fa-bell"></i>
+                        <span class="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-danger-500 text-white text-xs flex items-center justify-center">3</span>
+                    </button>
+                    <button class="relative text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <i class="fas fa-envelope"></i>
+                        <span class="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary-500 text-white text-xs flex items-center justify-center">5</span>
+                    </button>
+                    <button class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <div class="relative">
+                        <button class="flex items-center text-gray-700 focus:outline-none">
+                            <span class="mr-2 hidden md:inline">Admin User</span>
+                            <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 overflow-auto p-6 bg-gray-50">
+                <!-- Dashboard Header -->
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">AI-BOS OS Dashboard</h1>
+                        <p class="text-gray-600">Welcome back! Here's what's happening with your SaaS ecosystem today.</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="px-3 py-1 text-sm bg-primary-100 text-primary-700 rounded-lg">Refresh Data</button>
+                        <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg">Export Report</button>
+                    </div>
+                </div>
+
+                <!-- System Status Bar -->
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-primary-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">System Status</p>
+                                <p class="mt-1 text-xl font-semibold text-gray-900">Operational</p>
+                            </div>
+                            <div class="p-2 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-secondary-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Active Modules</p>
+                                <p class="mt-1 text-xl font-semibold text-gray-900">24</p>
+                            </div>
+                            <div class="p-2 rounded-full bg-purple-100 text-purple-600">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-warning-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Pending Updates</p>
+                                <p class="mt-1 text-xl font-semibold text-gray-900">3</p>
+                            </div>
+                            <div class="p-2 rounded-full bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-danger-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Critical Issues</p>
+                                <p class="mt-1 text-xl font-semibold text-gray-900">1</p>
+                            </div>
+                            <div class="p-2 rounded-full bg-red-100 text-red-600">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs Navigation -->
+                <div class="mb-6 border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-8">
+                        <button class="tab-button border-primary-500 text-primary-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab="overview">
+                            Overview
+                        </button>
+                        <button class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab="modules">
+                            Module Ecosystem
+                        </button>
+                        <button class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab="ai-copilot">
+                            AI Co-Pilot
+                        </button>
+                        <button class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab="governance">
+                            System Governance
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Contents -->
+                <div id="tab-contents">
+                    <!-- Overview Tab -->
+                    <div id="overview" class="tab-content active">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                            <!-- Revenue Metrics -->
+                            <div class="bg-white rounded-lg shadow-sm p-6 lg:col-span-2">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="text-lg font-semibold text-gray-800">Revenue Metrics</h2>
+                                    <div class="flex space-x-2">
+                                        <button class="px-3 py-1 text-xs bg-primary-100 text-primary-700 rounded-full">Monthly</button>
+                                        <button class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">Quarterly</button>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <p class="text-sm font-medium text-gray-500">MRR</p>
+                                        <p class="mt-1 text-xl font-semibold text-gray-900">$24,780</p>
+                                        <p class="mt-1 text-sm text-green-600 flex items-center">
+                                            <span>12.5% increase</span>
+                                            <i class="fas fa-arrow-up ml-1"></i>
+                                        </p>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <p class="text-sm font-medium text-gray-500">ARR</p>
+                                        <p class="mt-1 text-xl font-semibold text-gray-900">$297,360</p>
+                                        <p class="mt-1 text-sm text-green-600 flex items-center">
+                                            <span>10.2% increase</span>
+                                            <i class="fas fa-arrow-up ml-1"></i>
+                                        </p>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <p class="text-sm font-medium text-gray-500">Churn Rate</p>
+                                        <p class="mt-1 text-xl font-semibold text-gray-900">3.2%</p>
+                                        <p class="mt-1 text-sm text-red-600 flex items-center">
+                                            <span>0.8% increase</span>
+                                            <i class="fas fa-arrow-up ml-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="h-64">
+                                    <!-- Chart placeholder - would be replaced with actual chart library -->
+                                    <div class="w-full h-full bg-gray-100 rounded flex items-center justify-center text-gray-400">
+                                        <i class="fas fa-chart-line text-4xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="bg-white rounded-lg shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+                                <div class="space-y-3">
+                                    <button class="w-full flex items-center justify-between px-4 py-3 bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100 transition-colors">
+                                        <span>Install New Module</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                    <button class="w-full flex items-center justify-between px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                                        <span>Run System Health Check</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                    <button class="w-full flex items-center justify-between px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
+                                        <span>Review AI Co-Pilot Suggestions</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                    <button class="w-full flex items-center justify-between px-4 py-3 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 transition-colors">
+                                        <span>Check Pending Updates</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                    <button class="w-full flex items-center justify-between px-4 py-3 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors">
+                                        <span>View Critical Issues</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                            <!-- Recent Activity -->
+                            <div class="bg-white rounded-lg shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h2>
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                            <i class="fas fa-user-plus"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">42 new signups today</p>
+                                            <p class="text-sm text-gray-500">5 minutes ago</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                            <i class="fas fa-code"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">New version v2.3.1 deployed</p>
+                                            <p class="text-sm text-gray-500">1 hour ago</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">API response time spike detected</p>
+                                            <p class="text-sm text-gray-500">3 hours ago</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                                            <i class="fas fa-credit-card"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">5 enterprise plan upgrades</p>
+                                            <p class="text-sm text-gray-500">5 hours ago</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                            <i class="fas fa-bug"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">Critical bug reported in Reporting Module</p>
+                                            <p class="text-sm text-gray-500">8 hours ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- System Health -->
+                            <div class="bg-white rounded-lg shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-800 mb-4">System Health</h2>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="text-sm font-medium text-gray-700">API Gateway</p>
+                                            <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Operational</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-green-600 h-2 rounded-full" style="width: 95%"></div>
+                                        </div>
+                                        <p class="mt-1 text-xs text-gray-500">Avg response time: 128ms</p>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="text-sm font-medium text-gray-700">Database</p>
+                                            <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Operational</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-green-600 h-2 rounded-full" style="width: 88%"></div>
+                                        </div>
+                                        <p class="mt-1 text-xs text-gray-500">Query performance: 92% optimal</p>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="text-sm font-medium text-gray-700">Module Registry</p>
+                                            <span class="text-xs font-medium text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">Degraded</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 65%"></div>
+                                        </div>
+                                        <p class="mt-1 text-xs text-gray-500">Higher than normal latency</p>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="text-sm font-medium text-gray-700">AI Co-Pilot</p>
+                                            <span class="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Critical</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-red-600 h-2 rounded-full" style="width: 42%"></div>
+                                        </div>
+                                        <p class="mt-1 text-xs text-gray-500">Timeout errors detected</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module Ecosystem Tab -->
+                    <div id="modules" class="tab-content">
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-bold text-gray-800">Module Ecosystem</h2>
+                                <div class="flex space-x-3">
+                                    <div class="relative">
+                                        <input type="text" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Search modules...">
+                                        <div class="absolute left-3 top-2.5 text-gray-400">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                    </div>
+                                    <button class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                                        <i class="fas fa-plus mr-2"></i> Add Module
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex mb-4 border-b border-gray-200">
+                                <button class="tab-button border-primary-500 text-primary-600 whitespace-nowrap py-2 px-4 border-b-2 font-medium text-sm" data-subtab="store">
+                                    Module Store
+                                </button>
+                                <button class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-4 border-b-2 font-medium text-sm" data-subtab="installed">
+                                    Installed Modules
+                                </button>
+                                <button class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-4 border-b-2 font-medium text-sm" data-subtab="dependencies">
+                                    Dependencies
+                                </button>
+                            </div>
+
+                            <!-- Module Store Subtab -->
+                            <div id="store-subtab" class="subtab-content active">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="flex space-x-2">
+                                        <button class="px-3 py-1 text-xs bg-primary-100 text-primary-700 rounded-full">All Categories</button>
+                                        <button class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">Accounting</button>
+                                        <button class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">CRM</button>
+                                        <button class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">HR</button>
+                                        <button class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">Analytics</button>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="p-1 text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-th-large"></i>
+                                        </button>
+                                        <button class="p-1 text-gray-500 hover:text-gray-700">
+                                            <i class="fas fa-list"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <!-- Module Card 1 -->
+                                    <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
+                                        <div class="p-4">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h3 class="font-semibold text-gray-800">Advanced Reporting</h3>
+                                                    <p class="text-sm text-gray-500">by AI-BOS Team</p>
+                                                </div>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fas fa-star mr-1 text-yellow-500"></i> 4.8
+                                                </span>
+                                            </div>
+                                            <p class="mt-2 text-sm text-gray-600">Comprehensive analytics and custom reporting tools for your business data.</p>
+                                            <div class="mt-3 flex flex-wrap gap-1">
+                                                <span class="module-badge inline-flex items-center px-2 py-0.5 rounded bg-blue-100 text-blue-800">Analytics</span>
+                                                <span class="module-badge inline-flex items-center px-2 py-0.5 rounded bg-purple-100 text-purple-800">Dashboard</span>
+                                                <span class="module-badge inline-flex items-center px-2 py-0.5 rounded bg-green-100 text-green-800">Business Intelligence</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray-50 px-4 py-3 flex justify-between items-center">
+                                            <div>
+                                                <span class="text-xs text-gray-500">v2.3.1</span>
+                                                <span class="mx-2 text-gray-300">•</span>
+                                                <span class="text-xs text-gray-500">1.2K installs</span>
+                                            </div>
+                                            <button class="px-3 py-1 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 transition-colors">
+                                                Install
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Module Card 2 -->
+                                    <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
+                                        <div class="p-4">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h3 class="font-semibold text-gray-800">Invoice Automation</h3>
+                                                    <p class="text-sm text-gray-500">by FinTech Solutions</p>
+                                                </div>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fas fa-star mr-1 text-yellow-500"></i> 4.6
+                                                </span>
+                                            </div>
+                                            <p class="mt-2 text-sm text-gray-600">AI-powered invoice processing with OCR and approval workflows.</p>
+                                            <div class="mt-3 flex flex-wrap gap-1">
+                                                <span class="module-badge inline-flex items-center px-2 py-0.5 rounded bg-blue-100 text-blue-800">Accounting</span>
+                                                <span class="module-badge inline-flex items-center px-2 py-0.5 rounded bg-purple-100 text-purple-800">AI</span>
+                                                <span class="module-badge inline-flex items-center px-2 py-0.5 rounded bg-green-100 text-green-800">Automation</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray-50 px-4 py-3 flex justify-between items-center">
+                                            <div>
+                                                <span class="text-xs text-gray-500">v1.5.2</span>
+                                                <span class="mx-2 text-gray-300">•</span>
+                                                <span class="text-xs text-gray-500">856 installs</span>
+                                            </div>
+                                            <button class="px-3 py-1 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 transition-colors">
+                                                Install
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Module Card 3 -->
+                                    <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
+                                        <div class="p-4">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h3 class="font-semibold text-gray-800">Customer Portal</h3>
+                                                    <p class="text-sm text-gray-500">by UX Labs</p>
+                                                </div>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fas fa-star mr-1 text-yellow-500"></i> 4.9
+                                                </span>
+                                            </div>
+                                            <p class="mt-2 text-sm text-gray-600">Self-service portal for customers to manage their accounts and services.</p>
+                                            <div class="mt-3 flex flex-wrap gap-1">
+                                                <span class="module-badge inline-flex items-center px-2 py-0.5 rounded bg-blue-100 text-blue-800">CRM</span>
+                                                <span class="module-badge inline-flex items-center px-2 py-0.5 rounded bg-purple-100 text-purple-800">Customer Experience</span>
+                                                <span class="module-badge inline-flex items-center px-2 py-0.5 rounded bg-green-100 text-green-800">Self-Service</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-3 flex justify-between items-center">
+                                    <div>
+                                        <span class="text-xs text-gray-500">v3.0.0</span>
+                                        <span class="mx-2 text-gray-300">•</span>
+                                        <span class="text-xs text-gray-500">2.4K installs</span>
+                                    </div>
+                                    <button class="px-3 py-1 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 transition-colors">
+                                        Install
+                                    </button>
+                                </div>
+                            </div>
+                        </div> <!-- end of grid -->
+                    </div> <!-- end of store-subtab -->
+                </div> <!-- end of #modules tab content -->
+
+                <!-- Additional tab contents (empty placeholders) -->
+                <div id="ai-copilot" class="tab-content">
+                    <p class="text-gray-600">AI Co-Pilot tab content goes here.</p>
+                </div>
+
+                <div id="governance" class="tab-content">
+                    <p class="text-gray-600">System Governance tab content goes here.</p>
+                </div>
+
+            </div> <!-- end of #tab-contents -->
+        </div> <!-- end of main content area -->
+    </div> <!-- end of flex-1 -->
+</div> <!-- end of flex -->
+</body>
+</html>

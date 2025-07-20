@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import type { User, UserSchema  } from '../user/user';
-import type { Tenant, TenantSchema  } from '../tenant/tenant';
+import { UserSchema } from '../user/user';
+import type { User } from '../user/user';
+import { TenantSchema } from '../tenant/tenant';
+import type { Tenant } from '../tenant/tenant';
 
 /**
  * Represents an authenticated session in the system.

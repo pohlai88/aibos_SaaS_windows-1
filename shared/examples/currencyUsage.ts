@@ -1,9 +1,8 @@
+import type { Money, ExchangeRates } from '../types/billing/currency.enums';
 import {
   Currency,
   CurrencyUtils,
   CurrencyConversionService,
-  Money,
-  ExchangeRates,
 } from '../types/billing/currency.enums';
 
 /**

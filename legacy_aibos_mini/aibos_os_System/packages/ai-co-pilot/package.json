@@ -1,0 +1,35 @@
+{
+  "name": "@aibos/ai-co-pilot",
+  "version": "1.0.0",
+  "description": "AI-BOS Co-Pilot - Rule engine for enforcing coding standards and preventing forbidden patterns",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src --ext .ts,.tsx",
+    "type-check": "tsc --noEmit",
+    "validate": "npm run type-check && npm run lint",
+    "analyze": "node dist/cli.js"
+  },
+  "dependencies": {
+    "@aibos/core-types": "workspace:*",
+    "@aibos/module-registry": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.4",
+    "typescript": "^5.3.2",
+    "eslint": "^8.54.0"
+  },
+  "keywords": [
+    "ai-bos",
+    "ai-co-pilot",
+    "rule-engine",
+    "code-analysis",
+    "coding-standards",
+    "linting"
+  ],
+  "author": "AI-BOS Team",
+  "license": "MIT"
+} 

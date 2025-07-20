@@ -8,12 +8,16 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { EnterpriseDashboard } from '@/components/enterprise/EnterpriseDashboard';
 import { VisualAppBuilder } from '@/components/enterprise/VisualAppBuilder';
 import { DeveloperPortal } from '@/components/enterprise/DeveloperPortal';
+import { RevolutionaryDashboard } from '@/components/ai/RevolutionaryDashboard';
 
-type AppMode = 'shell' | 'dashboard' | 'builder' | 'portal';
+// Import the revolutionary design system
+import '@/styles/ai-design-system.css';
+
+type AppMode = 'shell' | 'dashboard' | 'revolutionary' | 'builder' | 'portal';
 
 export default function HomePage() {
   const { user, tenant, loading } = useAuth();
-  const [appMode, setAppMode] = useState<AppMode>('dashboard');
+  const [appMode, setAppMode] = useState<AppMode>('revolutionary'); // Default to revolutionary
 
   if (loading) {
     return (
@@ -53,6 +57,16 @@ export default function HomePage() {
             📊 Enterprise Dashboard
           </button>
           <button
+            onClick={() => setAppMode('revolutionary')}
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              appMode === 'revolutionary'
+                ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            🚀 Revolutionary Dashboard
+          </button>
+          <button
             onClick={() => setAppMode('builder')}
             className={`px-4 py-2 rounded-lg transition-colors ${
               appMode === 'builder'
@@ -78,6 +92,16 @@ export default function HomePage() {
       {/* Render different app modes based on user selection */}
       {(() => {
         switch (appMode) {
+          case 'revolutionary':
+            return (
+              <RevolutionaryDashboard
+                tenantId={tenant?.tenant_id}
+                userId={user.user_id}
+                enableAI={true}
+                enableRealtime={true}
+              />
+            );
+
           case 'dashboard':
             return (
               <EnterpriseDashboard

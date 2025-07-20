@@ -1,4 +1,4 @@
-import type { defineConfig, devices  } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: '../test/e2e',
@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: [
     ['html', { outputFolder: '../.reports/playwright' }],
     ['json', { outputFile: '../.reports/playwright/results.json' }],
-    ['junit', { outputFile: '../.reports/playwright/results.xml' }]
+    ['junit', { outputFile: '../.reports/playwright/results.xml' }],
   ],
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:3000',

@@ -1,13 +1,18 @@
-import type { Subscription,
-  SubscriptionStatus,
-  SubscriptionUtils,
+import type {
+  Subscription,
   SubscriptionInvoice,
   SubscriptionUsage,
   PlanChangeRequest,
   SubscriptionAnalytics,
+} from '../types/billing/subscription';
+import {
+  SubscriptionPlan,
+  BillingInterval,
+  Currency,
+  SubscriptionStatus,
+  SubscriptionUtils,
   SubscriptionEvent,
- } from '../types/billing/subscription';
-import { SubscriptionPlan, BillingInterval, Currency } from '../types/billing/subscription';
+} from '../types/billing/subscription';
 import { CurrencyUtils } from '../types/billing/currency.enums';
 
 /**

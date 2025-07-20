@@ -1,0 +1,666 @@
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { z } from 'zod';
+import { EventEmitter } from 'events';
+import { EnterpriseWorkflowAutomationService } from './workflow-automation-enterprise';
+import { CustomerService } from '../customer-service';
+import { MultientityService } from './multientity-service';
+
+// ===== INDUSTRY-SPECIFIC TYPES =====
+
+export enum IndustryVertical {
+  HYPERMARKET = 'hypermarket',
+  HORECA = 'horeca', // Hotels, Restaurants, Cafes
+  RETAIL = 'retail',
+  CONSIGNMENT = 'consignment',
+  MANUFACTURING = 'manufacturing',
+  DISTRIBUTION = 'distribution',
+  ECOMMERCE = 'ecommerce',
+  WHOLESALE = 'wholesale'
+}
+
+export enum CustomerSegment {
+  // B2B Segments
+  ENTERPRISE = 'enterprise',
+  SME = 'sme',
+  DISTRIBUTOR = 'distributor',
+  RESELLER = 'reseller',
+  FRANCHISE = 'franchise',
+  CHAIN_STORE = 'chain_store',
+  
+  // B2C Segments
+  PREMIUM = 'premium',
+  REGULAR = 'regular',
+  BUDGET = 'budget',
+  LOYALTY_MEMBER = 'loyalty_member'
+}
+
+export enum RelationshipType {
+  DIRECT_CUSTOMER = 'direct_customer',
+  CHANNEL_PARTNER = 'channel_partner',
+  STRATEGIC_ACCOUNT = 'strategic_account',
+  KEY_ACCOUNT = 'key_account',
+  CONSIGNMENT_PARTNER = 'consignment_partner',
+  FRANCHISE_OWNER = 'franchise_owner',
+  END_CONSUMER = 'end_consumer'
+}
+
+export interface HybridCustomer {
+  // Core Identity
+  id: string;
+  organization_id: string;
+  customer_code: string;
+  customer_name: string;
+  display_name: string;
+  
+  // Business Classification
+  customer_type: 'B2B' | 'B2C';
+  industry_vertical: IndustryVertical;
+  customer_segment: CustomerSegment;
+  relationship_type: RelationshipType;
+  business_size: 'micro' | 'small' | 'medium' | 'large' | 'enterprise';
+  
+  // Contact Information
+  primary_contact: ContactPerson;
+  additional_contacts: ContactPerson[];
+  billing_address: Address;
+  shipping_addresses: Address[];
+  
+  // Business Details
+  legal_entity_name?: string;
+  registration_number?: string;
+  tax_id?: string;
+  industry_codes: string[];
+  
+  // Financial Profile
+  credit_limit: number;
+  payment_terms: PaymentTerms;
+  currency: string;
+  price_list_id?: string;
+  discount_structure: DiscountStructure;
+  
+  // Relationship Management
+  account_manager_id?: string;
+  sales_rep_id?: string;
+  customer_success_manager_id?: string;
+  
+  // Industry-Specific Data
+  industry_metadata: IndustryMetadata;
+  
+  // Analytics & Scoring
+  customer_score: CustomerScore;
+  lifecycle_stage: LifecycleStage;
+  
+  // Integration Data
+  external_ids: Record<string, string>;
+  sync_status: SyncStatus;
+  
+  // Audit
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  updated_by: string;
+}
+
+export interface IndustryMetadata {
+  // Hypermarket Specific
+  store_format?: 'hypermarket' | 'supermarket' | 'convenience' | 'specialty';
+  floor_space?: number;
+  product_categories?: string[];
+  
+  // HoReCa Specific
+  establishment_type?: 'hotel' | 'restaurant' | 'cafe' | 'bar' | 'catering';
+  seating_capacity?: number;
+  cuisine_type?: string[];
+  service_style?: 'fine_dining' | 'casual' | 'fast_food' | 'buffet';
+  
+  // Retail Specific
+  retail_format?: 'department_store' | 'specialty_store' | 'boutique' | 'outlet';
+  target_demographic?: string[];
+  
+  // Consignment Specific
+  consignment_terms?: ConsignmentTerms;
+  inventory_management?: 'vendor_managed' | 'customer_managed';
+  settlement_frequency?: 'weekly' | 'monthly' | 'quarterly';
+}
+
+export interface CustomerScore {
+  overall_score: number;
+  credit_score: number;
+  loyalty_score: number;
+  profitability_score: number;
+  growth_potential: number;
+  risk_score: number;
+  engagement_score: number;
+  last_calculated: string;
+}
+
+export interface LifecycleStage {
+  current_stage: 'prospect' | 'lead' | 'opportunity' | 'customer' | 'advocate' | 'at_risk' | 'churned';
+  stage_entry_date: string;
+  previous_stages: StageHistory[];
+  next_expected_stage?: string;
+  stage_probability?: number;
+}
+
+// ===== OPPORTUNITY MANAGEMENT =====
+
+export interface Opportunity {
+  id: string;
+  customer_id: string;
+  opportunity_name: string;
+  description: string;
+  stage: OpportunityStage;
+  probability: number;
+  estimated_value: number;
+  expected_close_date: string;
+  actual_close_date?: string;
+  
+  // Industry Context
+  opportunity_type: OpportunityType;
+  product_categories: string[];
+  
+  // Team
+  owner_id: string;
+  team_members: string[];
+  
+  // Tracking
+  activities: Activity[];
+  documents: Document[];
+  
+  created_at: string;
+  updated_at: string;
+}
+
+export enum OpportunityType {
+  NEW_BUSINESS = 'new_business',
+  EXPANSION = 'expansion',
+  RENEWAL = 'renewal',
+  UPSELL = 'upsell',
+  CROSS_SELL = 'cross_sell',
+  CONSIGNMENT_AGREEMENT = 'consignment_agreement',
+  FRANCHISE_OPPORTUNITY = 'franchise_opportunity'
+}
+
+// ===== ACTIVITY MANAGEMENT =====
+
+export interface Activity {
+  id: string;
+  customer_id?: string;
+  opportunity_id?: string;
+  activity_type: ActivityType;
+  subject: string;
+  description: string;
+  status: ActivityStatus;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  
+  // Scheduling
+  scheduled_date?: string;
+  due_date?: string;
+  completed_date?: string;
+  duration_minutes?: number;
+  
+  // Participants
+  assigned_to: string;
+  participants: string[];
+  
+  // Location/Method
+  location?: string;
+  meeting_type?: 'in_person' | 'video_call' | 'phone_call' | 'email';
+  
+  // Follow-up
+  follow_up_required: boolean;
+  follow_up_date?: string;
+  
+  created_at: string;
+  updated_at: string;
+}
+
+export enum ActivityType {
+  CALL = 'call',
+  EMAIL = 'email',
+  MEETING = 'meeting',
+  SITE_VISIT = 'site_visit',
+  DEMO = 'demo',
+  PROPOSAL = 'proposal',
+  NEGOTIATION = 'negotiation',
+  CONTRACT_REVIEW = 'contract_review',
+  DELIVERY = 'delivery',
+  SUPPORT = 'support',
+  TRAINING = 'training'
+}
+
+// ===== MAIN CRM SERVICE =====
+
+export class HybridCRMEnterpriseService extends EventEmitter {
+  private supabase: SupabaseClient;
+  private workflowService: EnterpriseWorkflowAutomationService;
+  private customerService: CustomerService;
+  private multientityService: MultientityService;
+  
+  private cache: Map<string, any> = new Map();
+  private readonly CACHE_TTL = {
+    customer: 5 * 60 * 1000,      // 5 minutes
+    opportunity: 3 * 60 * 1000,   // 3 minutes
+    activity: 2 * 60 * 1000,      // 2 minutes
+    analytics: 15 * 60 * 1000     // 15 minutes
+  };
+
+  constructor(
+    supabaseUrl: string,
+    supabaseKey: string,
+    options: {
+      enableRealTimeSync?: boolean;
+      enableAIInsights?: boolean;
+      enableWorkflowAutomation?: boolean;
+    } = {}
+  ) {
+    super();
+    this.supabase = createClient(supabaseUrl, supabaseKey);
+    this.workflowService = new EnterpriseWorkflowAutomationService(supabaseUrl, supabaseKey);
+    this.customerService = new CustomerService(supabaseUrl, supabaseKey);
+    this.multientityService = new MultientityService(supabaseUrl, supabaseKey);
+    
+    if (options.enableRealTimeSync) {
+      this.setupRealTimeSync();
+    }
+  }
+
+  // ===== CUSTOMER MANAGEMENT =====
+
+  async createHybridCustomer(
+    organizationId: string,
+    customerData: Omit<HybridCustomer, 'id' | 'created_at' | 'updated_at'>,
+    userContext: UserContext
+  ): Promise<CRMServiceResult<HybridCustomer>> {
+    try {
+      // Validate industry-specific requirements
+      const validation = await this.validateIndustryRequirements(customerData);
+      if (!validation.success) {
+        return validation;
+      }
+
+      // Generate customer code based on industry
+      const customerCode = await this.generateIndustryCustomerCode(
+        organizationId,
+        customerData.industry_vertical,
+        customerData.customer_type
+      );
+
+      // Create customer with industry metadata
+      const hybridCustomer: HybridCustomer = {
+        ...customerData,
+        id: crypto.randomUUID(),
+        customer_code: customerCode,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Save to database
+      const { data, error } = await this.supabase
+        .from('hybrid_customers')
+        .insert(hybridCustomer)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Initialize customer scoring
+      await this.initializeCustomerScoring(data.id, organizationId);
+
+      // Setup industry-specific workflows
+      await this.setupIndustryWorkflows(data.id, customerData.industry_vertical);
+
+      // Cache the result
+      this.cache.set(`customer:${data.id}`, data, this.CACHE_TTL.customer);
+
+      this.emit('customer_created', { customer: data, userContext });
+
+      return {
+        success: true,
+        data,
+        errors: [],
+        warnings: []
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        errors: [{
+          code: 'CUSTOMER_CREATION_FAILED',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          severity: 'error',
+          timestamp: new Date()
+        }],
+        warnings: []
+      };
+    }
+  }
+
+  // ===== INDUSTRY-SPECIFIC METHODS =====
+
+  async getHypermarketInsights(
+    customerId: string,
+    organizationId: string
+  ): Promise<CRMServiceResult<HypermarketInsights>> {
+    try {
+      const customer = await this.getCustomer(customerId, organizationId);
+      if (!customer.success || customer.data?.industry_vertical !== IndustryVertical.HYPERMARKET) {
+        throw new Error('Customer is not a hypermarket');
+      }
+
+      // Get hypermarket-specific analytics
+      const insights = await this.calculateHypermarketMetrics(customerId, organizationId);
+      
+      return {
+        success: true,
+        data: insights,
+        errors: [],
+        warnings: []
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        errors: [{
+          code: 'INSIGHTS_CALCULATION_FAILED',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          severity: 'error',
+          timestamp: new Date()
+        }],
+        warnings: []
+      };
+    }
+  }
+
+  async getHoReCaRecommendations(
+    customerId: string,
+    organizationId: string
+  ): Promise<CRMServiceResult<HoReCaRecommendations>> {
+    // Implementation for HoReCa-specific recommendations
+    // Based on cuisine type, seating capacity, service style
+    return this.generateIndustryRecommendations(customerId, IndustryVertical.HORECA);
+  }
+
+  async getConsignmentPerformance(
+    customerId: string,
+    organizationId: string,
+    period: DateRange
+  ): Promise<CRMServiceResult<ConsignmentPerformance>> {
+    // Implementation for consignment-specific performance metrics
+    // Inventory turnover, settlement analysis, product performance
+    return this.calculateConsignmentMetrics(customerId, period);
+  }
+
+  // ===== OPPORTUNITY MANAGEMENT =====
+
+  async createOpportunity(
+    organizationId: string,
+    opportunityData: Omit<Opportunity, 'id' | 'created_at' | 'updated_at'>,
+    userContext: UserContext
+  ): Promise<CRMServiceResult<Opportunity>> {
+    try {
+      const opportunity: Opportunity = {
+        ...opportunityData,
+        id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await this.supabase
+        .from('opportunities')
+        .insert(opportunity)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Setup opportunity workflows
+      await this.setupOpportunityWorkflows(data.id, data.opportunity_type);
+
+      this.emit('opportunity_created', { opportunity: data, userContext });
+
+      return {
+        success: true,
+        data,
+        errors: [],
+        warnings: []
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        errors: [{
+          code: 'OPPORTUNITY_CREATION_FAILED',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          severity: 'error',
+          timestamp: new Date()
+        }],
+        warnings: []
+      };
+    }
+  }
+
+  // ===== ANALYTICS & INSIGHTS =====
+
+  async getCustomerAnalytics(
+    organizationId: string,
+    filters: AnalyticsFilters
+  ): Promise<CRMServiceResult<CustomerAnalytics>> {
+    try {
+      const cacheKey = `analytics:${organizationId}:${JSON.stringify(filters)}`;
+      const cached = this.cache.get(cacheKey);
+      if (cached) {
+        return { success: true, data: cached, errors: [], warnings: [] };
+      }
+
+      const analytics = await this.calculateCustomerAnalytics(organizationId, filters);
+      
+      this.cache.set(cacheKey, analytics, this.CACHE_TTL.analytics);
+
+      return {
+        success: true,
+        data: analytics,
+        errors: [],
+        warnings: []
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        errors: [{
+          code: 'ANALYTICS_CALCULATION_FAILED',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          severity: 'error',
+          timestamp: new Date()
+        }],
+        warnings: []
+      };
+    }
+  }
+
+  // ===== INTEGRATION METHODS =====
+
+  async syncWithAccountingSystem(
+    customerId: string,
+    organizationId: string
+  ): Promise<CRMServiceResult<SyncResult>> {
+    try {
+      // Sync with existing customer service
+      const accountingCustomer = await this.customerService.getCustomer(organizationId, customerId);
+      
+      if (accountingCustomer.customer) {
+        // Update CRM with latest accounting data
+        await this.updateCustomerFromAccounting(customerId, accountingCustomer.customer);
+      }
+
+      return {
+        success: true,
+        data: { synced: true, timestamp: new Date().toISOString() },
+        errors: [],
+        warnings: []
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        errors: [{
+          code: 'SYNC_FAILED',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          severity: 'error',
+          timestamp: new Date()
+        }],
+        warnings: []
+      };
+    }
+  }
+
+  // ===== PRIVATE HELPER METHODS =====
+
+  private async validateIndustryRequirements(
+    customerData: Omit<HybridCustomer, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<CRMServiceResult<boolean>> {
+    const errors: CRMError[] = [];
+    const warnings: CRMWarning[] = [];
+
+    // Industry-specific validation logic
+    switch (customerData.industry_vertical) {
+      case IndustryVertical.HYPERMARKET:
+        if (!customerData.industry_metadata.store_format) {
+          errors.push({
+            code: 'MISSING_STORE_FORMAT',
+            message: 'Store format is required for hypermarket customers',
+            severity: 'error',
+            timestamp: new Date()
+          });
+        }
+        break;
+
+      case IndustryVertical.HORECA:
+        if (!customerData.industry_metadata.establishment_type) {
+          errors.push({
+            code: 'MISSING_ESTABLISHMENT_TYPE',
+            message: 'Establishment type is required for HoReCa customers',
+            severity: 'error',
+            timestamp: new Date()
+          });
+        }
+        break;
+
+      case IndustryVertical.CONSIGNMENT:
+        if (!customerData.industry_metadata.consignment_terms) {
+          errors.push({
+            code: 'MISSING_CONSIGNMENT_TERMS',
+            message: 'Consignment terms are required for consignment customers',
+            severity: 'error',
+            timestamp: new Date()
+          });
+        }
+        break;
+    }
+
+    return {
+      success: errors.length === 0,
+      data: true,
+      errors,
+      warnings
+    };
+  }
+
+  private async generateIndustryCustomerCode(
+    organizationId: string,
+    industry: IndustryVertical,
+    customerType: 'B2B' | 'B2C'
+  ): Promise<string> {
+    const prefix = {
+      [IndustryVertical.HYPERMARKET]: 'HM',
+      [IndustryVertical.HORECA]: 'HR',
+      [IndustryVertical.RETAIL]: 'RT',
+      [IndustryVertical.CONSIGNMENT]: 'CS',
+      [IndustryVertical.MANUFACTURING]: 'MF',
+      [IndustryVertical.DISTRIBUTION]: 'DS',
+      [IndustryVertical.ECOMMERCE]: 'EC',
+      [IndustryVertical.WHOLESALE]: 'WS'
+    }[industry];
+
+    const typeCode = customerType === 'B2B' ? 'B' : 'C';
+    const timestamp = Date.now().toString().slice(-6);
+    
+    return `${prefix}${typeCode}${timestamp}`;
+  }
+
+  private async setupRealTimeSync(): Promise<void> {
+    // Setup real-time subscriptions for customer updates
+    this.supabase
+      .channel('hybrid_customers')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'hybrid_customers' },
+        (payload) => {
+          this.handleRealTimeUpdate(payload);
+        }
+      )
+      .subscribe();
+  }
+
+  private handleRealTimeUpdate(payload: any): void {
+    // Invalidate cache and emit events
+    if (payload.new) {
+      this.cache.delete(`customer:${payload.new.id}`);
+      this.emit('customer_updated', payload.new);
+    }
+  }
+}
+
+// ===== SUPPORTING INTERFACES =====
+
+export interface CRMServiceResult<T> {
+  success: boolean;
+  data?: T;
+  errors: CRMError[];
+  warnings: CRMWarning[];
+  metadata?: Record<string, any>;
+}
+
+export interface CRMError {
+  code: string;
+  message: string;
+  severity: 'error' | 'warning' | 'info';
+  timestamp: Date;
+  field?: string;
+  context?: Record<string, any>;
+}
+
+export interface CRMWarning {
+  code: string;
+  message: string;
+  field?: string;
+  context?: Record<string, any>;
+}
+
+export interface UserContext {
+  user_id: string;
+  organization_id: string;
+  role: string;
+  permissions: string[];
+  session_id: string;
+}
+
+export interface HypermarketInsights {
+  store_performance: StorePerformance;
+  product_mix_analysis: ProductMixAnalysis;
+  seasonal_trends: SeasonalTrends;
+  competitor_analysis: CompetitorAnalysis;
+}
+
+export interface HoReCaRecommendations {
+  menu_optimization: MenuOptimization;
+  seasonal_promotions: SeasonalPromotions;
+  inventory_suggestions: InventorySuggestions;
+  customer_preferences: CustomerPreferences;
+}
+
+export interface ConsignmentPerformance {
+  inventory_turnover: InventoryTurnover;
+  settlement_analysis: SettlementAnalysis;
+  product_performance: ProductPerformance;
+  profitability_metrics: ProfitabilityMetrics;
+}

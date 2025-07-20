@@ -1,4 +1,4 @@
-import { Permission } from '../types/roles/permissions';
+import type { Permission } from '../types/roles/permissions';
 import type { User } from '../types/user/user';
 import { apiFetcher } from './apiFetcher';
 import type { ApiFetcherConfig } from './apiFetcher';

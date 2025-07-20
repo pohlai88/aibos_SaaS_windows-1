@@ -1,0 +1,28 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "includeVersion": true,
+  "categorizeByGroup": true,
+  "categoryOrder": ["Marketplace", "Template Browser", "Template Installer", "Template Publisher", "Utilities", "*"],
+  "theme": "default",
+  "readme": "README.md",
+  "name": "AI-BOS Community Templates",
+  "description": "Marketplace for sharing and discovering app templates with AI-powered recommendations",
+  "gitRevision": "main",
+  "gitRemote": "origin",
+  "validation": {
+    "invalidLink": true,
+    "notExported": true
+  },
+  "plugin": ["typedoc-plugin-markdown"],
+  "hideGenerator": true,
+  "sort": ["source-order"],
+  "searchInComments": true,
+  "cleanOutputDir": true,
+  "darkHighlightTheme": "dark-plus",
+  "lightHighlightTheme": "light-plus"
+}

@@ -1,4 +1,4 @@
-import type { ApiResponse, PaginatedResponse  } from '../api';
+import type { ApiResponse, PaginatedResponse } from '../api';
 import type { UserRole } from './roles.enums';
 import type { Permission } from './permissions';
 

@@ -1,8 +1,8 @@
 {
-  "name": "@aibos/ui-components",
-  "version": "1.0.0-beta.2",
+  "name": "@aibos/ui-components-enterprise",
+  "version": "1.0.0",
   "type": "module",
-  "description": "AI-BOS Platform UI Components - Enterprise-grade React components with AI-powered features",
+  "description": "AI-BOS Enterprise UI Components - ISO27001, GDPR, SOC2, HIPAA compliant React components with purpose-driven architecture",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -12,10 +12,25 @@
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
+    "./core": {
+      "import": "./dist/core/index.esm.js",
+      "require": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
+    },
     "./primitives": {
       "import": "./dist/primitives/index.esm.js",
       "require": "./dist/primitives/index.js",
       "types": "./dist/primitives/index.d.ts"
+    },
+    "./data": {
+      "import": "./dist/data/index.esm.js",
+      "require": "./dist/data/index.js",
+      "types": "./dist/data/index.d.ts"
+    },
+    "./forms": {
+      "import": "./dist/forms/index.esm.js",
+      "require": "./dist/forms/index.js",
+      "types": "./dist/forms/index.d.ts"
     },
     "./feedback": {
       "import": "./dist/feedback/index.esm.js",
@@ -27,60 +42,36 @@
       "require": "./dist/layout/index.js",
       "types": "./dist/layout/index.d.ts"
     },
-    "./forms": {
-      "import": "./dist/forms/index.esm.js",
-      "require": "./dist/forms/index.js",
-      "types": "./dist/forms/index.d.ts"
-    },
-    "./data": {
-      "import": "./dist/data/index.esm.js",
-      "require": "./dist/data/index.js",
-      "types": "./dist/data/index.d.ts"
-    },
     "./ai": {
       "import": "./dist/ai/index.esm.js",
       "require": "./dist/ai/index.js",
       "types": "./dist/ai/index.d.ts"
     },
-    "./charts": {
-      "import": "./dist/charts/index.esm.js",
-      "require": "./dist/charts/index.js",
-      "types": "./dist/charts/index.d.ts"
+    "./compliance": {
+      "import": "./dist/compliance/index.esm.js",
+      "require": "./dist/compliance/index.js",
+      "types": "./dist/compliance/index.d.ts"
     },
-    "./theme": {
-      "import": "./dist/theme/index.esm.js",
-      "require": "./dist/theme/index.js",
-      "types": "./dist/theme/index.d.ts"
-    },
-    "./search": {
-      "import": "./dist/search/index.esm.js",
-      "require": "./dist/search/index.js",
-      "types": "./dist/search/index.d.ts"
+    "./security": {
+      "import": "./dist/security/index.esm.js",
+      "require": "./dist/security/index.js",
+      "types": "./dist/security/index.d.ts"
     },
     "./performance": {
       "import": "./dist/performance/index.esm.js",
       "require": "./dist/performance/index.js",
       "types": "./dist/performance/index.d.ts"
     },
-    "./analytics": {
-      "import": "./dist/analytics/index.esm.js",
-      "require": "./dist/analytics/index.js",
-      "types": "./dist/analytics/index.d.ts"
-    },
-    "./job-queue": {
-      "import": "./dist/job-queue/index.esm.js",
-      "require": "./dist/job-queue/index.js",
-      "types": "./dist/job-queue/index.d.ts"
-    },
-    "./ai-assistant": {
-      "import": "./dist/ai-assistant/index.esm.js",
-      "require": "./dist/ai-assistant/index.js",
-      "types": "./dist/ai-assistant/index.d.ts"
+    "./accessibility": {
+      "import": "./dist/accessibility/index.esm.js",
+      "require": "./dist/accessibility/index.js",
+      "types": "./dist/accessibility/index.d.ts"
     }
   },
   "files": [
     "dist/**/*",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "rollup -c",
@@ -88,20 +79,16 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "lint:check": "npm run lint",
-    "lint:threshold": "node verify-threshold.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "cleanup:track": "node cleanup-tracker.mjs",
-    "cleanup:verify": "node verify-fixes.mjs",
-    "cleanup:phase1": "node fix-scripts/phase1-critical.mjs",
-    "publish:beta": "npm publish --tag beta --access public",
-    "deploy:ready": "npm run build && npm run lint:threshold && echo 'Ready for deployment!'",
-    "zone:check": "node zone-checker.mjs",
-    "cleanup:phase1-undefined": "node phase1-undefined.mjs",
-    "cleanup:phase1-react": "node phase1-react.mjs",
-    "cleanup:phase1-types": "node phase1-types.mjs",
-    "cleanup:phase1-general": "node phase1-general.mjs"
+    "prepublishOnly": "npm run test && npm run build",
+    "compliance:check": "node scripts/compliance-check.mjs",
+    "security:audit": "node scripts/security-audit.mjs",
+    "performance:benchmark": "node scripts/performance-benchmark.mjs",
+    "accessibility:test": "node scripts/accessibility-test.mjs"
   },
   "peerDependencies": {
     "react": "^18.0.0",
@@ -136,34 +123,58 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tanstack/react-virtual": "^3.0.0",
     "class-variance-authority": "^0.7.0",
-    "clsx": "^2.0.0",
+    "clsx": "^2.1.1",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.18.0",
     "fuse.js": "^7.0.0",
     "lucide-react": "^0.294.0",
     "recharts": "^2.8.0",
-    "tailwind-merge": "^2.0.0"
+    "tailwind-merge": "^2.6.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.4",
     "@rollup/plugin-node-resolve": "^15.2.1",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.5.1",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "@vitejs/plugin-react": "^4.1.0",
+    "c8": "^9.1.0",
+    "eslint": "^8.51.0",
+    "prettier": "^3.0.0",
+    "rimraf": "^5.0.5",
     "rollup": "^3.28.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^1.6.1"
   },
   "keywords": [
     "react",
     "ui-components",
     "typescript",
-    "tailwindcss",
-    "radix-ui",
-    "ai-powered",
     "enterprise",
+    "iso27001",
+    "gdpr",
+    "soc2",
+    "hipaa",
+    "compliance",
+    "security",
+    "accessibility",
+    "performance",
+    "purpose-driven",
+    "ai-powered",
     "saas",
     "windows-ui"
   ],
   "author": "AI-BOS Team",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pohlai88/aibos_SaaS_windows-1.git",
+    "directory": "shared/ui-components-enterprise"
+  }
 }

@@ -5,7 +5,8 @@
  * management, including schemas, fields, validation rules, and operations.
  */
 
-import type { MetadataFieldType,
+import type {
+  MetadataFieldType,
   MetadataValidationRule,
   MetadataOperation,
   MetadataPermission,
@@ -19,7 +20,7 @@ import type { MetadataFieldType,
   MetadataVersioningStrategy,
   MetadataAuditEvent,
   MetadataErrorType,
- } from './metadata.enums';
+} from './metadata.enums';
 import type { UUID, Email, ISODate, JsonObject, JsonValue } from '../primitives';
 
 // ============================================================================

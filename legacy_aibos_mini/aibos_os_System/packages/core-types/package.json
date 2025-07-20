@@ -1,0 +1,20 @@
+{
+  "name": "@aibos/core-types",
+  "version": "1.0.0",
+  "description": "Core type definitions shared across all AIBOS SDKs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean"
+  },
+  "keywords": ["types", "core", "shared", "aibos"],
+  "author": "AIBOS Team",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "rimraf": "^5.0.0"
+  }
+} 

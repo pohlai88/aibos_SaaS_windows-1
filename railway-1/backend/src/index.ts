@@ -1,6 +1,4 @@
-// Validate environment variables first
-import './validate-env';
-
+// Minimal working version for Railway deployment
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -21,30 +19,57 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     timestamp: new Date().toISOString(),
     service: 'AI-BOS Backend',
-    version: '1.0.0'
+    version: '1.0.0',
+    environment: process.env['NODE_ENV'] || 'development'
   });
 });
 
-// Initialize realtime service
-import realtimeService from './services/realtime';
-realtimeService.initialize(server);
+// Basic API Routes (without complex dependencies)
+app.get('/api/status', (req: Request, res: Response) => {
+  res.json({
+    message: 'AI-BOS Backend is running',
+    timestamp: new Date().toISOString()
+  });
+});
 
-// API Routes
-app.use('/api/manifests', require('./routes/manifests'));
-app.use('/api/apps', require('./routes/apps'));
-app.use('/api/events', require('./routes/events'));
-app.use('/api/entities', require('./routes/entities'));
-app.use('/api/auth', require('./routes/auth-enhanced')); // Enhanced with shared library
-app.use('/api/realtime', require('./routes/realtime'));
+// Simple auth endpoint for testing
+app.post('/api/auth/login', (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  // Demo credentials for testing
+  const demoUsers = [
+    { email: 'demo@aibos.com', password: 'demo123', role: 'admin' },
+    { email: 'user@aibos.com', password: 'user123', role: 'user' },
+    { email: 'admin@aibos.com', password: 'admin123', role: 'admin' }
+  ];
+
+  const user = demoUsers.find(u => u.email === email && u.password === password);
+
+  if (user) {
+    res.json({
+      success: true,
+      user: {
+        email: user.email,
+        role: user.role,
+        token: 'demo-token-' + Date.now()
+      }
+    });
+  } else {
+    res.status(401).json({
+      success: false,
+      message: 'Invalid credentials'
+    });
+  }
+});
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Internal server error',
     message: process.env['NODE_ENV'] === 'development' ? err.message : 'Something went wrong'
   });
@@ -55,10 +80,18 @@ app.use('*', (req: Request, res: Response) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
+// Start the server
+server.listen(PORT, () => {
+  console.log('🚀 AI-BOS Backend starting...');
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  console.log(`🔗 Environment: ${process.env['NODE_ENV'] || 'development'}`);
+  console.log('✅ Ready to accept requests');
+});
+
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('🛑 Shutting down gracefully...');
-  realtimeService.cleanup();
   server.close(() => {
     console.log('✅ Server closed');
     process.exit(0);

@@ -1,6 +1,6 @@
-import { PricingTableEntry } from '../types/billing/pricingTable.schema';
+import type { PricingTableEntry } from '../types/billing/pricingTable.schema';
 import { SubscriptionPlan, BillingInterval } from '../types/billing/billing.enums';
-import type { Currency } from '../types/billing/currency.enums';
+import { Currency } from '../types/billing/currency.enums';
 
 /**
  * Enhanced metadata for pricing table entries

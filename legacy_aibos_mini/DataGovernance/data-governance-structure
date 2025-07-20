@@ -1,0 +1,10 @@
+DataGovernance/
+├── enterprise-ssot.ts          # Core SSOT architecture
+├── crip-data-dictionary.ts     # CRIP classification
+├── sea-compliance-schemas.ts    # SEA compliance frameworks
+├── governance-policies.ts       # Enterprise policies
+├── audit-framework.ts          # Audit & monitoring
+├── performance-metadata.ts     # Performance optimization
+├── business-rules.ts           # Business validation rules
+├── package.json                # Package configuration
+└── index.ts                    # Main exports

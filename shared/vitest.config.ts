@@ -1,4 +1,4 @@
-import type { defineConfig  } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
 
 // Load environment variables

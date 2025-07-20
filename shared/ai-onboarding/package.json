@@ -1,0 +1,167 @@
+{
+  "name": "@aibos/ai-onboarding",
+  "version": "1.0.0",
+  "description": "AI-BOS AI-Powered Onboarding - Intelligent learning path recommendations and personalized development assistance",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./assistant": {
+      "types": "./dist/assistant/index.d.ts",
+      "import": "./dist/assistant/index.mjs"
+    },
+    "./learning-paths": {
+      "types": "./dist/learning-paths/index.d.ts",
+      "import": "./dist/learning-paths/index.mjs"
+    },
+    "./tutorials": {
+      "types": "./dist/tutorials/index.d.ts",
+      "import": "./dist/tutorials/index.mjs"
+    },
+    "./assessment": {
+      "types": "./dist/assessment/index.d.ts",
+      "import": "./dist/assessment/index.mjs"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run test && npm run lint && npm run type-check",
+    "build": "npm run build:clean && npm run build:compile && npm run build:optimize",
+    "build:clean": "rimraf dist",
+    "build:compile": "tsc",
+    "build:optimize": "rollup -c rollup.config.js",
+    "build:analyze": "rollup -c rollup.config.js --analyze",
+    "build:storybook": "storybook build -o storybook-static",
+    "dev": "tsc --watch",
+    "dev:storybook": "storybook dev -p 6006",
+    "type-check": "tsc --noEmit --incremental",
+    "type-check:watch": "tsc --watch --noEmit --incremental",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "lint:a11y": "eslint . --max-warnings=0 --config .eslintrc.a11y.js",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,json}\"",
+    "size-check": "bundlesize",
+    "docs:generate": "typedoc --out docs src",
+    "docs:serve": "serve docs",
+    "ci:test": "npm run test -- --reporter=verbose --coverage",
+    "ci:lint": "npm run lint -- --format=unix",
+    "ci:type-check": "npm run type-check",
+    "ci:build": "npm run build",
+    "postinstall": "husky install"
+  },
+  "bundlesize": [
+    {
+      "path": "./dist/index.mjs",
+      "maxSize": "500 kB"
+    },
+    {
+      "path": "./dist/assistant/index.mjs",
+      "maxSize": "200 kB"
+    },
+    {
+      "path": "./dist/learning-paths/index.mjs",
+      "maxSize": "150 kB"
+    },
+    {
+      "path": "./dist/tutorials/index.mjs",
+      "maxSize": "100 kB"
+    },
+    {
+      "path": "./dist/assessment/index.mjs",
+      "maxSize": "100 kB"
+    }
+  ],
+  "keywords": [
+    "aibos",
+    "ai-onboarding",
+    "learning-paths",
+    "tutorials",
+    "ai-assistant",
+    "personalized-learning",
+    "skill-assessment",
+    "enterprise",
+    "storybook",
+    "accessibility"
+  ],
+  "author": "AI-BOS Team",
+  "license": "MIT",
+  "dependencies": {
+    "@aibos/shared": "^1.0.0",
+    "@aibos/visual-dev": "^1.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "framer-motion": "^12.23.6",
+    "lucide-react": "^0.525.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^3.22.4",
+    "react-markdown": "^9.0.1",
+    "react-syntax-highlighter": "^15.5.0",
+    "prismjs": "^1.29.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/prismjs": "^1.26.0",
+    "@types/serve": "^14.2.0",
+    "typescript": "^5.2.2",
+    "rollup": "^4.6.0",
+    "vitest": "^1.6.1",
+    "eslint": "^8.51.0",
+    "prettier": "^3.0.0",
+    "rimraf": "^5.0.5",
+    "@storybook/react": "^7.5.3",
+    "@storybook/addon-a11y": "^7.5.3",
+    "@storybook/addon-essentials": "^7.5.3",
+    "@storybook/addon-interactions": "^7.5.3",
+    "@storybook/addon-links": "^7.5.3",
+    "@storybook/blocks": "^7.5.3",
+    "@storybook/react-vite": "^7.5.3",
+    "@storybook/testing-library": "^0.2.2",
+    "bundlesize": "^0.18.1",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.0",
+    "typedoc": "^0.25.0",
+    "serve": "^14.2.0",
+    "@playwright/test": "^1.40.0",
+    "axe-core": "^4.8.0",
+    "@axe-core/react": "^4.8.0",
+    "rollup-plugin-visualizer": "^5.9.0"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@aibos/visual-dev": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,jsx,md,json}": [
+      "prettier --write"
+    ]
+  }
+}

@@ -1,17 +1,18 @@
 import { z } from 'zod';
 import type { UUID, UserID, TenantID, ISODate } from '../primitives';
-import type { MetadataPermissionType,
-  MetadataPermissionTypes,
+import { MetadataPermissionTypes, MetadataOperationTypes } from './metadata.enums';
+import type {
+  MetadataPermissionType,
   MetadataOperationType,
-  MetadataOperationTypes,
   MetadataFieldType,
   MetadataFieldTypes,
- } from './metadata.enums';
-import type { MetadataEntity,
+} from './metadata.enums';
+import type {
+  MetadataEntity,
   MetadataField,
   MetadataSchema,
   MetadataConstraint,
- } from './metadata.types';
+} from './metadata.types';
 
 // ============================================================================
 // PERMISSION ENUMS
@@ -892,12 +893,4 @@ export type {
   MetadataPermissionManager,
 };
 
-export {
-  MetadataPermissionScope,
-  MetadataPermissionEffect,
-  MetadataPermissionCondition,
-  MetadataPermissionSchema,
-  MetadataRoleSchema,
-  MetadataAccessRequestSchema,
-  MetadataPermissionUtils,
-};
+// All exports are already defined above as individual exports

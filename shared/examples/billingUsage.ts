@@ -6,8 +6,8 @@ import {
   planHasFeature,
   calculateRenewalDate,
 } from '../types/billing/billing.enums';
+import type { Subscription } from '../types/billing/billing';
 import {
-  Subscription,
   isSubscriptionActive,
   daysUntilNextBilling,
   getUsagePercentage,

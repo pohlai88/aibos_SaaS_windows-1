@@ -1,19 +1,21 @@
 import { z } from 'zod';
 import type { UUID, ISODate, UserID, TenantID } from '../primitives';
-import type { MetadataFieldType,
+import { MetadataFieldType } from './metadata.enums';
+import type {
   MetadataFieldTypes,
   MetadataOperationType,
   MetadataOperationTypes,
   MetadataValidationRule,
   MetadataValidationRules,
- } from './metadata.enums';
-import type { MetadataEntity,
+} from './metadata.enums';
+import type {
+  MetadataEntity,
   MetadataField,
   MetadataValue,
   MetadataSchema,
   MetadataConstraint,
   MetadataQuery,
- } from './metadata.types';
+} from './metadata.types';
 
 // ============================================================================
 // TEST ENUMS
@@ -996,27 +998,15 @@ export class MetadataTestUtils {
     }
     return chunks;
   }
+
+  static randomSortOrder() {
+    return ['asc', 'desc'][Math.floor(Math.random() * 2)] as 'asc' | 'desc';
+  }
+
+  static randomFieldType(): MetadataFieldType {
+    const types = Object.values(MetadataFieldType);
+    return types[Math.floor(Math.random() * types.length)];
+  }
 }
 
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export type {
-  MetadataTestCase,
-  MetadataTestSuite,
-  MetadataTestExecution,
-  MetadataTestContext,
-  MetadataTestResult,
-  MetadataMockGenerator,
-  MetadataTestHelper,
-};
-
-export {
-  MetadataTestType,
-  MetadataTestStatus,
-  MetadataTestPriority,
-  MetadataTestCaseSchema,
-  MetadataTestExecutionSchema,
-  MetadataTestUtils,
-};
+// All exports are already defined above as individual exports

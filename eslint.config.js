@@ -73,6 +73,25 @@ export default [
         StorageEvent: 'readonly',
         FrameRequestCallback: 'readonly',
 
+        // Additional browser APIs for UI components
+        performance: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        WebSocket: 'readonly',
+        IntersectionObserverCallback: 'readonly',
+        HTMLTextAreaElement: 'readonly',
+        HTMLSelectElement: 'readonly',
+        FileReader: 'readonly',
+        Blob: 'readonly',
+
+        // AI Assistant & File handling APIs
+        File: 'readonly',
+        FormData: 'readonly',
+        MediaRecorder: 'readonly',
+        TextDecoder: 'readonly',
+        SpeechSynthesisUtterance: 'readonly',
+        speechSynthesis: 'readonly',
+
         // Node.js globals
         process: 'readonly',
         Buffer: 'readonly',

@@ -1,7 +1,8 @@
-import type { UserRole, UserRoleType  } from '../types/roles/roles.enums';
+import { UserRole } from '../types/roles/roles.enums';
+import type { UserRoleType } from '../types/roles/roles.enums';
 import { hasPermission } from '../utils/permissionUtils';
 import { checkPermission } from '../utils/permissionHandlers';
-import type { Permission } from '../types/roles/permissions';
+import { Permission } from '../types/roles/permissions';
 import { mapApiRoleToUserRole } from '../lib/userRoleMapper';
 
 /**

@@ -4,17 +4,16 @@
  * Comprehensive test suite for the AI-BOS event-driven architecture
  */
 
-import type { EventBus,
+import {
+  EventBus,
   EventSchemaRegistry,
   DeadLetterQueue,
   MemoryEventPersistence,
   createEventSchema,
   event,
   CommonEventSchemas,
-  EventBusConfig,
-  EventEnvelope,
-  EventMetadata,
- } from '../lib/events';
+} from '../lib/events';
+import type { EventBusConfig, EventEnvelope, EventMetadata } from '../lib/events';
 import { z } from 'zod';
 
 describe('Event System', () => {

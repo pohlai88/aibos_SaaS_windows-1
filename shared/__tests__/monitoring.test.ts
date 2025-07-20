@@ -1,5 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
-import type { PerformanceMonitor,
+import type { Mock } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import {
+  PerformanceMonitor,
   HealthMonitor,
   ApplicationMonitor,
   monitoring,
@@ -7,7 +9,7 @@ import type { PerformanceMonitor,
   HealthStatus,
   requestMonitoring,
   monitorDatabaseOperation,
- } from '../lib/monitoring';
+} from '../lib/monitoring';
 
 describe('PerformanceMonitor', () => {
   let performanceMonitor: PerformanceMonitor;

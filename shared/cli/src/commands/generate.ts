@@ -5,7 +5,7 @@
  * and other platform-specific code with enterprise-grade structure.
  */
 
-import { Command } from 'commander';
+import type { Command } from 'commander';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -94,7 +94,7 @@ async function generateComponent(type: string, name?: string, options: GenerateO
 
     // Display generated files
     if (generatedFiles.length > 0) {
-      logger.info('\n' + chalk.blue.bold('Generated files:'));
+      logger.info(`\n${chalk.blue.bold('Generated files:')}`);
       generatedFiles.forEach((file) => {
         logger.info(chalk.gray(`  ${file}`));
       });
@@ -410,7 +410,7 @@ async function generateComponentFiles(
 }
 
 function displayNextSteps(type: string, name: string) {
-  logger.info('\n' + chalk.blue.bold('Next steps:'));
+  logger.info(`\n${chalk.blue.bold('Next steps:')}`);
 
   switch (type) {
     case 'entity':

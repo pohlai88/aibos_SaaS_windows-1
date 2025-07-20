@@ -1,17 +1,18 @@
 import { z } from 'zod';
 import type { UUID, ISODate, UserID, TenantID } from '../primitives';
-import type { MetadataMigrationType,
+import {
   MetadataMigrationTypes,
-  MetadataMigrationStatus,
   MetadataMigrationStatuses,
   MetadataMigrationStrategy,
   MetadataMigrationStrategies,
- } from './metadata.enums';
-import type { MetadataSchema,
+} from './metadata.enums';
+import type { MetadataMigrationType, MetadataMigrationStatus } from './metadata.enums';
+import type {
+  MetadataSchema,
   MetadataField,
   MetadataEntity,
   MetadataConstraint,
- } from './metadata.types';
+} from './metadata.types';
 
 // ============================================================================
 // MIGRATION ENUMS
@@ -758,7 +759,7 @@ export class MetadataMigrationUtils {
     const isHighRisk = migration.type === 'data_migration' || migration.type === 'bulk_operation';
 
     return {
-      type?: isHighRisk ? 'full' : 'incremental',
+      type: isHighRisk ? 'full' : 'incremental',
       location: `backups/migrations/${migration.id}`,
       compression: true,
       encryption: isHighRisk,
@@ -978,11 +979,4 @@ export type {
   MetadataMigrationExecutor,
 };
 
-export {
-  MetadataMigrationDirection,
-  MetadataMigrationPhase,
-  MetadataMigrationRollbackStrategy,
-  MetadataMigrationSchema,
-  MetadataMigrationExecutionSchema,
-  MetadataMigrationUtils,
-};
+// All exports are already defined above as individual exports

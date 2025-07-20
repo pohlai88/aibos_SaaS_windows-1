@@ -1,6 +1,6 @@
 import type { User } from '../user/user';
 import type { Tenant } from '../tenant/tenant';
-import type { AuthType, TokenType  } from './auth.enums';
+import type { AuthType, TokenType } from './auth.enums';
 
 /**
  * Core authentication types for the AI-BOS platform

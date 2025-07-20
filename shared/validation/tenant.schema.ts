@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TenantStatus, SubscriptionPlan } from '../types/tenant/tenant.enums';
+import { TenantStatus, SubscriptionPlan, TaxIdType } from '../types/tenant/tenant.enums';
 import type { ISODate } from '../types/primitives';
 
 // Reusable schemas

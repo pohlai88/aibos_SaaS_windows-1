@@ -5,7 +5,7 @@
  * configuration, and best practices.
  */
 
-import { Command } from 'commander';
+import type { Command } from 'commander';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -226,21 +226,21 @@ async function collectProjectInfo(name?: string, options: InitOptions = {}): Pro
 }
 
 function displaySuccessMessage(projectName: string, projectPath: string) {
-  logger.info('\n' + chalk.green.bold('✅ Project created successfully!'));
-  logger.info('\n' + chalk.blue.bold('Next steps:'));
+  logger.info(`\n${chalk.green.bold('✅ Project created successfully!')}`);
+  logger.info(`\n${chalk.blue.bold('Next steps:')}`);
   logger.info(chalk.gray(`  cd ${projectName}`));
   logger.info(chalk.gray('  npm run dev          # Start development server'));
   logger.info(chalk.gray('  npm test             # Run tests'));
   logger.info(chalk.gray('  npm run build        # Build for production'));
   logger.info(chalk.gray('  npm run deploy       # Deploy to production'));
 
-  logger.info('\n' + chalk.blue.bold('Documentation:'));
+  logger.info(`\n${chalk.blue.bold('Documentation:')}`);
   logger.info(chalk.gray('  https://docs.aibos.com'));
   logger.info(chalk.gray('  https://github.com/aibos/shared'));
 
-  logger.info('\n' + chalk.blue.bold('Support:'));
+  logger.info(`\n${chalk.blue.bold('Support:')}`);
   logger.info(chalk.gray('  Discord: https://discord.gg/aibos'));
   logger.info(chalk.gray('  Issues: https://github.com/aibos/shared/issues'));
 
-  logger.info('\n' + chalk.yellow.bold('Happy coding! 🚀'));
+  logger.info(`\n${chalk.yellow.bold('Happy coding! 🚀')}`);
 }
