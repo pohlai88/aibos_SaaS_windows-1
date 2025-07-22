@@ -14,8 +14,8 @@
  * - Market analysis and insights
  */
 
-import { logger } from '../../../lib/logger';
-import { MultiLevelCache } from '../../../lib/cache';
+import { logger } from '../../lib/logger';
+import { MultiLevelCache } from '../../lib/cache';
 
 // Predictive Analytics Task Types
 export type PredictiveTask =

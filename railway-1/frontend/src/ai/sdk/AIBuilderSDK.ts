@@ -16,7 +16,7 @@
 //   domain: 'healthcare'
 // });
 
-import { AppManifest, manifestLoader, ValidPermission } from '../runtime/ManifestLoader';
+import { AppManifest, manifestLoader, ValidPermission } from '../../runtime/ManifestLoader';
 
 // ==================== TYPES ====================
 export interface PromptRequest {

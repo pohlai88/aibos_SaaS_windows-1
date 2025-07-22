@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/components/providers/AppProvider';
 import { cn } from '@/lib/utils';
-import RealtimeDemo from '../apps/RealtimeDemo';
+import UnifiedDemo from '../demo/UnifiedDemo';
 
 interface Window {
   id: string;
@@ -157,7 +157,7 @@ export function AppWindow({ window }: AppWindowProps) {
       case 'realtime':
         return (
           <div className="h-full">
-            <RealtimeDemo />
+            <UnifiedDemo />
           </div>
         );
       default:

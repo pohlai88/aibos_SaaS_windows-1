@@ -11,9 +11,9 @@ import {
 } from 'lucide-react';
 
 // AI-BOS Integration
-import { AppManifest, manifestLoader } from '../runtime/ManifestLoader';
-import { aiBuilderSDK, PromptRequest } from '../ai/AIBuilderSDK';
-import { AppContainer } from '../runtime/AppContainer';
+import { AppManifest, manifestLoader } from '../../runtime/ManifestLoader';
+import { aiBuilderSDK, PromptRequest } from '../sdk/AIBuilderSDK';
+import { AppContainer } from '../../runtime/AppContainer';
 
 // ==================== TYPES ====================
 interface VisualBuilderProps {

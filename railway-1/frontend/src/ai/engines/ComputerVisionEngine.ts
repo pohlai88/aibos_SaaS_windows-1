@@ -14,8 +14,8 @@
  * - Scene understanding and description
  */
 
-import { logger } from '../../../lib/logger';
-import { MultiLevelCache } from '../../../lib/cache';
+import { logger } from '../../lib/logger';
+import { MultiLevelCache } from '../../lib/cache';
 
 // Computer Vision Task Types
 export type CVTask =

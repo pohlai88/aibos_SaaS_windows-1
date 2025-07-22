@@ -10,10 +10,10 @@
  * - Model registry and discovery
  */
 
-import * as tf from '@tensorflow/tfjs-node';
+// import * as tf from '@tensorflow/tfjs-node';
 import type { z } from 'zod';
-import { logger } from '../../../lib/logger';
-import { MultiLevelCache } from '../../../lib/cache';
+import { logger } from '../../lib/logger';
+import { MultiLevelCache } from '../../lib/cache';
 
 // ML Model Types
 export type MLModelType =
@@ -634,7 +634,8 @@ export class MLModelManager {
     // Load model based on framework
     switch (model.config.framework) {
       case 'tensorflow':
-        return await tf.loadLayersModel(modelVersion.filePath);
+        // return await tf.loadLayersModel(modelVersion.filePath);
+    return null; // TensorFlow not available in frontend
       case 'onnx':
         // TODO: Implement ONNX model loading
         return {};

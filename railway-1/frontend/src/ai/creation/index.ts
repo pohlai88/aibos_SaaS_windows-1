@@ -12,9 +12,9 @@ import { PromptEngine } from './PromptEngine';
 import { ResponseProcessor } from './ResponseProcessor';
 
 // ==================== PHASE 5: ECOSYSTEM COMPONENTS ====================
-import { RevenueEngine } from '../ecosystem/RevenueEngine';
-import { OrgNetworkManager } from '../ecosystem/OrgNetworkManager';
-import { MarketplaceInsightsEngine } from '../ecosystem/MarketplaceInsightsEngine';
+import { RevenueEngine } from '../../ecosystem/RevenueEngine';
+import { OrgNetworkManager } from '../../ecosystem/OrgNetworkManager';
+import { MarketplaceInsightsEngine } from '../../ecosystem/MarketplaceInsightsEngine';
 
 // ==================== AI CREATION METADATA ====================
 export const AI_CREATION_NAME = 'AI-Driven Creation Engine';

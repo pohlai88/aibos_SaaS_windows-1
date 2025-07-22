@@ -14,8 +14,8 @@
  * - Text similarity and clustering
  */
 
-import { logger } from '../../../lib/logger';
-import { MultiLevelCache } from '../../../lib/cache';
+import { logger } from '../../lib/logger';
+import { MultiLevelCache } from '../../lib/cache';
 
 // NLP Task Types
 export type NLPTask =

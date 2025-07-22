@@ -1,6 +1,6 @@
 /**
  * AI Code Generator - Production Grade
- * 
+ *
  * Features:
  * - Generate code in 20+ languages
  * - Support for frameworks and patterns
@@ -10,15 +10,13 @@
  * - Best practice enforcement
  */
 
-import { AIEngine, AIRequest, AIResponse } from '../engine/AIEngine';
-
-// 1. Core Types
-type CodeLanguage = 
-  | 'typescript' | 'javascript' | 'python' | 'java' 
+// ==================== TYPES ====================
+type CodeLanguage =
+  | 'typescript' | 'javascript' | 'python' | 'java'
   | 'csharp' | 'go' | 'rust' | 'swift' | 'kotlin';
 
-type CodePattern = 
-  | 'component' | 'service' | 'utility' 
+type CodePattern =
+  | 'component' | 'service' | 'utility'
   | 'test' | 'documentation' | 'api';
 
 type CodeStyle = 'functional' | 'oop' | 'procedural';
@@ -69,6 +67,45 @@ interface CodeIssue {
   fix?: string;
 }
 
+// Simple AI Engine for code generation
+interface SimpleAIRequest {
+  task: string;
+  input: string;
+  provider?: string;
+  model?: string;
+  metadata?: Record<string, any>;
+}
+
+interface SimpleAIResponse {
+  output: string;
+  model: string;
+  provider: string;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  cached?: boolean;
+}
+
+class SimpleAIEngine {
+  async process(request: SimpleAIRequest): Promise<SimpleAIResponse> {
+    // Mock AI processing for now
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    return {
+      output: `Generated ${request.task} code for: ${request.input}`,
+      model: request.model || 'gpt-4',
+      provider: request.provider || 'openai',
+      usage: {
+        promptTokens: Math.ceil(request.input.length / 4),
+        completionTokens: Math.ceil(request.input.length / 8),
+        totalTokens: Math.ceil(request.input.length / 3)
+      }
+    };
+  }
+}
+
 // 3. Main Generator Class
 export class AICodeGenerator {
   private readonly languageTemplates: Record<CodeLanguage, string> = {
@@ -92,7 +129,7 @@ export class AICodeGenerator {
     api: 'Build RESTful APIs with proper validation and error handling',
   };
 
-  constructor(private aiEngine: AIEngine) {}
+  constructor(private aiEngine: SimpleAIEngine = new SimpleAIEngine()) {}
 
   // 4. Core Methods (CLI Compatible)
   async generateCode(description: string, language: CodeLanguage = 'typescript', options?: {
@@ -105,11 +142,11 @@ export class AICodeGenerator {
       pattern: options?.pattern || 'utility',
       description,
       options: {
-        includeTests: options?.includeTests,
-        includeDocs: options?.includeDocs,
+        includeTests: options?.includeTests ?? false,
+        includeDocs: options?.includeDocs ?? false,
       },
     };
-    
+
     return this.generate(request);
   }
 
@@ -117,11 +154,10 @@ export class AICodeGenerator {
     const prompt = this.buildCompletionPrompt(partialCode, language);
     const response = await this.aiEngine.process({
       task: 'code-generation',
-      prompt,
-      context: { language },
-      options: { model: 'gpt-4', temperature: 0.2 },
+      input: prompt,
+      metadata: { language },
     });
-    
+
     return this.parseResponse(response, {
       language,
       pattern: 'utility',
@@ -142,23 +178,21 @@ export class AICodeGenerator {
     const prompt = this.buildExplanationPrompt(code, language);
     const response = await this.aiEngine.process({
       task: 'text-generation',
-      prompt,
-      context: { language },
-      options: { model: 'gpt-4', temperature: 0.3 },
+      input: prompt,
+      metadata: { language },
     });
-    
-    return this.parseExplanation(response.content);
+
+    return this.parseExplanation(response.output);
   }
 
   async generate(request: CodeGenRequest): Promise<GeneratedCode> {
     const prompt = this.buildPrompt(request);
     const response = await this.aiEngine.process({
       task: 'code-generation',
-      prompt,
-      context: request.context || {},
-      options: { model: 'gpt-4', temperature: 0.3 },
+      input: prompt,
+      metadata: request.context || {},
     });
-    
+
     return this.parseResponse(response, request);
   }
 
@@ -166,11 +200,10 @@ export class AICodeGenerator {
     const prompt = this.buildAnalysisPrompt(code, language);
     const response = await this.aiEngine.process({
       task: 'code-review',
-      prompt,
-      context: { language },
-      options: { model: 'gpt-4', temperature: 0.2 },
+      input: prompt,
+      metadata: { language },
     });
-    
+
     return this.parseAnalysis(response);
   }
 
@@ -178,15 +211,14 @@ export class AICodeGenerator {
     const prompt = this.buildRefactorPrompt(code, language, goals);
     const response = await this.aiEngine.process({
       task: 'code-generation',
-      prompt,
-      context: { language },
-      options: { model: 'gpt-4', temperature: 0.3 },
+      input: prompt,
+      metadata: { language },
     });
-    
-    return this.parseResponse(response, { 
-      language, 
-      pattern: 'utility', 
-      description: 'Refactored code' 
+
+    return this.parseResponse(response, {
+      language,
+      pattern: 'utility',
+      description: 'Refactored code'
     });
   }
 
@@ -294,27 +326,27 @@ Format as JSON with fields: explanation, breakdown, concepts, improvements
   }
 
   // 6. Response Parsing
-  private parseResponse(response: AIResponse, request: CodeGenRequest): GeneratedCode {
-    const codeBlocks = this.extractCodeBlocks(response.content);
-    
+  private parseResponse(response: SimpleAIResponse, request: CodeGenRequest): GeneratedCode {
+    const codeBlocks = this.extractCodeBlocks(response.output);
+
     return {
       code: codeBlocks[0] || '',
       tests: request.options?.includeTests ? codeBlocks[1] : undefined,
       docs: request.options?.includeDocs ? codeBlocks[2] : undefined,
-      dependencies: this.extractDependencies(response.content),
+      dependencies: this.extractDependencies(response.output),
       metadata: {
         complexity: this.assessComplexity(codeBlocks[0] || ''),
-        qualityScore: this.extractQualityScore(response.content),
-        securityWarnings: this.extractSecurityWarnings(response.content)
+        qualityScore: this.extractQualityScore(response.output),
+        securityWarnings: this.extractSecurityWarnings(response.output)
       }
     };
   }
 
-  private parseAnalysis(response: AIResponse): CodeAnalysis {
+  private parseAnalysis(response: SimpleAIResponse): CodeAnalysis {
     try {
-      return JSON.parse(response.content);
+      return JSON.parse(response.output);
     } catch {
-      return this.safeParseAnalysis(response.content);
+      return this.safeParseAnalysis(response.output);
     }
   }
 
@@ -339,7 +371,7 @@ Format as JSON with fields: explanation, breakdown, concepts, improvements
   // 7. Helper Methods (Now Implemented)
   private extractCodeBlocks(content: string): string[] {
     const matches = content.match(/```[\w]*\n([\s\S]*?)```/g) || [];
-    return matches.map(block => 
+    return matches.map(block =>
       block.replace(/```[\w]*\n/, '').replace(/```$/, '').trim()
     );
   }
@@ -347,13 +379,19 @@ Format as JSON with fields: explanation, breakdown, concepts, improvements
   private extractDependencies(content: string): string[] {
     const importMatches = content.match(/import.*from\s+['"]([^'"]+)['"]/g) || [];
     const requireMatches = content.match(/require\(['"]([^'"]+)['"]\)/g) || [];
-    
+
     const dependencies = [
-      ...importMatches.map(match => match.match(/['"]([^'"]+)['"]/)![1]),
-      ...requireMatches.map(match => match.match(/['"]([^'"]+)['"]/)![1])
+      ...importMatches.map(match => {
+        const result = match.match(/['"]([^'"]+)['"]/);
+        return result ? result[1] : '';
+      }),
+      ...requireMatches.map(match => {
+        const result = match.match(/['"]([^'"]+)['"]/);
+        return result ? result[1] : '';
+      })
     ];
-    
-    return [...new Set(dependencies.filter(dep => !dep.startsWith('.')))];
+
+    return Array.from(new Set(dependencies.filter(dep => dep && !dep.startsWith('.'))));
   }
 
   private extractQualityScore(content: string): number {
@@ -370,7 +408,7 @@ Format as JSON with fields: explanation, breakdown, concepts, improvements
     if (!code) return 'low';
     const lines = code.split('\n').length;
     const cyclomaticIndicators = (code.match(/if|for|while|switch|catch/g) || []).length;
-    
+
     if (lines < 50 && cyclomaticIndicators < 5) return 'low';
     if (lines < 200 && cyclomaticIndicators < 15) return 'medium';
     return 'high';
@@ -437,22 +475,4 @@ Format as JSON with fields: explanation, breakdown, concepts, improvements
 export type { CodeLanguage, CodePattern, CodeStyle, CodeGenRequest, GeneratedCode, CodeAnalysis, CodeIssue };
 
 // Export singleton instance
-export const aiCodeGenerator = new AICodeGenerator(new AIEngine());
-
-// Generate a React component
-const component = await generator.generate({
-  language: 'typescript',
-  pattern: 'component',
-  description: 'A reusable button component with variants',
-  options: { includeTests: true }
-});
-
-// Analyze existing code
-const analysis = await generator.analyze(component.code, 'typescript');
-
-// Refactor code
-const refactored = await generator.refactor(
-  component.code, 
-  'typescript', 
-  ['Improve type safety', 'Add error boundaries']
-);
+export const aiCodeGenerator = new AICodeGenerator();

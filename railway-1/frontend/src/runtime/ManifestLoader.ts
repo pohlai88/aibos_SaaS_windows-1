@@ -16,7 +16,7 @@ import { z } from 'zod';
 
 // ==================== TYPES ====================
 export interface AppManifest {
-  manifest_version: number; // Schema versioning for future compatibility
+  manifest_version: 1; // Schema versioning - currently only version 1 is supported
   app_id: string;
   name: string;
   version: string;
@@ -264,7 +264,7 @@ export class ManifestLoader {
       this.log('Starting manifest validation');
 
       // Schema validation
-      const validatedData = ManifestSchema.parse(data);
+      const validatedData = ManifestSchema.parse(data) as AppManifest;
 
       // Business rule validation
       this.validateBusinessRules(validatedData, errors, warnings, options);
@@ -339,7 +339,7 @@ export class ManifestLoader {
     }
 
     // Validate permissions
-    const invalidPermissions = (manifest.permissions || []).filter(p => !(permissionLiterals || []).includes(p));
+    const invalidPermissions = (manifest.permissions || []).filter(p => !permissionLiterals.includes(p as any));
     if (invalidPermissions.length > 0) {
       errors.push(`Invalid permissions: ${invalidPermissions.join(', ')}`);
     }
