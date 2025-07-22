@@ -4,6 +4,7 @@ import { AuthProvider } from '@/components/providers/AuthProvider';
 import { AppProvider } from '@/components/providers/AppProvider';
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
 import { SystemCoreProvider } from '@/components/shell/SystemCore';
+import { StateManagerProvider } from '@/components/shell/StateManager';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,13 +31,15 @@ export default function RootLayout({
             }
           }}
         >
-          <AuthProvider>
-            <RealtimeProvider>
-              <AppProvider>
-                {children}
-              </AppProvider>
-            </RealtimeProvider>
-          </AuthProvider>
+          <StateManagerProvider>
+            <AuthProvider>
+              <RealtimeProvider>
+                <AppProvider>
+                  {children}
+                </AppProvider>
+              </RealtimeProvider>
+            </AuthProvider>
+          </StateManagerProvider>
         </SystemCoreProvider>
       </body>
     </html>
