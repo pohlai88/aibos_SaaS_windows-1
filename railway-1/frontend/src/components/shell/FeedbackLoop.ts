@@ -360,8 +360,8 @@ class FeedbackLoopManager {
     confidence: number;
   }): boolean {
     if (!this.config.enabled) return false;
-    if (!this.config.categories.includes('all') && !this.config.categories.includes(context.category)) return false;
-    if (!this.config.userSegments.includes('all') && !this.config.userSegments.includes(context.userRole)) return false;
+    if (!(this.config.categories || []).includes('all') && !(this.config.categories || []).includes(context.category)) return false;
+    if (!(this.config.userSegments || []).includes('all') && !(this.config.userSegments || []).includes(context.userRole)) return false;
     if (context.confidence < this.config.minRatingThreshold) return false;
 
     return true;

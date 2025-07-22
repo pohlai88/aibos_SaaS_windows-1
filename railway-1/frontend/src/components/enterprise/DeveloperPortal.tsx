@@ -109,8 +109,8 @@ export const DeveloperPortal: React.FC<DeveloperPortalProps> = ({
   // Filter modules
   const filteredModules = modules.filter(module => {
     const matchesCategory = selectedCategory === 'all' || module.category === selectedCategory;
-    const matchesSearch = module.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         module.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (module.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (module.description?.toLowerCase() || '').includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 

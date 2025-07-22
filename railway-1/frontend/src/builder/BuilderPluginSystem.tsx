@@ -575,7 +575,7 @@ export const BuilderPluginSystem: React.FC<BuilderPluginSystemProps> = ({
   // ==================== RENDER ====================
   const filteredPlugins = state.availablePlugins.filter(plugin => {
     if (selectedCategory !== 'all' && plugin.category !== selectedCategory) return false;
-    if (searchQuery && !plugin.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (searchQuery && !(plugin.name?.toLowerCase() || '').includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 

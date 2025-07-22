@@ -232,21 +232,18 @@ class AITipsGenerator {
     const opportunities: string[] = [];
 
     // Analyze recent actions
-    if (context.recentActions.length > 10) {
-      patterns.push('frequent_user');
-    }
-    if (context.recentActions.some(action => action.includes('folder'))) {
+    if ((context.recentActions || []).some(action => (action || '').includes('folder'))) {
       patterns.push('folder_user');
     }
-    if (context.recentActions.some(action => action.includes('search'))) {
+    if ((context.recentActions || []).some(action => (action || '').includes('search'))) {
       patterns.push('search_user');
     }
 
     // Analyze usage patterns
-    if (context.usagePatterns.includes('keyboard_shortcuts')) {
+    if ((context.usagePatterns || []).includes('keyboard_shortcuts')) {
       patterns.push('keyboard_user');
     }
-    if (context.usagePatterns.includes('mouse_navigation')) {
+    if ((context.usagePatterns || []).includes('mouse_navigation')) {
       patterns.push('mouse_user');
     }
 
@@ -266,7 +263,7 @@ class AITipsGenerator {
     if (Object.keys(featureUsage).length < 3) {
       opportunities.push('feature_discovery');
     }
-    if (!context.usagePatterns.includes('ai_features')) {
+    if (!(context.usagePatterns || []).includes('ai_features')) {
       opportunities.push('ai_adoption');
     }
 
@@ -434,7 +431,7 @@ class AITipsGenerator {
 
     // Context matching bonus
     const contextMatches = tip.context.filter(c =>
-      context.patterns.includes(c) || context.opportunities.includes(c)
+      (context.patterns || []).includes(c) || (context.opportunities || []).includes(c)
     );
     relevance += contextMatches.length * 0.1;
 
@@ -476,11 +473,11 @@ class AITipsGenerator {
   private generateRecommendations(context: ReturnType<typeof this.analyzeUserContext>): string[] {
     const recommendations: string[] = [];
 
-    if (context.opportunities.includes('ai_adoption')) {
+    if ((context.opportunities || []).includes('ai_adoption')) {
       recommendations.push('Consider exploring AI-powered features to enhance your workflow');
     }
 
-    if (context.opportunities.includes('feature_discovery')) {
+    if ((context.opportunities || []).includes('feature_discovery')) {
       recommendations.push('Take time to explore advanced features for better productivity');
     }
 
