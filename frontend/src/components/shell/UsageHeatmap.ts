@@ -132,9 +132,9 @@ class UsageHeatmapTracker {
   }
 
   private getZoneType(event: UsageEvent): HeatmapZone['type'] {
-    if (event.target.includes('app_')) return 'app';
-    if (event.target.includes('feature_')) return 'feature';
-    if (event.target.includes('workflow_')) return 'workflow';
+    if ((event.target || '').includes('app_')) return 'app';
+    if ((event.target || '').includes('feature_')) return 'feature';
+    if ((event.target || '').includes('workflow_')) return 'workflow';
     return 'area';
   }
 
@@ -253,8 +253,8 @@ class UsageHeatmapTracker {
   }
 
   private calculateCompletionRate(events: UsageEvent[]): number {
-    const startEvents = events.filter(e => e.type === 'action' && e.target.includes('start'));
-    const endEvents = events.filter(e => e.type === 'action' && e.target.includes('complete'));
+    const startEvents = events.filter(e => e.type === 'action' && (e.target || '').includes('start'));
+    const endEvents = events.filter(e => e.type === 'action' && (e.target || '').includes('complete'));
     return startEvents.length > 0 ? endEvents.length / startEvents.length : 0;
   }
 

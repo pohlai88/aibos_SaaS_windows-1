@@ -244,9 +244,9 @@ export const MarketplaceDirectory: React.FC = () => {
     // Search query
     if (state.searchQuery) {
       filtered = filtered.filter(module =>
-        module.name.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-        module.description.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-        module.tags.some(tag => tag.toLowerCase().includes(state.searchQuery.toLowerCase()))
+        (module.name?.toLowerCase() || '').includes(state.searchQuery.toLowerCase()) ||
+        (module.description?.toLowerCase() || '').includes(state.searchQuery.toLowerCase()) ||
+        (module.tags || []).some(tag => (tag?.toLowerCase() || '').includes(state.searchQuery.toLowerCase()))
       );
     }
 
@@ -268,7 +268,7 @@ export const MarketplaceDirectory: React.FC = () => {
     // Publisher filter
     if (state.filters.publisher) {
       filtered = filtered.filter(module =>
-        module.publisher.name.toLowerCase().includes(state.filters.publisher.toLowerCase())
+        (module.publisher?.name?.toLowerCase() || '').includes(state.filters.publisher.toLowerCase())
       );
     }
 
@@ -276,7 +276,7 @@ export const MarketplaceDirectory: React.FC = () => {
     if (state.filters.compliance.length > 0) {
       filtered = filtered.filter(module =>
         state.filters.compliance.every(compliance =>
-          module.compliance[compliance as keyof typeof module.compliance]
+          module.compliance?.[compliance as keyof typeof module.compliance]
         )
       );
     }
@@ -299,19 +299,19 @@ export const MarketplaceDirectory: React.FC = () => {
     // Sorting
     switch (state.sortBy) {
       case 'popular':
-        filtered.sort((a, b) => b.installCount - a.installCount);
+        filtered.sort((a, b) => (b.installCount || 0) - (a.installCount || 0));
         break;
       case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating);
+        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case 'newest':
-        filtered.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime());
+        filtered.sort((a, b) => (b.lastUpdated?.getTime() || 0) - (a.lastUpdated?.getTime() || 0));
         break;
       case 'trending':
         filtered.sort((a, b) => (b.trending ? 1 : 0) - (a.trending ? 1 : 0));
         break;
       case 'name':
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
         break;
     }
 

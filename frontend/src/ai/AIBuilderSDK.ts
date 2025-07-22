@@ -336,7 +336,7 @@ export class AIBuilderSDK {
     // App type tokens
     const appTypeTokens = ['form', 'list', 'table', 'dashboard', 'chart', 'workflow', 'process'];
     appTypeTokens.forEach(token => {
-      if (prompt.includes(token)) {
+      if ((prompt || '').includes(token)) {
         tokens.recognized.appType.push(token);
       }
     });
@@ -344,7 +344,7 @@ export class AIBuilderSDK {
     // Domain tokens
     const domainTokens = ['customer', 'contact', 'order', 'product', 'employee', 'hr', 'finance', 'invoice', 'patient', 'medical'];
     domainTokens.forEach(token => {
-      if (prompt.includes(token)) {
+      if ((prompt || '').includes(token)) {
         tokens.recognized.domain.push(token);
       }
     });
@@ -352,7 +352,7 @@ export class AIBuilderSDK {
     // Feature tokens
     const featureTokens = ['search', 'filter', 'sort', 'export', 'import', 'validate', 'notify', 'chart', 'analytics'];
     featureTokens.forEach(token => {
-      if (prompt.includes(token)) {
+      if ((prompt || '').includes(token)) {
         tokens.recognized.features.push(token);
       }
     });
@@ -360,7 +360,7 @@ export class AIBuilderSDK {
     // Action tokens
     const actionTokens = ['create', 'build', 'make', 'design', 'collect', 'manage', 'display', 'show'];
     actionTokens.forEach(token => {
-      if (prompt.includes(token)) {
+      if ((prompt || '').includes(token)) {
         tokens.recognized.actions.push(token);
       }
     });
@@ -392,19 +392,19 @@ export class AIBuilderSDK {
     };
 
     // Score based on keywords
-    if (prompt.includes('form') || prompt.includes('input') || prompt.includes('collect')) {
+    if ((prompt || '').includes('form') || (prompt || '').includes('input') || (prompt || '').includes('collect')) {
       appTypeScores.form += 0.8;
     }
-    if (prompt.includes('list') || prompt.includes('table') || prompt.includes('display')) {
+    if ((prompt || '').includes('list') || (prompt || '').includes('table') || (prompt || '').includes('display')) {
       appTypeScores.list += 0.8;
     }
-    if (prompt.includes('dashboard') || prompt.includes('analytics') || prompt.includes('metrics')) {
+    if ((prompt || '').includes('dashboard') || (prompt || '').includes('analytics') || (prompt || '').includes('metrics')) {
       appTypeScores.dashboard += 0.9;
     }
-    if (prompt.includes('chart') || prompt.includes('graph') || prompt.includes('visualization')) {
+    if ((prompt || '').includes('chart') || (prompt || '').includes('graph') || (prompt || '').includes('visualization')) {
       appTypeScores.chart += 0.8;
     }
-    if (prompt.includes('workflow') || prompt.includes('process') || prompt.includes('automation')) {
+    if ((prompt || '').includes('workflow') || (prompt || '').includes('process') || (prompt || '').includes('automation')) {
       appTypeScores.custom += 0.7; // Could be workflow
     }
 
@@ -434,22 +434,22 @@ export class AIBuilderSDK {
     };
 
     // Score based on keywords
-    if (prompt.includes('customer') || prompt.includes('contact') || prompt.includes('lead')) {
+    if ((prompt || '').includes('customer') || (prompt || '').includes('contact') || (prompt || '').includes('lead')) {
       domainScores.crm += 0.9;
     }
-    if (prompt.includes('order') || prompt.includes('product') || prompt.includes('inventory')) {
+    if ((prompt || '').includes('order') || (prompt || '').includes('product') || (prompt || '').includes('inventory')) {
       domainScores.ecommerce += 0.9;
     }
-    if (prompt.includes('employee') || prompt.includes('hr') || prompt.includes('staff')) {
+    if ((prompt || '').includes('employee') || (prompt || '').includes('hr') || (prompt || '').includes('staff')) {
       domainScores.hr += 0.9;
     }
-    if (prompt.includes('finance') || prompt.includes('invoice') || prompt.includes('payment')) {
+    if ((prompt || '').includes('finance') || (prompt || '').includes('invoice') || (prompt || '').includes('payment')) {
       domainScores.finance += 0.9;
     }
-    if (prompt.includes('patient') || prompt.includes('medical') || prompt.includes('health')) {
+    if ((prompt || '').includes('patient') || (prompt || '').includes('medical') || (prompt || '').includes('health')) {
       domainScores.healthcare += 0.9;
     }
-    if (prompt.includes('student') || prompt.includes('course') || prompt.includes('education')) {
+    if ((prompt || '').includes('student') || (prompt || '').includes('course') || (prompt || '').includes('education')) {
       domainScores.education += 0.9;
     }
 

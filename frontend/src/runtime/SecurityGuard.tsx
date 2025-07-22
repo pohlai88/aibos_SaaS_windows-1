@@ -176,7 +176,7 @@ export const SecurityGuard: React.FC<SecurityGuardProps> = ({
   // ==================== SECURITY VALIDATION ====================
   const validatePermissions = useCallback((requiredPermissions: ValidPermission[]): boolean => {
     const hasAllPermissions = requiredPermissions.every(permission =>
-      userPermissions.includes(permission)
+      (userPermissions || []).includes(permission)
     );
 
     if (!hasAllPermissions) {
@@ -185,11 +185,11 @@ export const SecurityGuard: React.FC<SecurityGuardProps> = ({
         timestamp: new Date(),
         type: 'permission_violation',
         severity: 'high',
-        message: `User lacks required permissions: ${requiredPermissions.filter(p => !userPermissions.includes(p)).join(', ')}`,
+        message: `User lacks required permissions: ${requiredPermissions.filter(p => !(userPermissions || []).includes(p)).join(', ')}`,
         details: {
           required: requiredPermissions,
           actual: userPermissions,
-          missing: requiredPermissions.filter(p => !userPermissions.includes(p))
+          missing: requiredPermissions.filter(p => !(userPermissions || []).includes(p))
         },
         user: userId,
         tenant: tenantId,
@@ -246,7 +246,7 @@ export const SecurityGuard: React.FC<SecurityGuardProps> = ({
     // Check for suspicious domains
     if (manifest.security?.allowedDomains) {
       const suspiciousDomains = manifest.security.allowedDomains.filter(domain =>
-        !domain.includes('aibos.com') && !domain.includes('localhost')
+        !(domain || '').includes('aibos.com') && !(domain || '').includes('localhost')
       );
 
       if (suspiciousDomains.length > 0) {

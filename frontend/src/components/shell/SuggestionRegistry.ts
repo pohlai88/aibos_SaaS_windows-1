@@ -123,7 +123,7 @@ class SuggestionRegistry {
 
     switch (type) {
       case 'app_installed':
-        const isInstalled = context.installedApps?.includes(value);
+        const isInstalled = (context.installedApps || []).includes(value);
         return operator === 'equals' ? isInstalled : !isInstalled;
 
       case 'usage_frequency':

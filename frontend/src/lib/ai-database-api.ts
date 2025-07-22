@@ -560,7 +560,7 @@ export function validateTypeScriptInterfaces(interfaces: string[]): boolean {
   return interfaces.every(intf =>
     typeof intf === 'string' &&
     intf.trim().length > 0 &&
-    intf.includes('interface')
+    (intf || '').includes('interface')
   );
 }
 

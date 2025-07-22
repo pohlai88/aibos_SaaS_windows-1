@@ -96,7 +96,7 @@ class AutoExecuteManager {
     if (this.actionsExecutedThisSession >= this.maxActionsPerSession) return false;
 
     // Check category preferences
-    if (!this.context.preferences.categories.includes(action.category)) return false;
+    if (!(this.context.preferences?.categories || []).includes(action.category)) return false;
 
     // Check requirements
     if (!this.checkRequirements(action.requirements)) return false;

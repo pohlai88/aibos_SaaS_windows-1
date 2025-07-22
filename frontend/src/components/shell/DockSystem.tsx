@@ -311,10 +311,10 @@ export const DockSystem: React.FC<DockSystemProps> = ({
     const savedPinnedApps = localStorage.getItem('aibos-dock-pinned-apps');
     if (savedPinnedApps) {
       try {
-        const pinnedAppIds = JSON.parse(savedPinnedApps);
+        const pinnedAppIds = JSON.parse(savedPinnedApps) || [];
         setApps(prev => prev.map(app => ({
           ...app,
-          isPinned: pinnedAppIds.includes(app.id)
+          isPinned: (pinnedAppIds || []).includes(app.id)
         })));
       } catch (error) {
         console.warn('Failed to load pinned apps:', error);

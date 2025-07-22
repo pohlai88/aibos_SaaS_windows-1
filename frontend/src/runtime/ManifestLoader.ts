@@ -339,7 +339,7 @@ export class ManifestLoader {
     }
 
     // Validate permissions
-    const invalidPermissions = manifest.permissions.filter(p => !permissionLiterals.includes(p));
+    const invalidPermissions = (manifest.permissions || []).filter(p => !(permissionLiterals || []).includes(p));
     if (invalidPermissions.length > 0) {
       errors.push(`Invalid permissions: ${invalidPermissions.join(', ')}`);
     }
@@ -362,7 +362,7 @@ export class ManifestLoader {
   private validateSecurity(manifest: AppManifest, errors: string[], warnings: string[]) {
     // Check for dangerous permissions
     const dangerousPermissions: ValidPermission[] = ['system.files', 'system.network'];
-    const hasDangerousPermissions = manifest.permissions.some(p => dangerousPermissions.includes(p));
+    const hasDangerousPermissions = (manifest.permissions || []).some(p => (dangerousPermissions || []).includes(p));
 
     if (hasDangerousPermissions && !manifest.security?.sandboxed) {
       warnings.push('Dangerous permissions detected - consider enabling sandbox mode');

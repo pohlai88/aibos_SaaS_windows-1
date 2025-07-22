@@ -315,7 +315,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({
 
       // Validate origin if trusted origins are specified
       if (options.trustedOrigins && options.trustedOrigins.length > 0) {
-        if (!options.trustedOrigins.includes(event.origin)) {
+        if (!(options.trustedOrigins || []).includes(event.origin)) {
           console.warn(`[AppContainer] Rejected message from untrusted origin: ${event.origin}`);
           return;
         }

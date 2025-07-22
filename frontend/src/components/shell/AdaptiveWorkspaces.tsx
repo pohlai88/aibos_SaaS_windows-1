@@ -115,11 +115,12 @@ export const AdaptiveWorkspaces: React.FC<AdaptiveWorkspacesProps> = ({
 
   // Memoized filtered workspaces
   const filteredWorkspaces = useMemo(() => {
-    return workspaces.filter(workspace =>
-      workspace.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      workspace.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      workspace.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    return workspaces.filter(workspace => {
+      const matchesSearch = (workspace.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+        (workspace.description?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+        (workspace.category?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+      return matchesSearch;
+    });
   }, [workspaces, searchQuery]);
 
   // AI-powered workspace suggestions

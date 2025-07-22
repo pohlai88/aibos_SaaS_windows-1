@@ -397,7 +397,7 @@ export const TelemetryEventBus: React.FC<TelemetryEventBusProps> = ({
     const insights: AIInsight[] = [];
 
     // Performance insight
-    if (analysis.anomalies.some(a => a.description.includes('Performance'))) {
+    if ((analysis.anomalies || []).some(a => (a.description || '').includes('Performance'))) {
       insights.push({
         id: `insight-${Date.now()}-1`,
         timestamp: new Date(),
@@ -415,7 +415,7 @@ export const TelemetryEventBus: React.FC<TelemetryEventBusProps> = ({
     }
 
     // Security insight
-    if (analysis.patterns.some(p => p.description.includes('security'))) {
+    if ((analysis.patterns || []).some(p => (p.description || '').includes('security'))) {
       insights.push({
         id: `insight-${Date.now()}-2`,
         timestamp: new Date(),
@@ -433,7 +433,7 @@ export const TelemetryEventBus: React.FC<TelemetryEventBusProps> = ({
     }
 
     // User experience insight
-    if (analysis.trends.some(t => t.direction === 'increasing' && t.description.includes('interaction'))) {
+    if ((analysis.trends || []).some(t => t.direction === 'increasing' && (t.description || '').includes('interaction'))) {
       insights.push({
         id: `insight-${Date.now()}-3`,
         timestamp: new Date(),

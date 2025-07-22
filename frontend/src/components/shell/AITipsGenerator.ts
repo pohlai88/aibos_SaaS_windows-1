@@ -232,21 +232,18 @@ class AITipsGenerator {
     const opportunities: string[] = [];
 
     // Analyze recent actions
-    if (context.recentActions.length > 10) {
-      patterns.push('frequent_user');
-    }
-    if (context.recentActions.some(action => action.includes('folder'))) {
+    if ((context.recentActions || []).some(action => (action || '').includes('folder'))) {
       patterns.push('folder_user');
     }
-    if (context.recentActions.some(action => action.includes('search'))) {
+    if ((context.recentActions || []).some(action => (action || '').includes('search'))) {
       patterns.push('search_user');
     }
 
     // Analyze usage patterns
-    if (context.usagePatterns.includes('keyboard_shortcuts')) {
+    if ((context.usagePatterns || []).includes('keyboard_shortcuts')) {
       patterns.push('keyboard_user');
     }
-    if (context.usagePatterns.includes('mouse_navigation')) {
+    if ((context.usagePatterns || []).includes('mouse_navigation')) {
       patterns.push('mouse_user');
     }
 
@@ -266,7 +263,7 @@ class AITipsGenerator {
     if (Object.keys(featureUsage).length < 3) {
       opportunities.push('feature_discovery');
     }
-    if (!context.usagePatterns.includes('ai_features')) {
+    if (!(context.usagePatterns || []).includes('ai_features')) {
       opportunities.push('ai_adoption');
     }
 
@@ -286,16 +283,16 @@ class AITipsGenerator {
   }
 
   private determineUserSegment(patterns: string[], context: UserContext): string {
-    if (patterns.includes('frequent_user') && context.sessionDuration > 600000) {
+    if ((patterns || []).includes('frequent_user') && context.sessionDuration > 600000) {
       return 'power_user';
     }
-    if (patterns.includes('ai_adoption')) {
+    if ((patterns || []).includes('ai_adoption')) {
       return 'curious_user';
     }
-    if (context.recentActions.length < 5) {
+    if ((context.recentActions || []).length < 5) {
       return 'new_user';
     }
-    if (patterns.includes('keyboard_user')) {
+    if ((patterns || []).includes('keyboard_user')) {
       return 'efficiency_user';
     }
     return 'regular_user';
@@ -314,7 +311,7 @@ class AITipsGenerator {
     if (featureCount > 10) score += 0.1;
 
     // Recent actions bonus
-    if (context.recentActions.length > 10) score += 0.1;
+    if ((context.recentActions || []).length > 10) score += 0.1;
 
     return Math.min(1, score);
   }
@@ -356,7 +353,7 @@ class AITipsGenerator {
     const contextualTips: AITip[] = [];
 
     // Generate tips based on patterns
-    if (patterns.includes('frequent_user')) {
+    if ((patterns || []).includes('frequent_user')) {
       contextualTips.push({
         id: `tip-${Date.now()}-001`,
         title: 'Optimize Your Workflow',
@@ -379,7 +376,7 @@ class AITipsGenerator {
       });
     }
 
-    if (opportunities.includes('ai_adoption')) {
+    if ((opportunities || []).includes('ai_adoption')) {
       contextualTips.push({
         id: `tip-${Date.now()}-002`,
         title: 'Try AI-Powered Features',
@@ -402,7 +399,7 @@ class AITipsGenerator {
       });
     }
 
-    if (opportunities.includes('feature_discovery')) {
+    if ((opportunities || []).includes('feature_discovery')) {
       contextualTips.push({
         id: `tip-${Date.now()}-003`,
         title: 'Explore Hidden Features',
@@ -434,7 +431,7 @@ class AITipsGenerator {
 
     // Context matching bonus
     const contextMatches = tip.context.filter(c =>
-      context.patterns.includes(c) || context.opportunities.includes(c)
+      (context.patterns || []).includes(c) || (context.opportunities || []).includes(c)
     );
     relevance += contextMatches.length * 0.1;
 
@@ -476,11 +473,11 @@ class AITipsGenerator {
   private generateRecommendations(context: ReturnType<typeof this.analyzeUserContext>): string[] {
     const recommendations: string[] = [];
 
-    if (context.opportunities.includes('ai_adoption')) {
+    if ((context.opportunities || []).includes('ai_adoption')) {
       recommendations.push('Consider exploring AI-powered features to enhance your workflow');
     }
 
-    if (context.opportunities.includes('feature_discovery')) {
+    if ((context.opportunities || []).includes('feature_discovery')) {
       recommendations.push('Take time to explore advanced features for better productivity');
     }
 
