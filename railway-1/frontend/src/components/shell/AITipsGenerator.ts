@@ -283,16 +283,16 @@ class AITipsGenerator {
   }
 
   private determineUserSegment(patterns: string[], context: UserContext): string {
-    if (patterns.includes('frequent_user') && context.sessionDuration > 600000) {
+    if ((patterns || []).includes('frequent_user') && context.sessionDuration > 600000) {
       return 'power_user';
     }
-    if (patterns.includes('ai_adoption')) {
+    if ((patterns || []).includes('ai_adoption')) {
       return 'curious_user';
     }
-    if (context.recentActions.length < 5) {
+    if ((context.recentActions || []).length < 5) {
       return 'new_user';
     }
-    if (patterns.includes('keyboard_user')) {
+    if ((patterns || []).includes('keyboard_user')) {
       return 'efficiency_user';
     }
     return 'regular_user';
@@ -311,7 +311,7 @@ class AITipsGenerator {
     if (featureCount > 10) score += 0.1;
 
     // Recent actions bonus
-    if (context.recentActions.length > 10) score += 0.1;
+    if ((context.recentActions || []).length > 10) score += 0.1;
 
     return Math.min(1, score);
   }
@@ -353,7 +353,7 @@ class AITipsGenerator {
     const contextualTips: AITip[] = [];
 
     // Generate tips based on patterns
-    if (patterns.includes('frequent_user')) {
+    if ((patterns || []).includes('frequent_user')) {
       contextualTips.push({
         id: `tip-${Date.now()}-001`,
         title: 'Optimize Your Workflow',
@@ -376,7 +376,7 @@ class AITipsGenerator {
       });
     }
 
-    if (opportunities.includes('ai_adoption')) {
+    if ((opportunities || []).includes('ai_adoption')) {
       contextualTips.push({
         id: `tip-${Date.now()}-002`,
         title: 'Try AI-Powered Features',
@@ -399,7 +399,7 @@ class AITipsGenerator {
       });
     }
 
-    if (opportunities.includes('feature_discovery')) {
+    if ((opportunities || []).includes('feature_discovery')) {
       contextualTips.push({
         id: `tip-${Date.now()}-003`,
         title: 'Explore Hidden Features',

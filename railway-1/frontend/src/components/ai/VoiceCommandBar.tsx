@@ -67,7 +67,7 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
             setTranscript(fullTranscript);
 
             // Check for wake word
-            if (fullTranscript.toLowerCase().includes(wakeWord.toLowerCase())) {
+            if ((fullTranscript || '').toLowerCase().includes((wakeWord || '').toLowerCase())) {
               handleWakeWord();
             }
 
@@ -119,7 +119,7 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
 
     // Find matching command
     const matchedCommand = commands.find(cmd =>
-      lowerCommand.includes(cmd.phrase.toLowerCase())
+      (lowerCommand || '').includes((cmd.phrase || '').toLowerCase())
     );
 
     if (matchedCommand) {
@@ -168,7 +168,7 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
     };
 
     const action = Object.keys(actions).find(key =>
-      command.toLowerCase().includes(key)
+      (command || '').toLowerCase().includes(key)
     );
 
     return actions[action || ''] || (() => console.log('Command not understood'));

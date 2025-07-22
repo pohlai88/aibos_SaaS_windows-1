@@ -252,7 +252,7 @@ export const marketplaceUtils = {
       if (!rule.enabled) return;
 
       // Check GDPR compliance
-      if (rule.category === 'privacy' && rule.name.includes('GDPR')) {
+      if (rule.category === 'privacy' && (rule.name || '').includes('GDPR')) {
         if (!module.compliance.gdpr) {
           violations.push('GDPR compliance required');
         }

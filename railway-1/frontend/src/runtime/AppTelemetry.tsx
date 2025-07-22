@@ -303,9 +303,9 @@ export const AppTelemetry: React.FC<AppTelemetryProps> = ({
     setMetrics(prev => ({
       ...prev,
       technical: {
-        browser: navigator.userAgent.includes('Chrome') ? 'Chrome' :
-                navigator.userAgent.includes('Firefox') ? 'Firefox' :
-                navigator.userAgent.includes('Safari') ? 'Safari' : 'Other',
+        browser: (navigator.userAgent || '').includes('Chrome') ? 'Chrome' :
+        (navigator.userAgent || '').includes('Firefox') ? 'Firefox' :
+        (navigator.userAgent || '').includes('Safari') ? 'Safari' : 'Other',
         device: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
         os: navigator.platform,
         screenResolution: `${screen.width}x${screen.height}`,

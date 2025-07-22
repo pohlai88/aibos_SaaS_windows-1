@@ -298,7 +298,7 @@ const useDragAndResize = (windowId: string, windowActions: ReturnType<typeof use
 
       if (resizeState.maintainAspectRatio) {
         const aspectRatio = resizeState.resizeStart.width / resizeState.resizeStart.height;
-        if (['nw', 'ne', 'sw', 'se'].includes(resizeState.resizeHandle)) {
+        if (['nw', 'ne', 'sw', 'se'].includes(resizeState.resizeHandle || '')) {
           newHeight = newWidth / aspectRatio;
         }
       }

@@ -173,12 +173,9 @@ export function TerminalLoginScreen() {
           <div className="font-mono text-sm">
             {terminalOutput.map((line, index) => (
               <div key={index} className="text-green-400">
-                {line.includes('[OK]') ? (
-                  <span>
-                    {line.replace('[OK]', '')}
-                    <span className="text-green-600">[OK]</span>
-                  </span>
-                ) : line.includes('ERROR:') ? (
+                {(line || '').includes('[OK]') ? (
+                  <span className="text-green-500">✓ {line}</span>
+                ) : (line || '').includes('ERROR:') ? (
                   <span className="text-red-400">{line}</span>
                 ) : (
                   line

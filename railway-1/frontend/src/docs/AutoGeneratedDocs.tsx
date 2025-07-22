@@ -645,7 +645,7 @@ ${example.interactive ? '**Try it live:** [Interactive Demo](#)' : ''}
     let improvements = 0;
 
     // Improve content clarity
-    if (section.content.includes('TODO') || section.content.includes('FIXME')) {
+    if ((section.content || '').includes('TODO') || (section.content || '').includes('FIXME')) {
       section.content = section.content.replace(/TODO|FIXME/g, '✅ Completed');
       improvements++;
     }
