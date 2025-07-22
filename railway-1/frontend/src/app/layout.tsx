@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { AppProvider } from '@/components/providers/AppProvider';
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
+import { SystemCoreProvider } from '@/components/shell/SystemCore';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,14 +20,25 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <RealtimeProvider>
-            <AppProvider>
-              {children}
-            </AppProvider>
-          </RealtimeProvider>
-        </AuthProvider>
+        <SystemCoreProvider
+          config={{
+            features: {
+              ai: true,
+              realtime: true,
+              analytics: true,
+              telemetry: true
+            }
+          }}
+        >
+          <AuthProvider>
+            <RealtimeProvider>
+              <AppProvider>
+                {children}
+              </AppProvider>
+            </RealtimeProvider>
+          </AuthProvider>
+        </SystemCoreProvider>
       </body>
     </html>
   );
-} 
+}

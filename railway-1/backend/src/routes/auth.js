@@ -4,8 +4,16 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Database connection
-const { db } = require('../utils/supabase');
+// Database connection with error handling
+let db;
+try {
+  const supabaseModule = require('../utils/supabase');
+  db = supabaseModule.db;
+  console.log('✅ Supabase connection initialized successfully');
+} catch (error) {
+  console.error('❌ Failed to initialize Supabase:', error.message);
+  db = null;
+}
 
 // POST /api/auth/login - User login
 router.post('/login', async (req, res) => {
@@ -29,83 +37,125 @@ router.post('/login', async (req, res) => {
     const demoUser = demoUsers.find(user => user.email === email && user.password === password);
 
     if (demoUser) {
-      // Try to get user
-      let userResult = await db.getUserByEmail(email);
-      let user = userResult.data;
-      let tenant;
-      if (!user) {
-        // Create tenant
-        const tenantData = {
-          tenant_id: uuidv4(),
-          name: 'Demo Tenant',
-          status: 'active',
-          settings: {}
-        };
-        const tenantResult = await db.createTenant(tenantData);
-        if (tenantResult.error) {
-          return res.status(500).json({ success: false, error: 'Failed to create tenant' });
-        }
-        tenant = tenantResult.data;
-        // Hash password
-        const passwordHash = await bcrypt.hash(password, 10);
-        // Create user
-        const userData = {
-          user_id: uuidv4(),
-          tenant_id: tenant.tenant_id,
-          email,
-          name: demoUser.name,
-          role: 'admin',
-          permissions: ['read', 'write', 'admin'],
-          password_hash: passwordHash
-        };
-        const userCreateResult = await db.createUser(userData);
-        if (userCreateResult.error) {
-          return res.status(500).json({ success: false, error: 'Failed to create user' });
-        }
-        user = userCreateResult.data;
-      } else {
-        // Get tenant
-        const tenantResult = await db.getTenant(user.tenant_id);
-        if (!tenantResult.data) {
-          return res.status(401).json({ success: false, error: 'Tenant not found' });
-        }
-        tenant = tenantResult.data;
+      console.log(`🔐 Demo user login attempt: ${email}`);
+
+      if (!db) {
+        console.error('❌ Database not available for demo user creation');
+        return res.status(500).json({
+          success: false,
+          error: 'Database service unavailable. Please try again later.'
+        });
       }
-      // Generate JWT token
-      const token = jwt.sign(
-        {
-          user_id: user.user_id,
-          tenant_id: user.tenant_id,
-          email: user.email,
-          role: user.role
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
-      return res.json({
-        success: true,
-        data: {
-          token,
-          user: {
-            user_id: user.user_id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            permissions: user.permissions
-          },
-          tenant: {
-            tenant_id: tenant.tenant_id,
-            name: tenant.name,
-            status: tenant.status
+
+      try {
+        // Try to get user
+        let userResult = await db.getUserByEmail(email);
+        let user = userResult.data;
+        let tenant;
+
+        if (!user) {
+          console.log(`📝 Creating new demo user: ${email}`);
+          // Create tenant
+          const tenantData = {
+            tenant_id: uuidv4(),
+            name: 'Demo Tenant',
+            status: 'active',
+            settings: {}
+          };
+          const tenantResult = await db.createTenant(tenantData);
+          if (tenantResult.error) {
+            console.error('❌ Failed to create tenant:', tenantResult.error);
+            return res.status(500).json({ success: false, error: 'Failed to create tenant' });
           }
-        },
-        message: 'Login successful (demo user)'
+          tenant = tenantResult.data;
+
+          // Hash password
+          const passwordHash = await bcrypt.hash(password, 10);
+
+          // Create user
+          const userData = {
+            user_id: uuidv4(),
+            tenant_id: tenant.tenant_id,
+            email,
+            name: demoUser.name,
+            role: 'admin',
+            permissions: ['read', 'write', 'admin'],
+            password_hash: passwordHash
+          };
+          const userCreateResult = await db.createUser(userData);
+          if (userCreateResult.error) {
+            console.error('❌ Failed to create user:', userCreateResult.error);
+            return res.status(500).json({ success: false, error: 'Failed to create user' });
+          }
+          user = userCreateResult.data;
+          console.log(`✅ Demo user created successfully: ${email}`);
+        } else {
+          console.log(`👤 Existing demo user found: ${email}`);
+          // Get tenant
+          const tenantResult = await db.getTenant(user.tenant_id);
+          if (!tenantResult.data) {
+            console.error('❌ Tenant not found for user:', user.user_id);
+            return res.status(401).json({ success: false, error: 'Tenant not found' });
+          }
+          tenant = tenantResult.data;
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+          {
+            user_id: user.user_id,
+            tenant_id: user.tenant_id,
+            email: user.email,
+            role: user.role
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+
+        console.log(`✅ Demo user login successful: ${email}`);
+        return res.json({
+          success: true,
+          data: {
+            token,
+            user: {
+              user_id: user.user_id,
+              email: user.email,
+              name: user.name,
+              role: user.role,
+              permissions: user.permissions
+            },
+            tenant: {
+              tenant_id: tenant.tenant_id,
+              name: tenant.name,
+              status: tenant.status
+            }
+          },
+          message: 'Login successful (demo user)'
+        });
+      } catch (dbError) {
+        console.error('❌ Database error during demo user login:', dbError);
+        return res.status(500).json({
+          success: false,
+          error: 'Database service error. Please try again later.'
+        });
+      }
+    }
+
+    // Regular user login (non-demo)
+    if (!db) {
+      console.error('❌ Database not available for regular user login');
+      return res.status(500).json({
+        success: false,
+        error: 'Database service unavailable. Please try again later.'
       });
     }
+
+    console.log(`🔐 Regular user login attempt: ${email}`);
 
     // Get user from database
     const userResult = await db.getUserByEmail(email);
     if (!userResult.data) {
+      console.log(`❌ User not found: ${email}`);
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials'
@@ -115,6 +165,7 @@ router.post('/login', async (req, res) => {
     const user = userResult.data;
     const tenantResult = await db.getTenant(user.tenant_id);
     if (!tenantResult.data) {
+      console.error('❌ Tenant not found for user:', user.user_id);
       return res.status(401).json({
         success: false,
         error: 'Tenant not found'
@@ -126,6 +177,7 @@ router.post('/login', async (req, res) => {
     // Verify password with bcrypt
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
     if (!isValidPassword) {
+      console.log(`❌ Invalid password for user: ${email}`);
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 
@@ -141,6 +193,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
+    console.log(`✅ Regular user login successful: ${email}`);
     res.json({
       success: true,
       data: {
@@ -161,6 +214,7 @@ router.post('/login', async (req, res) => {
       message: 'Login successful'
     });
   } catch (error) {
+    console.error('❌ Login error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -396,6 +450,75 @@ router.get('/users', async (req, res) => {
       }
     });
   } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET /api/auth/test - Test database connection and create demo user
+router.get('/test', async (req, res) => {
+  try {
+    if (!db) {
+      return res.status(500).json({
+        success: false,
+        error: 'Database not available'
+      });
+    }
+
+    console.log('🔍 Testing database connection...');
+
+    // Try to create a test tenant
+    const tenantData = {
+      tenant_id: uuidv4(),
+      name: 'Test Demo Tenant',
+      status: 'active',
+      settings: {}
+    };
+
+    const tenantResult = await db.createTenant(tenantData);
+    if (tenantResult.error) {
+      console.error('❌ Failed to create tenant:', tenantResult.error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create tenant: ' + tenantResult.error.message
+      });
+    }
+
+    console.log('✅ Tenant created successfully');
+
+    // Try to create demo user
+    const passwordHash = await bcrypt.hash('Demo123!', 10);
+    const userData = {
+      user_id: uuidv4(),
+      tenant_id: tenantResult.data.tenant_id,
+      email: 'admin@demo.com',
+      name: 'Demo Admin',
+      role: 'admin',
+      permissions: ['read', 'write', 'admin'],
+      password_hash: passwordHash
+    };
+
+    const userResult = await db.createUser(userData);
+    if (userResult.error) {
+      console.error('❌ Failed to create user:', userResult.error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create user: ' + userResult.error.message
+      });
+    }
+
+    console.log('✅ Demo user created successfully');
+
+    res.json({
+      success: true,
+      message: 'Database test successful - demo user created',
+      data: {
+        tenant: tenantResult.data,
+        user: userResult.data
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Test error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
