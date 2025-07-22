@@ -43,23 +43,16 @@ export type {
   ApprovalWorkflow,
   ApprovalStep,
   AIRecommendation,
-  ManifestAIAnalysis,
-  ManifestStatus,
-  ApprovalStatus,
-  WorkflowStatus
+  ManifestAIAnalysis
 } from './SchemaManifestGovernance';
 
 export type {
   SchemaStructure,
-  SchemaComparisonResult,
-  ComparisonHook,
-  HookContext
+  SchemaComparisonResult
 } from './SchemaComparator';
 
 export type {
   AIService as AIServiceInterface,
-  SchemaAnalysis,
-  SchemaComparison,
   MigrationPlan as AIMigrationPlan,
   SchemaOptimization,
   PerformancePrediction,
@@ -73,7 +66,7 @@ export type {
   ValidationResult,
   BackupResult,
   RestoreResult,
-  ConnectionResult,
+  ConnectionTestResult,
   DatabaseInfo,
   QueryResult,
   TransactionResult,
@@ -123,7 +116,13 @@ export class AIDatabaseSystem extends EventEmitter {
     this.schemaManifestGovernance = new SchemaManifestGovernance();
     this.schemaComparator = new SchemaComparator();
     this.aiService = new AIService();
-    this.databaseConnector = new DatabaseConnector();
+    this.databaseConnector = new DatabaseConnector({
+      host: 'localhost',
+      port: 5432,
+      database: 'aibos',
+      username: 'postgres',
+      password: 'password'
+    });
     this.telemetryEngine = new AITelemetryEngine();
 
     // Set up event forwarding
@@ -264,7 +263,14 @@ export class AIDatabaseSystem extends EventEmitter {
       return {
         status: 'failed',
         timestamp: new Date(),
-        engines: {},
+        engines: {
+        schemaVersioning: this.schemaVersioning.healthCheck(),
+        schemaManifestGovernance: this.schemaManifestGovernance.healthCheck(),
+        schemaComparator: this.schemaComparator.healthCheck(),
+        aiService: this.aiService.healthCheck(),
+        databaseConnector: this.databaseConnector.healthCheck(),
+        telemetryEngine: this.telemetryEngine.healthCheck()
+      },
         overall: {
           totalEngines: 6,
           healthyEngines: 0,
@@ -311,7 +317,7 @@ export class AIDatabaseSystem extends EventEmitter {
       if (config.databaseConnection !== false) {
         const connectionResult = await this.databaseConnector.testConnection();
         if (!connectionResult.success) {
-          console.warn('⚠️ Database connection failed:', connectionResult.error);
+          console.warn('⚠️ Database connection failed:', connectionResult.errors);
         } else {
           console.log('🗄️ Database connection established');
         }
@@ -406,7 +412,7 @@ export class AIDatabaseSystem extends EventEmitter {
     });
 
     // Forward AI service events to telemetry
-    this.aiService.on('analysisCompleted', (data) => {
+    this.aiService.on('analysisCompleted', (data: any) => {
       this.telemetryEngine.recordEvent(
         'ai_prediction',
         'AIService',

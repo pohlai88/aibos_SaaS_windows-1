@@ -267,7 +267,7 @@ export class AITelemetryEngine extends EventEmitter {
       metadata: {
         version: '1.0.0',
         environment: 'production',
-        instanceId: process.env.INSTANCE_ID || 'default',
+        instanceId: process.env['INSTANCE_ID'] || 'default',
         tags: [],
         ...metadata
       },
@@ -308,12 +308,12 @@ export class AITelemetryEngine extends EventEmitter {
       actualOutcome,
       accuracy: this.calculateAccuracy(event, actualOutcome),
       feedback,
-      userRating,
       corrections,
-      improvements: this.generateImprovements(corrections)
+      improvements: this.generateImprovements(corrections),
+      ...(userRating !== undefined && { userRating })
     };
 
-    this.feedback.set(learningFeedback.id, event);
+    this.feedback.set(learningFeedback.id, learningFeedback);
     event.processed = true;
 
     // Update AI models with feedback
@@ -650,7 +650,10 @@ export class AITelemetryEngine extends EventEmitter {
     }
 
     // Compare prediction with actual outcome
-    const prediction = event.aiAnalysis!.predictions[0];
+    const prediction = event.aiAnalysis?.predictions[0];
+    if (!prediction) {
+      return 0.5; // Default accuracy if no prediction available
+    }
     const predictedValue = prediction.value;
     const actualValue = typeof actualOutcome === 'number' ? actualOutcome : 0;
 
@@ -707,7 +710,7 @@ export class AITelemetryEngine extends EventEmitter {
       insights.push({
         id: uuidv4(),
         timestamp: new Date(),
-        type: 'error',
+        type: 'security',
         title: 'Error Patterns Detected',
         description: `${errorEvents.length} errors detected`,
         severity: 'medium',
@@ -1038,6 +1041,137 @@ export class AITelemetryEngine extends EventEmitter {
 
     this.models.set(model.id, model);
     return model;
+  }
+
+  async queryAuditTrail(filters: any = {}): Promise<any> {
+    const startTime = Date.now();
+
+    try {
+      console.log('📋 Querying audit trail');
+
+      // Get all events
+      const allEvents = Array.from(this.events.values());
+
+      // Apply filters
+      let filteredEvents = allEvents;
+
+      if (filters.type) {
+        filteredEvents = filteredEvents.filter(event => event.type === filters.type);
+      }
+
+      if (filters.source) {
+        filteredEvents = filteredEvents.filter(event => event.source === filters.source);
+      }
+
+      if (filters.startDate) {
+        filteredEvents = filteredEvents.filter(event => event.timestamp >= new Date(filters.startDate));
+      }
+
+      if (filters.endDate) {
+        filteredEvents = filteredEvents.filter(event => event.timestamp <= new Date(filters.endDate));
+      }
+
+      if (filters.userId) {
+        filteredEvents = filteredEvents.filter(event => event.userId === filters.userId);
+      }
+
+      const result = {
+        id: uuidv4(),
+        timestamp: new Date(),
+        filters,
+        events: filteredEvents,
+        total: filteredEvents.length,
+        summary: {
+          eventTypes: this.countEventTypes(filteredEvents),
+          averageConfidence: this.calculateAverageConfidence(filteredEvents),
+          errorRate: this.calculateErrorRate(filteredEvents)
+        }
+      };
+
+      console.log(`✅ Audit trail query completed in ${Date.now() - startTime}ms`);
+
+      return result;
+
+    } catch (error) {
+      console.error('❌ Audit trail query failed:', error);
+      throw new Error(`Audit trail query failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  async generateAuditReport(timeframe: string = '30d'): Promise<any> {
+    const startTime = Date.now();
+
+    try {
+      console.log('📊 Generating audit report');
+
+      // Get events for the timeframe
+      const events = Array.from(this.events.values()).filter(event => {
+        const eventTime = event.timestamp.getTime();
+        const cutoffTime = Date.now() - this.parseTimeframe(timeframe);
+        return eventTime >= cutoffTime;
+      });
+
+      // Generate insights
+      const insights = await this.generateInsights(events);
+
+      // Detect patterns
+      const patterns = await this.detectPatterns(events);
+
+      // Detect anomalies
+      const anomalies = await this.detectAnomalies(events);
+
+      // Analyze trends
+      const trends = await this.analyzeTrends(events);
+
+      // Generate predictions
+      const predictions = await this.generatePredictions(events);
+
+      const report = {
+        id: uuidv4(),
+        timestamp: new Date(),
+        timeframe,
+        summary: this.createSummary(events, insights, patterns, anomalies, trends, predictions),
+        insights,
+        patterns,
+        anomalies,
+        trends,
+        predictions,
+        recommendations: this.generateRecommendations(insights, patterns, anomalies, trends),
+        actions: this.generateActions(this.generateRecommendations(insights, patterns, anomalies, trends))
+      };
+
+      console.log(`✅ Audit report generated in ${Date.now() - startTime}ms`);
+
+      return report;
+
+    } catch (error) {
+      console.error('❌ Audit report generation failed:', error);
+      throw new Error(`Audit report generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private countEventTypes(events: TelemetryEvent[]): Record<TelemetryEventType, number> {
+    const counts: Record<TelemetryEventType, number> = {} as Record<TelemetryEventType, number>;
+
+    events.forEach(event => {
+      counts[event.type] = (counts[event.type] || 0) + 1;
+    });
+
+    return counts;
+  }
+
+  private calculateAverageConfidence(events: TelemetryEvent[]): number {
+    if (events.length === 0) return 0;
+
+    const totalConfidence = events.reduce((sum, event) => sum + event.confidence, 0);
+    return totalConfidence / events.length;
+  }
+
+  private calculateErrorRate(events: TelemetryEvent[]): number {
+    if (events.length === 0) return 0;
+
+    const errorEvents = events.filter(event => event.data.error);
+    return errorEvents.length / events.length;
   }
 }
 

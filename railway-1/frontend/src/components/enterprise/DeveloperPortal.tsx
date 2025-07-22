@@ -357,7 +357,7 @@ export const DeveloperPortal: React.FC<DeveloperPortalProps> = ({
                 </div>
                 <div className="bg-white p-4 rounded-lg border border-gray-200">
                   <h4 className="font-medium text-gray-900 mb-2">Performance boost</h4>
-                  <p className="text-sm text-gray-600 mb-3">Advanced Data Grid can improve your app's performance by 40%</p>
+                  <p className="text-sm text-gray-600 mb-3">Advanced Data Grid can improve your app&apos;s performance by 40%</p>
                   <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
                     Learn More →
                   </button>

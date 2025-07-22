@@ -1,1 +1,0 @@
-export { MetadataRegistryLayout } from './MetadataRegistryLayout' 

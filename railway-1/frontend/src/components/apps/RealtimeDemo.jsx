@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  useRealtimeConnection, 
-  useRealtimeSubscription, 
+import {
+  useRealtimeConnection,
+  useRealtimeSubscription,
   useDatabaseChanges,
-  useRealtimeAuth 
+  useRealtimeAuth
 } from '../../hooks/useRealtime';
 
 export default function RealtimeDemo() {
@@ -42,21 +42,22 @@ export default function RealtimeDemo() {
     }
   }, [isConnected, status.tenantId, status.userId, authenticate]);
 
+  const { publish: publishMessage } = useRealtimeSubscription('test', 'message');
+  const { publish: publishAppEvent } = useRealtimeSubscription('app', 'demo');
+
   const sendMessage = () => {
     if (newMessage.trim()) {
       // Publish to the test channel
-      const { publish } = useRealtimeSubscription('test', 'message');
-      publish({ message: newMessage, sender: status.userId });
+      publishMessage({ message: newMessage, sender: status.userId });
       setNewMessage('');
     }
   };
 
   const sendAppEvent = () => {
-    const { publish } = useRealtimeSubscription('app', 'demo');
-    publish({ 
-      action: 'demo_action', 
+    publishAppEvent({
+      action: 'demo_action',
       data: { timestamp: new Date().toISOString() },
-      sender: status.userId 
+      sender: status.userId
     });
   };
 
@@ -80,8 +81,8 @@ export default function RealtimeDemo() {
             <button
               onClick={isConnected ? disconnect : connect}
               className={`px-4 py-2 rounded text-white text-sm ${
-                isConnected 
-                  ? 'bg-red-500 hover:bg-red-600' 
+                isConnected
+                  ? 'bg-red-500 hover:bg-red-600'
                   : 'bg-green-500 hover:bg-green-600'
               }`}
             >
@@ -221,7 +222,7 @@ export default function RealtimeDemo() {
               ))}
               {appEvents.length === 0 && (
                 <div className="text-gray-500 text-center py-8">
-                  No app events yet. Click "Send Event" to test!
+                  No app events yet. Click &quot;Send Event&quot; to test!
                 </div>
               )}
             </div>
@@ -233,17 +234,17 @@ export default function RealtimeDemo() {
       <div className="bg-white border-t px-6 py-3">
         <div className="flex items-center justify-between text-sm text-gray-600">
           <div>
-            Client ID: {status.clientId || 'N/A'} | 
-            Tenant: {status.tenantId || 'N/A'} | 
+            Client ID: {status.clientId || 'N/A'} |
+            Tenant: {status.tenantId || 'N/A'} |
             User: {status.userId || 'N/A'}
           </div>
           <div>
-            Messages: {messages.length} | 
-            DB Events: {databaseEvents.length} | 
+            Messages: {messages.length} |
+            DB Events: {databaseEvents.length} |
             App Events: {appEvents.length}
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}

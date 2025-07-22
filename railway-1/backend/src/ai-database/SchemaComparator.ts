@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 export interface SchemaStructure {
   tables: Map<string, TableStructure>;
   relationships: RelationshipStructure[];
-  constraints: ConstraintStructure[];
+  constraints: CheckConstraintStructure[];
   indexes: IndexStructure[];
   views: ViewStructure[];
   functions: FunctionStructure[];
@@ -377,7 +377,7 @@ export class SchemaComparator {
 
     } catch (error) {
       console.error('❌ Schema comparison failed:', error);
-      throw new Error(`Schema comparison failed: ${error.message}`);
+      throw new Error(`Schema comparison failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -410,7 +410,7 @@ export class SchemaComparator {
 
     // Parse constraints
     if (schema.constraints) {
-      structure.constraints = await this.parseConstraints(schema.constraints);
+      structure.constraints = await this.parseCheckConstraints(schema.constraints);
     }
 
     // Parse indexes
@@ -468,10 +468,9 @@ export class SchemaComparator {
     // Parse triggers
     const triggers = tableData.triggers ? await this.parseTriggers(tableData.triggers) : [];
 
-    return {
+    const tableStructure: TableStructure = {
       name,
       columns,
-      primaryKey,
       foreignKeys,
       uniqueConstraints,
       checkConstraints,
@@ -479,13 +478,19 @@ export class SchemaComparator {
       triggers,
       metadata: tableData.metadata || {}
     };
+
+    if (primaryKey) {
+      tableStructure.primaryKey = primaryKey;
+    }
+
+    return tableStructure;
   }
 
   /**
    * Parse column structure
    */
   private async parseColumn(name: string, columnData: any): Promise<ColumnStructure> {
-    return {
+    const columnStructure: ColumnStructure = {
       name,
       type: await this.parseColumnType(columnData.type),
       nullable: columnData.nullable !== false,
@@ -493,10 +498,15 @@ export class SchemaComparator {
       autoIncrement: columnData.autoIncrement === true,
       unique: columnData.unique === true,
       primaryKey: columnData.primaryKey === true,
-      foreignKey: columnData.foreignKey ? await this.parseForeignKeyReference(columnData.foreignKey) : undefined,
       checkConstraints: columnData.checkConstraints ? await this.parseCheckConstraints(columnData.checkConstraints) : [],
       metadata: columnData.metadata || {}
     };
+
+    if (columnData.foreignKey) {
+      columnStructure.foreignKey = await this.parseForeignKeyReference(columnData.foreignKey);
+    }
+
+    return columnStructure;
   }
 
   /**
@@ -1210,6 +1220,13 @@ export class SchemaComparator {
     return {
       table: data.table,
       column: data.column
+    };
+  }
+
+  healthCheck(): { status: string; hooks: number } {
+    return {
+      status: 'healthy',
+      hooks: this.hooks.size
     };
   }
 }

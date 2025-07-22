@@ -453,7 +453,7 @@ export class SchemaVersioningEngine extends EventEmitter {
             impact: this.assessBreakingChangeImpact(change),
             mitigation: this.generateMitigationStrategy(change),
             rollbackStrategy: this.generateRollbackStrategy(change),
-            testingRequired: this.requiresTesting(change),
+            testingRequired: this.requiresTestingForChange(change),
             aiConfidence: change.aiConfidence
           };
 
@@ -466,7 +466,7 @@ export class SchemaVersioningEngine extends EventEmitter {
       return breakingChanges;
 
     } catch (error) {
-      console.error(`❌ Failed to detect breaking changes: ${error.message}`);
+      console.error(`❌ Failed to detect breaking changes: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return [];
     }
   }
@@ -614,8 +614,8 @@ export class SchemaVersioningEngine extends EventEmitter {
       return rollbackPlan;
 
     } catch (error) {
-      console.error(`❌ Failed to generate rollback plan: ${error.message}`);
-      throw new Error(`Rollback plan generation failed: ${error.message}`);
+      console.error(`❌ Failed to generate rollback plan: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Rollback plan generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -628,7 +628,12 @@ export class SchemaVersioningEngine extends EventEmitter {
     }
 
     const latestVersion = versions[versions.length - 1];
-    const [major, minor, patch] = latestVersion.version.split('.').map(Number);
+    if (!latestVersion) {
+      return '1.0.0';
+    }
+
+    const versionParts = latestVersion.version.split('.').map(Number);
+    const [major = 1, minor = 0, patch = 0] = versionParts;
     return `${major}.${minor}.${patch + 1}`;
   }
 
@@ -642,13 +647,11 @@ export class SchemaVersioningEngine extends EventEmitter {
   }
 
   private generateMetadata(metadata: Partial<SchemaVersionMetadata>): SchemaVersionMetadata {
-    return {
+    const result: SchemaVersionMetadata = {
       author: metadata.author || 'system',
       description: metadata.description || 'AI-generated schema version',
       tags: metadata.tags || [],
       environment: metadata.environment || 'development',
-      tenantId: metadata.tenantId,
-      moduleId: metadata.moduleId,
       dependencies: metadata.dependencies || [],
       impact: metadata.impact || 'low',
       estimatedDowntime: metadata.estimatedDowntime || 0,
@@ -673,6 +676,16 @@ export class SchemaVersioningEngine extends EventEmitter {
         maintenance: { improved: true, issues: [] }
       }
     };
+
+    // Handle optional properties
+    if (metadata.tenantId !== undefined) {
+      result.tenantId = metadata.tenantId;
+    }
+    if (metadata.moduleId !== undefined) {
+      result.moduleId = metadata.moduleId;
+    }
+
+    return result;
   }
 
   private async performAIAnalysis(schema: any, version: SchemaVersion): Promise<SchemaVersionAIAnalysis> {
@@ -811,13 +824,15 @@ export class SchemaVersioningEngine extends EventEmitter {
     return 'Implement gradual migration with feature flags and comprehensive testing';
   }
 
-  private generateRollbackStrategy(change: SchemaChange): string {
+    private generateRollbackStrategy(change: SchemaChange): string {
     return 'Maintain backup of previous schema state for quick rollback';
   }
 
-  private requiresTesting(change: SchemaChange): boolean {
+  private requiresTestingForChange(change: SchemaChange): boolean {
     return change.breaking || change.impact === 'critical' || change.impact === 'high';
   }
+
+
 
   private getPreviousVersion(version: string): SchemaVersion | undefined {
     const versions = Array.from(this.versions.values()).sort((a, b) =>

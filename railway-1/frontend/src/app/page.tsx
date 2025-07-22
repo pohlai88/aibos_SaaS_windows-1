@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { LoginScreen } from '@/components/auth/LoginScreen';
+import { TerminalLoginScreen } from '@/components/auth/TerminalLoginScreen';
 import SystemCoreProvider from '@/components/shell/SystemCore';
 import { TopBar } from '@/components/shell/TopBar';
 import { DockSystem } from '@/components/shell/DockSystem';
@@ -119,7 +119,7 @@ export default function HomePage() {
   }
 
   if (!user) {
-    return <LoginScreen />;
+    return <TerminalLoginScreen />;
   }
 
   return (

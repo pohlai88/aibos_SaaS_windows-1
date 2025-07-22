@@ -4,6 +4,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import http from 'http';
 
+// Import AI-BOS Database API
+import databaseRouter from './api/database';
+
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env['PORT'] || 3001;
@@ -16,6 +19,9 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Mount AI-BOS Database API
+app.use('/api/database', databaseRouter);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {

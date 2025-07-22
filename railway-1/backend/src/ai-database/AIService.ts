@@ -4,12 +4,13 @@
 // Steve Jobs Philosophy: "Innovation distinguishes between a leader and a follower."
 
 import { v4 as uuidv4 } from 'uuid';
+import { EventEmitter } from 'events';
 import { SchemaComparisonResult, SchemaChange, BreakingChange } from './SchemaComparator';
 
 // ==================== CORE TYPES ====================
 export interface AIService {
   analyzeSchema(schema: any): Promise<AIAnalysis>;
-  compareSchemas(old: any, new: any): Promise<SchemaComparisonResult>;
+  compareSchemas(old: any, newSchema: any): Promise<SchemaComparisonResult>;
   generateMigrationPlan(diff: SchemaComparisonResult): Promise<MigrationPlan>;
   optimizeSchema(schema: any): Promise<SchemaOptimization>;
   predictPerformance(schema: any, queries: QueryPattern[]): Promise<PerformancePrediction[]>;
@@ -327,7 +328,7 @@ export interface ComplianceRequirement {
 }
 
 // ==================== AI SERVICE IMPLEMENTATION ====================
-export class EnhancedAIService implements AIService {
+export class EnhancedAIService extends EventEmitter implements AIService {
   private model: string;
   private temperature: number;
   private maxTokens: number;
@@ -335,6 +336,7 @@ export class EnhancedAIService implements AIService {
   private timeout: number;
 
   constructor(config: AIServiceConfig = {}) {
+    super();
     this.model = config.model || 'gpt-4';
     this.temperature = config.temperature || 0.1;
     this.maxTokens = config.maxTokens || 4000;
@@ -389,14 +391,14 @@ export class EnhancedAIService implements AIService {
 
     } catch (error) {
       console.error('❌ AI schema analysis failed:', error);
-      throw new Error(`AI schema analysis failed: ${error.message}`);
+      throw new Error(`AI schema analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
   /**
    * Compare schemas with AI
    */
-  async compareSchemas(old: any, new: any): Promise<SchemaComparisonResult> {
+  async compareSchemas(old: any, newSchema: any): Promise<SchemaComparisonResult> {
     const startTime = Date.now();
 
     try {
@@ -404,7 +406,7 @@ export class EnhancedAIService implements AIService {
 
       // Use enhanced schema comparator
       const comparator = new (await import('./SchemaComparator')).default();
-      const comparison = await comparator.compareSchemas(old, new);
+      const comparison = await comparator.compareSchemas(old, newSchema);
 
       // Enhance with AI insights
       const enhancedComparison = await this.enhanceComparisonWithAI(comparison);
@@ -415,7 +417,7 @@ export class EnhancedAIService implements AIService {
 
     } catch (error) {
       console.error('❌ AI schema comparison failed:', error);
-      throw new Error(`AI schema comparison failed: ${error.message}`);
+      throw new Error(`AI schema comparison failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -478,7 +480,7 @@ export class EnhancedAIService implements AIService {
 
     } catch (error) {
       console.error('❌ AI migration plan generation failed:', error);
-      throw new Error(`AI migration plan generation failed: ${error.message}`);
+      throw new Error(`AI migration plan generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -526,7 +528,7 @@ export class EnhancedAIService implements AIService {
 
     } catch (error) {
       console.error('❌ AI schema optimization failed:', error);
-      throw new Error(`AI schema optimization failed: ${error.message}`);
+      throw new Error(`AI schema optimization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -552,7 +554,7 @@ export class EnhancedAIService implements AIService {
 
     } catch (error) {
       console.error('❌ AI performance prediction failed:', error);
-      throw new Error(`AI performance prediction failed: ${error.message}`);
+      throw new Error(`AI performance prediction failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -598,7 +600,7 @@ export class EnhancedAIService implements AIService {
 
     } catch (error) {
       console.error('❌ AI security assessment failed:', error);
-      throw new Error(`AI security assessment failed: ${error.message}`);
+      throw new Error(`AI security assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -635,7 +637,7 @@ export class EnhancedAIService implements AIService {
 
     } catch (error) {
       console.error('❌ AI compliance validation failed:', error);
-      throw new Error(`AI compliance validation failed: ${error.message}`);
+      throw new Error(`AI compliance validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -1060,12 +1062,12 @@ export class EnhancedAIService implements AIService {
 
   private async assessSecurityCompliance(schema: any): Promise<SecurityCompliance> {
     return {
-      gdpr: { compliant: true, issues: [], score: 90 },
-      hipaa: { compliant: true, issues: [], score: 85 },
-      soc2: { compliant: true, issues: [], score: 90 },
-      iso27001: { compliant: true, issues: [], score: 85 },
-      pci: { compliant: true, issues: [], score: 90 },
-      overall: { compliant: true, score: 88 }
+      gdpr: { compliant: true, issues: [], score: 90, recommendations: [] },
+      hipaa: { compliant: true, issues: [], score: 85, recommendations: [] },
+      soc2: { compliant: true, issues: [], score: 90, recommendations: [] },
+      iso27001: { compliant: true, issues: [], score: 85, recommendations: [] },
+      pci: { compliant: true, issues: [], score: 90, recommendations: [] },
+      overall: { compliant: true, score: 88, issues: [], recommendations: [] }
     };
   }
 
@@ -1095,6 +1097,99 @@ export class EnhancedAIService implements AIService {
       score: avgScore,
       issues: [],
       recommendations: []
+    };
+  }
+
+  async orchestrateDatabase(typescriptInterfaces: string[]): Promise<any> {
+    const startTime = Date.now();
+
+    try {
+      console.log('🎯 Orchestrating database from TypeScript interfaces');
+
+      // Analyze the TypeScript interfaces
+      const schemaAnalysis = await this.analyzeSchema({ interfaces: typescriptInterfaces });
+
+      // Generate optimized schema
+      const optimizedSchema = await this.optimizeSchema({ interfaces: typescriptInterfaces });
+
+      // Assess security
+      const securityAssessment = await this.assessSecurity({ interfaces: typescriptInterfaces });
+
+      // Validate compliance
+      const complianceValidation = await this.validateCompliance({ interfaces: typescriptInterfaces }, []);
+
+      const result = {
+        id: uuidv4(),
+        timestamp: new Date(),
+        interfaces: typescriptInterfaces,
+        schemaAnalysis,
+        optimizedSchema,
+        securityAssessment,
+        complianceValidation,
+        recommendations: [
+          ...schemaAnalysis.recommendations.map(r => r.description),
+          ...optimizedSchema.recommendations,
+          ...securityAssessment.recommendations
+        ],
+        confidence: (schemaAnalysis.confidence + optimizedSchema.confidence + securityAssessment.score) / 3
+      };
+
+      console.log(`✅ Database orchestration completed in ${Date.now() - startTime}ms`);
+
+      return result;
+
+    } catch (error) {
+      console.error('❌ Database orchestration failed:', error);
+      throw new Error(`Database orchestration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  async generateCompliantSchema(typescriptInterfaces: string[]): Promise<any> {
+    const startTime = Date.now();
+
+    try {
+      console.log('🛡️ Generating compliant schema from TypeScript interfaces');
+
+      // Analyze the interfaces
+      const schemaAnalysis = await this.analyzeSchema({ interfaces: typescriptInterfaces });
+
+      // Optimize for compliance
+      const optimizedSchema = await this.optimizeSchema({ interfaces: typescriptInterfaces });
+
+      // Validate compliance
+      const complianceValidation = await this.validateCompliance({ interfaces: typescriptInterfaces }, []);
+
+      const result = {
+        id: uuidv4(),
+        timestamp: new Date(),
+        interfaces: typescriptInterfaces,
+        originalSchema: { interfaces: typescriptInterfaces },
+        compliantSchema: optimizedSchema.optimizedSchema,
+        complianceScore: complianceValidation.overall.score,
+        securityScore: schemaAnalysis.security.score,
+        performanceScore: schemaAnalysis.performance.score,
+        recommendations: [
+          ...optimizedSchema.recommendations,
+          ...complianceValidation.overall.recommendations
+        ],
+        confidence: optimizedSchema.confidence
+      };
+
+      console.log(`✅ Compliant schema generation completed in ${Date.now() - startTime}ms`);
+
+      return result;
+
+    } catch (error) {
+      console.error('❌ Compliant schema generation failed:', error);
+      throw new Error(`Compliant schema generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  healthCheck(): { status: string; model: string; temperature: number } {
+    return {
+      status: 'healthy',
+      model: this.model,
+      temperature: this.temperature
     };
   }
 }

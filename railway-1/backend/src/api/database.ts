@@ -5,7 +5,8 @@
 
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
-import AIDatabaseSystem, {
+import AIDatabaseSystem, { getAIDatabaseSystem } from '../ai-database';
+import {
   SchemaVersion,
   SchemaVersionMetadata,
   SchemaDiff,
@@ -13,12 +14,15 @@ import AIDatabaseSystem, {
   RollbackPlan,
   BreakingChange,
   SchemaManifest,
-  SchemaManifestMetadata,
   ApprovalWorkflow,
   ApprovalStep
 } from '../ai-database';
+import { SchemaManifestMetadata } from '../ai-database/SchemaManifestGovernance';
 
 const router = express.Router();
+
+// Get the singleton instance of AIDatabaseSystem
+const aiDatabaseSystem = getAIDatabaseSystem();
 
 // ==================== VALIDATION SCHEMAS ====================
 
@@ -119,8 +123,27 @@ router.post('/manifest/create', async (req: Request, res: Response) => {
 
     const { versionId, title, description, schema, metadata } = CreateManifestSchema.parse(req.body);
 
-    const { manifestGovernance } = AIDatabaseSystem.getEngines();
-    const manifest = await manifestGovernance.createManifest(versionId, title, description, schema, metadata);
+    const { schemaManifestGovernance } = aiDatabaseSystem.getEngines();
+
+    // Create proper metadata object handling optional properties
+    const manifestMetadata: Partial<SchemaManifestMetadata> = {};
+    if (metadata) {
+      if (metadata.author !== undefined) manifestMetadata.author = metadata.author;
+      if (metadata.department !== undefined) manifestMetadata.department = metadata.department;
+      if (metadata.priority !== undefined) manifestMetadata.priority = metadata.priority;
+      if (metadata.businessImpact !== undefined) manifestMetadata.businessImpact = metadata.businessImpact;
+      if (metadata.technicalImpact !== undefined) manifestMetadata.technicalImpact = metadata.technicalImpact;
+      if (metadata.estimatedCost !== undefined) manifestMetadata.estimatedCost = metadata.estimatedCost;
+      if (metadata.estimatedTime !== undefined) manifestMetadata.estimatedTime = metadata.estimatedTime;
+      if (metadata.dependencies !== undefined) manifestMetadata.dependencies = metadata.dependencies;
+      if (metadata.stakeholders !== undefined) manifestMetadata.stakeholders = metadata.stakeholders;
+      if (metadata.tags !== undefined) manifestMetadata.tags = metadata.tags;
+      if (metadata.environment !== undefined) manifestMetadata.environment = metadata.environment;
+      if (metadata.tenantId !== undefined) manifestMetadata.tenantId = metadata.tenantId;
+      if (metadata.moduleId !== undefined) manifestMetadata.moduleId = metadata.moduleId;
+    }
+
+    const manifest = await schemaManifestGovernance.createManifest(versionId, title, description, schema, manifestMetadata);
 
     res.status(201).json({
       success: true,
@@ -146,7 +169,7 @@ router.post('/manifest/create', async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'Schema manifest creation failed',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? (error instanceof Error ? error.message : "Unknown error") : 'Unknown error'
     });
   }
 });
@@ -159,10 +182,10 @@ router.get('/manifest/list', async (req: Request, res: Response) => {
   try {
     console.log('📋 Retrieving all schema manifests');
 
-    const { manifestGovernance } = AIDatabaseSystem.getEngines();
-    const manifests = manifestGovernance.getManifests();
+    const { schemaManifestGovernance } = aiDatabaseSystem.getEngines();
+    const manifests = schemaManifestGovernance.getManifests();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Schema manifests retrieved successfully',
       data: {
@@ -185,10 +208,10 @@ router.get('/manifest/list', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Failed to retrieve schema manifests:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve schema manifests',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? (error instanceof Error ? error.message : "Unknown error") : 'Unknown error'
     });
   }
 });
@@ -200,10 +223,16 @@ router.get('/manifest/list', async (req: Request, res: Response) => {
 router.get('/manifest/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Manifest ID is required'
+      });
+    }
     console.log(`📋 Retrieving schema manifest: ${id}`);
 
-    const { manifestGovernance } = AIDatabaseSystem.getEngines();
-    const manifest = manifestGovernance.getManifest(id);
+    const { schemaManifestGovernance } = aiDatabaseSystem.getEngines();
+    const manifest = schemaManifestGovernance.getManifest(id);
 
     if (!manifest) {
       return res.status(404).json({
@@ -212,7 +241,7 @@ router.get('/manifest/:id', async (req: Request, res: Response) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Schema manifest retrieved successfully',
       data: {
@@ -237,10 +266,10 @@ router.get('/manifest/:id', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Failed to retrieve schema manifest:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve schema manifest',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -255,10 +284,10 @@ router.post('/manifest/submit', async (req: Request, res: Response) => {
 
     const { manifestId, submittedBy } = SubmitManifestSchema.parse(req.body);
 
-    const { manifestGovernance } = AIDatabaseSystem.getEngines();
-    const manifest = await manifestGovernance.submitManifest(manifestId, submittedBy);
+    const { schemaManifestGovernance } = aiDatabaseSystem.getEngines();
+    const manifest = await schemaManifestGovernance.submitManifest(manifestId, submittedBy);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Schema manifest submitted successfully',
       data: {
@@ -275,10 +304,10 @@ router.post('/manifest/submit', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Schema manifest submission failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Schema manifest submission failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -293,10 +322,10 @@ router.post('/manifest/approve-step', async (req: Request, res: Response) => {
 
     const { manifestId, stepId, approver, comment } = ApproveStepSchema.parse(req.body);
 
-    const { manifestGovernance } = AIDatabaseSystem.getEngines();
-    const step = await manifestGovernance.approveStep(manifestId, stepId, approver, comment);
+    const { schemaManifestGovernance } = aiDatabaseSystem.getEngines();
+    const step = await schemaManifestGovernance.approveStep(manifestId, stepId, approver, comment);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Workflow step approved successfully',
       data: {
@@ -314,10 +343,10 @@ router.post('/manifest/approve-step', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Workflow step approval failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Workflow step approval failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -332,10 +361,10 @@ router.post('/manifest/reject-step', async (req: Request, res: Response) => {
 
     const { manifestId, stepId, approver, reason } = RejectStepSchema.parse(req.body);
 
-    const { manifestGovernance } = AIDatabaseSystem.getEngines();
-    const step = await manifestGovernance.rejectStep(manifestId, stepId, approver, reason);
+    const { schemaManifestGovernance } = aiDatabaseSystem.getEngines();
+    const step = await schemaManifestGovernance.rejectStep(manifestId, stepId, approver, reason);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Workflow step rejected successfully',
       data: {
@@ -351,10 +380,10 @@ router.post('/manifest/reject-step', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Workflow step rejection failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Workflow step rejection failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -366,10 +395,16 @@ router.post('/manifest/reject-step', async (req: Request, res: Response) => {
 router.get('/manifest/:id/workflow', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Manifest ID is required'
+      });
+    }
     console.log(`📋 Retrieving approval workflow for manifest: ${id}`);
 
-    const { manifestGovernance } = AIDatabaseSystem.getEngines();
-    const workflow = manifestGovernance.getWorkflow(id);
+    const { schemaManifestGovernance } = aiDatabaseSystem.getEngines();
+    const workflow = schemaManifestGovernance.getWorkflow(id);
 
     if (!workflow) {
       return res.status(404).json({
@@ -378,7 +413,7 @@ router.get('/manifest/:id/workflow', async (req: Request, res: Response) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Approval workflow retrieved successfully',
       data: {
@@ -402,10 +437,10 @@ router.get('/manifest/:id/workflow', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Failed to retrieve approval workflow:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve approval workflow',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -418,10 +453,10 @@ router.get('/manifest/audit-trail', async (req: Request, res: Response) => {
   try {
     console.log('📋 Retrieving manifest audit trail');
 
-    const { manifestGovernance } = AIDatabaseSystem.getEngines();
-    const auditTrail = manifestGovernance.getAuditTrail();
+    const { schemaManifestGovernance } = aiDatabaseSystem.getEngines();
+    const auditTrail = schemaManifestGovernance.getAuditTrail();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Manifest audit trail retrieved successfully',
       data: {
@@ -432,10 +467,10 @@ router.get('/manifest/audit-trail', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Failed to retrieve manifest audit trail:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve manifest audit trail',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -452,8 +487,28 @@ router.post('/version/create', async (req: Request, res: Response) => {
 
     const { schema, metadata, options } = CreateSchemaVersionSchema.parse(req.body);
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const version = await versioningEngine.createSchemaVersion(schema, metadata, options);
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+
+    // Create proper metadata object handling optional properties
+    const versionMetadata: Partial<SchemaVersionMetadata> = {};
+    if (metadata) {
+      if (metadata.author !== undefined) versionMetadata.author = metadata.author;
+      if (metadata.description !== undefined) versionMetadata.description = metadata.description;
+      if (metadata.tags !== undefined) versionMetadata.tags = metadata.tags;
+      if (metadata.environment !== undefined) versionMetadata.environment = metadata.environment;
+      if (metadata.tenantId !== undefined) versionMetadata.tenantId = metadata.tenantId;
+      if (metadata.moduleId !== undefined) versionMetadata.moduleId = metadata.moduleId;
+      if (metadata.dependencies !== undefined) versionMetadata.dependencies = metadata.dependencies;
+      if (metadata.impact !== undefined) versionMetadata.impact = metadata.impact;
+      if (metadata.estimatedDowntime !== undefined) versionMetadata.estimatedDowntime = metadata.estimatedDowntime;
+      if (metadata.riskLevel !== undefined) versionMetadata.riskLevel = metadata.riskLevel;
+    }
+
+    const versionOptions = {
+      analyze: options?.analyze ?? true,
+      generatePlan: options?.generatePlan ?? true
+    };
+    const version = await schemaVersioning.createSchemaVersion(schema, versionMetadata, versionOptions);
 
     res.status(201).json({
       success: true,
@@ -480,7 +535,7 @@ router.post('/version/create', async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'Schema version creation failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -493,14 +548,14 @@ router.get('/version/list', async (req: Request, res: Response) => {
   try {
     console.log('📋 Retrieving all schema versions');
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const versions = versioningEngine.getVersions();
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const versions = schemaVersioning.getVersions();
 
     res.status(200).json({
       success: true,
       message: 'Schema versions retrieved successfully',
       data: {
-        versions: versions.map(version => ({
+        versions: versions.map((version: SchemaVersion) => ({
           id: version.id,
           version: version.version,
           timestamp: version.timestamp,
@@ -519,7 +574,7 @@ router.get('/version/list', async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'Failed to retrieve schema versions',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -531,10 +586,16 @@ router.get('/version/list', async (req: Request, res: Response) => {
 router.get('/version/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Version ID is required'
+      });
+    }
     console.log(`📋 Retrieving schema version: ${id}`);
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const version = versioningEngine.getVersion(id);
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const version = schemaVersioning.getVersion(id);
 
     if (!version) {
       return res.status(404).json({
@@ -543,7 +604,7 @@ router.get('/version/:id', async (req: Request, res: Response) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Schema version retrieved successfully',
       data: {
@@ -566,10 +627,10 @@ router.get('/version/:id', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Failed to retrieve schema version:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve schema version',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -584,10 +645,10 @@ router.post('/version/diff', async (req: Request, res: Response) => {
 
     const { fromVersion, toVersion } = GenerateDiffSchema.parse(req.body);
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const diff = await versioningEngine.generateSchemaDiff(fromVersion, toVersion);
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const diff = await schemaVersioning.generateSchemaDiff(fromVersion, toVersion);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Schema diff generated successfully',
       data: {
@@ -609,10 +670,10 @@ router.post('/version/diff', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Schema diff generation failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Schema diff generation failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -627,8 +688,8 @@ router.post('/version/approve', async (req: Request, res: Response) => {
 
     const { versionId, approvedBy, comments } = ApproveVersionSchema.parse(req.body);
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const version = versioningEngine.getVersion(versionId);
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const version = schemaVersioning.getVersion(versionId);
 
     if (!version) {
       return res.status(404).json({
@@ -644,7 +705,7 @@ router.post('/version/approve', async (req: Request, res: Response) => {
       version.metadata.description = `${version.metadata.description}\n\nApproval Comments: ${comments}`;
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Schema version approved successfully',
       data: {
@@ -659,10 +720,10 @@ router.post('/version/approve', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Schema version approval failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Schema version approval failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -677,8 +738,8 @@ router.post('/version/deploy', async (req: Request, res: Response) => {
 
     const { versionId, deployedBy, environment, dryRun = false } = DeployVersionSchema.parse(req.body);
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const version = versioningEngine.getVersion(versionId);
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const version = schemaVersioning.getVersion(versionId);
 
     if (!version) {
       return res.status(404).json({
@@ -700,7 +761,7 @@ router.post('/version/deploy', async (req: Request, res: Response) => {
       version.metadata.environment = environment;
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: dryRun ? 'Schema version deployment simulation completed' : 'Schema version deployed successfully',
       data: {
@@ -722,10 +783,10 @@ router.post('/version/deploy', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Schema version deployment failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Schema version deployment failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -740,8 +801,8 @@ router.post('/version/rollback', async (req: Request, res: Response) => {
 
     const { versionId, rolledBackBy, reason } = RollbackVersionSchema.parse(req.body);
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const version = versioningEngine.getVersion(versionId);
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const version = schemaVersioning.getVersion(versionId);
 
     if (!version) {
       return res.status(404).json({
@@ -763,7 +824,7 @@ router.post('/version/rollback', async (req: Request, res: Response) => {
       version.metadata.description = `${version.metadata.description}\n\nRollback Reason: ${reason}`;
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Schema version rolled back successfully',
       data: {
@@ -783,10 +844,10 @@ router.post('/version/rollback', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Schema version rollback failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Schema version rollback failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -798,10 +859,16 @@ router.post('/version/rollback', async (req: Request, res: Response) => {
 router.get('/version/:id/migration-plan', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Version ID is required'
+      });
+    }
     console.log(`📋 Retrieving migration plan for version: ${id}`);
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const version = versioningEngine.getVersion(id);
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const version = schemaVersioning.getVersion(id);
 
     if (!version) {
       return res.status(404).json({
@@ -810,7 +877,7 @@ router.get('/version/:id/migration-plan', async (req: Request, res: Response) =>
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Migration plan retrieved successfully',
       data: {
@@ -820,10 +887,10 @@ router.get('/version/:id/migration-plan', async (req: Request, res: Response) =>
 
   } catch (error) {
     console.error('❌ Failed to retrieve migration plan:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve migration plan',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -835,10 +902,16 @@ router.get('/version/:id/migration-plan', async (req: Request, res: Response) =>
 router.get('/version/:id/rollback-plan', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Version ID is required'
+      });
+    }
     console.log(`📋 Retrieving rollback plan for version: ${id}`);
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const version = versioningEngine.getVersion(id);
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const version = schemaVersioning.getVersion(id);
 
     if (!version) {
       return res.status(404).json({
@@ -847,7 +920,7 @@ router.get('/version/:id/rollback-plan', async (req: Request, res: Response) => 
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Rollback plan retrieved successfully',
       data: {
@@ -857,10 +930,10 @@ router.get('/version/:id/rollback-plan', async (req: Request, res: Response) => 
 
   } catch (error) {
     console.error('❌ Failed to retrieve rollback plan:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve rollback plan',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -873,10 +946,10 @@ router.get('/version/audit-trail', async (req: Request, res: Response) => {
   try {
     console.log('📋 Retrieving schema version audit trail');
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const auditTrail = versioningEngine.getAuditTrail();
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const auditTrail = schemaVersioning.getAuditTrail();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Audit trail retrieved successfully',
       data: {
@@ -887,10 +960,10 @@ router.get('/version/audit-trail', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Failed to retrieve audit trail:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve audit trail',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -903,15 +976,15 @@ router.get('/version/breaking-changes', async (req: Request, res: Response) => {
   try {
     console.log('⚠️ Retrieving all breaking changes');
 
-    const { versioningEngine } = AIDatabaseSystem.getEngines();
-    const versions = versioningEngine.getVersions();
+    const { schemaVersioning } = aiDatabaseSystem.getEngines();
+    const versions = schemaVersioning.getVersions();
 
     const allBreakingChanges: BreakingChange[] = [];
     versions.forEach(version => {
       allBreakingChanges.push(...version.breakingChanges);
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Breaking changes retrieved successfully',
       data: {
@@ -928,10 +1001,10 @@ router.get('/version/breaking-changes', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Failed to retrieve breaking changes:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to retrieve breaking changes',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -955,10 +1028,10 @@ router.post('/orchestrate', async (req: Request, res: Response) => {
       });
     }
 
-    const { schemaMind } = AIDatabaseSystem.getEngines();
-    const orchestration = await schemaMind.orchestrateDatabase(typescriptInterfaces);
+    const { aiService } = aiDatabaseSystem.getEngines();
+    const orchestration = await aiService.orchestrateDatabase(typescriptInterfaces);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'AI-BOS Database Orchestration completed successfully',
       data: orchestration
@@ -966,10 +1039,10 @@ router.post('/orchestrate', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ AI-BOS Database Orchestration failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'AI-BOS Database Orchestration failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -991,10 +1064,10 @@ router.post('/schema', async (req: Request, res: Response) => {
       });
     }
 
-    const { schemaMind } = AIDatabaseSystem.getEngines();
-    const schema = await schemaMind.generateCompliantSchema(typescriptInterfaces);
+    const { aiService } = aiDatabaseSystem.getEngines();
+    const schema = await aiService.generateCompliantSchema(typescriptInterfaces);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Compliant schema generated successfully',
       data: schema
@@ -1002,10 +1075,10 @@ router.post('/schema', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Schema generation failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Schema generation failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -1018,10 +1091,10 @@ router.get('/compliance/verify', async (req: Request, res: Response) => {
   try {
     console.log('🔐 Verifying compliance');
 
-    const { complianceEngine } = AIDatabaseSystem.getEngines();
-    const compliance = await complianceEngine.verifyCompliance();
+    const { databaseConnector } = aiDatabaseSystem.getEngines();
+    const compliance = await databaseConnector.verifyCompliance();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Compliance verification completed',
       data: compliance
@@ -1029,10 +1102,10 @@ router.get('/compliance/verify', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Compliance verification failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Compliance verification failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -1045,10 +1118,10 @@ router.get('/compliance/monitor', async (req: Request, res: Response) => {
   try {
     console.log('🔐 Monitoring compliance in real-time');
 
-    const { complianceEngine } = AIDatabaseSystem.getEngines();
-    const monitoring = await complianceEngine.monitorCompliance();
+    const { databaseConnector } = aiDatabaseSystem.getEngines();
+    const monitoring = await databaseConnector.monitorCompliance();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Compliance monitoring completed',
       data: monitoring
@@ -1056,10 +1129,10 @@ router.get('/compliance/monitor', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Compliance monitoring failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Compliance monitoring failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -1072,10 +1145,10 @@ router.get('/compliance/report', async (req: Request, res: Response) => {
   try {
     console.log('📊 Generating compliance report');
 
-    const { complianceEngine } = AIDatabaseSystem.getEngines();
-    const report = await complianceEngine.generateComplianceReport();
+    const { databaseConnector } = aiDatabaseSystem.getEngines();
+    const report = await databaseConnector.generateComplianceReport();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Compliance report generated successfully',
       data: report
@@ -1083,10 +1156,10 @@ router.get('/compliance/report', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Compliance report generation failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Compliance report generation failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -1099,11 +1172,11 @@ router.get('/audit/trail', async (req: Request, res: Response) => {
   try {
     console.log('📊 Querying audit trail');
 
-    const { auditEngine } = AIDatabaseSystem.getEngines();
-    const filters = req.query;
-    const auditTrail = await auditEngine.queryAuditTrail(filters);
+    const { telemetryEngine } = aiDatabaseSystem.getEngines();
+    const filters = req.query as any;
+    const auditTrail = await telemetryEngine.queryAuditTrail(filters);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Audit trail queried successfully',
       data: auditTrail
@@ -1111,10 +1184,10 @@ router.get('/audit/trail', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Audit trail query failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Audit trail query failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -1127,11 +1200,11 @@ router.get('/audit/report', async (req: Request, res: Response) => {
   try {
     console.log('📊 Generating audit report');
 
-    const { auditEngine } = AIDatabaseSystem.getEngines();
-    const filters = req.query;
-    const report = await auditEngine.generateAuditReport(filters);
+    const { telemetryEngine } = aiDatabaseSystem.getEngines();
+    const timeframe = (req.query as any)['timeframe'] as string || '30d';
+    const report = await telemetryEngine.generateAuditReport(timeframe);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Audit report generated successfully',
       data: report
@@ -1139,10 +1212,10 @@ router.get('/audit/report', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('❌ Audit report generation failed:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Audit report generation failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });
@@ -1155,7 +1228,7 @@ router.get('/health', async (req: Request, res: Response) => {
   try {
     console.log('🏥 Performing health check');
 
-    const health = AIDatabaseSystem.healthCheck();
+    const health = aiDatabaseSystem.healthCheck();
 
     res.status(200).json({
       success: true,
@@ -1168,7 +1241,7 @@ router.get('/health', async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'Health check failed',
-      error: error.message
+      error: (error instanceof Error ? error.message : "Unknown error")
     });
   }
 });

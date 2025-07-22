@@ -73,7 +73,7 @@ export class SecurityMiddleware {
         legacyHeaders: false
       },
       cors: {
-        origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+        origin: process.env["ALLOWED_ORIGINS"]?.split(',') || ['http://localhost:3000'],
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-API-Key']
@@ -266,10 +266,11 @@ export class SecurityMiddleware {
 
         apiReq.context.user = user;
         next();
+        return;
 
       } catch (error) {
         console.error('Authentication error:', error);
-        res.status(500).json({
+        return res.status(500).json({
           success: false,
           error: {
             code: 'AUTHENTICATION_ERROR',
@@ -322,6 +323,7 @@ export class SecurityMiddleware {
       }
 
       next();
+      return;
     };
   }
 
@@ -370,7 +372,7 @@ export class SecurityMiddleware {
     return req.ip ||
            req.connection.remoteAddress ||
            req.socket.remoteAddress ||
-           (req.connection.socket ? req.connection.socket.remoteAddress : '') ||
+           ((req.connection as any).socket ? (req.connection as any).socket.remoteAddress : '') ||
            'unknown';
   }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppManifest, manifestLoader } from './ManifestLoader';
 
@@ -12,6 +12,12 @@ interface AppContainerProps {
   onDestroy?: () => void;
   className?: string;
   style?: React.CSSProperties;
+  options?: {
+    timeout?: number; // Timeout in milliseconds
+    strictCSP?: boolean; // Enable strict Content Security Policy
+    enableDevtools?: boolean; // Enable developer tools
+    trustedOrigins?: string[]; // Trusted origins for postMessage
+  };
 }
 
 interface AppRuntimeContext {
@@ -33,13 +39,75 @@ interface AppRuntimeContext {
     notify: (message: string, type?: 'success' | 'error' | 'warning') => void;
     navigate: (path: string) => void;
   };
+  devtools?: {
+    log: (message: string, level: 'info' | 'warn' | 'error') => void;
+    metrics: {
+      memoryUsage: number;
+      loadTime: number;
+      apiCalls: number;
+    };
+  };
 }
 
 interface AppContainerState {
-  status: 'loading' | 'mounted' | 'error' | 'destroyed';
+  status: 'loading' | 'mounted' | 'error' | 'destroyed' | 'timeout';
   error?: string;
   loadTime?: number;
   memoryUsage?: number;
+  timeoutId?: NodeJS.Timeout;
+}
+
+// ==================== GLOBAL RUNTIME BUS ====================
+declare global {
+  interface Window {
+    AIBOS_EVENTBUS?: {
+      publish: (event: string, data: any) => void;
+      subscribe: (event: string, callback: (data: any) => void) => void;
+      unsubscribe: (event: string, callback: (data: any) => void) => void;
+    };
+    __AIBOS_DEVTOOLS__?: {
+      registerApp: (context: AppRuntimeContext) => void;
+      unregisterApp: (appId: string) => void;
+    };
+  }
+}
+
+// Initialize global runtime bus
+if (typeof window !== 'undefined' && !window.AIBOS_EVENTBUS) {
+  const listeners = new Map<string, Set<(data: any) => void>>();
+
+  window.AIBOS_EVENTBUS = {
+    publish: (event: string, data: any) => {
+      const eventListeners = listeners.get(event);
+      if (eventListeners) {
+        eventListeners.forEach(callback => callback(data));
+      }
+    },
+    subscribe: (event: string, callback: (data: any) => void) => {
+      if (!listeners.has(event)) {
+        listeners.set(event, new Set());
+      }
+      listeners.get(event)!.add(callback);
+    },
+    unsubscribe: (event: string, callback: (data: any) => void) => {
+      const eventListeners = listeners.get(event);
+      if (eventListeners) {
+        eventListeners.delete(callback);
+      }
+    }
+  };
+}
+
+// Initialize devtools
+if (typeof window !== 'undefined' && !window.__AIBOS_DEVTOOLS__) {
+  window.__AIBOS_DEVTOOLS__ = {
+    registerApp: (context: AppRuntimeContext) => {
+      console.log(`[AIBOS DevTools] App registered: ${context.appId}`, context);
+    },
+    unregisterApp: (appId: string) => {
+      console.log(`[AIBOS DevTools] App unregistered: ${appId}`);
+    }
+  };
 }
 
 // ==================== APP CONTAINER COMPONENT ====================
@@ -49,12 +117,14 @@ export const AppContainer: React.FC<AppContainerProps> = ({
   onError,
   onDestroy,
   className = '',
-  style = {}
+  style = {},
+  options = {}
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [state, setState] = useState<AppContainerState>({ status: 'loading' });
   const [runtimeContext, setRuntimeContext] = useState<AppRuntimeContext | null>(null);
+  const [metrics, setMetrics] = useState({ memoryUsage: 0, apiCalls: 0 });
 
   // ==================== LIFECYCLE MANAGEMENT ====================
 
@@ -68,20 +138,48 @@ export const AppContainer: React.FC<AppContainerProps> = ({
         setState(prev => ({ ...prev, status: 'loading' }));
 
         // Create runtime context
-        const context = createRuntimeContext(manifest);
+        const context = createRuntimeContext(manifest, options);
         setRuntimeContext(context);
+
+        // Register with devtools
+        if (options.enableDevtools) {
+          window.__AIBOS_DEVTOOLS__?.registerApp(context);
+        }
 
         // Validate permissions
         await validatePermissions(manifest.permissions);
 
+        // Set timeout
+        const timeoutId = setTimeout(() => {
+          setState(prev => ({
+            ...prev,
+            status: 'timeout',
+            error: 'App failed to load within timeout period'
+          }));
+          onError?.('App load timeout');
+        }, options.timeout || 30000);
+
+        setState(prev => ({ ...prev, timeoutId }));
+
         // Mount the app
         await mountApp(manifest, context);
+
+        // Clear timeout on success
+        clearTimeout(timeoutId);
 
         setState(prev => ({
           ...prev,
           status: 'mounted',
-          loadTime: Date.now()
+          loadTime: Date.now(),
+          timeoutId: undefined
         }));
+
+        // Publish event to global bus
+        window.AIBOS_EVENTBUS?.publish('app.loaded', {
+          appId: manifest.app_id,
+          loadTime: Date.now(),
+          manifest
+        });
 
         onMount?.();
 
@@ -90,7 +188,8 @@ export const AppContainer: React.FC<AppContainerProps> = ({
         setState(prev => ({
           ...prev,
           status: 'error',
-          error: errorMessage
+          error: errorMessage,
+          timeoutId: undefined
         }));
         onError?.(errorMessage);
       }
@@ -110,7 +209,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({
    * Create runtime context for the app
    * Steve Jobs Philosophy: "Think different"
    */
-  const createRuntimeContext = (manifest: AppManifest): AppRuntimeContext => {
+  const createRuntimeContext = (manifest: AppManifest, options: AppContainerProps['options']): AppRuntimeContext => {
     return {
       appId: manifest.app_id,
       manifest,
@@ -126,9 +225,10 @@ export const AppContainer: React.FC<AppContainerProps> = ({
         name: 'Current Tenant'
       },
       api: {
-        call: async (endpoint: string, options?: any) => {
-          // Implement secure API calls
-          return await secureApiCall(endpoint, options, manifest.permissions);
+        call: async (endpoint: string, apiOptions?: any) => {
+          // Track API calls for metrics
+          setMetrics(prev => ({ ...prev, apiCalls: prev.apiCalls + 1 }));
+          return await secureApiCall(endpoint, apiOptions, manifest.permissions, options?.trustedOrigins);
         },
         notify: (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
           // Implement notification system
@@ -138,7 +238,17 @@ export const AppContainer: React.FC<AppContainerProps> = ({
           // Implement navigation
           console.log(`[${manifest.app_id}] Navigate to: ${path}`);
         }
-      }
+      },
+      devtools: options?.enableDevtools ? {
+        log: (message: string, level: 'info' | 'warn' | 'error') => {
+          console.log(`[${manifest.app_id}] ${level}: ${message}`);
+        },
+        metrics: {
+          memoryUsage: metrics.memoryUsage,
+          loadTime: state.loadTime || 0,
+          apiCalls: metrics.apiCalls,
+        }
+      } : undefined
     };
   };
 
@@ -178,7 +288,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({
   };
 
   /**
-   * Mount app in sandboxed iframe
+   * Mount app in sandboxed iframe with enhanced security
    * Steve Jobs Philosophy: "Safety first"
    */
   const mountSandboxedApp = async (manifest: AppManifest, context: AppRuntimeContext): Promise<void> => {
@@ -186,17 +296,30 @@ export const AppContainer: React.FC<AppContainerProps> = ({
       throw new Error('Iframe not ready');
     }
 
-    // Set up iframe with security restrictions
+    // Set up iframe with enhanced security restrictions
     const iframe = iframeRef.current;
     iframe.sandbox.add('allow-scripts', 'allow-same-origin');
+
+    // Add Content Security Policy if strict mode is enabled
+    if (options.strictCSP) {
+      iframe.setAttribute('csp', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';");
+    }
 
     // Inject runtime context into iframe
     const iframeContent = generateIframeContent(manifest, context);
     iframe.srcdoc = iframeContent;
 
-    // Set up message communication
+    // Set up message communication with origin validation
     const handleMessage = (event: MessageEvent) => {
       if (event.source !== iframe.contentWindow) return;
+
+      // Validate origin if trusted origins are specified
+      if (options.trustedOrigins && options.trustedOrigins.length > 0) {
+        if (!options.trustedOrigins.includes(event.origin)) {
+          console.warn(`[AppContainer] Rejected message from untrusted origin: ${event.origin}`);
+          return;
+        }
+      }
 
       const { type, payload } = event.data;
       handleAppMessage(type, payload, context);
@@ -206,15 +329,21 @@ export const AppContainer: React.FC<AppContainerProps> = ({
   };
 
   /**
-   * Mount app directly in container
+   * Mount app directly in container with React.lazy
    * Steve Jobs Philosophy: "Performance matters"
    */
   const mountDirectApp = async (manifest: AppManifest, context: AppRuntimeContext): Promise<void> => {
-    // For trusted apps, mount directly
-    const appComponent = await loadAppComponent(manifest.entry);
-    if (containerRef.current) {
-      // Render app component directly
-      // This would be implemented with React rendering
+    // For trusted apps, mount directly using React.lazy
+    try {
+      const LazyApp = React.lazy(() => loadAppComponent(manifest.entry));
+
+      if (containerRef.current) {
+        // This would be implemented with React rendering
+        // For now, we'll show a placeholder
+        console.log(`[AppContainer] Direct mount for trusted app: ${manifest.app_id}`);
+      }
+    } catch (error) {
+      throw new Error(`Failed to load app component: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -223,6 +352,11 @@ export const AppContainer: React.FC<AppContainerProps> = ({
    * Steve Jobs Philosophy: "Clean up after yourself"
    */
   const destroyApp = useCallback(() => {
+    // Clear timeout if exists
+    if (state.timeoutId) {
+      clearTimeout(state.timeoutId);
+    }
+
     setState(prev => ({ ...prev, status: 'destroyed' }));
 
     // Clean up resources
@@ -230,16 +364,27 @@ export const AppContainer: React.FC<AppContainerProps> = ({
       iframeRef.current.srcdoc = '';
     }
 
+    // Unregister from devtools
+    if (options.enableDevtools) {
+      window.__AIBOS_DEVTOOLS__?.unregisterApp(manifest.app_id);
+    }
+
+    // Publish event to global bus
+    window.AIBOS_EVENTBUS?.publish('app.destroyed', {
+      appId: manifest.app_id,
+      manifest
+    });
+
     // Clear runtime context
     setRuntimeContext(null);
 
     onDestroy?.();
-  }, [onDestroy]);
+  }, [onDestroy, manifest.app_id, state.timeoutId, options.enableDevtools]);
 
   // ==================== UTILITY METHODS ====================
 
   /**
-   * Generate iframe content for sandboxed apps
+   * Generate iframe content for sandboxed apps with lifecycle support
    * Steve Jobs Philosophy: "Attention to detail"
    */
   const generateIframeContent = (manifest: AppManifest, context: AppRuntimeContext): string => {
@@ -266,6 +411,12 @@ export const AppContainer: React.FC<AppContainerProps> = ({
             // Set up message communication
             window.addEventListener('message', (event) => {
               // Handle incoming messages from parent
+              if (event.data.type === 'invoke' && event.data.handler) {
+                // Invoke lifecycle handlers
+                if (typeof window[event.data.handler] === 'function') {
+                  window[event.data.handler]();
+                }
+              }
             });
 
             // Load and render app
@@ -274,7 +425,18 @@ export const AppContainer: React.FC<AppContainerProps> = ({
             function loadApp(entry) {
               // This would load the actual app component
               document.getElementById('loading').innerHTML = 'App loaded: ${manifest.name}';
+
+              // Invoke onMount lifecycle handler if defined
+              ${manifest.lifecycle?.onMount ? `if (typeof ${manifest.lifecycle.onMount} === 'function') { ${manifest.lifecycle.onMount}(); }` : ''}
             }
+
+            // Error handler
+            window.addEventListener('error', (event) => {
+              window.parent.postMessage({
+                type: 'error',
+                payload: { message: event.error?.message || 'Unknown error' }
+              }, '*');
+            });
           </script>
         </body>
       </html>
@@ -282,7 +444,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({
   };
 
   /**
-   * Handle messages from sandboxed app
+   * Handle messages from sandboxed app with enhanced security
    * Steve Jobs Philosophy: "Communication is key"
    */
   const handleAppMessage = (type: string, payload: any, context: AppRuntimeContext) => {
@@ -300,24 +462,41 @@ export const AppContainer: React.FC<AppContainerProps> = ({
         // Handle errors
         setState(prev => ({ ...prev, status: 'error', error: payload.message }));
         break;
+      case 'lifecycle':
+        // Handle lifecycle events
+        if (payload.handler && manifest.lifecycle?.[payload.handler as keyof typeof manifest.lifecycle]) {
+          // Invoke lifecycle handler
+          console.log(`[AppContainer] Invoking lifecycle handler: ${payload.handler}`);
+        }
+        break;
     }
   };
 
   /**
-   * Load app component
+   * Load app component with React.lazy
    * Steve Jobs Philosophy: "Lazy loading for performance"
    */
   const loadAppComponent = async (entry: string): Promise<any> => {
-    // This would dynamically import the app component
+    // This would dynamically import the app component using React.lazy
     // For now, return a placeholder
-    return null;
+    return {
+      default: () => React.createElement('div', { className: 'app-placeholder' }, 'App Component')
+    };
   };
 
   /**
-   * Secure API call
+   * Secure API call with origin validation
    * Steve Jobs Philosophy: "Security by design"
    */
-  const secureApiCall = async (endpoint: string, options: any, permissions: string[]): Promise<any> => {
+  const secureApiCall = async (endpoint: string, options: any, permissions: string[], trustedOrigins?: string[]): Promise<any> => {
+    // Validate endpoint against trusted origins
+    if (trustedOrigins && trustedOrigins.length > 0) {
+      const url = new URL(endpoint, window.location.origin);
+      if (!trustedOrigins.some(origin => url.origin === origin)) {
+        throw new Error(`API call to untrusted origin: ${url.origin}`);
+      }
+    }
+
     // Implement secure API calls with permission checking
     return { success: true, data: {} };
   };
@@ -386,6 +565,34 @@ export const AppContainer: React.FC<AppContainerProps> = ({
         )}
       </AnimatePresence>
 
+      {/* Timeout State */}
+      <AnimatePresence>
+        {state.status === 'timeout' && (
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center bg-yellow-50 dark:bg-yellow-900/20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="text-center">
+              <div className="text-2xl mb-4">⏰</div>
+              <h3 className="text-lg font-semibold mb-2 text-yellow-800 dark:text-yellow-200">
+                Load Timeout
+              </h3>
+              <p className="text-yellow-600 dark:text-yellow-300 mb-4">
+                App took too long to load. Please try again.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* App Content */}
       {state.status === 'mounted' && (
         <iframe
@@ -414,6 +621,11 @@ export const AppContainer: React.FC<AppContainerProps> = ({
               Loaded in {state.loadTime}ms
             </div>
           )}
+          {options.enableDevtools && (
+            <div className="text-gray-500 mt-1">
+              API calls: {metrics.apiCalls}
+            </div>
+          )}
         </motion.div>
       )}
     </motion.div>
@@ -424,7 +636,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({
 export const useAppRuntime = () => {
   const [context, setContext] = useState<AppRuntimeContext | null>(null);
 
-  const initializeRuntime = useCallback((manifest: AppManifest) => {
+  const initializeRuntime = useCallback((manifest: AppManifest, options?: AppContainerProps['options']) => {
     const runtimeContext = {
       appId: manifest.app_id,
       manifest,
@@ -450,7 +662,17 @@ export const useAppRuntime = () => {
         navigate: (path: string) => {
           console.log(`[${manifest.app_id}] Navigate to: ${path}`);
         }
-      }
+      },
+      devtools: options?.enableDevtools ? {
+        log: (message: string, level: 'info' | 'warn' | 'error') => {
+          console.log(`[${manifest.app_id}] ${level}: ${message}`);
+        },
+        metrics: {
+          memoryUsage: 0,
+          loadTime: 0,
+          apiCalls: 0,
+        }
+      } : undefined
     };
     setContext(runtimeContext);
     return runtimeContext;

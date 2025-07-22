@@ -25,6 +25,24 @@ export interface SchemaManifest {
   deployedAt?: Date;
 }
 
+export interface ComplianceImpact {
+  level: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  affectedStandards: string[];
+}
+
+export interface SecurityImpact {
+  level: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  vulnerabilities: string[];
+}
+
+export interface PerformanceImpact {
+  level: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  affectedMetrics: string[];
+}
+
 export interface SchemaManifestMetadata {
   author: string;
   department: string;
@@ -211,8 +229,8 @@ export class SchemaManifestGovernance extends EventEmitter {
       return manifest;
 
     } catch (error) {
-      console.error(`❌ Failed to create schema manifest: ${error.message}`);
-      throw new Error(`Schema manifest creation failed: ${error.message}`);
+      console.error(`❌ Failed to create schema manifest: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Schema manifest creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -254,8 +272,8 @@ export class SchemaManifestGovernance extends EventEmitter {
       return manifest;
 
     } catch (error) {
-      console.error(`❌ Failed to submit manifest: ${error.message}`);
-      throw new Error(`Manifest submission failed: ${error.message}`);
+      console.error(`❌ Failed to submit manifest: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Manifest submission failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -325,8 +343,8 @@ export class SchemaManifestGovernance extends EventEmitter {
       return step;
 
     } catch (error) {
-      console.error(`❌ Failed to approve step: ${error.message}`);
-      throw new Error(`Step approval failed: ${error.message}`);
+      console.error(`❌ Failed to approve step: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Step approval failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -399,8 +417,8 @@ export class SchemaManifestGovernance extends EventEmitter {
       return step;
 
     } catch (error) {
-      console.error(`❌ Failed to reject step: ${error.message}`);
-      throw new Error(`Step rejection failed: ${error.message}`);
+      console.error(`❌ Failed to reject step: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Step rejection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -414,23 +432,19 @@ export class SchemaManifestGovernance extends EventEmitter {
       businessImpact: metadata.businessImpact || 'Standard business impact',
       technicalImpact: metadata.technicalImpact || 'Standard technical impact',
       complianceImpact: metadata.complianceImpact || {
-        gdpr: { compliant: true, issues: [] },
-        hipaa: { compliant: true, issues: [] },
-        soc2: { compliant: true, issues: [] },
-        iso27001: { compliant: true, issues: [] },
-        pci: { compliant: true, issues: [] }
+        level: 'low' as const,
+        description: 'Standard compliance requirements',
+        affectedStandards: ['gdpr', 'hipaa', 'soc2', 'iso27001', 'pci']
       },
       securityImpact: metadata.securityImpact || {
-        encryption: { required: false, issues: [] },
-        accessControl: { secure: true, issues: [] },
-        auditTrail: { complete: true, issues: [] },
-        dataClassification: { accurate: true, issues: [] }
+        level: 'low' as const,
+        description: 'Standard security measures',
+        vulnerabilities: []
       },
       performanceImpact: metadata.performanceImpact || {
-        queryPerformance: { improved: true, issues: [] },
-        storageEfficiency: { improved: true, issues: [] },
-        scalability: { improved: true, issues: [] },
-        maintenance: { improved: true, issues: [] }
+        level: 'low' as const,
+        description: 'Standard performance impact',
+        affectedMetrics: ['query', 'storage', 'scalability', 'maintenance']
       },
       estimatedCost: metadata.estimatedCost || 0,
       estimatedTime: metadata.estimatedTime || 8,
@@ -438,8 +452,8 @@ export class SchemaManifestGovernance extends EventEmitter {
       stakeholders: metadata.stakeholders || [],
       tags: metadata.tags || [],
       environment: metadata.environment || 'development',
-      tenantId: metadata.tenantId,
-      moduleId: metadata.moduleId
+      ...(metadata.tenantId && { tenantId: metadata.tenantId }),
+      ...(metadata.moduleId && { moduleId: metadata.moduleId })
     };
   }
 
@@ -588,8 +602,8 @@ export class SchemaManifestGovernance extends EventEmitter {
 
     // Start first step
     if (workflow.steps.length > 0) {
-      workflow.steps[0].status = 'in_progress';
-      workflow.steps[0].updatedAt = new Date();
+      if (workflow.steps[0]) { workflow.steps[0].status = 'in_progress'; }
+      if (workflow.steps[0]) { workflow.steps[0].updatedAt = new Date(); }
     }
 
     // Audit trail
@@ -635,8 +649,8 @@ export class SchemaManifestGovernance extends EventEmitter {
     } else {
       // Start next step
       const nextStep = workflow.steps[workflow.currentStep];
-      nextStep.status = 'in_progress';
-      nextStep.updatedAt = new Date();
+      if (nextStep) { nextStep.status = 'in_progress'; }
+      if (nextStep) { nextStep.updatedAt = new Date(); }
 
       // Audit trail
       this.auditTrail.push({

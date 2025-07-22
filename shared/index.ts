@@ -1,7 +1,11 @@
 /**
  * AI-BOS Shared Library - Production Deployment Version
- * Only exports verified, existing modules for stable deployment
+ * Optimized exports for better tree-shaking and specific imports
  */
+
+// ============================================================================
+// CORE SYSTEMS - VERIFIED AND OPERATIONAL
+// ============================================================================
 
 // Core Systems (verified)
 export * from './lib/index';
@@ -19,8 +23,77 @@ export * from './ui-components/src/index';
 // Security (verified)
 export * from './security/index';
 
-// Examples (for reference, commented out for production)
-// export * from './examples/index';
+// ============================================================================
+// SPECIFIC EXPORTS FOR BETTER TREE-SHAKING
+// ============================================================================
+
+// Core Systems - Specific exports
+export {
+  EventBus,
+  ManifestBuilder,
+  EntityManager,
+  logger,
+  monitoring,
+  initializeAibosSystems,
+  createAibosApp
+} from './lib';
+
+// Types - Specific exports
+export type {
+  AppManifest,
+  EventEnvelope,
+  EntityInstance,
+  ApiResponse,
+  ApiError,
+  ValidationResult,
+  ValidationError
+} from './types';
+
+// UI Components - Specific exports
+export {
+  Button,
+  Input,
+  Badge,
+  SelfHealingProvider
+} from './ui-components/src';
+
+// Utilities - Specific exports
+export {
+  apiFetcher,
+  permissionHandlers
+} from './utils';
+
+// Validation - Specific exports
+export {
+  validateSchema,
+  validateManifest,
+  validateEntity
+} from './validation';
+
+// ============================================================================
+// FEATURE FLAGS FOR GRADUAL ENABLEMENT
+// ============================================================================
+
+export const FeatureFlags = {
+  // Core features
+  EVENT_BUS: true,
+  MANIFEST_SYSTEM: true,
+  ENTITY_MANAGEMENT: true,
+
+  // UI features
+  SELF_HEALING: true,
+  ZERO_TRUST: false, // Temporarily disabled
+  GPU_ACCELERATION: false, // Temporarily disabled
+
+  // Advanced features
+  AI_ASSISTANT: false, // Temporarily disabled
+  VISUAL_BUILDER: false, // Temporarily disabled
+  COMMUNITY_TEMPLATES: false, // Temporarily disabled
+} as const;
+
+export function isFeatureEnabled(feature: keyof typeof FeatureFlags): boolean {
+  return FeatureFlags[feature] || false;
+}
 
 // ============================================================================
 // STRATEGIC ENHANCEMENTS - "EVERYONE CAN DEV" VISION (IMPLEMENTED)
@@ -57,5 +130,10 @@ export * from './security/index';
 // export * from './compliance/index';
 // export * from './monitoring/index';
 
+// ============================================================================
+// DEVELOPMENT NOTE
+// ============================================================================
+
 // Development note: Strategic enhancements are production-ready
 // Other modules will be uncommented as they are fully implemented
+// Feature flags allow for gradual enablement of advanced features

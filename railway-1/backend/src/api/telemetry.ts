@@ -96,11 +96,21 @@ router.post('/events', async (req: Request, res: Response) => {
   try {
     const validatedData = RecordEventSchema.parse(req.body);
 
+    // Prepare telemetry data with proper optional property handling
+    const telemetryData = {
+      operation: validatedData.data.operation,
+      parameters: validatedData.data.parameters,
+      duration: validatedData.data.duration,
+      resourceUsage: validatedData.data.resourceUsage,
+      context: validatedData.data.context,
+      ...(validatedData.data.result !== undefined ? { result: validatedData.data.result } : {}),
+      ...(validatedData.data.error !== undefined ? { error: validatedData.data.error } : {})
+    };
+
     const event = await telemetryEngine.recordEvent(
       validatedData.type,
       validatedData.source,
-      validatedData.data,
-      validatedData.metadata
+      telemetryData
     );
 
     res.status(201).json({
@@ -208,6 +218,15 @@ router.get('/events', async (req: Request, res: Response) => {
 router.get('/events/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'MISSING_EVENT_ID',
+          message: 'Event ID is required'
+        }
+      });
+    }
     const event = telemetryEngine['events'].get(id);
 
     if (!event) {
@@ -220,14 +239,14 @@ router.get('/events/:id', async (req: Request, res: Response) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: event
     });
 
   } catch (error) {
     console.error('❌ Failed to get telemetry event:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: {
         code: 'GET_EVENT_FAILED',
@@ -246,12 +265,21 @@ router.post('/feedback', async (req: Request, res: Response) => {
   try {
     const validatedData = ProvideFeedbackSchema.parse(req.body);
 
+    // Prepare corrections with proper optional property handling
+    const corrections = validatedData.corrections?.map(correction => ({
+      field: correction.field,
+      reason: correction.reason,
+      confidence: correction.confidence,
+      originalValue: correction.originalValue,
+      correctedValue: correction.correctedValue
+    }));
+
     const feedback = await telemetryEngine.provideFeedback(
       validatedData.eventId,
       validatedData.actualOutcome,
       validatedData.feedback,
       validatedData.userRating,
-      validatedData.corrections
+      corrections
     );
 
     res.status(201).json({
@@ -472,6 +500,15 @@ router.get('/models', async (req: Request, res: Response) => {
 router.get('/models/:id/performance', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'MISSING_MODEL_ID',
+          message: 'Model ID is required'
+        }
+      });
+    }
     const performance = telemetryEngine.getModelPerformance(id);
 
     if (!performance) {
@@ -484,14 +521,14 @@ router.get('/models/:id/performance', async (req: Request, res: Response) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: performance
     });
 
   } catch (error) {
     console.error('❌ Failed to get model performance:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: {
         code: 'GET_PERFORMANCE_FAILED',

@@ -102,15 +102,24 @@ export class PaginationUtils {
   static parsePaginationOptions(query: any): PaginationOptions {
     const parsed = PaginationSchema.parse(query);
 
-    return {
+    const result: PaginationOptions = {
       page: parsed.page,
       limit: parsed.limit,
       sort: this.parseSortOptions(parsed.sort),
-      filter: this.parseFilterOptions(parsed.filter),
-      search: parsed.search,
-      include: parsed.include ? parsed.include.split(',') : undefined,
-      exclude: parsed.exclude ? parsed.exclude.split(',') : undefined
+      filter: this.parseFilterOptions(parsed.filter)
     };
+
+    if (parsed.search !== undefined) {
+      result.search = parsed.search;
+    }
+    if (parsed.include !== undefined) {
+      result.include = parsed.include.split(',');
+    }
+    if (parsed.exclude !== undefined) {
+      result.exclude = parsed.exclude.split(',');
+    }
+
+    return result;
   }
 
   /**
@@ -122,7 +131,7 @@ export class PaginationUtils {
     return sortString.split(',').map(sort => {
       const [field, direction] = sort.split(':');
       return {
-        field: field.trim(),
+        field: field?.trim() || '',
         direction: (direction?.toLowerCase() as 'asc' | 'desc') || 'asc'
       };
     });
@@ -200,14 +209,14 @@ export class PaginationUtils {
         totalPages,
         hasNext: options.page < totalPages,
         hasPrev: options.page > 1,
-        nextPage: options.page < totalPages ? options.page + 1 : undefined,
-        prevPage: options.page > 1 ? options.page - 1 : undefined
+        ...(options.page < totalPages ? { nextPage: options.page + 1 } : {}),
+        ...(options.page > 1 ? { prevPage: options.page - 1 } : {})
       },
       meta: {
         sort: options.sort || [],
         filter: options.filter || [],
-        search: options.search,
-        processingTime
+        processingTime,
+        ...(options.search !== undefined ? { search: options.search } : {})
       }
     };
   }
@@ -475,9 +484,9 @@ export class PaginationUtils {
         page: pagination.page,
         total: pagination.total,
         processingTime: pagination.processingTime,
-        requestId
+        ...(requestId !== undefined ? { requestId } : {})
       };
-    } else if (requestId) {
+    } else if (requestId !== undefined) {
       response.meta = { requestId };
     }
 
@@ -493,15 +502,20 @@ export class PaginationUtils {
     details?: any,
     requestId?: string
   ): ApiResponse<never> {
-    return {
+    const response: ApiResponse<never> = {
       success: false,
       error: {
         code,
         message,
         details
-      },
-      meta: requestId ? { requestId } : undefined
+      }
     };
+
+    if (requestId !== undefined) {
+      response.meta = { requestId };
+    }
+
+    return response;
   }
 }
 
@@ -625,8 +639,8 @@ export class QueryBuilder {
     this.conditions = [];
     this.params = [];
     this.sortFields = [];
-    this.limitValue = undefined;
-    this.offsetValue = undefined;
+    this.limitValue = 0;
+    this.offsetValue = 0;
     return this;
   }
 }

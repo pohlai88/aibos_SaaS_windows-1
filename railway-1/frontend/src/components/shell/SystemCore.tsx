@@ -231,7 +231,7 @@ class SystemErrorBoundary extends React.Component<
               System Error
             </h1>
             <p className="text-red-600 mb-6">
-              Something went wrong with the AI-BOS OS. We're working to fix this.
+              Something went wrong with the AI-BOS OS. We&apos;re working to fix this.
             </p>
             <button
               onClick={() => window.location.reload()}

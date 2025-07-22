@@ -343,7 +343,7 @@ export class TypeScriptParser {
         interfaces.push(interfaceData);
       } catch (error) {
         console.error('❌ Interface parsing failed:', error);
-        throw new Error(`Failed to parse interface: ${error.message}`);
+        throw new Error(`Failed to parse interface: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
 
@@ -394,8 +394,8 @@ export class TypeScriptParser {
         interfaceData.name = node.name.text;
 
         // Parse interface decorators
-        if (node.decorators) {
-          interfaceData.decorators = node.decorators.map(decorator =>
+        if ((node as any).decorators) {
+          interfaceData.decorators = (node as any).decorators.map((decorator: any) =>
             this.parseDecorator(decorator)
           );
         }
@@ -436,8 +436,8 @@ export class TypeScriptParser {
     };
 
     // Parse property decorators
-    if (member.decorators) {
-      property.decorators = member.decorators.map(decorator =>
+    if ((member as any).decorators) {
+      property.decorators = (member as any).decorators.map((decorator: any) =>
         this.parseDecorator(decorator)
       );
     }
@@ -469,7 +469,7 @@ export class TypeScriptParser {
   // ==================== DECORATOR ANALYSIS ====================
   private extractDecoratorName(decoratorText: string): string {
     const match = decoratorText.match(/@(\w+)/);
-    return match ? match[1] : 'unknown';
+    return match ? match[1] || 'unknown' : 'unknown';
   }
 
   private extractDecoratorArguments(decoratorText: string): any[] {
@@ -637,7 +637,7 @@ export class TypeScriptParser {
               id: `${interface_.name}_${property.name}_${targetTable}`,
               sourceTable: interface_.name,
               targetTable: targetTable,
-              type: 'many-to-one', // Default, can be refined
+              type: 'one-to-many' as const, // Default, can be refined
               sourceColumn: property.name,
               targetColumn: 'id', // Default primary key
               cascade: { onDelete: 'RESTRICT', onUpdate: 'CASCADE' },

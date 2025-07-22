@@ -12,3 +12,6 @@ export * from './user';
 
 // Metadata types
 export * from './metadata';
+
+// Unified type definitions
+export * from './unified';

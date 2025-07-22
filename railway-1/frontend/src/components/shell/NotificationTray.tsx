@@ -375,6 +375,8 @@ export const NotificationTray: React.FC<NotificationTrayProps> = ({
     </motion.div>
   ));
 
+  NotificationItem.displayName = 'NotificationItem';
+
   return (
     <div
       className="notification-tray fixed top-6 right-6 z-50"
@@ -456,7 +458,7 @@ export const NotificationTray: React.FC<NotificationTrayProps> = ({
                   <div className="text-4xl mb-4">🔕</div>
                   <div className="text-gray-600 mb-2">No notifications</div>
                   <div className="text-sm text-gray-500">
-                    You're all caught up!
+                    You&apos;re all caught up!
                   </div>
                 </div>
               ) : (

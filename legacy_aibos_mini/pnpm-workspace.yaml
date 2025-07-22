@@ -1,8 +1,0 @@
-packages:
-  - 'apps/*'
-  - 'packages/*'
-  - 'DataGovernance'  # Add this
-  - 'database'
-  - 'metadataRegistry'
-  - 'storage'
-  - 'cidDashboard'

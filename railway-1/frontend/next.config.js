@@ -1,16 +1,6 @@
-const path = require('path');
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Transpile shared packages for proper module resolution
-  transpilePackages: ['@aibos/shared'],
-
   webpack: (config, { isServer }) => {
-    // Fix module resolution for @aibos/shared
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@aibos/shared': path.resolve(__dirname, '../../shared'),
-    };
 
     // Handle Node.js modules in browser environment
     if (!isServer) {

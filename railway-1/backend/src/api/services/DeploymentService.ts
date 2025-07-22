@@ -114,11 +114,11 @@ export interface ExplanationStep {
   order: number;
   type: 'backup' | 'schema_change' | 'data_migration' | 'validation' | 'cleanup';
   description: string;
-  sql?: string;
+  sql?: string | undefined;
   estimatedTime: number;
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
   dependencies: string[];
-  rollbackSql?: string;
+  rollbackSql?: string | undefined;
   validationQueries: string[];
 }
 
@@ -579,12 +579,12 @@ export class DeploymentService {
         order: index + 1,
         type: this.mapStepType(step.type),
         description: step.description,
-        sql: step.sql,
+        sql: step.sql || undefined,
         estimatedTime: step.estimatedTime,
         riskLevel: step.riskLevel,
         dependencies: step.dependencies || [],
-        rollbackSql: step.rollbackSql,
-        validationQueries: step.validationQueries || []
+        rollbackSql: step.rollbackSql || undefined,
+        validationQueries: (step as any).validationQueries || []
       };
 
       steps.push(explanationStep);
@@ -734,7 +734,7 @@ export class DeploymentService {
           sql: step.rollbackSql,
           estimatedTime: step.estimatedTime * 0.8, // Rollback is usually faster
           riskLevel: step.riskLevel,
-          validationQueries: step.validationQueries || []
+          validationQueries: (step as any).validationQueries || []
         };
 
         steps.push(rollbackStep);

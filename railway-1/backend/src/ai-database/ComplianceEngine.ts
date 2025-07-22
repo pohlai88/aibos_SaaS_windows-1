@@ -656,10 +656,13 @@ export class ComplianceEngine {
       details: compliance,
       monitoring: monitoring,
       trends: {
-        lastMonth: 100,
-        lastQuarter: 100,
-        lastYear: 100,
-        trend: 'stable'
+        complianceScore: 100,
+        trend: 'stable',
+        recommendations: [
+          'Monitor compliance trends regularly',
+          'Address any declining trends promptly',
+          'Maintain current compliance practices'
+        ]
       },
       recommendations: [
         'Continue monitoring compliance status',
