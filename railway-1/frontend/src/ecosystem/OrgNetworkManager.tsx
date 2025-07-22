@@ -432,9 +432,9 @@ export const OrgNetworkManager: React.FC = () => {
   }, [expandedNodes, selectedOrg, getChildren, toggleNode]);
 
   const filteredOrganizations = organizations.filter(org => {
-    const matchesSearch = org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         org.metadata.industry.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         org.metadata.region.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (org.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (org.metadata?.industry?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (org.metadata?.region?.toLowerCase() || '').includes(searchTerm.toLowerCase());
     const matchesFilter = filterType === 'all' || org.type === filterType;
     return matchesSearch && matchesFilter;
   });

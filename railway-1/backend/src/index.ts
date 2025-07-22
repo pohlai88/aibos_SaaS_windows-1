@@ -7,9 +7,15 @@ import http from 'http';
 // Import AI-BOS Database API
 import databaseRouter from './api/database';
 
+// Import WebSocket realtime service
+const realtimeService = require('./services/realtime');
+
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env['PORT'] || 3001;
+
+// Initialize WebSocket service
+realtimeService.initialize(server);
 
 // Middleware
 app.use(helmet());
@@ -38,6 +44,15 @@ app.get('/health', (req: Request, res: Response) => {
 app.get('/api/status', (req: Request, res: Response) => {
   res.json({
     message: 'AI-BOS Backend is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// WebSocket endpoint info
+app.get('/api/websocket-info', (req: Request, res: Response) => {
+  res.json({
+    websocketUrl: `wss://${req.get('host')}/api`,
+    status: 'available',
     timestamp: new Date().toISOString()
   });
 });
@@ -91,6 +106,7 @@ server.listen(PORT, () => {
   console.log('🚀 AI-BOS Backend starting...');
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  console.log(`🔌 WebSocket endpoint: ws://localhost:${PORT}/api`);
   console.log(`🔗 Environment: ${process.env['NODE_ENV'] || 'development'}`);
   console.log('✅ Ready to accept requests');
 });
@@ -98,6 +114,7 @@ server.listen(PORT, () => {
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('🛑 Shutting down gracefully...');
+  realtimeService.cleanup();
   server.close(() => {
     console.log('✅ Server closed');
     process.exit(0);

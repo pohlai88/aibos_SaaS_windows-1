@@ -149,9 +149,9 @@ export const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
     // Filter by search query
     if (searchQuery) {
       filtered = filtered.filter(app =>
-        app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        app.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        app.category.toLowerCase().includes(searchQuery.toLowerCase())
+        (app.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+        (app.description?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+        (app.category?.toLowerCase() || '').includes(searchQuery.toLowerCase())
       );
     }
 
@@ -164,9 +164,9 @@ export const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'name':
-          return a.name.localeCompare(b.name);
+          return (a.name || '').localeCompare(b.name || '');
         case 'rating':
-          return b.rating - a.rating;
+          return (b.rating || 0) - (a.rating || 0);
         case 'featured':
           return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0);
         default:
