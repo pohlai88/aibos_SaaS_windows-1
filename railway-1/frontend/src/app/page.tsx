@@ -194,8 +194,4 @@ export default function HomePage() {
         })()}
       </div>
     );
-  }
-
-  // If not authenticated, just show the login screen without SystemCore components
-  return <TerminalLoginScreen />;
 }
