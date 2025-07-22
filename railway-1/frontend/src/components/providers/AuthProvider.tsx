@@ -63,17 +63,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setTenant(response.data.data.tenant);
       } else {
         // Token is invalid, clear it
-        localStorage.removeItem('aibos_token');
-        setToken(null);
-        delete api.defaults.headers.common['Authorization'];
+        clearAuth();
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      localStorage.removeItem('aibos_token');
-      setToken(null);
-      delete api.defaults.headers.common['Authorization'];
+      // Clear invalid token and show login screen
+      clearAuth();
     } finally {
       setLoading(false);
+    }
+  };
+
+  const clearAuth = () => {
+    setUser(null);
+    setTenant(null);
+    setToken(null);
+    localStorage.removeItem('aibos_token');
+    delete api.defaults.headers.common['Authorization'];
+
+    // Disconnect realtime client
+    if (realtimeClient.isConnected) {
+      realtimeClient.disconnect();
     }
   };
 
@@ -82,11 +92,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await api.post('/auth/login', { email, password });
       if (response.data.success) {
         const { token: newToken, user: userData, tenant: tenantData } = response.data.data;
-        
+
         setToken(newToken);
         setUser(userData);
         setTenant(tenantData);
-        
+
         localStorage.setItem('aibos_token', newToken);
         api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
 
@@ -108,11 +118,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await api.post('/auth/register', { email, password, name, tenant_name });
       if (response.data.success) {
         const { token: newToken, user: userData, tenant: tenantData } = response.data.data;
-        
+
         setToken(newToken);
         setUser(userData);
         setTenant(tenantData);
-        
+
         localStorage.setItem('aibos_token', newToken);
         api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
 
@@ -130,14 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    setUser(null);
-    setTenant(null);
-    setToken(null);
-    localStorage.removeItem('aibos_token');
-    delete api.defaults.headers.common['Authorization'];
-    
-    // Disconnect realtime client
-    realtimeClient.disconnect();
+    clearAuth();
   };
 
   const value: AuthContextType = {
@@ -163,4 +166,4 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-} 
+}

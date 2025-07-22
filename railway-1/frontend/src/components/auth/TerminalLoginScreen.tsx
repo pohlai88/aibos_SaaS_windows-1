@@ -7,7 +7,7 @@ import { checkConnection } from '@/lib/api';
 
 export function TerminalLoginScreen() {
   const [loginMode, setLoginMode] = useState<'select' | 'classic' | 'modern'>('select');
-  const [loading, setLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
   const [error, setError] = useState('');
   const [bootComplete, setBootComplete] = useState(false);
   const [terminalOutput, setTerminalOutput] = useState<string[]>([]);
@@ -19,8 +19,9 @@ export function TerminalLoginScreen() {
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [lockoutTime, setLockoutTime] = useState(0);
+  const [debugMode, setDebugMode] = useState(false);
 
-  const { login, register } = useAuth();
+  const { login, register, user, loading } = useAuth();
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,6 +31,12 @@ export function TerminalLoginScreen() {
     { email: 'demo@aibos.com', password: 'demo123', name: 'Demo User', role: 'user' },
     { email: 'developer@aibos.com', password: 'dev2024!', name: 'Developer', role: 'developer' }
   ];
+
+  // Force logout function to clear any stored tokens
+  const forceLogout = () => {
+    localStorage.removeItem('aibos_token');
+    window.location.reload();
+  };
 
   // Check connection status
   useEffect(() => {
@@ -87,6 +94,14 @@ export function TerminalLoginScreen() {
   // Handle keyboard input for mode selection
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Toggle debug mode with Ctrl+D
+      if (e.ctrlKey && e.key === 'd') {
+        e.preventDefault();
+        setDebugMode(prev => !prev);
+        setTerminalOutput(prev => [...prev, `> Debug mode: ${!debugMode ? 'enabled' : 'disabled'}`, '']);
+        return;
+      }
+
       if (!bootComplete || loginMode !== 'select' || isLocked) return;
 
       if (e.key === '1') {
@@ -106,7 +121,7 @@ export function TerminalLoginScreen() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [bootComplete, loginMode, isLocked]);
+  }, [bootComplete, loginMode, isLocked, debugMode]);
 
   // Handle lockout timer
   useEffect(() => {
@@ -138,7 +153,7 @@ export function TerminalLoginScreen() {
       return;
     }
 
-    setLoading(true);
+    setLoginLoading(true);
     setError('');
 
     try {
@@ -156,7 +171,7 @@ export function TerminalLoginScreen() {
         setError(error.message || 'Login failed. Please check your credentials.');
       }
     } finally {
-      setLoading(false);
+      setLoginLoading(false);
     }
   };
 
@@ -220,8 +235,17 @@ export function TerminalLoginScreen() {
             </div>
             <div className="text-sm text-green-400 font-mono">AI-BOS v2.5.0</div>
           </div>
-          <div className={`text-xs font-mono ${getConnectionStatusColor()}`}>
-            {getConnectionStatusText()}
+          <div className="flex items-center space-x-3">
+            <div className={`text-xs font-mono ${getConnectionStatusColor()}`}>
+              {getConnectionStatusText()}
+            </div>
+            <button
+              onClick={forceLogout}
+              className="text-xs text-red-400 hover:text-red-300 font-mono underline"
+              title="Clear session and reload"
+            >
+              CLEAR SESSION
+            </button>
           </div>
         </div>
 
@@ -241,6 +265,21 @@ export function TerminalLoginScreen() {
                 )}
               </div>
             ))}
+
+            {/* Debug Panel */}
+            {debugMode && (
+              <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-700 rounded">
+                <p className="text-xs text-yellow-300 mb-2 font-mono">DEBUG INFO:</p>
+                <div className="text-xs text-yellow-400 space-y-1 font-mono">
+                  <div>Loading: {loading ? 'true' : 'false'}</div>
+                  <div>User: {user ? `${user.email} (${user.name})` : 'null'}</div>
+                  <div>Token: {localStorage.getItem('aibos_token') ? 'exists' : 'null'}</div>
+                  <div>Connection: {connectionStatus}</div>
+                  <div>Login Mode: {loginMode}</div>
+                  <div>Boot Complete: {bootComplete ? 'true' : 'false'}</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -339,10 +378,10 @@ export function TerminalLoginScreen() {
 
               <button
                 type="submit"
-                disabled={loading || isLocked}
+                disabled={loginLoading || isLocked}
                 className="w-full py-2 bg-green-700 hover:bg-green-600 disabled:bg-gray-700 text-black font-bold rounded font-mono text-sm transition-all"
               >
-                {loading ? (
+                {loginLoading ? (
                   <div className="flex items-center justify-center">
                     <LoadingSpinner size="sm" className="mr-2" />
                     AUTHENTICATING...
@@ -452,10 +491,10 @@ export function TerminalLoginScreen() {
 
               <button
                 type="submit"
-                disabled={loading || isLocked}
+                disabled={loginLoading || isLocked}
                 className="w-full py-2 bg-green-700 hover:bg-green-600 disabled:bg-gray-700 text-black font-bold rounded font-mono transition-all"
               >
-                {loading ? (
+                {loginLoading ? (
                   <div className="flex items-center justify-center">
                     <LoadingSpinner size="sm" className="mr-2" />
                     AUTHENTICATING...
