@@ -6,6 +6,7 @@ import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
 import { SystemCoreProvider } from '@/components/shell/SystemCore';
 import { StateManagerProvider } from '@/components/shell/StateManager';
 import ToastProvider from '@/components/ui/Toast';
+import { initializeSharedInfrastructure } from '@/lib/shared-infrastructure-test';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,6 +20,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Initialize shared infrastructure
+  if (typeof window !== 'undefined') {
+    initializeSharedInfrastructure();
+  }
+
   return (
     <html lang="en">
       <body className={inter.className}>

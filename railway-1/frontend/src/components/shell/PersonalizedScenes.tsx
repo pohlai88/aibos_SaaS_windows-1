@@ -43,7 +43,7 @@ const DEFAULT_SCENES: Scene[] = [
     name: 'Morning Focus',
     description: 'Clean and bright to start your day with clarity',
     mood: 'focused',
-    wallpaper: '/scenes/morning-focus.jpg',
+    wallpaper: '/scenes/morning-focus.svg',
     colorScheme: {
       primary: '#3B82F6',
       secondary: '#10B981',
@@ -66,7 +66,7 @@ const DEFAULT_SCENES: Scene[] = [
     name: 'Creative Flow',
     description: 'Inspirational colors to spark your imagination',
     mood: 'creative',
-    wallpaper: '/scenes/creative-flow.jpg',
+    wallpaper: '/scenes/creative-flow.svg',
     colorScheme: {
       primary: '#8B5CF6',
       secondary: '#EC4899',
@@ -88,7 +88,7 @@ const DEFAULT_SCENES: Scene[] = [
     name: 'Deep Work',
     description: 'Minimal and distraction-free for intense focus',
     mood: 'focused',
-    wallpaper: '/scenes/deep-work.jpg',
+    wallpaper: '/scenes/deep-work.svg',
     colorScheme: {
       primary: '#1F2937',
       secondary: '#374151',
@@ -110,7 +110,7 @@ const DEFAULT_SCENES: Scene[] = [
     name: 'Cozy Evening',
     description: 'Warm and comfortable for evening relaxation',
     mood: 'cozy',
-    wallpaper: '/scenes/cozy-evening.jpg',
+    wallpaper: '/scenes/cozy-evening.svg',
     colorScheme: {
       primary: '#DC2626',
       secondary: '#EA580C',
@@ -133,7 +133,7 @@ const DEFAULT_SCENES: Scene[] = [
     name: 'Energetic Morning',
     description: 'Vibrant and motivating to boost your energy',
     mood: 'energetic',
-    wallpaper: '/scenes/energetic-morning.jpg',
+    wallpaper: '/scenes/energetic-morning.svg',
     colorScheme: {
       primary: '#059669',
       secondary: '#10B981',
@@ -156,7 +156,7 @@ const DEFAULT_SCENES: Scene[] = [
     name: 'Professional Meeting',
     description: 'Clean and professional for important meetings',
     mood: 'professional',
-    wallpaper: '/scenes/professional-meeting.jpg',
+    wallpaper: '/scenes/professional-meeting.svg',
     colorScheme: {
       primary: '#1E40AF',
       secondary: '#3B82F6',
@@ -432,16 +432,16 @@ export const PersonalizedScenes: React.FC<PersonalizedScenesProps> = ({
   const moodStats = getMoodStats();
 
   return (
-    <div className={`bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 ${className}`}>
+    <div className={`bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 max-h-full overflow-hidden flex flex-col ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 flex-shrink-0">
         <div>
           <h2 className="text-xl font-bold text-white mb-1">Personalized Scenes</h2>
           <p className="text-white/80 text-sm">Choose a mood that matches your current vibe</p>
         </div>
 
         <motion.button
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors flex-shrink-0"
           onClick={() => setShowCreateModal(true)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -451,10 +451,10 @@ export const PersonalizedScenes: React.FC<PersonalizedScenesProps> = ({
       </div>
 
       {/* Mood Filter */}
-      <div className="flex items-center space-x-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex items-center space-x-2 mb-6 overflow-x-auto pb-2 flex-shrink-0">
         <button
           onClick={() => setSelectedMood('all')}
-          className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+          className={`px-3 py-1 rounded-full text-sm font-medium transition-colors flex-shrink-0 ${
             selectedMood === 'all'
               ? 'bg-white text-gray-900'
               : 'bg-white/20 text-white hover:bg-white/30'
@@ -467,7 +467,7 @@ export const PersonalizedScenes: React.FC<PersonalizedScenesProps> = ({
           <button
             key={mood}
             onClick={() => setSelectedMood(mood)}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors flex items-center space-x-1 ${
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors flex items-center space-x-1 flex-shrink-0 ${
               selectedMood === mood
                 ? 'bg-white text-gray-900'
                 : 'bg-white/20 text-white hover:bg-white/30'
@@ -482,7 +482,7 @@ export const PersonalizedScenes: React.FC<PersonalizedScenesProps> = ({
 
       {/* Active Scene */}
       {activeScene && (
-        <div className="mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
+        <div className="mb-6 p-4 bg-white/10 rounded-lg border border-white/20 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <span className="text-lg">{MOOD_EMOJIS[activeScene.mood]}</span>
             <div>
@@ -493,24 +493,26 @@ export const PersonalizedScenes: React.FC<PersonalizedScenesProps> = ({
         </div>
       )}
 
-      {/* Scenes Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <AnimatePresence>
-          {filteredScenes.map((scene, index) => (
-            <motion.div
-              key={scene.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
-              <SceneCard
-                scene={scene}
-                onSelect={handleSceneSelect}
-                isActive={activeScene?.id === scene.id}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      {/* Scenes Grid - Scrollable Container */}
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
+          <AnimatePresence>
+            {filteredScenes.map((scene, index) => (
+              <motion.div
+                key={scene.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <SceneCard
+                  scene={scene}
+                  onSelect={handleSceneSelect}
+                  isActive={activeScene?.id === scene.id}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Create Custom Scene Modal */}

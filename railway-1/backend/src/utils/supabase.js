@@ -23,7 +23,7 @@ const db = {
       .insert(tenantData)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
@@ -33,7 +33,7 @@ const db = {
       .select('*')
       .eq('tenant_id', tenantId)
       .single();
-    
+
     return { data, error };
   },
 
@@ -42,7 +42,7 @@ const db = {
       .from('tenants')
       .select('*')
       .order('created_at', { ascending: false });
-    
+
     return { data, error };
   },
 
@@ -53,7 +53,7 @@ const db = {
       .insert(userData)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
@@ -63,7 +63,7 @@ const db = {
       .select('*')
       .eq('email', email)
       .single();
-    
+
     return { data, error };
   },
 
@@ -73,7 +73,7 @@ const db = {
       .select('*')
       .eq('user_id', userId)
       .single();
-    
+
     return { data, error };
   },
 
@@ -82,7 +82,7 @@ const db = {
       .from('users')
       .select('*')
       .order('created_at', { ascending: false });
-    
+
     return { data, error };
   },
 
@@ -93,7 +93,7 @@ const db = {
       .insert(manifestData)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
@@ -103,7 +103,7 @@ const db = {
       .select('*')
       .eq('manifest_id', manifestId)
       .single();
-    
+
     return { data, error };
   },
 
@@ -112,7 +112,7 @@ const db = {
       .from('manifests')
       .select('*')
       .order('created_at', { ascending: false });
-    
+
     return { data, error };
   },
 
@@ -123,7 +123,7 @@ const db = {
       .eq('manifest_id', manifestId)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
@@ -132,7 +132,7 @@ const db = {
       .from('manifests')
       .delete()
       .eq('manifest_id', manifestId);
-    
+
     return { data, error };
   },
 
@@ -143,7 +143,7 @@ const db = {
       .insert(appData)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
@@ -153,7 +153,7 @@ const db = {
       .select('*')
       .eq('app_id', appId)
       .single();
-    
+
     return { data, error };
   },
 
@@ -162,7 +162,7 @@ const db = {
     if (tenantId) {
       query = query.eq('tenant_id', tenantId);
     }
-    
+
     const { data, error } = await query.order('installed_at', { ascending: false });
     return { data, error };
   },
@@ -174,7 +174,7 @@ const db = {
       .eq('app_id', appId)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
@@ -183,7 +183,7 @@ const db = {
       .from('apps')
       .delete()
       .eq('app_id', appId);
-    
+
     return { data, error };
   },
 
@@ -194,13 +194,13 @@ const db = {
       .insert(eventData)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
   async listEvents(filters = {}) {
     let query = supabase.from('events').select('*');
-    
+
     if (filters.tenant_id) {
       query = query.eq('tenant_id', filters.tenant_id);
     }
@@ -210,7 +210,7 @@ const db = {
     if (filters.event_name) {
       query = query.eq('event_name', filters.event_name);
     }
-    
+
     const { data, error } = await query.order('created_at', { ascending: false });
     return { data, error };
   },
@@ -222,13 +222,13 @@ const db = {
       .insert(subscriptionData)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
   async listEventSubscriptions(filters = {}) {
     let query = supabase.from('event_subscriptions').select('*');
-    
+
     if (filters.tenant_id) {
       query = query.eq('tenant_id', filters.tenant_id);
     }
@@ -238,7 +238,7 @@ const db = {
     if (filters.event_name) {
       query = query.eq('event_name', filters.event_name);
     }
-    
+
     const { data, error } = await query.order('created_at', { ascending: false });
     return { data, error };
   },
@@ -248,7 +248,7 @@ const db = {
       .from('event_subscriptions')
       .delete()
       .eq('subscription_id', subscriptionId);
-    
+
     return { data, error };
   },
 
@@ -259,7 +259,7 @@ const db = {
       .eq('subscription_id', subscriptionId)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
@@ -270,20 +270,20 @@ const db = {
       .insert(entityData)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
   async listEntities(filters = {}) {
     let query = supabase.from('entities').select('*');
-    
+
     if (filters.tenant_id) {
       query = query.eq('tenant_id', filters.tenant_id);
     }
     if (filters.manifest_id) {
       query = query.eq('manifest_id', filters.manifest_id);
     }
-    
+
     const { data, error } = await query.order('created_at', { ascending: false });
     return { data, error };
   },
@@ -291,14 +291,14 @@ const db = {
   // Entity Data (dynamic tables)
   async getEntityData(entityName, tenantId, filters = {}) {
     let query = supabase.from(entityName).select('*').eq('tenant_id', tenantId);
-    
+
     // Apply additional filters
     Object.keys(filters).forEach(key => {
       if (filters[key] !== undefined && filters[key] !== null) {
         query = query.eq(key, filters[key]);
       }
     });
-    
+
     const { data, error } = await query.order('created_at', { ascending: false });
     return { data, error };
   },
@@ -309,7 +309,7 @@ const db = {
       .insert(recordData)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
@@ -320,7 +320,7 @@ const db = {
       .eq('id', recordId)
       .select()
       .single();
-    
+
     return { data, error };
   },
 
@@ -329,9 +329,79 @@ const db = {
       .from(entityName)
       .delete()
       .eq('id', recordId);
-    
+
+    return { data, error };
+  },
+
+  // Soft delete methods
+  async softDeleteEntityRecord(entityName, recordId, deletedBy) {
+    const { data, error } = await supabase
+      .from(entityName)
+      .update({
+        is_active: false,
+        deleted_at: new Date().toISOString(),
+        updated_by: deletedBy
+      })
+      .eq('id', recordId)
+      .select()
+      .single();
+
+    return { data, error };
+  },
+
+  async restoreEntityRecord(entityName, recordId, restoredBy) {
+    const { data, error } = await supabase
+      .from(entityName)
+      .update({
+        is_active: true,
+        deleted_at: null,
+        updated_by: restoredBy
+      })
+      .eq('id', recordId)
+      .select()
+      .single();
+
+    return { data, error };
+  },
+
+  // Query methods with soft delete filtering
+  async getEntityData(entityName, tenantId, filters = {}, includeDeleted = false) {
+    let query = supabase.from(entityName).select('*').eq('tenant_id', tenantId);
+
+    // Filter out soft-deleted records unless explicitly requested
+    if (!includeDeleted) {
+      query = query.eq('is_active', true);
+    }
+
+    // Apply additional filters
+    Object.keys(filters).forEach(key => {
+      if (filters[key] !== undefined && filters[key] !== null) {
+        query = query.eq(key, filters[key]);
+      }
+    });
+
+    const { data, error } = await query.order('created_at', { ascending: false });
+    return { data, error };
+  },
+
+  async listEntities(filters = {}, includeDeleted = false) {
+    let query = supabase.from('entities').select('*');
+
+    if (filters.tenant_id) {
+      query = query.eq('tenant_id', filters.tenant_id);
+    }
+    if (filters.manifest_id) {
+      query = query.eq('manifest_id', filters.manifest_id);
+    }
+
+    // Filter out soft-deleted records unless explicitly requested
+    if (!includeDeleted) {
+      query = query.eq('is_active', true);
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
     return { data, error };
   }
 };
 
-module.exports = { supabase, db }; 
+module.exports = { supabase, db };

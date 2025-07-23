@@ -1,3 +1,6 @@
+// Load environment variables
+import 'dotenv/config';
+
 // Minimal working version for Railway deployment
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
@@ -9,6 +12,18 @@ import databaseRouter from './api/database';
 
 // Import auth routes
 const authRouter = require('./routes/auth');
+
+// Import entities routes
+const entitiesRouter = require('./routes/entities');
+
+// Import dashboard routes
+const dashboardRouter = require('./routes/dashboard');
+
+// Import modules routes
+const modulesRouter = require('./routes/modules');
+
+// Import consciousness routes
+const consciousnessRouter = require('./routes/consciousness');
 
 // Import WebSocket realtime service
 const realtimeService = require('./services/realtime');
@@ -35,7 +50,40 @@ app.use('/api/database', databaseRouter);
 // Mount auth routes
 app.use('/api/auth', authRouter);
 
-// Health check endpoint
+// Mount entities routes
+app.use('/api/entities', entitiesRouter);
+
+// Mount dashboard routes
+app.use('/api/dashboard', dashboardRouter);
+
+// Mount modules routes
+app.use('/api/modules', modulesRouter);
+
+// Mount consciousness routes
+app.use('/api/consciousness', consciousnessRouter);
+
+// Root endpoint
+app.get('/', (req: Request, res: Response) => {
+  res.json({
+    message: 'AI-BOS Backend API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/health',
+      apiHealth: '/api/health',
+      auth: '/api/auth',
+      database: '/api/database',
+      entities: '/api/entities',
+      dashboard: '/api/dashboard',
+      modules: '/api/modules',
+      consciousness: '/api/consciousness',
+      websocket: '/api'
+    },
+    documentation: 'API documentation available at /api/health'
+  });
+});
+
+// Health check endpoint (root level)
 app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'OK',
@@ -43,6 +91,30 @@ app.get('/health', (req: Request, res: Response) => {
     service: 'AI-BOS Backend',
     version: '1.0.0',
     environment: process.env['NODE_ENV'] || 'development'
+  });
+});
+
+// Favicon endpoint
+app.get('/favicon.ico', (req: Request, res: Response) => {
+  res.status(204).end(); // No content - prevents 404 errors
+});
+
+// API Health check endpoint (standard REST API)
+app.get('/api/health', (req: Request, res: Response) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    service: 'AI-BOS Backend API',
+    version: '1.0.0',
+    environment: process.env['NODE_ENV'] || 'development',
+    endpoints: {
+      auth: '/api/auth',
+      database: '/api/database',
+      dashboard: '/api/dashboard',
+      modules: '/api/modules',
+      consciousness: '/api/consciousness',
+      websocket: '/api'
+    }
   });
 });
 
@@ -85,4 +157,6 @@ server.listen(PORT, () => {
   console.log(`🚀 AI-BOS Backend running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env['NODE_ENV'] || 'development'}`);
   console.log(`🔌 WebSocket service: ${realtimeService ? 'Initialized' : 'Not available'}`);
+  console.log(`📊 Dashboard API: /api/dashboard`);
+  console.log(`📦 Modules API: /api/modules`);
 });

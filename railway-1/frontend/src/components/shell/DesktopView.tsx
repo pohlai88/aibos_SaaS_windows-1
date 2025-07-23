@@ -83,19 +83,20 @@ const ICON_SIZES = {
 };
 
 const DEFAULT_WALLPAPERS = [
-  '/wallpapers/ai-bos-gradient.jpg',
-  '/wallpapers/geometric-pattern.jpg',
-  '/wallpapers/minimal-abstract.jpg',
-  '/wallpapers/tech-circuit.jpg'
+  '/wallpapers/ai-bos-gradient.svg',
+  '/wallpapers/geometric-pattern.svg',
+  '/wallpapers/minimal-abstract.svg',
+  '/wallpapers/tech-circuit.svg'
 ];
 
-const SAMPLE_APPS = [
-  { id: 'dashboard', name: 'Dashboard', icon: '📊' },
-  { id: 'tenants', name: 'Tenants', icon: '🏢' },
-  { id: 'modules', name: 'Modules', icon: '📦' },
-  { id: 'analytics', name: 'Analytics', icon: '📈' },
-  { id: 'settings', name: 'Settings', icon: '⚙️' },
-  { id: 'help', name: 'Help', icon: '❓' }
+// Real apps that actually work
+const REAL_APPS = [
+  { id: 'dashboard', name: 'Enterprise Dashboard', icon: '📊', description: 'Business metrics and analytics' },
+  { id: 'portal', name: 'Developer Portal', icon: '📦', description: 'Module marketplace and management' },
+  { id: 'builder', name: 'Visual App Builder', icon: '🔨', description: 'Build applications visually' },
+  { id: 'analytics', name: 'Analytics', icon: '📈', description: 'Advanced analytics and reporting' },
+  { id: 'settings', name: 'Settings', icon: '⚙️', description: 'System preferences and configuration' },
+  { id: 'help', name: 'Help & Support', icon: '❓', description: 'Documentation and support' }
 ];
 
 // ==================== COMPONENTS ====================
@@ -161,7 +162,7 @@ const DesktopIconComponent: React.FC<DesktopIconProps> = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [isDragging]); // Remove handleMouseMove and handleMouseUp dependencies
 
   return (
     <motion.div
@@ -337,7 +338,7 @@ export const DesktopView: React.FC<DesktopViewProps> = ({
     // Start Usage Heatmap Tracking
     startHeatmapTracking();
 
-    // Register sample suggestion manifest
+    // Register intelligent suggestion manifest
     registerSuggestionManifest({
       id: 'desktop-suggestions-v1',
       appId: 'desktop',
@@ -508,7 +509,7 @@ export const DesktopView: React.FC<DesktopViewProps> = ({
         console.warn('Failed to load saved folders:', error);
       }
     }
-  }, [trackEvent]);
+  }, []); // Remove trackEvent dependency
 
   // Save icon positions and folders to localStorage whenever they change
   useEffect(() => {
@@ -546,7 +547,7 @@ export const DesktopView: React.FC<DesktopViewProps> = ({
 
   // Initialize desktop icons
   useEffect(() => {
-    const initialIcons: DesktopIcon[] = SAMPLE_APPS.map((app, index) => ({
+    const initialIcons: DesktopIcon[] = REAL_APPS.map((app, index) => ({
       id: `icon-${app.id}`,
       appId: app.id,
       name: app.name,
@@ -566,7 +567,7 @@ export const DesktopView: React.FC<DesktopViewProps> = ({
 
     setIcons(initialIcons);
     trackEvent('desktop_initialized', { iconCount: initialIcons.length });
-  }, [trackEvent]);
+  }, []); // Remove trackEvent dependency
 
   // Handle icon selection
   const handleIconSelect = useCallback((icon: DesktopIcon) => {

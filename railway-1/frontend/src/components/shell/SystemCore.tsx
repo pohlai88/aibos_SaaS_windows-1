@@ -547,7 +547,7 @@ export const SystemCoreProvider: React.FC<SystemCoreProviderProps> = ({
   // Auto-boot on mount
   useEffect(() => {
     boot();
-  }, [boot]);
+  }, []); // Remove boot dependency
 
   // Performance monitoring
   useEffect(() => {

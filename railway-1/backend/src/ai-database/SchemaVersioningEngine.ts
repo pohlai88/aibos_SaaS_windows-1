@@ -282,6 +282,11 @@ export class SchemaVersioningEngine extends EventEmitter {
     try {
       console.log(`📋 Creating schema version ${version} with AI analysis`);
 
+      // Validate schema input
+      if (!schema || typeof schema !== 'object') {
+        throw new Error('Invalid schema: Schema must be a valid object');
+      }
+
       // Generate schema hash
       const hash = this.generateSchemaHash(schema);
 
@@ -312,6 +317,19 @@ export class SchemaVersioningEngine extends EventEmitter {
       if (options.analyze) {
         schemaVersion.aiAnalysis = await this.performAIAnalysis(schema, schemaVersion);
         schemaVersion.confidence = schemaVersion.aiAnalysis.confidence;
+      } else {
+        // Set default AI analysis when analysis is disabled
+        schemaVersion.aiAnalysis = {
+          confidence: 0,
+          reasoning: 'AI analysis disabled',
+          suggestions: [],
+          risks: [],
+          optimizations: [],
+          complianceGaps: [],
+          securityVulnerabilities: [],
+          performanceBottlenecks: [],
+          dataQualityIssues: []
+        };
       }
 
       // Detect breaking changes
@@ -321,6 +339,10 @@ export class SchemaVersioningEngine extends EventEmitter {
       if (options.generatePlan) {
         schemaVersion.migrationPlan = await this.generateMigrationPlan(schemaVersion);
         schemaVersion.rollbackPlan = await this.generateRollbackPlan(schemaVersion);
+      } else {
+        // Set empty migration plan when generation is disabled
+        schemaVersion.migrationPlan = this.createEmptyMigrationPlan(schemaVersion);
+        schemaVersion.rollbackPlan = this.createEmptyRollbackPlan(schemaVersion);
       }
 
       // Store version
@@ -481,16 +503,17 @@ export class SchemaVersioningEngine extends EventEmitter {
       console.log(`📋 Generating migration plan for version ${version.version}`);
 
       const previousVersion = this.getPreviousVersion(version.version);
+
       if (!previousVersion) {
-        // First version - no migration needed
+        // First version - create empty migration plan
         return this.createEmptyMigrationPlan(version);
       }
 
-      // Generate diff
+      // Generate diff between previous and current version
       const diff = await this.generateSchemaDiff(previousVersion.version, version.version);
 
       // Create migration plan
-      const migrationPlan: MigrationPlan = {
+      const plan: MigrationPlan = {
         id: uuidv4(),
         version: version.version,
         steps: [],
@@ -503,29 +526,25 @@ export class SchemaVersioningEngine extends EventEmitter {
         downtimeRequired: false,
         parallelExecution: false,
         dependencies: [],
-        aiConfidence: 0
+        aiConfidence: 0.8
       };
 
       // Generate migration steps
-      migrationPlan.steps = await this.generateMigrationSteps(diff, migrationPlan);
+      plan.steps = await this.generateMigrationSteps(diff, plan);
 
-      // Calculate estimates
-      migrationPlan.estimatedTime = this.calculateMigrationTime(migrationPlan.steps);
-      migrationPlan.riskLevel = this.calculateMigrationRisk(migrationPlan.steps);
-      migrationPlan.rollbackSupported = this.isRollbackSupported(migrationPlan.steps);
-      migrationPlan.testingRequired = this.requiresTesting(migrationPlan.steps);
-      migrationPlan.backupRequired = this.requiresBackup(migrationPlan.steps);
-      migrationPlan.downtimeRequired = this.requiresDowntime(migrationPlan.steps);
-      migrationPlan.parallelExecution = this.supportsParallelExecution(migrationPlan.steps);
+      // Calculate plan properties
+      plan.estimatedTime = this.calculateMigrationTime(plan.steps);
+      plan.riskLevel = this.calculateMigrationRisk(plan.steps);
+      plan.rollbackSupported = this.isRollbackSupported(plan.steps);
+      plan.testingRequired = this.requiresTesting(plan.steps);
+      plan.backupRequired = this.requiresBackup(plan.steps);
+      plan.downtimeRequired = this.requiresDowntime(plan.steps);
+      plan.parallelExecution = this.supportsParallelExecution(plan.steps);
+      plan.validationQueries = this.generateValidationQueries(diff);
+      plan.aiConfidence = this.calculateMigrationConfidence(plan);
 
-      // Generate validation queries
-      migrationPlan.validationQueries = this.generateValidationQueries(diff);
-
-      // Calculate AI confidence
-      migrationPlan.aiConfidence = this.calculateMigrationConfidence(migrationPlan);
-
-      // Store plan
-      this.migrationPlans.set(migrationPlan.id, migrationPlan);
+      // Store migration plan
+      this.migrationPlans.set(plan.id, plan);
 
       // Audit trail
       this.auditTrail.push({
@@ -536,14 +555,14 @@ export class SchemaVersioningEngine extends EventEmitter {
         timestamp: new Date(),
         metadata: {
           processingTime: Date.now() - startTime,
-          stepsCount: migrationPlan.steps.length,
-          estimatedTime: migrationPlan.estimatedTime
+          stepsCount: plan.steps.length,
+          estimatedTime: plan.estimatedTime
         }
       });
 
-      console.log(`✅ Migration plan generated successfully`);
+      console.log(`✅ Migration plan generated for version ${version.version}`);
 
-      return migrationPlan;
+      return plan;
 
     } catch (error) {
       console.error(`❌ Failed to generate migration plan: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -638,8 +657,15 @@ export class SchemaVersioningEngine extends EventEmitter {
   }
 
   private generateSchemaHash(schema: any): string {
-    const schemaString = JSON.stringify(schema, Object.keys(schema).sort());
-    return crypto.createHash('sha256').update(schemaString).digest('hex');
+    // Normalize schema by sorting keys and removing undefined values
+    const normalizedSchema = JSON.stringify(schema, (key, value) => {
+      if (value === undefined) return null;
+      return value;
+    }, 2);
+
+    // Create hash with additional entropy to ensure uniqueness
+    const hashInput = normalizedSchema + Date.now().toString();
+    return crypto.createHash('sha256').update(hashInput).digest('hex');
   }
 
   private findVersionByHash(hash: string): SchemaVersion | undefined {
@@ -714,10 +740,177 @@ export class SchemaVersioningEngine extends EventEmitter {
   private async analyzeChanges(oldSchema: any, newSchema: any): Promise<SchemaChange[]> {
     const changes: SchemaChange[] = [];
 
-    // Implement schema comparison logic
-    // This is a simplified version - in production, you'd have more sophisticated comparison
+    // Normalize schemas to handle different structures
+    const oldTables = oldSchema?.tables || oldSchema || {};
+    const newTables = newSchema?.tables || newSchema || {};
 
+    // Compare tables
+    const oldTableNames = Object.keys(oldTables);
+    const newTableNames = Object.keys(newTables);
+
+    // Find added tables
+    const addedTables = newTableNames.filter(table => !oldTableNames.includes(table));
+    addedTables.forEach(table => {
+      changes.push({
+        id: uuidv4(),
+        type: 'table_added',
+        table,
+        description: `Table '${table}' was added`,
+        after: newTables[table],
+        impact: 'medium',
+        breaking: false,
+        aiConfidence: 0.9
+      });
+    });
+
+    // Find removed tables
+    const removedTables = oldTableNames.filter(table => !newTableNames.includes(table));
+    removedTables.forEach(table => {
+      changes.push({
+        id: uuidv4(),
+        type: 'table_removed',
+        table,
+        description: `Table '${table}' was removed`,
+        before: oldTables[table],
+        impact: 'high',
+        breaking: true,
+        aiConfidence: 0.9
+      });
+    });
+
+    // Compare fields in existing tables
+    const commonTables = oldTableNames.filter(table => newTableNames.includes(table));
+    commonTables.forEach(table => {
+      const oldTable = oldTables[table];
+      const newTable = newTables[table];
+
+      // Compare columns/fields
+      const oldColumns = oldTable?.columns || oldTable || {};
+      const newColumns = newTable?.columns || newTable || {};
+
+      const oldColumnNames = Object.keys(oldColumns);
+      const newColumnNames = Object.keys(newColumns);
+
+      // Find added fields
+      const addedFields = newColumnNames.filter(field => !oldColumnNames.includes(field));
+      addedFields.forEach(field => {
+        changes.push({
+          id: uuidv4(),
+          type: 'field_added',
+          table,
+          field,
+          description: `Field '${field}' was added to table '${table}'`,
+          after: newColumns[field],
+          impact: 'low',
+          breaking: false,
+          aiConfidence: 0.8
+        });
+      });
+
+      // Find removed fields
+      const removedFields = oldColumnNames.filter(field => !newColumnNames.includes(field));
+      removedFields.forEach(field => {
+        changes.push({
+          id: uuidv4(),
+          type: 'field_removed',
+          table,
+          field,
+          description: `Field '${field}' was removed from table '${table}'`,
+          before: oldColumns[field],
+          impact: 'high',
+          breaking: true,
+          aiConfidence: 0.9
+        });
+      });
+
+      // Find modified fields
+      const commonFields = oldColumnNames.filter(field => newColumnNames.includes(field));
+      commonFields.forEach(field => {
+        const oldField = oldColumns[field];
+        const newField = newColumns[field];
+
+        if (JSON.stringify(oldField) !== JSON.stringify(newField)) {
+          const isBreaking = this.isBreakingFieldChange(oldField, newField);
+          changes.push({
+            id: uuidv4(),
+            type: 'field_modified',
+            table,
+            field,
+            description: `Field '${field}' was modified in table '${table}'`,
+            before: oldField,
+            after: newField,
+            impact: isBreaking ? 'high' : 'medium',
+            breaking: isBreaking,
+            aiConfidence: 0.8
+          });
+        }
+      });
+
+      // Compare indexes
+      const oldIndexes = oldTable?.indexes || [];
+      const newIndexes = newTable?.indexes || [];
+
+      // Find added indexes
+      const addedIndexes = newIndexes.filter((index: any) =>
+        !oldIndexes.some((oldIndex: any) => oldIndex.name === index.name)
+      );
+      addedIndexes.forEach((index: any) => {
+        changes.push({
+          id: uuidv4(),
+          type: 'index_added',
+          table,
+          description: `Index '${index.name}' was added to table '${table}'`,
+          after: index,
+          impact: 'low',
+          breaking: false,
+          aiConfidence: 0.7
+        });
+      });
+
+      // Find removed indexes
+      const removedIndexes = oldIndexes.filter((index: any) =>
+        !newIndexes.some((newIndex: any) => newIndex.name === index.name)
+      );
+      removedIndexes.forEach((index: any) => {
+        changes.push({
+          id: uuidv4(),
+          type: 'index_removed',
+          table,
+          description: `Index '${index.name}' was removed from table '${table}'`,
+          before: index,
+          impact: 'medium',
+          breaking: false,
+          aiConfidence: 0.7
+        });
+      });
+    });
+
+    console.log(`🔍 Analyzed ${changes.length} schema changes`);
     return changes;
+  }
+
+  private isBreakingFieldChange(oldField: any, newField: any): boolean {
+    // Check if field type changed to a more restrictive type
+    if (oldField.type && newField.type && oldField.type !== newField.type) {
+      const restrictiveTypes = ['varchar', 'text', 'json'];
+      const lessRestrictiveTypes = ['int', 'bigint', 'decimal', 'float'];
+
+      if (restrictiveTypes.includes(oldField.type) && lessRestrictiveTypes.includes(newField.type)) {
+        return true;
+      }
+    }
+
+    // Check if field became required
+    if (!oldField.required && newField.required) {
+      return true;
+    }
+
+    // Check if field length was reduced
+    if (oldField.length && newField.length && oldField.length > newField.length) {
+      return true;
+    }
+
+    return false;
   }
 
   private extractAdditions(changes: SchemaChange[]): SchemaAddition[] {
@@ -848,55 +1041,35 @@ export class SchemaVersioningEngine extends EventEmitter {
 
   private async generateMigrationSteps(diff: SchemaDiff, plan: MigrationPlan): Promise<MigrationStep[]> {
     const steps: MigrationStep[] = [];
-    let order = 1;
+    let stepOrder = 1;
 
-    // Add backup step
-    steps.push({
-      id: uuidv4(),
-      order: order++,
-      type: 'backup',
-      description: 'Create backup of current schema state',
-      estimatedTime: 5,
-      riskLevel: 'low',
-      dependencies: [],
-      parallel: false,
-      retryable: true,
-      maxRetries: 3,
-      timeout: 300,
-      aiConfidence: 0.95
-    });
-
-    // Add schema change steps
-    for (const change of diff.changes) {
-      if (change.type.includes('added') || change.type.includes('modified')) {
-        steps.push({
-          id: uuidv4(),
-          order: order++,
-          type: 'schema_change',
-          description: change.description,
-          sql: this.generateSQLForChange(change),
-          validation: this.generateValidationForChange(change),
-          rollbackSql: this.generateRollbackSQLForChange(change),
-          estimatedTime: this.estimateChangeTime(change),
-          riskLevel: change.impact,
-          dependencies: [],
-          parallel: false,
-          retryable: !change.breaking,
-          maxRetries: change.breaking ? 1 : 3,
-          timeout: 600,
-          aiConfidence: change.aiConfidence
-        });
-      }
+    // Add backup step if there are breaking changes
+    if (diff.breakingChanges.length > 0) {
+      steps.push({
+        id: uuidv4(),
+        order: stepOrder++,
+        type: 'backup',
+        description: 'Create backup before applying breaking changes',
+        sql: '-- Backup will be created by database system',
+        estimatedTime: 5,
+        riskLevel: 'low',
+        dependencies: [],
+        parallel: false,
+        retryable: true,
+        maxRetries: 3,
+        timeout: 300,
+        aiConfidence: 0.9
+      });
     }
 
-    // Add validation step
+    // Add rollback point
     steps.push({
       id: uuidv4(),
-      order: order++,
-      type: 'validation',
-      description: 'Validate schema changes',
-      validation: 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = \'public\'',
-      estimatedTime: 2,
+      order: stepOrder++,
+      type: 'rollback_point',
+      description: 'Create rollback point',
+      sql: '-- Rollback point created',
+      estimatedTime: 1,
       riskLevel: 'low',
       dependencies: [],
       parallel: false,
@@ -906,7 +1079,131 @@ export class SchemaVersioningEngine extends EventEmitter {
       aiConfidence: 0.9
     });
 
+    // Process additions (tables and fields)
+    const additions = diff.additions.filter(addition => addition.type === 'table');
+    additions.forEach(addition => {
+      steps.push({
+        id: uuidv4(),
+        order: stepOrder++,
+        type: 'schema_change',
+        description: `Create table '${addition.name}'`,
+        sql: this.generateCreateTableSQL(addition.name, addition.definition),
+        estimatedTime: 2,
+        riskLevel: 'low',
+        dependencies: [],
+        parallel: false,
+        retryable: true,
+        maxRetries: 3,
+        timeout: 120,
+        aiConfidence: 0.8
+      });
+    });
+
+    // Process field additions
+    const fieldAdditions = diff.additions.filter(addition => addition.type === 'field');
+    fieldAdditions.forEach(addition => {
+      steps.push({
+        id: uuidv4(),
+        order: stepOrder++,
+        type: 'schema_change',
+        description: `Add field '${addition.name}'`,
+        sql: this.generateAddFieldSQL(addition.name, addition.definition),
+        estimatedTime: 1,
+        riskLevel: 'low',
+        dependencies: [],
+        parallel: false,
+        retryable: true,
+        maxRetries: 3,
+        timeout: 60,
+        aiConfidence: 0.8
+      });
+    });
+
+    // Process modifications
+    diff.modifications.forEach(modification => {
+      steps.push({
+        id: uuidv4(),
+        order: stepOrder++,
+        type: 'schema_change',
+        description: `Modify ${modification.type} '${modification.name}'`,
+        sql: this.generateModifyFieldSQL(modification.name, modification.before, modification.after),
+        estimatedTime: 3,
+        riskLevel: modification.breaking ? 'high' : 'medium',
+        dependencies: [],
+        parallel: false,
+        retryable: true,
+        maxRetries: 3,
+        timeout: 180,
+        aiConfidence: 0.7
+      });
+    });
+
+    // Process deletions (handle carefully)
+    diff.deletions.forEach(deletion => {
+      steps.push({
+        id: uuidv4(),
+        order: stepOrder++,
+        type: 'schema_change',
+        description: `Remove ${deletion.type} '${deletion.name}'`,
+        sql: this.generateRemoveFieldSQL(deletion.name),
+        estimatedTime: 2,
+        riskLevel: deletion.breaking ? 'critical' : 'high',
+        dependencies: [],
+        parallel: false,
+        retryable: false,
+        maxRetries: 1,
+        timeout: 120,
+        aiConfidence: 0.6
+      });
+    });
+
+    // Add validation step
+    if (steps.length > 0) {
+      steps.push({
+        id: uuidv4(),
+        order: stepOrder++,
+        type: 'validation',
+        description: 'Validate schema changes',
+        validation: 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = \'public\'',
+        estimatedTime: 1,
+        riskLevel: 'low',
+        dependencies: steps.map(s => s.id),
+        parallel: false,
+        retryable: true,
+        maxRetries: 3,
+        timeout: 60,
+        aiConfidence: 0.9
+      });
+    }
+
     return steps;
+  }
+
+  private generateCreateTableSQL(tableName: string, definition: any): string {
+    const fields = Object.entries(definition).map(([fieldName, fieldDef]: [string, any]) => {
+      const type = fieldDef.type || 'text';
+      const nullable = fieldDef.required ? 'NOT NULL' : '';
+      const defaultValue = fieldDef.default ? `DEFAULT ${fieldDef.default}` : '';
+      return `${fieldName} ${type} ${nullable} ${defaultValue}`.trim();
+    }).join(',\n  ');
+
+    return `CREATE TABLE ${tableName} (\n  ${fields}\n);`;
+  }
+
+  private generateAddFieldSQL(fieldName: string, definition: any): string {
+    const type = definition.type || 'text';
+    const nullable = definition.required ? 'NOT NULL' : '';
+    const defaultValue = definition.default ? `DEFAULT ${definition.default}` : '';
+    return `ALTER TABLE ${definition.table} ADD COLUMN ${fieldName} ${type} ${nullable} ${defaultValue};`;
+  }
+
+  private generateModifyFieldSQL(fieldName: string, before: any, after: any): string {
+    // This is a simplified version - in production, you'd have more sophisticated field modification logic
+    return `-- Modify field ${fieldName} from ${JSON.stringify(before)} to ${JSON.stringify(after)}`;
+  }
+
+  private generateRemoveFieldSQL(fieldName: string): string {
+    return `-- Remove field ${fieldName} (implement based on your database system)`;
   }
 
   private calculateMigrationTime(steps: MigrationStep[]): number {

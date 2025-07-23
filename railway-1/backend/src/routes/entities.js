@@ -11,14 +11,14 @@ router.get('/', (req, res) => {
   try {
     const { tenant_id, manifest_id } = req.query;
     let filteredEntities = entities;
-    
+
     if (tenant_id) {
       filteredEntities = filteredEntities.filter(e => e.tenant_id === tenant_id);
     }
     if (manifest_id) {
       filteredEntities = filteredEntities.filter(e => e.manifest_id === manifest_id);
     }
-    
+
     res.json({
       success: true,
       data: filteredEntities,
@@ -33,22 +33,22 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   try {
     const { name, manifest_id, tenant_id, schema_json, tags } = req.body;
-    
+
     if (!name || !manifest_id || !tenant_id || !schema_json) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'name, manifest_id, tenant_id, and schema_json are required' 
+      return res.status(400).json({
+        success: false,
+        error: 'name, manifest_id, tenant_id, and schema_json are required'
       });
     }
 
     // Check if entity already exists for this tenant
-    const existingEntity = entities.find(e => 
+    const existingEntity = entities.find(e =>
       e.tenant_id === tenant_id && e.name === name
     );
     if (existingEntity) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Entity already exists for this tenant' 
+      return res.status(400).json({
+        success: false,
+        error: 'Entity already exists for this tenant'
       });
     }
 
@@ -63,10 +63,10 @@ router.post('/', (req, res) => {
     };
 
     entities.push(entity);
-    
+
     // Initialize data storage for this entity
     entityData[name] = [];
-    
+
     res.status(201).json({
       success: true,
       data: entity,
@@ -78,47 +78,54 @@ router.post('/', (req, res) => {
 });
 
 // GET /api/entities/:name - Get entity data
-router.get('/:name', (req, res) => {
+router.get('/:name', async (req, res) => {
   try {
-    const { tenant_id, filters } = req.query;
+    const { tenant_id, filters, include_deleted } = req.query;
     const entityName = req.params.name;
-    
+
     if (!tenant_id) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'tenant_id is required' 
+      return res.status(400).json({
+        success: false,
+        error: 'tenant_id is required'
       });
     }
 
     // Check if entity exists
-    const entity = entities.find(e => 
+    const entity = entities.find(e =>
       e.tenant_id === tenant_id && e.name === entityName
     );
     if (!entity) {
       return res.status(404).json({ success: false, error: 'Entity not found' });
     }
 
-    let data = entityData[entityName] || [];
-    
-    // Apply filters if provided
+    // Parse filters
+    let filterObj = {};
     if (filters) {
       try {
-        const filterObj = JSON.parse(filters);
-        data = data.filter(item => {
-          return Object.keys(filterObj).every(key => 
-            item[key] === filterObj[key]
-          );
-        });
+        filterObj = JSON.parse(filters);
       } catch (e) {
         return res.status(400).json({ success: false, error: 'Invalid filters format' });
       }
     }
-    
+
+    // Get data from database with soft delete filtering
+    const includeDeleted = include_deleted === 'true';
+    const { data, error } = await db.getEntityData(entityName, tenant_id, filterObj, includeDeleted);
+
+    if (error) {
+      console.error('❌ Database query failed:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch entity data'
+      });
+    }
+
     res.json({
       success: true,
-      data,
-      count: data.length,
-      entity: entity
+      data: data || [],
+      count: (data || []).length,
+      entity: entity,
+      includeDeleted
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -130,16 +137,16 @@ router.post('/:name', (req, res) => {
   try {
     const { tenant_id, data } = req.body;
     const entityName = req.params.name;
-    
+
     if (!tenant_id || !data) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'tenant_id and data are required' 
+      return res.status(400).json({
+        success: false,
+        error: 'tenant_id and data are required'
       });
     }
 
     // Check if entity exists
-    const entity = entities.find(e => 
+    const entity = entities.find(e =>
       e.tenant_id === tenant_id && e.name === entityName
     );
     if (!entity) {
@@ -156,9 +163,9 @@ router.post('/:name', (req, res) => {
     if (!entityData[entityName]) {
       entityData[entityName] = [];
     }
-    
+
     entityData[entityName].push(record);
-    
+
     res.status(201).json({
       success: true,
       data: record,
@@ -175,16 +182,16 @@ router.put('/:name/:id', (req, res) => {
     const { tenant_id, data } = req.body;
     const entityName = req.params.name;
     const recordId = req.params.id;
-    
+
     if (!tenant_id || !data) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'tenant_id and data are required' 
+      return res.status(400).json({
+        success: false,
+        error: 'tenant_id and data are required'
       });
     }
 
     // Check if entity exists
-    const entity = entities.find(e => 
+    const entity = entities.find(e =>
       e.tenant_id === tenant_id && e.name === entityName
     );
     if (!entity) {
@@ -208,7 +215,7 @@ router.put('/:name/:id', (req, res) => {
     };
 
     entityData[entityName][recordIndex] = updatedRecord;
-    
+
     res.json({
       success: true,
       data: updatedRecord,
@@ -219,46 +226,100 @@ router.put('/:name/:id', (req, res) => {
   }
 });
 
-// DELETE /api/entities/:name/:id - Delete entity record
-router.delete('/:name/:id', (req, res) => {
+// DELETE /api/entities/:name/:id - Soft delete entity record
+router.delete('/:name/:id', async (req, res) => {
   try {
     const { tenant_id } = req.query;
     const entityName = req.params.name;
     const recordId = req.params.id;
-    
+
     if (!tenant_id) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'tenant_id is required' 
+      return res.status(400).json({
+        success: false,
+        error: 'tenant_id is required'
       });
     }
 
     // Check if entity exists
-    const entity = entities.find(e => 
+    const entity = entities.find(e =>
       e.tenant_id === tenant_id && e.name === entityName
     );
     if (!entity) {
       return res.status(404).json({ success: false, error: 'Entity not found' });
     }
 
-    if (!entityData[entityName]) {
-      return res.status(404).json({ success: false, error: 'Entity data not found' });
+    // Use soft delete instead of hard delete
+    const { data, error } = await db.softDeleteEntityRecord(
+      entityName,
+      recordId,
+      req.user?.user_id || 'system'
+    );
+
+    if (error) {
+      console.error('❌ Soft delete failed:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to soft delete record'
+      });
     }
 
-    const recordIndex = entityData[entityName].findIndex(r => r.id === recordId);
-    if (recordIndex === -1) {
-      return res.status(404).json({ success: false, error: 'Record not found' });
-    }
-
-    entityData[entityName].splice(recordIndex, 1);
-    
     res.json({
       success: true,
-      message: 'Entity record deleted successfully'
+      message: 'Entity record soft deleted successfully',
+      data
     });
   } catch (error) {
+    console.error('❌ Entity soft delete error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-module.exports = router; 
+// POST /api/entities/:name/:id/restore - Restore soft deleted entity record
+router.post('/:name/:id/restore', async (req, res) => {
+  try {
+    const { tenant_id } = req.query;
+    const entityName = req.params.name;
+    const recordId = req.params.id;
+
+    if (!tenant_id) {
+      return res.status(400).json({
+        success: false,
+        error: 'tenant_id is required'
+      });
+    }
+
+    // Check if entity exists
+    const entity = entities.find(e =>
+      e.tenant_id === tenant_id && e.name === entityName
+    );
+    if (!entity) {
+      return res.status(404).json({ success: false, error: 'Entity not found' });
+    }
+
+    // Restore soft deleted record
+    const { data, error } = await db.restoreEntityRecord(
+      entityName,
+      recordId,
+      req.user?.user_id || 'system'
+    );
+
+    if (error) {
+      console.error('❌ Restore failed:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to restore record'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Entity record restored successfully',
+      data
+    });
+  } catch (error) {
+    console.error('❌ Entity restore error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+module.exports = router;

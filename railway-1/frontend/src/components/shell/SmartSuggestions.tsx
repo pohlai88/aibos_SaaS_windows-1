@@ -117,11 +117,11 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
     });
 
     return currentSuggestions;
-  }, [trackEvent, success, info, onAction]);
+  }, []); // Remove unstable dependencies
 
   useEffect(() => {
     setSuggestions(generateSuggestions);
-  }, [generateSuggestions]);
+  }, []); // Remove generateSuggestions dependency
 
   const filteredSuggestions = useMemo(() => {
     if (selectedCategory === 'all') return suggestions;

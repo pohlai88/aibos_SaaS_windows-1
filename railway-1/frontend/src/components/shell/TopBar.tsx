@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSystemCore } from './SystemCore';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 // ==================== TYPES ====================
 interface TopBarProps {
@@ -183,12 +184,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <span className="text-gray-400 mr-2">🔍</span>
       <input
         type="text"
+        id="topbar-search"
+        name="topbar-search"
         value={query}
         onChange={(e) => handleSearch(e.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
         className="flex-1 bg-transparent text-white placeholder-gray-400 outline-none text-sm"
+        aria-label="Search apps, files, and more"
       />
       {query && (
         <motion.button
@@ -213,14 +217,9 @@ export const TopBar: React.FC<TopBarProps> = ({
   onSearch
 }) => {
   const { trackEvent, config } = useSystemCore();
+  const { user, tenant, logout } = useAuth();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [userProfile, setUserProfile] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    avatar: '👤',
-    tenant: 'Acme Corp'
-  });
 
   // Update time every minute
   useEffect(() => {
@@ -248,9 +247,30 @@ export const TopBar: React.FC<TopBarProps> = ({
 
   const handleUserAction = useCallback((action: string) => {
     setActiveMenu(null);
-    onUserAction?.(action);
+
+    // Handle real user actions
+    switch (action) {
+      case 'logout':
+        logout();
+        break;
+      case 'profile':
+        // TODO: Navigate to user profile
+        console.log('Navigate to user profile');
+        break;
+      case 'settings':
+        // TODO: Navigate to account settings
+        console.log('Navigate to account settings');
+        break;
+      case 'tenants':
+        // TODO: Show tenant switcher
+        console.log('Show tenant switcher');
+        break;
+      default:
+        onUserAction?.(action);
+    }
+
     trackEvent('topbar_user_action', { action });
-  }, [onUserAction, trackEvent]);
+  }, [onUserAction, trackEvent, logout]);
 
   const handleSearch = useCallback((query: string) => {
     onSearch?.(query);
@@ -272,6 +292,20 @@ export const TopBar: React.FC<TopBarProps> = ({
       day: 'numeric'
     });
   };
+
+  // Get user display info from real auth data
+  const getUserDisplayInfo = () => {
+    if (!user) return { name: 'Guest', email: '', avatar: '👤', tenant: 'No Tenant' };
+
+    return {
+      name: user.name || user.email?.split('@')[0] || 'User',
+      email: user.email || '',
+      avatar: '👤', // Default avatar since User interface doesn't have avatar property
+      tenant: tenant?.name || 'No Tenant'
+    };
+  };
+
+  const userInfo = getUserDisplayInfo();
 
   return (
     <motion.div
@@ -374,7 +408,7 @@ export const TopBar: React.FC<TopBarProps> = ({
             className="text-white text-sm opacity-80"
             whileHover={{ scale: 1.05 }}
           >
-            {userProfile.tenant}
+            {userInfo.tenant}
           </motion.div>
 
           {/* Time & Date */}
@@ -394,8 +428,8 @@ export const TopBar: React.FC<TopBarProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <span className="text-lg">{userProfile.avatar}</span>
-              <span className="text-sm font-medium">{userProfile.name}</span>
+              <span className="text-lg">{userInfo.avatar}</span>
+              <span className="text-sm font-medium">{userInfo.name}</span>
             </motion.button>
 
             <AnimatePresence>
@@ -410,10 +444,10 @@ export const TopBar: React.FC<TopBarProps> = ({
                   {/* User Info Header */}
                   <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                     <div className="font-medium text-gray-900 dark:text-white">
-                      {userProfile.name}
+                      {userInfo.name}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {userProfile.email}
+                      {userInfo.email}
                     </div>
                   </div>
 

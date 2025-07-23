@@ -27,11 +27,10 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Special demo user logic - accept multiple demo credentials
+    // Demo user logic - 1 secret default + 1 public demo
     const demoUsers = [
-      { email: 'jackwee@ai-bos.io', password: 'Weepohlai88!', name: 'Default Admin' },
-      { email: 'admin@demo.com', password: 'Demo123!', name: 'Demo Admin' },
-      { email: 'demo@aibos.com', password: 'demo123', name: 'Demo User' }
+      { email: 'jackwee@ai-bos.io', password: 'Weepohlai88!', name: 'Default Admin' }, // Secret default
+      { email: 'admin@demo.com', password: 'Demo123!', name: 'Demo Admin' } // Public demo
     ];
 
     const demoUser = demoUsers.find(user => user.email === email && user.password === password);

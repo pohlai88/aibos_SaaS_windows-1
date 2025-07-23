@@ -31,6 +31,8 @@ interface DockSystemProps {
   onAppLaunch?: (appId: string) => void;
   onAppClose?: (appId: string) => void;
   onAppPin?: (appId: string, pinned: boolean) => void;
+  onScenesToggle?: () => void; // Add scenes toggle prop
+  isScenesVisible?: boolean; // Add scenes visibility state
 }
 
 // ==================== CONSTANTS ====================
@@ -270,7 +272,9 @@ export const DockSystem: React.FC<DockSystemProps> = ({
   className = '',
   onAppLaunch,
   onAppClose,
-  onAppPin
+  onAppPin,
+  onScenesToggle,
+  isScenesVisible
 }) => {
   const { trackEvent } = useSystemCore();
   const [apps, setApps] = useState<DockApp[]>(DOCK_APPS);
@@ -450,6 +454,22 @@ export const DockSystem: React.FC<DockSystemProps> = ({
               </motion.div>
             ))}
           </AnimatePresence>
+
+          {/* Scenes Control - Separator and Toggle */}
+          <div className="w-px h-8 bg-white/20 mx-2" />
+          <motion.button
+            onClick={onScenesToggle}
+            className={`p-3 rounded-xl transition-all duration-200 ${
+              isScenesVisible
+                ? 'bg-purple-500/30 border border-purple-400/50 text-purple-300'
+                : 'bg-white/10 border border-white/20 text-white hover:bg-white/20'
+            }`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            title={isScenesVisible ? 'Hide Scenes' : 'Show Scenes'}
+          >
+            🎭
+          </motion.button>
         </div>
       </motion.div>
 

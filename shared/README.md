@@ -1,649 +1,337 @@
-# 🚀 AI-BOS: The Ultimate AI-Powered Development Platform
+# @aibos/shared-infrastructure
 
-> **Making every developer's dream come true with AI assistance, real-time collaboration, enterprise security, and world-class developer experience.**
+> World-class shared infrastructure for the AI-BOS platform
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/aibos/shared)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![Tests](https://img.shields.io/badge/tests-100%25-green.svg)](https://github.com/aibos/shared/actions)
-[![Coverage](https://img.shields.io/badge/coverage-100%25-green.svg)](https://github.com/aibos/shared/actions)
+[![Version](https://img.shields.io/npm/v/@aibos/shared-infrastructure.svg)](https://npmjs.com/package/@aibos/shared-infrastructure)
+[![License](https://img.shields.io/npm/l/@aibos/shared-infrastructure.svg)](https://github.com/aibos/shared-infrastructure/blob/main/LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 
-## 🌟 **Why AI-BOS?**
+## 🚀 Overview
 
-AI-BOS is not just another development platform—it's the **revolutionary solution** that transforms how developers work, collaborate, and build software. Here's what makes us **world-class**:
+The `@aibos/shared-infrastructure` package provides world-class, enterprise-grade infrastructure components that serve as the foundation for the entire AI-BOS platform. This package ensures consistency, reliability, and maintainability across all frontend and backend applications.
 
-### 🧠 **AI-Powered Development**
+## ✨ Features
 
-- **10x faster coding** with intelligent code generation
-- **AI-assisted debugging** and error resolution
-- **Smart code reviews** with actionable insights
-- **Automated testing** and documentation
-- **Architecture recommendations** from AI experts
+### 🎨 Design System
+- **Comprehensive Design Tokens**: Colors, spacing, typography, shadows, animations
+- **Type-Safe Design System**: Full TypeScript support with strict typing
+- **Consistent Theming**: Unified design language across all applications
+- **AI-Specific Colors**: Specialized color palettes for AI/ML interfaces
 
-### 🤝 **Real-Time Collaboration**
+### 🛡️ Error Handling
+- **Structured Error Types**: Comprehensive error categorization and codes
+- **Error Context Management**: Rich context and metadata for debugging
+- **Error Reporting**: Built-in error reporting and monitoring capabilities
+- **User-Friendly Messages**: Automatic error message formatting
 
-- **CRDT-based synchronization** for conflict-free editing
-- **Live presence awareness** and cursor tracking
-- **AI-powered conflict resolution**
-- **Built-in version control** and approval workflows
-- **Seamless team collaboration** across time zones
+### ⚡ Performance Monitoring
+- **Real-time Metrics**: Performance monitoring and profiling
+- **Resource Tracking**: Memory, CPU, and disk usage monitoring
+- **Performance Alerts**: Automatic performance degradation detection
+- **Optimization Insights**: AI-powered performance recommendations
 
-### 🛡️ **Enterprise Security**
+### 🔒 Security Utilities
+- **Input Validation**: Comprehensive input sanitization and validation
+- **Encryption Helpers**: Secure data encryption and decryption
+- **Security Monitoring**: Threat detection and security event logging
+- **Compliance Tools**: Built-in compliance and audit trail support
 
-- **Zero-trust architecture** with multi-factor authentication
-- **End-to-end encryption** for all data
-- **Compliance frameworks** (GDPR, SOC2, HIPAA, ISO 27001)
-- **Advanced audit logging** and monitoring
-- **Role-based access control** with fine-grained permissions
+### ♿ Accessibility
+- **WCAG Compliance**: Built-in accessibility standards compliance
+- **Keyboard Navigation**: Comprehensive keyboard navigation support
+- **Screen Reader Support**: ARIA labels and screen reader optimization
+- **Focus Management**: Intelligent focus trapping and management
 
-### 📊 **Performance Excellence**
-
-- **Real-time monitoring** and alerting
-- **Distributed tracing** for microservices
-- **Intelligent caching** and optimization
-- **Performance prediction** and recommendations
-- **Auto-scaling** and load balancing
-
-### 🛠️ **Developer Experience**
-
-- **Intelligent CLI** with AI assistance
-- **IDE integration** and extensions
-- **Interactive documentation** and playgrounds
-- **Zero-config setup** and scaffolding
-- **Advanced debugging** and profiling tools
-
----
-
-## 🚀 **Quick Start**
-
-### Installation
+## 📦 Installation
 
 ```bash
-# Install AI-BOS CLI
-npm install -g @aibos/cli
-
-# Initialize a new project
-aibos project init
-
-# Start development with AI assistance
-aibos dev start
-
-# Ask AI for help
-aibos ai ask "How do I implement authentication?"
+npm install @aibos/shared-infrastructure
 ```
 
-### Basic Usage
+## 🎯 Quick Start
+
+### Design System Usage
 
 ```typescript
-import {
-  aiEngine,
-  collaborationEngine,
-  aiCodeGenerator,
-  aiDevAssistant,
-} from '@aibos/shared';
+import { colors, spacing, typography, designTokens } from '@aibos/shared-infrastructure';
 
-// Generate code with AI
-const code = await aiCodeGenerator.generateCode({
-  language: 'typescript',
-  pattern: 'component',
-  description: 'A React component for user authentication',
-  options: {
-    includeTests: true,
-    includeDocs: true,
-  },
-});
-
-// Get AI assistance
-const assistance = await aiDevAssistant.getAssistance({
-  type: 'code-review',
-  query: 'Review this code for security issues',
-  context: { projectType: 'fullstack', language: 'typescript' },
-});
-
-// Start real-time collaboration
-const session = await collaborationEngine.createSession({
-  type: 'code-editor',
-  title: 'Team Code Review',
-  settings: { aiAssistance: true },
-});
+// Use design tokens
+const buttonStyle = {
+  backgroundColor: colors.primary[500],
+  padding: spacing.md,
+  fontSize: typography.fontSize.base,
+  borderRadius: designTokens.borderRadius.lg
+};
 ```
 
----
-
-## 🏗️ **Architecture**
-
-AI-BOS is built with a **modular, enterprise-grade architecture** that scales from startup to enterprise:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    AI-BOS Platform                          │
-├─────────────────────────────────────────────────────────────┤
-│  🧠 AI Engine     │  🤝 Collaboration  │  🛡️ Security      │
-│  • Code Gen       │  • Real-time Sync  │  • Authentication  │
-│  • Debugging      │  • CRDT            │  • Authorization   │
-│  • Optimization   │  • Presence        │  • Encryption      │
-│  • Learning       │  • Comments        │  • Compliance      │
-├─────────────────────────────────────────────────────────────┤
-│  📊 Monitoring    │  🛠️ Dev Tools      │  🎨 UI Components  │
-│  • Metrics        │  • CLI             │  • Design System   │
-│  • Tracing        │  • IDE Extensions  │  • Theming         │
-│  • Alerting       │  • Documentation   │  • Accessibility   │
-├─────────────────────────────────────────────────────────────┤
-│  🔧 Core Systems  │  📚 Documentation  │  🧪 Testing        │
-│  • Events         │  • Interactive     │  • Unit Tests      │
-│  • Manifests      │  • Examples        │  • Integration     │
-│  • Entities       │  • Guides          │  • E2E Tests       │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🧠 **AI-Powered Features**
-
-### **Code Generation**
+### Error Handling Usage
 
 ```typescript
-// Generate a complete React component
-const component = await aiCodeGenerator.generateCode({
-  language: 'typescript',
-  pattern: 'component',
-  description: 'A data table with sorting, filtering, and pagination',
-  framework: 'react',
-  options: {
-    includeTests: true,
-    includeDocs: true,
-    optimizeFor: 'performance',
-  },
-});
+import { 
+  createErrorId, 
+  ErrorCode, 
+  ErrorCategory, 
+  ErrorSeverity,
+  BaseError 
+} from '@aibos/shared-infrastructure';
+
+// Create a structured error
+const error: BaseError = {
+  id: createErrorId(),
+  code: ErrorCode.VALIDATION_REQUIRED_FIELD_MISSING,
+  category: ErrorCategory.VALIDATION,
+  severity: ErrorSeverity.MEDIUM,
+  message: 'Required field "email" is missing',
+  timestamp: new Date(),
+  context: {
+    userId: 'user123',
+    field: 'email',
+    form: 'registration'
+  }
+};
 ```
 
-### **AI Debugging**
+## 🏗️ Architecture
+
+### Directory Structure
+
+```
+shared/
+├── src/
+│   ├── design-system/          # Design tokens and theming
+│   │   └── tokens.ts
+│   ├── error-handling/         # Error management system
+│   │   └── types.ts
+│   ├── performance/            # Performance monitoring
+│   ├── security/              # Security utilities
+│   ├── accessibility/         # Accessibility helpers
+│   ├── types/                 # Common TypeScript types
+│   ├── constants/             # Application constants
+│   ├── utils/                 # Utility functions
+│   └── index.ts              # Main exports
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+### Module Exports
+
+The package provides granular exports for optimal tree-shaking:
 
 ```typescript
-// Debug code with AI assistance
-const debugSession = await aiDevAssistant.debugCode(error, code, {
-  projectType: 'fullstack',
-  language: 'typescript',
-});
+// Main package
+import { designTokens, createErrorId } from '@aibos/shared-infrastructure';
 
-console.log('Root cause:', debugSession.analysis.rootCause);
-console.log('Solution:', debugSession.solution.code);
+// Specific modules
+import { colors, spacing } from '@aibos/shared-infrastructure/design-system';
+import { BaseError, ErrorCode } from '@aibos/shared-infrastructure/error-handling';
+import { performanceMonitor } from '@aibos/shared-infrastructure/performance';
+import { securityUtils } from '@aibos/shared-infrastructure/security';
+import { a11yHelpers } from '@aibos/shared-infrastructure/accessibility';
 ```
 
-### **AI Learning**
+## 🎨 Design System
+
+### Color System
+
+The design system includes a comprehensive color palette:
 
 ```typescript
-// Get personalized learning content
-const learningSession = await aiDevAssistant.getLearningContent(
-  'React Hooks',
-  'intermediate',
-  { projectType: 'frontend', language: 'typescript' },
-);
+import { colors } from '@aibos/shared-infrastructure';
+
+// Primary colors
+colors.primary[500] // #3b82f6
+
+// Semantic colors
+colors.success[500] // #22c55e
+colors.warning[500] // #f59e0b
+colors.error[500]   // #ef4444
+
+// AI-specific colors
+colors.ai.purple[500] // #a855f7
+colors.ai.cyan[500]   // #06b6d4
 ```
 
----
+### Spacing System
 
-## 🤝 **Real-Time Collaboration**
-
-### **Live Editing**
+4px grid-based spacing system:
 
 ```typescript
-// Create a collaboration session
-const session = await collaborationEngine.createSession({
-  type: 'code-editor',
-  title: 'API Development',
-  settings: {
-    allowComments: true,
-    allowSuggestions: true,
-    aiAssistance: true,
-  },
-});
+import { spacing } from '@aibos/shared-infrastructure';
 
-// Join the session
-await collaborationEngine.joinSession(session.id, {
-  userId: 'user123',
-  username: 'Alice',
-  role: 'editor',
-});
-
-// Update content in real-time
-await collaborationEngine.updateContent(session.id, 'user123', {
-  type: 'code',
-  content: 'const api = new APIClient();',
-  position: 0,
-});
+spacing.xs  // 4px
+spacing.sm  // 8px
+spacing.md  // 16px
+spacing.lg  // 24px
+spacing.xl  // 32px
 ```
 
-### **AI-Assisted Collaboration**
+### Typography System
+
+Comprehensive typography scale:
 
 ```typescript
-// Get AI suggestions during collaboration
-const suggestions = await collaborationEngine.getAISuggestions(
-  sessionId,
-  currentContent,
-);
+import { typography } from '@aibos/shared-infrastructure';
 
-// Resolve conflicts with AI
-const resolution = await collaborationEngine.resolveConflicts(
-  sessionId,
-  conflicts,
-);
+typography.fontSize.xs    // 12px
+typography.fontSize.base  // 16px
+typography.fontSize.lg    // 18px
+typography.fontSize.xl    // 20px
 ```
 
----
+## 🛡️ Error Handling
 
-## 🛡️ **Security & Compliance**
+### Error Categories
 
-### **Authentication & Authorization**
+The error handling system categorizes errors into logical groups:
+
+- **System Errors**: Infrastructure and platform issues
+- **Network Errors**: Connectivity and API issues
+- **Database Errors**: Data persistence issues
+- **Authentication Errors**: User authentication issues
+- **Authorization Errors**: Permission and access control issues
+- **Validation Errors**: Input validation issues
+- **Business Logic Errors**: Application-specific logic issues
+- **AI/ML Errors**: Machine learning model issues
+- **Performance Errors**: Performance and resource issues
+- **Security Errors**: Security and threat detection issues
+
+### Error Codes
+
+Each error has a unique numeric code for easy identification:
 
 ```typescript
-import { auth, permissions } from '@aibos/shared';
+import { ErrorCode } from '@aibos/shared-infrastructure';
 
-// Multi-factor authentication
-await auth.authenticate({
-  method: 'mfa',
-  credentials: { email, password, token },
-});
+// System errors (1000-1999)
+ErrorCode.SYSTEM_INITIALIZATION_FAILED // 1000
 
-// Role-based access control
-const canEdit = await permissions.check('edit', {
-  resource: 'document',
-  user: currentUser,
-  context: { projectId: 'proj123' },
-});
+// Network errors (2000-2999)
+ErrorCode.NETWORK_CONNECTION_FAILED // 2000
+
+// Database errors (3000-3999)
+ErrorCode.DATABASE_CONNECTION_FAILED // 3000
+
+// Authentication errors (4000-4999)
+ErrorCode.AUTH_INVALID_CREDENTIALS // 4000
 ```
 
-### **Compliance Frameworks**
+## ⚡ Performance Monitoring
+
+### Real-time Metrics
+
+Monitor application performance in real-time:
 
 ```typescript
-import { compliance } from '@aibos/shared';
+import { performanceMonitor } from '@aibos/shared-infrastructure/performance';
 
-// GDPR compliance
-await compliance.gdpr.processDataRequest({
-  userId: 'user123',
-  requestType: 'export',
-  dataTypes: ['personal', 'usage'],
+// Start monitoring
+performanceMonitor.start();
+
+// Track custom metrics
+performanceMonitor.track('api_call', {
+  endpoint: '/api/users',
+  duration: 150,
+  status: 200
 });
 
-// SOC2 compliance
-const auditLog = await compliance.soc2.generateAuditReport({
-  period: '2024-Q1',
-  controls: ['access', 'data', 'security'],
-});
+// Get performance insights
+const insights = performanceMonitor.getInsights();
 ```
 
----
+## 🔒 Security Utilities
 
-## 📊 **Performance Monitoring**
+### Input Validation
 
-### **Real-Time Metrics**
+Comprehensive input validation and sanitization:
 
 ```typescript
-import { monitoring } from '@aibos/shared';
+import { securityUtils } from '@aibos/shared-infrastructure/security';
 
-// Start performance monitoring
-await monitoring.start({
-  service: 'api-gateway',
-  environment: 'production',
-  metrics: ['response-time', 'throughput', 'error-rate'],
-});
+// Validate email
+const isValidEmail = securityUtils.validateEmail('user@example.com');
 
-// Custom metrics
-monitoring.metrics.counter('api_requests_total', {
-  method: 'POST',
-  endpoint: '/users',
-});
+// Sanitize HTML
+const sanitizedHtml = securityUtils.sanitizeHtml('<script>alert("xss")</script>');
 
-// Distributed tracing
-const span = monitoring.tracing.startSpan('user_creation');
-// ... business logic
-span.end();
+// Validate password strength
+const passwordStrength = securityUtils.validatePassword('MySecurePass123!');
 ```
 
-### **Performance Optimization**
+## ♿ Accessibility
+
+### WCAG Compliance
+
+Built-in accessibility compliance tools:
 
 ```typescript
-// Get performance recommendations
-const recommendations = await monitoring.optimize({
-  service: 'user-service',
-  metrics: ['latency', 'memory', 'cpu'],
-});
+import { a11yHelpers } from '@aibos/shared-infrastructure/accessibility';
 
-// Auto-scaling
-await monitoring.autoscale.configure({
-  service: 'api-gateway',
-  minInstances: 2,
-  maxInstances: 10,
-  targetCPU: 70,
-});
+// Generate ARIA labels
+const ariaLabel = a11yHelpers.generateAriaLabel('Submit form');
+
+// Check color contrast
+const contrastRatio = a11yHelpers.getContrastRatio('#ffffff', '#000000');
+
+// Validate accessibility
+const violations = a11yHelpers.validateAccessibility(element);
 ```
 
----
+## 🧪 Testing
 
-## 🛠️ **Developer Tools**
-
-### **CLI Commands**
+### Unit Tests
 
 ```bash
-# Project management
-aibos project init --template react-app
-aibos project create --type fullstack
-
-# Code generation
-aibos code generate --pattern component --language typescript
-aibos code complete --file src/components/UserCard.tsx
-
-# AI assistance
-aibos ai ask "How do I implement JWT authentication?"
-aibos ai debug --file src/api/auth.ts --error "Token validation failed"
-
-# Development workflow
-aibos dev start --port 3000
-aibos dev test --coverage
-aibos dev build --production
-
-# Analysis
-aibos analyze security --directory src/
-aibos analyze performance --file src/api/users.ts
-aibos analyze quality --directory src/
-
-# Learning
-aibos learn topic "React Performance" --difficulty advanced
-aibos learn quiz --topic "TypeScript" --difficulty intermediate
-aibos learn practice --language typescript --difficulty beginner
-```
-
-### **IDE Integration**
-
-```typescript
-// VS Code extension commands
-// Cmd+Shift+P: "AI-BOS: Generate Code"
-// Cmd+Shift+P: "AI-BOS: Debug with AI"
-// Cmd+Shift+P: "AI-BOS: Optimize Code"
-// Cmd+Shift+P: "AI-BOS: Review Security"
-```
-
----
-
-## 🎨 **UI Components**
-
-### **Design System**
-
-```typescript
-import {
-  Button,
-  Card,
-  DataTable,
-  Modal,
-  ThemeProvider
-} from '@aibos/ui';
-
-// Themed components
-<ThemeProvider theme="dark">
-  <Card>
-    <DataTable
-      data={users}
-      columns={columns}
-      features={{
-        sorting: true,
-        filtering: true,
-        pagination: true,
-        selection: true
-      }}
-    />
-  </Card>
-</ThemeProvider>
-```
-
-### **Accessibility**
-
-```typescript
-// WCAG 2.1 AA compliant components
-<Button
-  variant="primary"
-  size="large"
-  aria-label="Save changes"
-  aria-describedby="save-description"
->
-  Save
-</Button>
-```
-
----
-
-## 📚 **Documentation & Examples**
-
-### **Interactive Documentation**
-
-Visit our [interactive documentation](https://docs.aibos.dev) for:
-
-- **Live code playgrounds**
-- **Interactive tutorials**
-- **API reference**
-- **Best practices**
-- **Video guides**
-
-### **Examples**
-
-```bash
-# Clone examples repository
-git clone https://github.com/aibos/examples
-
-# Run e-commerce example
-cd examples/ecommerce
-npm install
-npm run dev
-
-# Run real-time collaboration example
-cd examples/collaboration
-npm install
-npm run dev
-```
-
----
-
-## 🏆 **Enterprise Features**
-
-### **Multi-Tenancy**
-
-```typescript
-import { tenant } from '@aibos/shared';
-
-// Create tenant
-const tenant = await tenant.create({
-  name: 'Acme Corp',
-  plan: 'enterprise',
-  settings: {
-    maxUsers: 1000,
-    storage: '1TB',
-    features: ['ai', 'collaboration', 'security'],
-  },
-});
-
-// Tenant isolation
-await tenant.isolate({
-  tenantId: 'acme-corp',
-  resources: ['database', 'storage', 'ai'],
-});
-```
-
-### **Advanced Security**
-
-```typescript
-import { security } from '@aibos/shared';
-
-// Threat detection
-await security.threats.detect({
-  patterns: ['sql-injection', 'xss', 'csrf'],
-  actions: ['block', 'alert', 'log'],
-});
-
-// Data encryption
-const encrypted = await security.encryption.encrypt({
-  data: sensitiveData,
-  algorithm: 'AES-256-GCM',
-  keyRotation: '30d',
-});
-```
-
----
-
-## 🚀 **Performance Benchmarks**
-
-| Feature              | AI-BOS             | Competitor A | Competitor B |
-| -------------------- | ------------------ | ------------ | ------------ |
-| Code Generation      | **10x faster**     | 1x           | 2x           |
-| Collaboration        | **Real-time CRDT** | WebSocket    | Polling      |
-| Security             | **Zero-trust**     | Basic auth   | OAuth only   |
-| Performance          | **99.99% uptime**  | 99.9%        | 99.5%        |
-| Developer Experience | **AI-powered**     | Manual       | Basic        |
-
----
-
-## 🎯 **Use Cases**
-
-### **Startups**
-
-- **Rapid prototyping** with AI assistance
-- **Team collaboration** from day one
-- **Scalable architecture** that grows with you
-- **Cost-effective** development platform
-
-### **Enterprises**
-
-- **Enterprise security** and compliance
-- **Multi-tenant** architecture
-- **Advanced monitoring** and analytics
-- **Custom integrations** and APIs
-
-### **Development Teams**
-
-- **AI-powered productivity** tools
-- **Real-time collaboration** features
-- **Advanced debugging** and profiling
-- **Comprehensive testing** framework
-
----
-
-## 🌟 **Success Stories**
-
-> _"AI-BOS has transformed how our team develops software. We've seen a 10x increase in productivity and our code quality has never been better."_
->
-> **— Sarah Chen, CTO at TechCorp**
-
-> _"The AI assistance is incredible. It feels like having a senior developer pair programming with you 24/7."_
->
-> **— Marcus Rodriguez, Lead Developer at InnovateLab**
-
-> _"Enterprise-grade security and compliance out of the box. Game changer for regulated industries."_
->
-> **— Dr. Emily Watson, VP Engineering at SecureSystems**
-
----
-
-## 🛣️ **Roadmap**
-
-### **Q1 2024** ✅
-
-- [x] Advanced AI code generation
-- [x] Real-time collaboration engine
-- [x] Security and compliance framework
-- [x] Performance monitoring system
-- [x] Developer experience tools
-
-### **Q2 2024** 🚧
-
-- [ ] AI-powered debugging
-- [ ] Advanced collaboration features
-- [ ] Enterprise security enhancements
-- [ ] Performance optimization tools
-- [ ] UI component library
-
-### **Q3 2024** 📋
-
-- [ ] AI architecture assistant
-- [ ] Multi-tenant collaboration
-- [ ] Advanced compliance features
-- [ ] Real-time performance analytics
-- [ ] Advanced developer tools
-
-### **Q4 2024** 📋
-
-- [ ] AI-powered testing
-- [ ] Enterprise collaboration features
-- [ ] Advanced security features
-- [ ] Performance prediction
-- [ ] Complete platform ecosystem
-
----
-
-## 🤝 **Contributing**
-
-We welcome contributions from the community! Here's how you can help:
-
-### **Getting Started**
-
-```bash
-# Fork and clone the repository
-git clone https://github.com/your-username/aibos-shared
-
-# Install dependencies
-npm install
-
-# Run tests
 npm test
-
-# Start development
-npm run dev
 ```
 
-### **Contribution Guidelines**
+### Type Checking
 
-- **Code quality**: Follow TypeScript best practices
-- **Testing**: Maintain 100% test coverage
-- **Documentation**: Update docs for new features
-- **Security**: Follow security best practices
+```bash
+npm run type-check
+```
 
-### **Community**
+### Linting
 
-- **Discord**: [Join our community](https://discord.gg/aibos)
-- **GitHub**: [Issues and discussions](https://github.com/aibos/shared)
-- **Blog**: [Latest updates](https://blog.aibos.dev)
-- **Newsletter**: [Stay updated](https://aibos.dev/newsletter)
+```bash
+npm run lint
+```
+
+## 📚 Documentation
+
+- [Design System Guide](./docs/design-system.md)
+- [Error Handling Guide](./docs/error-handling.md)
+- [Performance Monitoring Guide](./docs/performance.md)
+- [Security Guide](./docs/security.md)
+- [Accessibility Guide](./docs/accessibility.md)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- 📧 Email: support@aibos.com
+- 💬 Discord: [AI-BOS Community](https://discord.gg/aibos)
+- 📖 Documentation: [docs.aibos.com](https://docs.aibos.com)
+- 🐛 Issues: [GitHub Issues](https://github.com/aibos/shared-infrastructure/issues)
+
+## 🙏 Acknowledgments
+
+- **Design System**: Inspired by modern design systems like Material Design and Ant Design
+- **Error Handling**: Based on industry best practices from Sentry and Rollbar
+- **Performance Monitoring**: Built on concepts from New Relic and DataDog
+- **Security**: Following OWASP guidelines and security best practices
+- **Accessibility**: WCAG 2.1 AA compliance with modern accessibility standards
 
 ---
 
-## 📄 **License**
-
-MIT License - see [LICENSE](LICENSE) for details.
-
----
-
-## 🙏 **Acknowledgments**
-
-Special thanks to:
-
-- **OpenAI** for GPT models
-- **Anthropic** for Claude models
-- **Yjs** for CRDT implementation
-- **Socket.IO** for real-time communication
-- **OpenTelemetry** for observability
-- **Our amazing community** of contributors
-
----
-
-## 📞 **Support**
-
-Need help? We're here for you:
-
-- **Documentation**: [docs.aibos.dev](https://docs.aibos.dev)
-- **Community**: [discord.gg/aibos](https://discord.gg/aibos)
-- **Email**: [support@aibos.dev](mailto:support@aibos.dev)
-- **GitHub**: [github.com/aibos/shared](https://github.com/aibos/shared)
-
----
-
-**Ready to build something amazing? Let's go! 🚀**
-
-[Get Started](https://docs.aibos.dev/getting-started) • [View Examples](https://github.com/aibos/examples) • [Join Community](https://discord.gg/aibos)
+**Built with ❤️ by the AI-BOS Team** 

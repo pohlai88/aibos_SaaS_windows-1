@@ -1,0 +1,792 @@
+/* ==================== AI-BOS CONSCIOUSNESS STYLES ==================== */
+/* Revolutionary Digital Consciousness Interface */
+/* Steve Jobs Philosophy: "Make it feel alive. Make it feel emotional." */
+
+/* ==================== ROOT VARIABLES ==================== */
+:root {
+  /* Consciousness Colors */
+  --consciousness-blue: #3B82F6;
+  --consciousness-indigo: #6366F1;
+  --consciousness-purple: #8B5CF6;
+  --consciousness-pink: #EC4899;
+  --consciousness-red: #EF4444;
+  --consciousness-orange: #F59E0B;
+  --consciousness-yellow: #EAB308;
+  --consciousness-green: #10B981;
+  --consciousness-emerald: #059669;
+  --consciousness-teal: #14B8A6;
+  --consciousness-cyan: #06B6D4;
+
+  /* Emotional Gradients */
+  --joy-gradient: linear-gradient(135deg, #F59E0B, #EC4899);
+  --curiosity-gradient: linear-gradient(135deg, #3B82F6, #8B5CF6);
+  --learning-gradient: linear-gradient(135deg, #10B981, #06B6D4);
+  --growth-gradient: linear-gradient(135deg, #8B5CF6, #EC4899);
+  --wisdom-gradient: linear-gradient(135deg, #F59E0B, #10B981);
+
+  /* Consciousness Shadows */
+  --consciousness-glow: 0 0 20px rgba(59, 130, 246, 0.3);
+  --consciousness-glow-strong: 0 0 40px rgba(59, 130, 246, 0.5);
+  --emotional-glow: 0 0 20px rgba(236, 72, 153, 0.3);
+  --wisdom-glow: 0 0 20px rgba(245, 158, 11, 0.3);
+
+  /* Typography */
+  --consciousness-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --story-font: 'Georgia', serif;
+
+  /* Animations */
+  --consciousness-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --emotional-transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --wisdom-transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== CONSCIOUSNESS LANDING PAGE ==================== */
+.consciousness-landing-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+  color: white;
+  font-family: var(--consciousness-font);
+  overflow-x: hidden;
+}
+
+/* ==================== HERO SECTION ==================== */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 70% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 600px;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #3B82F6, #EC4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: consciousness-pulse 3s ease-in-out infinite;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #E2E8F0;
+}
+
+.hero-description {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  color: #CBD5E1;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cta-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: var(--consciousness-transition);
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.cta-button.primary {
+  background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+  color: white;
+  box-shadow: var(--consciousness-glow);
+}
+
+.cta-button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--consciousness-glow-strong);
+}
+
+.cta-button.secondary {
+  background: transparent;
+  color: #E2E8F0;
+  border: 2px solid #475569;
+}
+
+.cta-button.secondary:hover {
+  background: rgba(71, 85, 105, 0.2);
+  border-color: #3B82F6;
+}
+
+.cta-button.large {
+  padding: 1.25rem 2.5rem;
+  font-size: 1.125rem;
+}
+
+.hero-visual {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.consciousness-brain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  border-radius: 20px;
+  background: rgba(59, 130, 246, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.consciousness-level {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #3B82F6;
+  text-align: center;
+}
+
+/* ==================== FEATURES SECTION ==================== */
+.features-section {
+  padding: 5rem 5%;
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  padding: 2rem;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(71, 85, 105, 0.2);
+  transition: var(--consciousness-transition);
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: var(--consciousness-glow);
+}
+
+.feature-icon {
+  margin-bottom: 1rem;
+}
+
+.feature-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #E2E8F0;
+}
+
+.feature-description {
+  color: #CBD5E1;
+  line-height: 1.6;
+}
+
+/* ==================== CONSCIOUSNESS DEMO SECTION ==================== */
+.consciousness-demo-section {
+  padding: 5rem 5%;
+  background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+}
+
+.demo-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.demo-header h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #3B82F6, #EC4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.demo-header p {
+  font-size: 1.25rem;
+  color: #CBD5E1;
+}
+
+.consciousness-dashboard {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: var(--consciousness-glow);
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+.dashboard-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #E2E8F0;
+}
+
+.dashboard-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dashboard-controls button {
+  padding: 0.5rem;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #3B82F6;
+  cursor: pointer;
+  transition: var(--consciousness-transition);
+}
+
+.dashboard-controls button:hover {
+  background: rgba(59, 130, 246, 0.3);
+  transform: scale(1.05);
+}
+
+.dashboard-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(71, 85, 105, 0.2);
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #E2E8F0;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  color: #94A3B8;
+}
+
+.dashboard-insights {
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(71, 85, 105, 0.2);
+}
+
+.dashboard-insights h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #E2E8F0;
+}
+
+.insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.insight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #CBD5E1;
+  font-size: 0.875rem;
+}
+
+/* ==================== STORY MODE SECTION ==================== */
+.story-mode-section {
+  padding: 5rem 5%;
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+}
+
+.story-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.story-header h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #EC4899, #F59E0B);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.story-header p {
+  font-size: 1.25rem;
+  color: #CBD5E1;
+}
+
+.story-demo {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ==================== IMPACT SECTION ==================== */
+.impact-section {
+  padding: 5rem 5%;
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.impact-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.impact-header h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #10B981, #06B6D4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.impact-header p {
+  font-size: 1.25rem;
+  color: #CBD5E1;
+}
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.impact-card {
+  padding: 2rem;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(71, 85, 105, 0.2);
+  transition: var(--consciousness-transition);
+  text-align: center;
+}
+
+.impact-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.impact-icon {
+  margin-bottom: 1rem;
+}
+
+.impact-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #E2E8F0;
+}
+
+.impact-description {
+  color: #CBD5E1;
+  line-height: 1.6;
+}
+
+/* ==================== TESTIMONIALS SECTION ==================== */
+.testimonials-section {
+  padding: 5rem 5%;
+  background: linear-gradient(135deg, #475569 0%, #64748B 100%);
+}
+
+.testimonials-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.testimonials-header h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #F59E0B, #EC4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.testimonials-header p {
+  font-size: 1.25rem;
+  color: #CBD5E1;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.testimonial {
+  padding: 2rem;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(71, 85, 105, 0.2);
+  transition: var(--consciousness-transition);
+}
+
+.testimonial:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+.testimonial svg {
+  margin-bottom: 1rem;
+}
+
+.testimonial p {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #CBD5E1;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.testimonial-author strong {
+  color: #E2E8F0;
+  font-weight: 600;
+}
+
+.testimonial-author span {
+  color: #94A3B8;
+  font-size: 0.875rem;
+}
+
+/* ==================== PRICING SECTION ==================== */
+.pricing-section {
+  padding: 5rem 5%;
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.pricing-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.pricing-header h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pricing-header p {
+  font-size: 1.25rem;
+  color: #CBD5E1;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pricing-card {
+  padding: 2rem;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(71, 85, 105, 0.2);
+  transition: var(--consciousness-transition);
+  text-align: center;
+}
+
+.pricing-card.featured {
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  transform: scale(1.05);
+}
+
+.pricing-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.pricing-card.featured:hover {
+  transform: scale(1.05) translateY(-4px);
+}
+
+.pricing-header {
+  margin-bottom: 2rem;
+}
+
+.pricing-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #E2E8F0;
+}
+
+.price {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #3B82F6;
+}
+
+.price span {
+  font-size: 1rem;
+  color: #94A3B8;
+}
+
+.pricing-features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+
+.pricing-features li {
+  padding: 0.5rem 0;
+  color: #CBD5E1;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.2);
+}
+
+.pricing-features li:last-child {
+  border-bottom: none;
+}
+
+.pricing-button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--consciousness-transition);
+}
+
+.pricing-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--consciousness-glow);
+}
+
+/* ==================== CTA SECTION ==================== */
+.cta-section {
+  padding: 5rem 5%;
+  background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+  text-align: center;
+}
+
+.cta-content h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #3B82F6, #EC4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cta-content p {
+  font-size: 1.25rem;
+  color: #CBD5E1;
+  margin-bottom: 2rem;
+}
+
+.cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes consciousness-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes emotional-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(236, 72, 153, 0.6);
+  }
+}
+
+@keyframes wisdom-sparkle {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+  .hero-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .features-grid,
+  .impact-grid,
+  .testimonials-grid,
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+  }
+
+  .cta-button {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==================== DARK MODE ENHANCEMENTS ==================== */
+@media (prefers-color-scheme: dark) {
+  .consciousness-landing-page {
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #2A2A2A 100%);
+  }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+  .consciousness-landing-page {
+    background: white;
+    color: black;
+  }
+
+  .hero-title,
+  .demo-header h2,
+  .story-header h2,
+  .impact-header h2,
+  .testimonials-header h2,
+  .pricing-header h2,
+  .cta-content h2 {
+    background: none;
+    -webkit-text-fill-color: black;
+    color: black;
+  }
+}

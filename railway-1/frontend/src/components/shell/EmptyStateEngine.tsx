@@ -123,7 +123,7 @@ const EMPTY_STATE_CONFIGS: EmptyStateConfig[] = [
     suggestions: [
       'Import CSV files',
       'Connect external data sources',
-      'Create sample data'
+      'Start with your first dataset'
     ]
   },
   {

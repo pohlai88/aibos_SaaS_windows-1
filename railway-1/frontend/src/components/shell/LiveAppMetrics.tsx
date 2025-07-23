@@ -288,7 +288,7 @@ export const LiveAppMetrics: React.FC<LiveAppMetricsProps> = ({
         });
       }
     });
-  }, [metrics, onPerformanceAlert, trackEvent]);
+  }, [metrics, onPerformanceAlert]); // Remove trackEvent dependency
 
   const handleAppSelect = useCallback((appId: string) => {
     onAppSelect?.(appId);
@@ -317,9 +317,9 @@ export const LiveAppMetrics: React.FC<LiveAppMetricsProps> = ({
   const systemUsage = getTotalSystemUsage();
 
   return (
-    <div className={`bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 ${className}`}>
+    <div className={`bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 max-h-full overflow-hidden flex flex-col ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div className="flex items-center space-x-2">
           <span className="text-lg">📊</span>
           <h3 className="font-semibold text-white">Live App Metrics</h3>
@@ -334,7 +334,7 @@ export const LiveAppMetrics: React.FC<LiveAppMetricsProps> = ({
       </div>
 
       {/* System Overview */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-2 gap-4 mb-4 flex-shrink-0">
         <div className="bg-white/10 rounded-lg p-3">
           <div className="text-xs text-white/80 mb-1">Total CPU</div>
           <div className="text-lg font-semibold text-white">
@@ -349,32 +349,34 @@ export const LiveAppMetrics: React.FC<LiveAppMetricsProps> = ({
         </div>
       </div>
 
-      {/* App Metrics */}
+      {/* App Metrics - Scrollable Container */}
       <AnimatePresence>
         {isVisible && (
           <motion.div
-            className="space-y-2"
+            className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {metrics.map((app) => (
-              <MetricsCard
-                key={app.appId}
-                metrics={app}
-                onSelect={handleAppSelect}
-                isExpanded={expandedApps.has(app.appId)}
-                onToggleExpand={() => handleToggleExpand(app.appId)}
-              />
-            ))}
+            <div className="space-y-2 pb-2">
+              {metrics.map((app) => (
+                <MetricsCard
+                  key={app.appId}
+                  metrics={app}
+                  onSelect={handleAppSelect}
+                  isExpanded={expandedApps.has(app.appId)}
+                  onToggleExpand={() => handleToggleExpand(app.appId)}
+                />
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Performance Legend */}
       {isVisible && (
-        <div className="mt-4 pt-3 border-t border-white/20">
+        <div className="mt-4 pt-3 border-t border-white/20 flex-shrink-0">
           <div className="flex items-center justify-between text-xs text-white/60">
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-1">

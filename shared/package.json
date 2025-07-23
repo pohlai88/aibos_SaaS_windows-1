@@ -1,74 +1,156 @@
 {
-  "name": "@aibos/shared",
+  "name": "aibos-shared-infrastructure",
   "version": "1.0.0",
-  "description": "AI-BOS Platform Shared Library - Enterprise-grade utilities for billing, caching, database, and performance optimization",
-  "main": "minimal/index.js",
-  "module": "minimal/index.mjs",
-  "types": "minimal/index.d.ts",
+  "description": "World-class shared infrastructure for AI-BOS platform - Design System, Error Handling, Performance, Security, Accessibility",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write src/**/*.{ts,tsx}",
+    "format:check": "prettier --check src/**/*.{ts,tsx}",
+    "type-check": "tsc --noEmit",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run clean && npm run build",
+    "docs": "typedoc src/index.ts --out docs",
+    "validate": "npm run lint && npm run type-check && npm run test"
+  },
   "exports": {
     ".": {
-      "types": "./minimal/index.d.ts",
-      "import": "./minimal/index.mjs",
-      "require": "./minimal/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
-    "./minimal": {
-      "types": "./minimal/index.d.ts",
-      "import": "./minimal/index.mjs",
-      "require": "./minimal/index.js"
+    "./design-system": {
+      "types": "./dist/design-system/index.d.ts",
+      "default": "./dist/design-system/index.js"
+    },
+    "./error-handling": {
+      "types": "./dist/error-handling/index.d.ts",
+      "default": "./dist/error-handling/index.js"
+    },
+    "./performance": {
+      "types": "./dist/performance/index.d.ts",
+      "default": "./dist/performance/index.js"
+    },
+    "./security": {
+      "types": "./dist/security/index.d.ts",
+      "default": "./dist/security/index.js"
+    },
+    "./accessibility": {
+      "types": "./dist/accessibility/index.d.ts",
+      "default": "./dist/accessibility/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
+    },
+    "./constants": {
+      "types": "./dist/constants/index.d.ts",
+      "default": "./dist/constants/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "default": "./dist/utils/index.js"
+    },
+    "./validation": {
+      "types": "./dist/validation/index.d.ts",
+      "default": "./dist/validation/index.js"
+    },
+    "./logging": {
+      "types": "./dist/logging/index.d.ts",
+      "default": "./dist/logging/index.js"
+    },
+    "./caching": {
+      "types": "./dist/caching/index.d.ts",
+      "default": "./dist/caching/index.js"
+    },
+    "./analytics": {
+      "types": "./dist/analytics/index.d.ts",
+      "default": "./dist/analytics/index.js"
     }
-  },
-  "files": [
-    "minimal/**/*",
-    "README.md",
-    "LICENSE"
-  ],
-  "scripts": {
-    "build": "npm run build:compile",
-    "build:clean": "echo 'Clean disabled for Windows'",
-    "build:compile": "cd minimal && tsc -p tsconfig.json",
-    "dev": "cd minimal && tsc -p tsconfig.json --watch",
-    "type-check": "cd minimal && tsc -p tsconfig.json --noEmit",
-    "test": "echo 'Tests disabled for minimal version'",
-    "lint": "echo 'Lint disabled for minimal version'",
-    "format": "echo 'Format disabled for minimal version'"
   },
   "keywords": [
-    "aibos",
-    "saas",
-    "shared",
-    "library",
+    "ai-bos",
+    "infrastructure",
+    "design-system",
+    "error-handling",
+    "performance",
+    "security",
+    "accessibility",
     "typescript",
-    "react"
+    "react",
+    "nodejs",
+    "enterprise",
+    "world-class",
+    "production-ready"
   ],
-  "author": "AI-BOS Team",
-  "contributors": [
-    {
-      "name": "AI-BOS Team",
-      "email": "team@aibos.com"
-    }
-  ],
+  "author": {
+    "name": "AI-BOS Team",
+    "email": "team@aibos.com",
+    "url": "https://aibos.com"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aibos/shared.git"
+    "url": "https://github.com/aibos/aibos-shared-infrastructure.git",
+    "directory": "shared"
   },
   "bugs": {
-    "url": "https://github.com/aibos/shared/issues"
+    "url": "https://github.com/aibos/aibos-shared-infrastructure/issues"
   },
-  "homepage": "https://github.com/aibos/shared#readme",
-  "dependencies": {},
+  "homepage": "https://github.com/aibos/aibos-shared-infrastructure#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "devDependencies": {
-    "@types/node": "^20.8.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "typescript": "^5.2.2"
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.19.9",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jest": "^27.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "jest": "^29.0.0",
+    "prettier": "^3.0.0",
+    "rimraf": "^5.0.0",
+    "ts-jest": "^29.1.0",
+    "typedoc": "^0.25.0",
+    "typescript": "^5.0.0"
   },
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "module": "dist/index.js",
+  "unpkg": "dist/index.js",
+  "jsdelivr": "dist/index.js",
+  "dependencies": {
+    "aibos-shared-infrastructure": "^1.0.0"
   }
 }

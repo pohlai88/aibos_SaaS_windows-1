@@ -25,11 +25,9 @@ export function TerminalLoginScreen() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  // Demo credentials with better security
+  // Demo credentials - Single public demo credential
   const demoCredentials = [
-    { email: 'admin@demo.com', password: 'Demo123!', name: 'Demo Admin', role: 'admin' },
-    { email: 'demo@aibos.com', password: 'demo123', name: 'Demo User', role: 'user' },
-    { email: 'developer@aibos.com', password: 'dev2024!', name: 'Developer', role: 'developer' }
+    { email: 'admin@demo.com', password: 'Demo123!', name: 'Demo Admin', role: 'admin' }
   ];
 
   // Force logout function to clear any stored tokens
@@ -293,31 +291,37 @@ export function TerminalLoginScreen() {
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-sm mb-2 text-green-400 font-mono">Email:</label>
+                <label htmlFor="login-email" className="block text-sm mb-2 text-green-400 font-mono">Email:</label>
                 <input
                   ref={emailInputRef}
                   type="email"
+                  id="login-email"
+                  name="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="user@aibos.com"
                   className="w-full px-3 py-2 bg-gray-900 border border-green-700 rounded text-green-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 font-mono text-sm transition-all"
                   required
                   disabled={isLocked}
+                  autoComplete="email"
                 />
               </div>
 
               <div>
-                <label className="block text-sm mb-2 text-green-400 font-mono">Password:</label>
+                <label htmlFor="login-password" className="block text-sm mb-2 text-green-400 font-mono">Password:</label>
                 <div className="relative">
                   <input
                     ref={passwordInputRef}
                     type={showPassword ? 'text' : 'password'}
+                    id="login-password"
+                    name="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     className="w-full px-3 py-2 pr-10 bg-gray-900 border border-green-700 rounded text-green-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 font-mono text-sm transition-all"
                     required
                     disabled={isLocked}
+                    autoComplete="current-password"
                   />
                   <button
                     type="button"
@@ -406,31 +410,37 @@ export function TerminalLoginScreen() {
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-sm mb-2 text-green-400">Email Address</label>
+                <label htmlFor="login-email" className="block text-sm mb-2 text-green-400">Email Address</label>
                 <input
                   ref={emailInputRef}
                   type="email"
+                  id="login-email"
+                  name="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="user@aibos.com"
                   className="w-full px-3 py-2 bg-gray-900 border border-green-700 rounded text-green-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 font-mono transition-all"
                   required
                   disabled={isLocked}
+                  autoComplete="email"
                 />
               </div>
 
               <div>
-                <label className="block text-sm mb-2 text-green-400">Password</label>
+                <label htmlFor="login-password" className="block text-sm mb-2 text-green-400">Password</label>
                 <div className="relative">
                   <input
                     ref={passwordInputRef}
                     type={showPassword ? 'text' : 'password'}
+                    id="login-password"
+                    name="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     className="w-full px-3 py-2 pr-10 bg-gray-900 border border-green-700 rounded text-green-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 font-mono transition-all"
                     required
                     disabled={isLocked}
+                    autoComplete="current-password"
                   />
                   <button
                     type="button"

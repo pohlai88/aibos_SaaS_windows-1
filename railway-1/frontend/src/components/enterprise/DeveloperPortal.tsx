@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { api } from '@/lib/api';
 
 interface Module {
   id: string;
@@ -12,6 +13,9 @@ interface Module {
   rating: number;
   price: number;
   isInstalled: boolean;
+  author?: string;
+  lastUpdated?: string;
+  compatibility?: string[];
 }
 
 interface DeveloperPortalProps {
@@ -21,7 +25,7 @@ interface DeveloperPortalProps {
   enableRealtime?: boolean;
 }
 
-// Simple SelfHealingProvider component
+// Simple local SelfHealingProvider
 const SelfHealingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
@@ -36,108 +40,121 @@ export const DeveloperPortal: React.FC<DeveloperPortalProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [installedModules, setInstalledModules] = useState<string[]>([]);
 
-  // Sample modules data
-  const sampleModules: Module[] = [
-    {
-      id: '1',
-      name: 'Advanced Data Grid',
-      version: '2.1.0',
-      description: 'High-performance data grid with sorting, filtering, and virtualization',
-      category: 'data',
-      downloads: 15420,
-      rating: 4.8,
-      price: 29.99,
-      isInstalled: false
-    },
-    {
-      id: '2',
-      name: 'AI Chat Assistant',
-      version: '1.5.2',
-      description: 'Intelligent chat assistant with natural language processing',
-      category: 'ai',
-      downloads: 8920,
-      rating: 4.6,
-      price: 49.99,
-      isInstalled: true
-    },
-    {
-      id: '3',
-      name: 'Security Audit Logger',
-      version: '1.2.1',
-      description: 'Comprehensive security audit logging for compliance',
-      category: 'security',
-      downloads: 5670,
-      rating: 4.9,
-      price: 39.99,
-      isInstalled: false
-    },
-    {
-      id: '4',
-      name: 'Analytics Dashboard',
-      version: '3.0.0',
-      description: 'Real-time analytics dashboard with customizable widgets',
-      category: 'analytics',
-      downloads: 12340,
-      rating: 4.7,
-      price: 59.99,
-      isInstalled: false
-    },
-    {
-      id: '5',
-      name: 'UI Component Library',
-      version: '1.8.3',
-      description: 'Complete set of enterprise-grade UI components',
-      category: 'ui',
-      downloads: 23450,
-      rating: 4.5,
-      price: 19.99,
-      isInstalled: true
-    }
-  ];
+  // Fetch modules from API
+  const fetchModules = useCallback(async () => {
+    try {
+      setError(null);
+      setIsLoading(true);
 
-  // Initialize
-  useEffect(() => {
-    setTimeout(() => {
-      setModules(sampleModules);
-      setInstalledModules(['2', '5']); // AI Chat Assistant and UI Component Library
+      const response = await api.get('/modules/marketplace');
+
+      if (response.data.success) {
+        setModules(response.data.data.modules || []);
+        setInstalledModules(response.data.data.installed || []);
+      } else {
+        throw new Error(response.data.error || 'Failed to fetch modules');
+      }
+    } catch (err) {
+      console.error('Failed to fetch modules:', err);
+      setError('Failed to load modules. Please try again.');
+
+      // Fallback to basic modules if API fails
+      setModules([
+        {
+          id: '1',
+          name: 'Advanced Data Grid',
+          version: '2.1.0',
+          description: 'High-performance data grid with sorting, filtering, and virtualization',
+          category: 'data',
+          downloads: 15420,
+          rating: 4.8,
+          price: 29.99,
+          isInstalled: false,
+          author: 'AI-BOS Team',
+          lastUpdated: '2024-01-15',
+          compatibility: ['React 18+', 'TypeScript']
+        },
+        {
+          id: '2',
+          name: 'AI Chat Assistant',
+          version: '1.5.2',
+          description: 'Intelligent chat assistant with natural language processing',
+          category: 'ai',
+          downloads: 8920,
+          rating: 4.6,
+          price: 49.99,
+          isInstalled: true,
+          author: 'AI-BOS Team',
+          lastUpdated: '2024-01-10',
+          compatibility: ['React 18+', 'OpenAI API']
+        }
+      ]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }, []);
 
-  // Filter modules
+  // Initial load
+  useEffect(() => {
+    fetchModules();
+  }, []); // Remove fetchModules dependency
+
+  const installModule = async (moduleId: string) => {
+    try {
+      const response = await api.post(`/modules/${moduleId}/install`);
+
+      if (response.data.success) {
+        setInstalledModules(prev => [...prev, moduleId]);
+        setModules(prev => prev.map(module =>
+          module.id === moduleId ? { ...module, isInstalled: true } : module
+        ));
+        console.log(`✅ Module ${moduleId} installed successfully`);
+      } else {
+        throw new Error(response.data.error || 'Installation failed');
+      }
+    } catch (err) {
+      console.error('Failed to install module:', err);
+      alert('Failed to install module. Please try again.');
+    }
+  };
+
+  const uninstallModule = async (moduleId: string) => {
+    try {
+      const response = await api.post(`/modules/${moduleId}/uninstall`);
+
+      if (response.data.success) {
+        setInstalledModules(prev => prev.filter(id => id !== moduleId));
+        setModules(prev => prev.map(module =>
+          module.id === moduleId ? { ...module, isInstalled: false } : module
+        ));
+        console.log(`✅ Module ${moduleId} uninstalled successfully`);
+      } else {
+        throw new Error(response.data.error || 'Uninstallation failed');
+      }
+    } catch (err) {
+      console.error('Failed to uninstall module:', err);
+      alert('Failed to uninstall module. Please try again.');
+    }
+  };
+
+  // Filter modules based on category and search
   const filteredModules = modules.filter(module => {
     const matchesCategory = selectedCategory === 'all' || module.category === selectedCategory;
-    const matchesSearch = (module.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (module.description?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+    const matchesSearch = module.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         module.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  // Install module
-  const installModule = (moduleId: string) => {
-    setInstalledModules(prev => [...prev, moduleId]);
-    setModules(prev => prev.map(module =>
-      module.id === moduleId ? { ...module, isInstalled: true } : module
-    ));
-  };
-
-  // Uninstall module
-  const uninstallModule = (moduleId: string) => {
-    setInstalledModules(prev => prev.filter(id => id !== moduleId));
-    setModules(prev => prev.map(module =>
-      module.id === moduleId ? { ...module, isInstalled: false } : module
-    ));
-  };
-
-  // Categories
   const categories = [
-    { id: 'all', name: 'All Modules', icon: '📦' },
+    { id: 'all', name: 'All Categories', icon: '📦' },
     { id: 'ui', name: 'UI Components', icon: '🎨' },
     { id: 'data', name: 'Data & Analytics', icon: '📊' },
-    { id: 'ai', name: 'AI & ML', icon: '🤖' },
-    { id: 'security', name: 'Security', icon: '🔒' },
-    { id: 'analytics', name: 'Analytics', icon: '📈' }
+    { id: 'ai', name: 'AI & Machine Learning', icon: '🤖' },
+    { id: 'security', name: 'Security & Compliance', icon: '🔒' },
+    { id: 'analytics', name: 'Analytics & Monitoring', icon: '📈' }
   ];
 
   if (isLoading) {
@@ -151,27 +168,48 @@ export const DeveloperPortal: React.FC<DeveloperPortalProps> = ({
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center max-w-md">
+          <div className="text-red-500 text-4xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Portal Error</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={fetchModules}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <SelfHealingProvider>
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200">
+        <header className="bg-white shadow-sm border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Developer Portal</h1>
                 <p className="mt-1 text-sm text-gray-500">
-                  Discover, install, and manage modules for your AI-BOS applications
+                  Discover and install powerful modules for your AI-BOS applications
                 </p>
               </div>
               <div className="flex items-center space-x-4">
                 {enableAI && (
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                  <div className="bg-blue-600 text-white px-4 py-2 rounded-lg">
                     🤖 AI Assistant
-                  </button>
+                  </div>
                 )}
-                <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                  📦 My Modules ({installedModules.length})
+                <button
+                  onClick={fetchModules}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Refresh
                 </button>
               </div>
             </div>
@@ -184,87 +222,31 @@ export const DeveloperPortal: React.FC<DeveloperPortalProps> = ({
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Search */}
               <div className="flex-1">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search modules..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-400">🔍</span>
-                  </div>
-                </div>
+                <input
+                  type="text"
+                  id="module-search"
+                  name="module-search"
+                  placeholder="Search modules..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  aria-label="Search modules"
+                />
               </div>
 
               {/* Category Filter */}
-              <div className="flex space-x-2">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedCategory === category.id
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className="mr-2">{category.icon}</span>
-                    {category.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <span className="text-2xl">📦</span>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Total Modules</p>
-                  <p className="text-2xl font-bold text-gray-900">{modules.length}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <div className="flex items-center">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <span className="text-2xl">✅</span>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Installed</p>
-                  <p className="text-2xl font-bold text-gray-900">{installedModules.length}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <div className="flex items-center">
-                <div className="p-2 bg-yellow-100 rounded-lg">
-                  <span className="text-2xl">⭐</span>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Avg Rating</p>
-                  <p className="text-2xl font-bold text-gray-900">4.7</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <div className="flex items-center">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <span className="text-2xl">📥</span>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Total Downloads</p>
-                  <p className="text-2xl font-bold text-gray-900">65.8K</p>
-                </div>
+              <div className="sm:w-64">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {categories.map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.icon} {category.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -272,55 +254,62 @@ export const DeveloperPortal: React.FC<DeveloperPortalProps> = ({
           {/* Modules Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredModules.map((module) => (
-              <div key={module.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+              <div key={module.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">{module.name}</h3>
-                      <p className="text-sm text-gray-500 mb-2">v{module.version}</p>
-                      <p className="text-sm text-gray-600 mb-4">{module.description}</p>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{module.name}</h3>
+                      <p className="text-sm text-gray-500">v{module.version}</p>
                     </div>
-                    <div className="ml-4">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        module.category === 'ui' ? 'bg-blue-100 text-blue-800' :
-                        module.category === 'data' ? 'bg-green-100 text-green-800' :
-                        module.category === 'ai' ? 'bg-purple-100 text-purple-800' :
-                        module.category === 'security' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {module.category.toUpperCase()}
-                      </span>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-yellow-400">⭐</span>
+                      <span className="text-sm font-medium">{module.rating}</span>
                     </div>
                   </div>
+
+                  <p className="text-gray-600 text-sm mb-4">{module.description}</p>
 
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <span>📥 {module.downloads.toLocaleString()}</span>
-                      <span>⭐ {module.rating}</span>
-                    </div>
-                    <div className="text-lg font-bold text-gray-900">
-                      ${module.price}
-                    </div>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {module.category.toUpperCase()}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {module.downloads.toLocaleString()} downloads
+                    </span>
                   </div>
 
-                  <div className="flex space-x-2">
-                    {module.isInstalled ? (
-                      <button
-                        onClick={() => uninstallModule(module.id)}
-                        className="flex-1 bg-red-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-red-700 transition-colors"
-                      >
-                        Uninstall
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => installModule(module.id)}
-                        className="flex-1 bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700 transition-colors"
-                      >
-                        Install
-                      </button>
-                    )}
-                    <button className="px-4 py-2 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
-                      Details
+                  {module.author && (
+                    <div className="text-xs text-gray-500 mb-2">
+                      By {module.author} • Updated {module.lastUpdated}
+                    </div>
+                  )}
+
+                  {module.compatibility && (
+                    <div className="mb-4">
+                      <div className="text-xs text-gray-500 mb-1">Compatible with:</div>
+                      <div className="flex flex-wrap gap-1">
+                        {module.compatibility.map((comp, index) => (
+                          <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-700">
+                            {comp}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-gray-900">
+                      ${module.price}
+                    </span>
+                    <button
+                      onClick={() => module.isInstalled ? uninstallModule(module.id) : installModule(module.id)}
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        module.isInstalled
+                          ? 'bg-red-600 text-white hover:bg-red-700'
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                      }`}
+                    >
+                      {module.isInstalled ? 'Uninstall' : 'Install'}
                     </button>
                   </div>
                 </div>
@@ -328,41 +317,14 @@ export const DeveloperPortal: React.FC<DeveloperPortalProps> = ({
             ))}
           </div>
 
+          {/* Empty State */}
           {filteredModules.length === 0 && (
             <div className="text-center py-12">
-              <div className="text-4xl mb-4">🔍</div>
+              <div className="text-gray-400 text-6xl mb-4">📦</div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No modules found</h3>
-              <p className="text-gray-500">Try adjusting your search or filter criteria</p>
-            </div>
-          )}
-
-          {/* AI Recommendations */}
-          {enableAI && (
-            <div className="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">🤖 AI Recommendations</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white p-4 rounded-lg border border-gray-200">
-                  <h4 className="font-medium text-gray-900 mb-2">Based on your usage</h4>
-                  <p className="text-sm text-gray-600 mb-3">We recommend the Analytics Dashboard for better insights</p>
-                  <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
-                    Learn More →
-                  </button>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-gray-200">
-                  <h4 className="font-medium text-gray-900 mb-2">Popular in your industry</h4>
-                  <p className="text-sm text-gray-600 mb-3">Security Audit Logger is trending among similar companies</p>
-                  <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
-                    Learn More →
-                  </button>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-gray-200">
-                  <h4 className="font-medium text-gray-900 mb-2">Performance boost</h4>
-                  <p className="text-sm text-gray-600 mb-3">Advanced Data Grid can improve your app&apos;s performance by 40%</p>
-                  <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
-                    Learn More →
-                  </button>
-                </div>
-              </div>
+              <p className="text-gray-500">
+                Try adjusting your search or category filter to find what you're looking for.
+              </p>
             </div>
           )}
         </div>

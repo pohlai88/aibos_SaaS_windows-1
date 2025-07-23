@@ -1,9 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+/* ==================== ACCESSIBILITY UTILITIES ==================== */
+
+/* Screen reader only - hides content visually but keeps it accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==================== WINDOW FOCUS STYLES ==================== */
+
+/* Enhanced focus styles for window controls */
+.window-focused button:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Window focus indicator */
+.aibos-window:focus-within {
+  box-shadow:
+    0 8px 32px 0 rgba(99,102,241,0.25),
+    0 0 0 2px rgba(99,102,241,0.5),
+    0 0 0 4px rgba(99,102,241,0.2);
+}
+
+/* ==================== CURSOR STATES ==================== */
+
+/* Drag cursor states */
+.cursor-grab {
+  cursor: grab;
+}
+
+.cursor-grabbing {
+  cursor: grabbing;
+}
+
+/* ==================== ANIMATION ENHANCEMENTS ==================== */
+
+/* Smooth transitions for all interactive elements */
+button, .aibos-window {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Ensure windows don't overflow on smaller screens */
+@media (max-width: 768px) {
+  .aibos-window {
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+  }
+}
 
 @layer base {
   html {
@@ -12,6 +72,33 @@
 
   body {
     @apply bg-gray-50 text-gray-900;
+  }
+
+  /* Custom Scrollbar Styles */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Dark mode scrollbar */
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 }
 
