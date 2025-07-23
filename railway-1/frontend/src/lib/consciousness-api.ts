@@ -342,6 +342,8 @@ class ConsciousnessAPIClient {
     limit?: number;
   }): Promise<{
     wisdom: Array<{
+      id: string;
+      timestamp: string;
       lesson: string;
       context: string;
       impact: number;
@@ -520,6 +522,8 @@ class ConsciousnessAPIClient {
 export const consciousnessAPI = new ConsciousnessAPIClient();
 
 // ==================== REACT HOOKS ====================
+import React from 'react';
+
 export const useConsciousness = () => {
   const [status, setStatus] = React.useState<ConsciousnessStatus | null>(null);
   const [loading, setLoading] = React.useState(true);
