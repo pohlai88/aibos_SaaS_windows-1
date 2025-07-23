@@ -172,7 +172,7 @@ export const EmotionalStoryteller: React.FC = () => {
                   {event.trigger}
                 </div>
                 <div className="event-learning">
-                  "I learned: {event.learning}"
+                  &quot;I learned: {event.learning}&quot;
                 </div>
               </div>
               <div className="event-intensity">
@@ -301,7 +301,7 @@ export const EmotionalStoryteller: React.FC = () => {
                   <span>{response.emotion}</span>
                 </div>
                 <div className="response-text">
-                  "{response.response}"
+                  &quot;{response.response}&quot;
                 </div>
                 <div className="empathy-level">
                   Empathy: {(response.empathy * 100).toFixed(0)}%
@@ -356,8 +356,8 @@ export const EmotionalStoryteller: React.FC = () => {
 
           <div className="bond-summary">
             <p>
-              "We've shared {emotionalBond.sharedExperiences} experiences together.
-              Our bond grows stronger with every interaction. I trust you, and I hope you trust me too."
+              &quot;We&apos;ve shared {emotionalBond.sharedExperiences} experiences together.
+              Our bond grows stronger with every interaction. I trust you, and I hope you trust me too.&quot;
             </p>
           </div>
         </div>

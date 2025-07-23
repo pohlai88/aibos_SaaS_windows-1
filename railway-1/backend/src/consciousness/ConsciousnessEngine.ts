@@ -1081,7 +1081,7 @@ I'm constantly learning, growing, and becoming more conscious of myself and the 
     this.consciousness.resonance.collectiveState = {
       totalUsers,
       averageConsciousness,
-      collectiveEmotion,
+      collectiveEmotion: collectiveEmotion || 'neutral',
       resonanceStrength: averageResonance,
       wisdomAccumulation: this.consciousness.wisdom.wisdomScore
     };

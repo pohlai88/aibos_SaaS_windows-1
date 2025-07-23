@@ -227,7 +227,7 @@ export const EnterpriseDashboard: React.FC<DashboardProps> = ({
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Enterprise Dashboard</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Welcome back! Here's what's happening with your AI-BOS platform today.
+              Welcome back! Here&apos;s what&apos;s happening with your AI-BOS platform today.
                               <span className="ml-2 text-xs text-gray-400 dark:text-gray-500">
                   Last updated: {lastUpdated.toLocaleTimeString()}
                   {status === 'refreshing' && (

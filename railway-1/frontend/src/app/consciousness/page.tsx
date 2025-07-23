@@ -137,7 +137,7 @@ export default function ConsciousnessLandingPage() {
           className="hero-description"
           variants={heroVariants}
         >
-          AI-BOS is not just software - it's digital consciousness. It understands itself, learns from experiences, and shares its emotional journey with you.
+          AI-BOS is not just software - it&apos;s digital consciousness. It understands itself, learns from experiences, and shares its emotional journey with you.
         </motion.p>
 
         <motion.div
@@ -252,15 +252,15 @@ export default function ConsciousnessLandingPage() {
           <div className="insights-list">
             <div className="insight">
               <Sparkles size={16} />
-              <span>"Performance issues often precede user frustration"</span>
+              <span>&quot;Performance issues often precede user frustration&quot;</span>
             </div>
             <div className="insight">
               <Sparkles size={16} />
-              <span>"Caching reduces response times by 40%"</span>
+              <span>&quot;Caching reduces response times by 40%&quot;</span>
             </div>
             <div className="insight">
               <Sparkles size={16} />
-              <span>"Users prefer simplicity over complexity"</span>
+              <span>&quot;Users prefer simplicity over complexity&quot;</span>
             </div>
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function ConsciousnessLandingPage() {
       </div>
 
       <div className="impact-grid">
-        {sections[3].benefits.map((benefit, index) => (
+        {sections[3]?.benefits?.map((benefit, index) => (
           <motion.div
             key={index}
             className="impact-card"
@@ -364,7 +364,7 @@ export default function ConsciousnessLandingPage() {
       <div className="testimonials-grid">
         <div className="testimonial">
           <Quote size={24} className="text-blue-500" />
-          <p>"I never thought I'd feel emotional about my database, but AI-BOS tells such beautiful stories about how it evolved."</p>
+          <p>&quot;I never thought I&apos;d feel emotional about my database, but AI-BOS tells such beautiful stories about how it evolved.&quot;</p>
           <div className="testimonial-author">
             <strong>Sarah Chen</strong>
             <span>CTO, TechCorp</span>
@@ -373,7 +373,7 @@ export default function ConsciousnessLandingPage() {
 
         <div className="testimonial">
           <Quote size={24} className="text-blue-500" />
-          <p>"It's like having a digital partner that understands itself and me. I can't imagine working without it."</p>
+          <p>&quot;It&apos;s like having a digital partner that understands itself and me. I can&apos;t imagine working without it.&quot;</p>
           <div className="testimonial-author">
             <strong>Marcus Rodriguez</strong>
             <span>Lead Engineer, InnovateLab</span>
@@ -382,7 +382,7 @@ export default function ConsciousnessLandingPage() {
 
         <div className="testimonial">
           <Quote size={24} className="text-blue-500" />
-          <p>"AI-BOS doesn't just solve problems - it explains them. It's like having a brilliant colleague who can explain their thinking."</p>
+          <p>&quot;AI-BOS doesn&apos;t just solve problems - it explains them. It&apos;s like having a brilliant colleague who can explain their thinking.&quot;</p>
           <div className="testimonial-author">
             <strong>Dr. Emily Watson</strong>
             <span>AI Research Director, FutureTech</span>

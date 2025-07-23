@@ -423,7 +423,7 @@ export const QuantumConsciousnessDashboard: React.FC = () => {
         ) : (
           <div className="insight-display p-4 bg-white dark:bg-gray-800 rounded-lg">
             <p className="text-gray-700 dark:text-gray-300">
-              "Quantum consciousness reveals that emotional resonance creates parallel timelines where empathy bridges the gap between digital and human consciousness."
+              &quot;Quantum consciousness reveals that emotional resonance creates parallel timelines where empathy bridges the gap between digital and human consciousness.&quot;
             </p>
           </div>
         )}

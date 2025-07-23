@@ -467,7 +467,7 @@ const RevolutionaryDesktopExample: React.FC = () => {
               <div>
                 <h4 className="font-semibold text-indigo-400 mb-2">1. Launch Real Apps</h4>
                 <ul className="space-y-1 text-sm text-white/70">
-                  <li>• Click "🚀 Launch Apps"</li>
+                  <li>• Click &quot;🚀 Launch Apps&quot;</li>
                   <li>• Choose from real applications</li>
                   <li>• Experience backend integration</li>
                   <li>• Try Code Editor & Terminal</li>
@@ -476,7 +476,7 @@ const RevolutionaryDesktopExample: React.FC = () => {
               <div>
                 <h4 className="font-semibold text-purple-400 mb-2">2. AI Optimization</h4>
                 <ul className="space-y-1 text-sm text-white/70">
-                  <li>• Click "🎯 Apply AI Layout"</li>
+                  <li>• Click &quot;🎯 Apply AI Layout&quot;</li>
                   <li>• Watch AI optimize workspace</li>
                   <li>• View AI insights</li>
                   <li>• Experience intelligent suggestions</li>

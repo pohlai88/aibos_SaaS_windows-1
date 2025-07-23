@@ -23,7 +23,7 @@ const dashboardRouter = require('./routes/dashboard');
 const modulesRouter = require('./routes/modules');
 
 // Import consciousness routes
-const consciousnessRouter = require('./routes/consciousness');
+import consciousnessRouter from './routes/consciousness';
 
 // Import WebSocket realtime service
 const realtimeService = require('./services/realtime');
@@ -84,14 +84,57 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Health check endpoint (root level)
-app.get('/health', (req: Request, res: Response) => {
-  res.json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    service: 'AI-BOS Backend',
-    version: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development'
-  });
+app.get('/health', async (req: Request, res: Response) => {
+  try {
+    // Test database connection if consciousness database is available
+    let databaseStatus = 'unknown';
+    let consciousnessStatus = 'unknown';
+
+    try {
+      const { consciousnessDatabase } = require('./consciousness/ConsciousnessDatabase');
+      const testClient = await consciousnessDatabase.pool.connect();
+      await testClient.query('SELECT NOW()');
+      testClient.release();
+      databaseStatus = 'connected';
+    } catch (dbError) {
+      databaseStatus = 'disconnected';
+      console.error('Database health check failed:', (dbError as Error).message);
+    }
+
+    // Test consciousness engine if available
+    try {
+      const { consciousnessEngine } = require('./consciousness/ConsciousnessEngine');
+      const health = await consciousnessEngine.healthCheck();
+      consciousnessStatus = health.status;
+    } catch (ceError) {
+      consciousnessStatus = 'unavailable';
+      console.error('Consciousness engine health check failed:', (ceError as Error).message);
+    }
+
+    res.json({
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      service: 'AI-BOS Backend',
+      version: '1.0.0',
+      environment: process.env['NODE_ENV'] || 'development',
+      database: {
+        status: databaseStatus,
+        url: process.env['DATABASE_URL'] ? 'configured' : 'missing'
+      },
+      consciousness: {
+        status: consciousnessStatus
+      },
+      memory: process.memoryUsage(),
+      uptime: process.uptime()
+    });
+      } catch (error) {
+      res.status(500).json({
+        status: 'ERROR',
+        timestamp: new Date().toISOString(),
+        service: 'AI-BOS Backend',
+        error: (error as Error).message
+      });
+    }
 });
 
 // Favicon endpoint

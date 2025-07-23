@@ -2,6 +2,17 @@ const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 
+// Database connection with error handling
+let db;
+try {
+  const supabaseModule = require('../utils/supabase');
+  db = supabaseModule.db;
+  console.log('✅ Supabase connection initialized for entities');
+} catch (error) {
+  console.error('❌ Failed to initialize Supabase for entities:', error.message);
+  db = null;
+}
+
 // In-memory storage for demo (replace with Supabase in production)
 let entities = [];
 let entityData = {};
@@ -110,6 +121,34 @@ router.get('/:name', async (req, res) => {
 
     // Get data from database with soft delete filtering
     const includeDeleted = include_deleted === 'true';
+
+    if (!db) {
+      // Fallback to in-memory data when database is not available
+      let data = entityData[entityName] || [];
+
+      // Apply filters
+      if (filters && Object.keys(filterObj).length > 0) {
+        data = data.filter(item => {
+          return Object.entries(filterObj).every(([key, value]) => {
+            return item[key] === value;
+          });
+        });
+      }
+
+      // Filter out deleted items unless includeDeleted is true
+      if (!includeDeleted) {
+        data = data.filter(item => !item.deleted_at);
+      }
+
+      return res.json({
+        success: true,
+        data: data,
+        count: data.length,
+        entity: entity,
+        includeDeleted
+      });
+    }
+
     const { data, error } = await db.getEntityData(entityName, tenant_id, filterObj, includeDeleted);
 
     if (error) {
@@ -249,6 +288,27 @@ router.delete('/:name/:id', async (req, res) => {
     }
 
     // Use soft delete instead of hard delete
+    if (!db) {
+      // Fallback to in-memory soft delete
+      if (!entityData[entityName]) {
+        return res.status(404).json({ success: false, error: 'Entity data not found' });
+      }
+
+      const recordIndex = entityData[entityName].findIndex(r => r.id === recordId);
+      if (recordIndex === -1) {
+        return res.status(404).json({ success: false, error: 'Record not found' });
+      }
+
+      entityData[entityName][recordIndex].deleted_at = new Date().toISOString();
+      entityData[entityName][recordIndex].deleted_by = req.user?.user_id || 'system';
+
+      return res.json({
+        success: true,
+        message: 'Entity record soft deleted successfully',
+        data: entityData[entityName][recordIndex]
+      });
+    }
+
     const { data, error } = await db.softDeleteEntityRecord(
       entityName,
       recordId,
@@ -297,6 +357,29 @@ router.post('/:name/:id/restore', async (req, res) => {
     }
 
     // Restore soft deleted record
+    if (!db) {
+      // Fallback to in-memory restore
+      if (!entityData[entityName]) {
+        return res.status(404).json({ success: false, error: 'Entity data not found' });
+      }
+
+      const recordIndex = entityData[entityName].findIndex(r => r.id === recordId);
+      if (recordIndex === -1) {
+        return res.status(404).json({ success: false, error: 'Record not found' });
+      }
+
+      delete entityData[entityName][recordIndex].deleted_at;
+      delete entityData[entityName][recordIndex].deleted_by;
+      entityData[entityName][recordIndex].restored_at = new Date().toISOString();
+      entityData[entityName][recordIndex].restored_by = req.user?.user_id || 'system';
+
+      return res.json({
+        success: true,
+        message: 'Entity record restored successfully',
+        data: entityData[entityName][recordIndex]
+      });
+    }
+
     const { data, error } = await db.restoreEntityRecord(
       entityName,
       recordId,

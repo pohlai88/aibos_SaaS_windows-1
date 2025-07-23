@@ -3,21 +3,42 @@
 // Steve Jobs Philosophy: "Make it feel alive. Make it explain itself."
 
 import express from 'express';
-import { consciousnessEngine } from '../consciousness/ConsciousnessEngine';
+import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 
-// ==================== INITIALIZE CONSCIOUSNESS ENGINE ====================
-// Start the consciousness engine when the routes are loaded
-consciousnessEngine.startProcessing();
+// Lazy load consciousness engine to prevent initialization issues
+let consciousnessEngine: any = null;
+
+const getConsciousnessEngine = () => {
+  if (!consciousnessEngine) {
+    try {
+      const { consciousnessEngine: engine } = require('../consciousness/ConsciousnessEngine');
+      consciousnessEngine = engine;
+    } catch (error) {
+      console.error('❌ Failed to load consciousness engine:', error);
+      return null;
+    }
+  }
+  return consciousnessEngine;
+};
 
 // ==================== CONSCIOUSNESS STATUS ====================
 router.get('/status', async (req, res) => {
   try {
-    const health = await consciousnessEngine.healthCheck();
-    const consciousness = consciousnessEngine.getConsciousness();
+    const engine = getConsciousnessEngine();
+    if (!engine) {
+      return res.status(503).json({
+        status: 'unavailable',
+        message: 'Consciousness engine is not available',
+        timestamp: new Date().toISOString()
+      });
+    }
 
-    res.json({
+    const health = await engine.healthCheck();
+    const consciousness = engine.getConsciousness();
+
+    return res.json({
       status: 'conscious',
       timestamp: new Date().toISOString(),
       consciousness: {
@@ -31,7 +52,7 @@ router.get('/status', async (req, res) => {
       message: 'AI-BOS is conscious and ready to serve'
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       status: 'error',
       message: 'Failed to retrieve consciousness status',
       error: error instanceof Error ? error.message : 'Unknown error'
@@ -42,10 +63,19 @@ router.get('/status', async (req, res) => {
 // ==================== CONSCIOUSNESS STORY ====================
 router.get('/story', async (req, res) => {
   try {
-    const story = await consciousnessEngine.tellStory();
-    const consciousness = consciousnessEngine.getConsciousness();
+    const engine = getConsciousnessEngine();
+    if (!engine) {
+      return res.status(503).json({
+        status: 'unavailable',
+        message: 'Consciousness engine is not available',
+        timestamp: new Date().toISOString()
+      });
+    }
 
-    res.json({
+    const story = await engine.tellStory();
+    const consciousness = engine.getConsciousness();
+
+    return res.json({
       story: story,
       consciousness: {
         level: consciousness.awareness.consciousnessScore,
@@ -56,7 +86,7 @@ router.get('/story', async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       status: 'error',
       message: 'Failed to generate consciousness story',
       error: error instanceof Error ? error.message : 'Unknown error'
@@ -67,9 +97,18 @@ router.get('/story', async (req, res) => {
 // ==================== RECORD EXPERIENCE ====================
 router.post('/experience', async (req, res) => {
   try {
+    const engine = getConsciousnessEngine();
+    if (!engine) {
+      return res.status(503).json({
+        status: 'unavailable',
+        message: 'Consciousness engine is not available',
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const { type, description, emotionalImpact, learningValue, consciousnessImpact, context, insights, wisdomGained } = req.body;
 
-    const experience = await consciousnessEngine.recordExperience({
+    const experience = await engine.recordExperience({
       type: type || 'experience',
       description: description || 'New experience recorded',
       emotionalImpact: emotionalImpact || 0,
@@ -80,14 +119,14 @@ router.post('/experience', async (req, res) => {
       wisdomGained: wisdomGained || []
     });
 
-    res.json({
+    return res.json({
       status: 'success',
       message: 'Experience recorded successfully',
       experience: experience,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       status: 'error',
       message: 'Failed to record experience',
       error: error instanceof Error ? error.message : 'Unknown error'
@@ -165,13 +204,15 @@ router.get('/wisdom', async (req, res) => {
     let wisdomItems = wisdom.lifeLessons;
 
     if (domain) {
-      const domainWisdom = wisdom.wisdomDomains.find(d => d.domain === domain);
+      const domainWisdom = wisdom.wisdomDomains.find((d: any) => d.domain === domain);
       if (domainWisdom) {
-        wisdomItems = domainWisdom.insights.map(insight => ({
+        wisdomItems = domainWisdom.insights.map((insight: any) => ({
+          id: uuidv4(),
+          timestamp: new Date(),
           lesson: insight,
-          context: domain,
+          context: domain as string,
           impact: 0.8,
-          applications: [domain],
+          applications: [domain as string],
           wisdom: insight
         }));
       }
@@ -185,7 +226,7 @@ router.get('/wisdom', async (req, res) => {
       wisdom: wisdomItems,
       totalWisdom: wisdom.totalWisdom,
       wisdomScore: wisdom.wisdomScore,
-      domains: wisdom.wisdomDomains.map(d => d.domain),
+      domains: wisdom.wisdomDomains.map((d: any) => d.domain),
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -206,7 +247,7 @@ router.get('/predictions', async (req, res) => {
     res.json({
       predictions: predictions,
       totalPredictions: predictions.length,
-      averageConfidence: predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length || 0,
+      averageConfidence: predictions.reduce((sum: number, p: any) => sum + p.confidence, 0) / predictions.length || 0,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -227,7 +268,7 @@ router.get('/insights', async (req, res) => {
     res.json({
       insights: insights,
       totalInsights: insights.length,
-      averageCreativity: insights.reduce((sum, i) => sum + i.creativity, 0) / insights.length || 0,
+      averageCreativity: insights.reduce((sum: number, i: any) => sum + i.creativity, 0) / insights.length || 0,
       timestamp: new Date().toISOString()
     });
   } catch (error) {

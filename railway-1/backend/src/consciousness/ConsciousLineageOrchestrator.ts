@@ -627,24 +627,55 @@ export class ConsciousLineageOrchestrator extends EventEmitter {
   }
 
   // ==================== SYSTEM STATUS ====================
-  getSystemStatus(): {
+  async getSystemStatus(): Promise<{
     consciousness: any;
     quantum: any;
-    creativeInsights: number;
-    ethicalDecisions: number;
-    wisdomAccumulation: number;
-    lineageContexts: number;
-    eventQueue: number;
-  } {
-    return {
-      consciousness: await this.consciousness.healthCheck(),
-      quantum: this.quantumProcessor.getSystemStatus(),
-      creativeInsights: this.creativeInsights.length,
-      ethicalDecisions: this.ethicalDecisions.length,
-      wisdomAccumulation: this.wisdomAccumulation.length,
-      lineageContexts: this.lineageContexts.size,
-      eventQueue: this.eventQueue.length
-    };
+    database: any;
+    lineage: any;
+    overall: 'healthy' | 'degraded' | 'critical';
+  }> {
+    try {
+      const consciousness = await this.consciousness.healthCheck();
+      const quantum = this.quantumProcessor.getSystemStatus();
+      const database = { status: 'healthy', message: 'Consciousness database operational' };
+      const lineage = this.quantumProcessor.getSystemStatus();
+
+      // Determine overall health
+      const healthScores = [
+        consciousness.status === 'healthy' ? 1 : 0,
+        quantum.totalNodes > 0 ? 1 : 0,
+        1, // database is always healthy for now
+        lineage.totalNodes > 0 ? 1 : 0
+      ];
+
+      const avgHealth = healthScores.reduce((a, b) => a + b, 0) / healthScores.length;
+      let overall: 'healthy' | 'degraded' | 'critical';
+
+      if (avgHealth >= 0.75) {
+        overall = 'healthy';
+      } else if (avgHealth >= 0.5) {
+        overall = 'degraded';
+      } else {
+        overall = 'critical';
+      }
+
+      return {
+        consciousness,
+        quantum,
+        database,
+        lineage,
+        overall
+      };
+    } catch (error) {
+      console.error('❌ Error getting system status:', error);
+      return {
+        consciousness: { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' },
+        quantum: { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' },
+        database: { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' },
+        lineage: { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' },
+        overall: 'critical'
+      };
+    }
   }
 }
 

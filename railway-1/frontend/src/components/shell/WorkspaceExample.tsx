@@ -53,7 +53,7 @@ const WorkspaceExample: React.FC = () => {
                   <div className="text-blue-400">createRevolutionaryApp</div>
                   <div className="text-white">() {`{`}</div>
                   <div className="text-yellow-400 ml-4">return</div>
-                  <div className="text-purple-400 ml-4">"Beyond Sir Steve!"</div>
+                  <div className="text-purple-400 ml-4">&quot;Beyond Sir Steve!&quot;</div>
                   <div className="text-white">{`}`}</div>
                 </div>
               </div>
@@ -189,7 +189,7 @@ const WorkspaceExample: React.FC = () => {
                 <div className="text-center">
                   <div className="text-4xl mb-2">🎵</div>
                   <div className="text-sm text-white/70">Now Playing</div>
-                  <div className="font-semibold">"Beyond Sir Steve"</div>
+                  <div className="font-semibold">&quot;Beyond Sir Steve&quot;</div>
                   <div className="text-xs text-white/50">AI-BOS Orchestra</div>
                 </div>
               </div>

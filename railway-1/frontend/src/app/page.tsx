@@ -196,17 +196,17 @@ export default function HomePage() {
                           <div className="space-y-4">
                             <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
                               <p className="text-sm text-blue-300">
-                                "I've analyzed your workflow and found 3 optimization opportunities. Would you like me to implement them?"
+                                &quot;I&apos;ve analyzed your workflow and found 3 optimization opportunities. Would you like me to implement them?&quot;
                               </p>
                             </div>
                             <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
                               <p className="text-sm text-purple-300">
-                                "Your team's productivity has increased by 23% this week. Great job!"
+                                &quot;Your team&apos;s productivity has increased by 23% this week. Great job!&quot;
                               </p>
                             </div>
                             <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
                               <p className="text-sm text-green-300">
-                                "New AI model deployed successfully. Performance improved by 15%."
+                                &quot;New AI model deployed successfully. Performance improved by 15%.&quot;
                               </p>
                             </div>
                           </div>

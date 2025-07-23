@@ -339,7 +339,7 @@ export class QuantumLineageProcessor extends EventEmitter {
     for (let i = 0; i < size; i++) {
       matrix[i] = [];
       for (let j = 0; j < size; j++) {
-        matrix[i][j] = Math.random() * 0.5 + 0.25; // 0.25 to 0.75
+        matrix[i]![j] = Math.random() * 0.5 + 0.25; // 0.25 to 0.75
       }
     }
 
@@ -461,7 +461,7 @@ export class QuantumLineageProcessor extends EventEmitter {
     );
 
     const sharedMetadata = node1.parallelVersions.some(v1 =>
-      node2.parallelVersions.some(v2 => v1.metadata.type === v2.metadata.type)
+      node2.parallelVersions.some(v2 => v1.metadata['type'] === v2.metadata['type'])
     );
 
     return sharedVersions || sharedMetadata;
@@ -486,8 +486,8 @@ export class QuantumLineageProcessor extends EventEmitter {
   }
 
   private calculateMetadataSimilarity(node1: QuantumLineageNode, node2: QuantumLineageNode): number {
-    const metadata1 = node1.parallelVersions.map(v => v.metadata.type);
-    const metadata2 = node2.parallelVersions.map(v => v.metadata.type);
+    const metadata1 = node1.parallelVersions.map(v => v.metadata['type']);
+    const metadata2 = node2.parallelVersions.map(v => v.metadata['type']);
 
     const intersection = metadata1.filter(m => metadata2.includes(m));
     const union = [...new Set([...metadata1, ...metadata2])];
@@ -521,7 +521,14 @@ export class QuantumLineageProcessor extends EventEmitter {
   private selectCollapseCondition(quantumNode: QuantumLineageNode): CollapseCondition {
     const validConditions = quantumNode.collapseConditions.filter(c => c.probability > 0.3);
     if (validConditions.length === 0) {
-      return quantumNode.collapseConditions[0];
+      return quantumNode.collapseConditions[0] || {
+        id: uuidv4(),
+        condition: 'default',
+        probability: 0.5,
+        trigger: 'system_default',
+        outcome: 'stable_state',
+        timestamp: new Date()
+      };
     }
 
     // Select based on probability
@@ -535,24 +542,31 @@ export class QuantumLineageProcessor extends EventEmitter {
       }
     }
 
-    return validConditions[0];
+    return validConditions[0] || {
+      id: uuidv4(),
+      condition: 'default',
+      probability: 0.5,
+      trigger: 'system_default',
+      outcome: 'stable_state',
+      timestamp: new Date()
+    };
   }
 
   private calculateTimelineImpact(version: LineageVersion): number {
-    return version.probability * (version.metadata.enhanced ? 1.2 : 1.0) * (version.metadata.revolutionary ? 1.5 : 1.0);
+    return version.probability * (version.metadata['enhanced'] ? 1.2 : 1.0) * (version.metadata['revolutionary'] ? 1.5 : 1.0);
   }
 
   private calculateTimelineDuration(version: LineageVersion): number {
-    return version.metadata.revolutionary ? 90 : version.metadata.enhanced ? 60 : 30;
+    return version.metadata['revolutionary'] ? 90 : version.metadata['enhanced'] ? 60 : 30;
   }
 
   private extractDependencies(version: LineageVersion): string[] {
-    return version.metadata.dependencies || [];
+    return version.metadata['dependencies'] || [];
   }
 
   private identifyRisks(version: LineageVersion): string[] {
     const risks = ['Technical complexity', 'User adoption challenges'];
-    if (version.metadata.revolutionary) {
+    if (version.metadata['revolutionary']) {
       risks.push('Market uncertainty', 'Implementation complexity');
     }
     return risks;
@@ -560,7 +574,7 @@ export class QuantumLineageProcessor extends EventEmitter {
 
   private identifyOpportunities(version: LineageVersion): string[] {
     const opportunities = ['User experience improvement', 'Performance optimization'];
-    if (version.metadata.revolutionary) {
+    if (version.metadata['revolutionary']) {
       opportunities.push('Market leadership', 'Paradigm shift');
     }
     return opportunities;

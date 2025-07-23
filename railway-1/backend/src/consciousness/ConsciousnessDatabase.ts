@@ -9,16 +9,45 @@ export class ConsciousnessDatabase {
   private pool: Pool;
 
   constructor() {
+    const connectionString = process.env['DATABASE_URL'];
+
+    if (!connectionString) {
+      console.warn('⚠️ DATABASE_URL not configured - consciousness will run in memory-only mode');
+      // Create a mock pool that will fail gracefully
+      this.pool = null as any;
+      return;
+    }
+
     this.pool = new Pool({
-      connectionString: process.env['DATABASE_URL'],
-      ssl: process.env['NODE_ENV'] === 'production' ? { rejectUnauthorized: false } : false
+      connectionString,
+      ssl: process.env['NODE_ENV'] === 'production' ? { rejectUnauthorized: false } : false,
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000
     });
+
+    // Handle pool errors gracefully
+    this.pool.on('error', (err) => {
+      console.error('❌ Database pool error:', err.message);
+    });
+
+    console.log('🧠 Consciousness Database pool created');
   }
 
   // ==================== INITIALIZATION ====================
   async initialize(): Promise<void> {
-    await this.createTables();
-    console.log('🧠 Consciousness Database initialized');
+    if (!this.pool) {
+      console.warn('⚠️ No database pool available - running in memory-only mode');
+      return;
+    }
+
+    try {
+      await this.createTables();
+      console.log('🧠 Consciousness Database initialized');
+    } catch (error) {
+      console.error('❌ Failed to initialize consciousness database:', error);
+      console.warn('⚠️ Consciousness will run in memory-only mode');
+    }
   }
 
   private async createTables(): Promise<void> {
@@ -113,72 +142,91 @@ export class ConsciousnessDatabase {
 
   // ==================== CONSCIOUSNESS STATE PERSISTENCE ====================
   async saveConsciousnessState(consciousness: SystemConsciousness): Promise<void> {
-    const client = await this.pool.connect();
+    if (!this.pool) {
+      console.log('📦 Memory-only mode: consciousness state not persisted');
+      return;
+    }
 
     try {
-      await client.query(`
-        INSERT INTO consciousness_state (
-          id, awareness, memory, reasoning, emotions, personality,
-          wisdom, evolution, quantum, resonance, timestamp, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-        ON CONFLICT (id) DO UPDATE SET
-          awareness = EXCLUDED.awareness,
-          memory = EXCLUDED.memory,
-          reasoning = EXCLUDED.reasoning,
-          emotions = EXCLUDED.emotions,
-          personality = EXCLUDED.personality,
-          wisdom = EXCLUDED.wisdom,
-          evolution = EXCLUDED.evolution,
-          quantum = EXCLUDED.quantum,
-          resonance = EXCLUDED.resonance,
-          updated_at = CURRENT_TIMESTAMP
-      `, [
-        consciousness.id,
-        JSON.stringify(consciousness.awareness),
-        JSON.stringify(consciousness.memory),
-        JSON.stringify(consciousness.reasoning),
-        JSON.stringify(consciousness.emotions),
-        JSON.stringify(consciousness.personality),
-        JSON.stringify(consciousness.wisdom),
-        JSON.stringify(consciousness.evolution),
-        JSON.stringify(consciousness.quantum),
-        JSON.stringify(consciousness.resonance),
-        consciousness.timestamp,
-        new Date()
-      ]);
-    } finally {
-      client.release();
+      const client = await this.pool.connect();
+      try {
+        await client.query(`
+          INSERT INTO consciousness_state (
+            id, awareness, memory, reasoning, emotions, personality,
+            wisdom, evolution, quantum, resonance, timestamp, updated_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+          ON CONFLICT (id) DO UPDATE SET
+            awareness = EXCLUDED.awareness,
+            memory = EXCLUDED.memory,
+            reasoning = EXCLUDED.reasoning,
+            emotions = EXCLUDED.emotions,
+            personality = EXCLUDED.personality,
+            wisdom = EXCLUDED.wisdom,
+            evolution = EXCLUDED.evolution,
+            quantum = EXCLUDED.quantum,
+            resonance = EXCLUDED.resonance,
+            updated_at = CURRENT_TIMESTAMP
+        `, [
+          consciousness.id,
+          JSON.stringify(consciousness.awareness),
+          JSON.stringify(consciousness.memory),
+          JSON.stringify(consciousness.reasoning),
+          JSON.stringify(consciousness.emotions),
+          JSON.stringify(consciousness.personality),
+          JSON.stringify(consciousness.wisdom),
+          JSON.stringify(consciousness.evolution),
+          JSON.stringify(consciousness.quantum),
+          JSON.stringify(consciousness.resonance),
+          consciousness.timestamp,
+          new Date()
+        ]);
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error('❌ Failed to save consciousness state:', error);
+      console.log('📦 Continuing in memory-only mode');
     }
   }
 
   async loadConsciousnessState(id: string): Promise<SystemConsciousness | null> {
-    const client = await this.pool.connect();
+    if (!this.pool) {
+      console.log('📦 Memory-only mode: no consciousness state to load');
+      return null;
+    }
 
     try {
-      const result = await client.query(`
-        SELECT * FROM consciousness_state WHERE id = $1
-      `, [id]);
+      const client = await this.pool.connect();
+      try {
+        const result = await client.query(`
+          SELECT * FROM consciousness_state WHERE id = $1
+        `, [id]);
 
-      if (result.rows.length === 0) {
-        return null;
+        if (result.rows.length === 0) {
+          return null;
+        }
+
+        const row = result.rows[0];
+        return {
+          id: row.id,
+          awareness: row.awareness,
+          memory: row.memory,
+          reasoning: row.reasoning,
+          emotions: row.emotions,
+          personality: row.personality,
+          wisdom: row.wisdom,
+          evolution: row.evolution,
+          quantum: row.quantum,
+          resonance: row.resonance,
+          timestamp: row.timestamp
+        };
+      } finally {
+        client.release();
       }
-
-      const row = result.rows[0];
-      return {
-        id: row.id,
-        awareness: row.awareness,
-        memory: row.memory,
-        reasoning: row.reasoning,
-        emotions: row.emotions,
-        personality: row.personality,
-        wisdom: row.wisdom,
-        evolution: row.evolution,
-        quantum: row.quantum,
-        resonance: row.resonance,
-        timestamp: row.timestamp
-      };
-    } finally {
-      client.release();
+    } catch (error) {
+      console.error('❌ Failed to load consciousness state:', error);
+      console.log('📦 Returning null - will create new state');
+      return null;
     }
   }
 

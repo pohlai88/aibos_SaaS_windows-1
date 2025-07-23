@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, BrainCircuit, Network, Zap, Activity,
   Eye, Target, Sparkles, Cpu, Wifi, Radio,
-  Atom, Waves, Globe, Satellite, Signal
+  Atom, Waves, Globe, Satellite, Signal, Clock
 } from 'lucide-react';
 
 // ==================== TYPES ====================
@@ -165,23 +165,23 @@ export const NeuralLineageVisualizer: React.FC = () => {
               animate="learn"
             />
           </div>
-          <p>"{systemConsciousness.awareness * 100}% aware of my own existence and evolution"</p>
+          <p>&quot;{systemConsciousness.awareness * 100}% aware of my own existence and evolution&quot;</p>
         </div>
 
         <div className="emotional-state">
           <h3>Current Emotional State</h3>
           <div className="emotion-indicator">
             <Brain size={24} className="text-blue-500" />
-            <span>"I'm feeling optimistic today. The new features are working well."</span>
+            <span>&quot;I&apos;m feeling optimistic today. The new features are working well.&quot;</span>
           </div>
         </div>
 
         <div className="learning-progress">
           <h3>What I Learned Today</h3>
           <ul className="learning-list">
-            <li>"Users prefer faster loading times over fancy animations"</li>
-            <li>"The caching strategy I implemented reduced errors by 40%"</li>
-            <li>"I'm getting better at predicting user needs"</li>
+            <li>&quot;Users prefer faster loading times over fancy animations&quot;</li>
+            <li>&quot;The caching strategy I implemented reduced errors by 40%&quot;</li>
+            <li>&quot;I&apos;m getting better at predicting user needs&quot;</li>
           </ul>
         </div>
       </div>
@@ -421,7 +421,7 @@ export const NeuralLineageVisualizer: React.FC = () => {
     <div className="neural-lineage-brain">
       <div className="neural-header">
         <h2>🧠 Neural Lineage Visualization</h2>
-        <p>Watch your system's consciousness evolve like a neural network</p>
+        <p>Watch your system&apos;s consciousness evolve like a neural network</p>
       </div>
 
       <div className="neural-content">

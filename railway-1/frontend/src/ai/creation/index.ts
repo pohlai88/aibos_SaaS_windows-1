@@ -1100,7 +1100,7 @@ export const REVOLUTIONARY_FEATURES = {
   }
 };
 
-export default {
+const AICreationModule = {
   // Core Components
   PromptToAppAgent: PromptToAppAgent,
   AgentOrchestrator: AgentOrchestrator,
@@ -1124,3 +1124,5 @@ export default {
   AI_CREATION_METRICS,
   REVOLUTIONARY_FEATURES
 };
+
+export default AICreationModule;

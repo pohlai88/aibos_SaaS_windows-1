@@ -384,7 +384,7 @@ const Terminal: React.FC = () => {
             {state.commands.length === 0 && (
               <div className="space-y-2">
                 <div className="text-green-400">Welcome to AI-BOS Terminal v1.0.0</div>
-                <div className="text-white/50">Type 'help' for available commands</div>
+                <div className="text-white/50">Type &apos;help&apos; for available commands</div>
                 <div className="text-white/50">Current directory: {state.currentDirectory}</div>
               </div>
             )}

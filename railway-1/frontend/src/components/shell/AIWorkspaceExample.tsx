@@ -327,7 +327,7 @@ const AIWorkspaceExample: React.FC = () => {
               <div>
                 <h4 className="font-semibold text-indigo-400 mb-2">AI Layout Optimization</h4>
                 <ul className="space-y-1 text-sm text-white/70">
-                  <li>• Click "Apply AI Layout" to optimize window positions</li>
+                  <li>• Click &quot;Apply AI Layout&quot; to optimize window positions</li>
                   <li>• AI analyzes content and user patterns</li>
                   <li>• Windows are arranged by priority and relevance</li>
                   <li>• Performance predictions guide optimization</li>
@@ -336,7 +336,7 @@ const AIWorkspaceExample: React.FC = () => {
               <div>
                 <h4 className="font-semibold text-purple-400 mb-2">AI Insights</h4>
                 <ul className="space-y-1 text-sm text-white/70">
-                  <li>• Click "AI Insights" to view recommendations</li>
+                  <li>• Click &quot;AI Insights&quot; to view recommendations</li>
                   <li>• Real-time performance predictions</li>
                   <li>• Risk factor identification</li>
                   <li>• Optimization suggestions</li>
