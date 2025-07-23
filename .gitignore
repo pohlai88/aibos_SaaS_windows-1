@@ -36,6 +36,14 @@ build/
 .vite/
 .eslintcache
 .prettiercache
+Legacy_shared/minimal/*.js
+Legacy_shared/minimal/*.js.map
+Legacy_shared/minimal/*.d.ts
+Legacy_shared/minimal/*.d.ts.map
+Legacy_shared/minimal/ui/*.js
+Legacy_shared/minimal/ui/*.js.map
+Legacy_shared/minimal/ui/*.d.ts
+Legacy_shared/minimal/ui/*.d.ts.map
 
 ############## DEPENDENCIES ##############
 node_modules/
