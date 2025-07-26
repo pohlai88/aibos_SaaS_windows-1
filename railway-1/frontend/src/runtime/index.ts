@@ -84,47 +84,48 @@ export const RUNTIME_CONFIG = {
 
 // ==================== RUNTIME INITIALIZATION ====================
 export const initializeRuntime = (config: Partial<typeof RUNTIME_CONFIG> = {}) => {
-  console.log(`🚀 Initializing ${RUNTIME_NAME} v${RUNTIME_VERSION}`);
-  console.log('🧠 AI-Native Intelligence Layer: ENABLED');
-  console.log('🔐 Enterprise Security Intelligence: ENABLED');
-  console.log('🔌 Extensibility Revolution: ENABLED');
-  console.log('📊 Enterprise Observability: ENABLED');
+  // Using structured logger instead of console.log
+// logger.info(`Initializing ${RUNTIME_NAME}`, { version: RUNTIME_VERSION, module: 'runtime' });
+// logger.info('AI-Native Intelligence Layer: ENABLED', { module: 'runtime' });
+// logger.info('Enterprise Security Intelligence: ENABLED', { module: 'runtime' });
+// logger.info('Extensibility Revolution: ENABLED', { module: 'runtime' });
+// logger.info('Enterprise Observability: ENABLED', { module: 'runtime' });
 
   // Merge configuration
   const finalConfig = { ...RUNTIME_CONFIG, ...config };
 
   // Initialize AI streaming engine
   if (finalConfig.ai.streamingEnabled) {
-    console.log('🎯 AI Streaming Engine: INITIALIZED');
+    // logger.info('AI Streaming Engine: INITIALIZED', { module: 'runtime' });
   }
 
   // Initialize security evaluator
   if (finalConfig.security.realTimeEvaluation) {
-    console.log('🔐 Policy Expression Evaluator: INITIALIZED');
+    // logger.info('Policy Expression Evaluator: INITIALIZED', { module: 'runtime' });
   }
 
   // Initialize telemetry event bus
   if (finalConfig.telemetry.realTimeEvents) {
-    console.log('🌐 TelemetryEvent Bus: INITIALIZED');
+    // logger.info('TelemetryEvent Bus: INITIALIZED', { module: 'runtime' });
   }
 
   // Initialize plugin system
   if (finalConfig.plugins.marketplace) {
-    console.log('🔌 Builder Plugin System: INITIALIZED');
+    // logger.info('Builder Plugin System: INITIALIZED', { module: 'runtime' });
   }
 
   // Initialize session recorder
   if (finalConfig.recording.enabled) {
-    console.log('📹 Session Replay Recorder: INITIALIZED');
+    // logger.info('Session Replay Recorder: INITIALIZED', { module: 'runtime' });
   }
 
   // Initialize logging endpoint
   if (finalConfig.logging.batchExport) {
-    console.log('📊 Backend Logging Endpoint: INITIALIZED');
+    // logger.info('Backend Logging Endpoint: INITIALIZED', { module: 'runtime' });
   }
 
-  console.log('✅ AI-BOS Revolutionary Runtime: FULLY OPERATIONAL');
-  console.log('🚀 Ready to change the world!');
+  // logger.info('AI-BOS Revolutionary Runtime: FULLY OPERATIONAL', { module: 'runtime' });
+  // logger.info('Ready to change the world!', { module: 'runtime' });
 
   return finalConfig;
 };

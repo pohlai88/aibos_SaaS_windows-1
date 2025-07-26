@@ -7,6 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import cors from 'cors';
+import { env } from '../../utils/env';
 
 // ==================== CORE TYPES ====================
 export interface AuthUser {
@@ -73,7 +74,7 @@ export class SecurityMiddleware {
         legacyHeaders: false
       },
       cors: {
-        origin: process.env["ALLOWED_ORIGINS"]?.split(',') || ['http://localhost:3000'],
+        origin: env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-API-Key']

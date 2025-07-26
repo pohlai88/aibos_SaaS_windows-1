@@ -1,0 +1,2729 @@
+{
+  "generated": "2025-07-26T09:20:11.477Z",
+  "summary": {
+    "total": 168,
+    "byCategory": {
+      "ai-engine": 159,
+      "analytics": 0,
+      "integration": 2,
+      "workflow": 0,
+      "security": 0,
+      "performance": 0,
+      "testing": 0,
+      "documentation": 0,
+      "deployment": 0,
+      "other": 7
+    },
+    "byPriority": {
+      "critical": 0,
+      "high": 0,
+      "medium": 162,
+      "low": 6
+    }
+  },
+  "categories": {
+    "ai-engine": [
+      {
+        "file": "railway-1\\frontend\\src\\lib\\5g-network-integration.ts",
+        "line": 747,
+        "description": "Implement when historical data is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\5g-network-integration.ts",
+        "line": 817,
+        "description": "Implement when optimization engine is available",
+        "category": "ai-engine",
+        "priority": "low",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\5g-network-integration.ts",
+        "line": 886,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 868,
+        "description": "Implement real widget data retrieval when backend APIs are available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 935,
+        "description": "Implement when AI backend is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 940,
+        "description": "Implement when quantum backend is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 945,
+        "description": "Implement when AI prediction service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 950,
+        "description": "Implement when quantum prediction service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 955,
+        "description": "Implement when AI recommendation service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 960,
+        "description": "Implement when quantum recommendation service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 965,
+        "description": "Implement when AI report enhancement service is available",
+        "category": "ai-engine",
+        "priority": "low",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 970,
+        "description": "Implement when AI visualization service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 975,
+        "description": "Implement when quantum visualization service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 990,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 995,
+        "description": "Implement when prediction rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 1000,
+        "description": "Implement when recommendation rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+        "line": 1005,
+        "description": "Implement when visualization rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-collaboration.ts",
+        "line": 1029,
+        "description": "Get real resource availability",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-collaboration.ts",
+        "line": 1036,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-collaboration.ts",
+        "line": 1041,
+        "description": "Implement when summary rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-voice-speech.ts",
+        "line": 1286,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 783,
+        "description": "Implement when action service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 788,
+        "description": "Implement when decision service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 793,
+        "description": "Implement when integration service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 798,
+        "description": "Implement when AI analysis service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 803,
+        "description": "Implement when notification service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 808,
+        "description": "Implement when custom task service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 813,
+        "description": "Implement when AI task analysis service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 818,
+        "description": "Implement when quantum task analysis service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 830,
+        "description": "Get real resource availability",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 837,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 842,
+        "description": "Implement when insight rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ar-vr-integration.ts",
+        "line": 1037,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\blockchain-integration.ts",
+        "line": 1037,
+        "description": "Implement when risk assessment service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\blockchain-integration.ts",
+        "line": 1047,
+        "description": "Implement when impact analysis service is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\blockchain-integration.ts",
+        "line": 1276,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\custom-ai-model-training.ts",
+        "line": 1227,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\edge-computing-integration.ts",
+        "line": 769,
+        "description": "Implement when historical data is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\edge-computing-integration.ts",
+        "line": 838,
+        "description": "Implement when optimization engine is available",
+        "category": "ai-engine",
+        "priority": "low",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\edge-computing-integration.ts",
+        "line": 904,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\iot-device-management.ts",
+        "line": 1066,
+        "description": "Implement when rule engine is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\backend\\src\\ai-database\\AuditEngine.ts",
+        "line": 164,
+        "description": "Initialize Supabase client when environment variables are available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "ai-database"
+      },
+      {
+        "file": "railway-1\\backend\\src\\ai-database\\AuditEngine.ts",
+        "line": 211,
+        "description": "Store in appropriate audit table when Supabase is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "ai-database"
+      },
+      {
+        "file": "railway-1\\backend\\src\\api\\webhooks\\WebhookManager.ts",
+        "line": 340,
+        "description": "Implement actual webhook sending when axios is available",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "api"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 13,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 48,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 157,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 215,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 251,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 314,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 377,
+        "description": "Query AI-Governed Database for real networks",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 396,
+        "description": "Query AI-Governed Database for real slices",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 415,
+        "description": "Query AI-Governed Database for real connections",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 434,
+        "description": "Query AI-Governed Database for real analytics",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+        "line": 453,
+        "description": "Query AI-Governed Database for real optimizations",
+        "category": "ai-engine",
+        "priority": "low",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 13,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 44,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 84,
+        "description": "Query AI-Governed Database for real sessions",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 105,
+        "description": "Query AI-Governed Database for specific session",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 133,
+        "description": "Update in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 158,
+        "description": "Delete from AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 184,
+        "description": "Add participant to session in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 216,
+        "description": "Add AI assistant to session in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 249,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 317,
+        "description": "Start meeting in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 343,
+        "description": "End meeting in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 377,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+        "line": 449,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+        "line": 13,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+        "line": 49,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+        "line": 148,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+        "line": 216,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+        "line": 276,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+        "line": 385,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+        "line": 427,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+        "line": 491,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\analytics.js",
+        "line": 36,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\analytics.js",
+        "line": 102,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\analytics.js",
+        "line": 170,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\analytics.js",
+        "line": 211,
+        "description": "Query AI-Governed Database for real insights",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\analytics.js",
+        "line": 230,
+        "description": "Query AI-Governed Database for real predictions",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\analytics.js",
+        "line": 249,
+        "description": "Query AI-Governed Database for real recommendations",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+        "line": 13,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+        "line": 46,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+        "line": 124,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+        "line": 177,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+        "line": 217,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+        "line": 259,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+        "line": 287,
+        "description": "Query AI-Governed Database for real sessions",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+        "line": 306,
+        "description": "Query AI-Governed Database for real devices",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+        "line": 325,
+        "description": "Query AI-Governed Database for real experiences",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 13,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 50,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 98,
+        "description": "Query AI-Governed Database for real networks",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 125,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 166,
+        "description": "Query AI-Governed Database for real transactions",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 193,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 236,
+        "description": "Query AI-Governed Database for real contracts",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 263,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 354,
+        "description": "Query AI-Governed Database for real governance proposals",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 381,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 435,
+        "description": "Query AI-Governed Database for real tokens",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 462,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 539,
+        "description": "Query AI-Governed Database for real NFTs",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 566,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+        "line": 604,
+        "description": "Query AI-Governed Database for real marketplaces",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 14,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 47,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 124,
+        "description": "Query AI-Governed Database for real models",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 145,
+        "description": "Query AI-Governed Database for specific model",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 173,
+        "description": "Update in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 198,
+        "description": "Delete from AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 218,
+        "description": "Start training in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 290,
+        "description": "Query AI-Governed Database for training jobs",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 448,
+        "description": "Make prediction using AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 479,
+        "description": "Query AI-Governed Database for all training jobs",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 686,
+        "description": "Update in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+        "line": 711,
+        "description": "Delete from AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 13,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 48,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 130,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 177,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 229,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 290,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 351,
+        "description": "Query AI-Governed Database for real nodes",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 370,
+        "description": "Query AI-Governed Database for real clusters",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 389,
+        "description": "Query AI-Governed Database for real workloads",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 408,
+        "description": "Query AI-Governed Database for real analytics",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+        "line": 427,
+        "description": "Query AI-Governed Database for real optimizations",
+        "category": "ai-engine",
+        "priority": "low",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\invitations.js",
+        "line": 132,
+        "description": "Send invitation email",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\invitations.js",
+        "line": 333,
+        "description": "Send invitation email",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+        "line": 13,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+        "line": 46,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+        "line": 116,
+        "description": "Query AI-Governed Database for real devices",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+        "line": 144,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+        "line": 201,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+        "line": 291,
+        "description": "Query AI-Governed Database for real fleets",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+        "line": 310,
+        "description": "Query AI-Governed Database for real device data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\scalability.js",
+        "line": 13,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\scalability.js",
+        "line": 54,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\scalability.js",
+        "line": 87,
+        "description": "Query AI-Governed Database for real scaling rules",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\scalability.js",
+        "line": 109,
+        "description": "Update in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\scalability.js",
+        "line": 134,
+        "description": "Delete from AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\scalability.js",
+        "line": 151,
+        "description": "Query AI-Governed Database for real node data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\scalability.js",
+        "line": 170,
+        "description": "Query AI-Governed Database for real performance data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\scalability.js",
+        "line": 205,
+        "description": "Implement actual scaling logic with AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 16,
+        "description": "Connect to AI-Governed Database for real data",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 48,
+        "description": "Save to AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 94,
+        "description": "Query AI-Governed Database for real workflows",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 135,
+        "description": "Query AI-Governed Database for specific workflow",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 163,
+        "description": "Update in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 188,
+        "description": "Delete from AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 208,
+        "description": "Execute workflow with AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 236,
+        "description": "Query AI-Governed Database for real executions",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 257,
+        "description": "Query AI-Governed Database for specific execution",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 290,
+        "description": "Add task to workflow in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 320,
+        "description": "Add connection to workflow in AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 342,
+        "description": "Query AI-Governed Database for real insights",
+        "category": "ai-engine",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+        "line": 369,
+        "description": "Perform AI optimization with AI-Governed Database",
+        "category": "ai-engine",
+        "priority": "low",
+        "module": "routes"
+      }
+    ],
+    "analytics": [],
+    "integration": [
+      {
+        "file": "railway-1\\backend\\src\\routes\\security.js",
+        "line": 339,
+        "description": "Implement API call tracking",
+        "category": "integration",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "shared\\src\\logging\\logger.ts",
+        "line": 100,
+        "description": "Implement external logging service integration",
+        "category": "integration",
+        "priority": "medium",
+        "module": "logging"
+      }
+    ],
+    "workflow": [],
+    "security": [],
+    "performance": [],
+    "testing": [],
+    "documentation": [],
+    "deployment": [],
+    "other": [
+      {
+        "file": "railway-1\\frontend\\src\\lib\\5g-network-integration.ts",
+        "line": 822,
+        "description": "Implement improvement calculation",
+        "category": "other",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\advanced-collaboration.ts",
+        "line": 1028,
+        "description": "Get real system load",
+        "category": "other",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+        "line": 829,
+        "description": "Get real system load",
+        "category": "other",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\frontend\\src\\lib\\edge-computing-integration.ts",
+        "line": 843,
+        "description": "Implement improvement calculation",
+        "category": "other",
+        "priority": "medium",
+        "module": "lib"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\billing.js",
+        "line": 435,
+        "description": "Implement PDF generation",
+        "category": "other",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\security.js",
+        "line": 54,
+        "description": "Get from user settings",
+        "category": "other",
+        "priority": "medium",
+        "module": "routes"
+      },
+      {
+        "file": "railway-1\\backend\\src\\routes\\security.js",
+        "line": 334,
+        "description": "Implement session tracking",
+        "category": "other",
+        "priority": "medium",
+        "module": "routes"
+      }
+    ]
+  },
+  "allTodos": [
+    {
+      "file": "railway-1\\frontend\\src\\lib\\5g-network-integration.ts",
+      "line": 747,
+      "description": "Implement when historical data is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\5g-network-integration.ts",
+      "line": 817,
+      "description": "Implement when optimization engine is available",
+      "category": "ai-engine",
+      "priority": "low",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\5g-network-integration.ts",
+      "line": 822,
+      "description": "Implement improvement calculation",
+      "category": "other",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\5g-network-integration.ts",
+      "line": 886,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 868,
+      "description": "Implement real widget data retrieval when backend APIs are available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 935,
+      "description": "Implement when AI backend is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 940,
+      "description": "Implement when quantum backend is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 945,
+      "description": "Implement when AI prediction service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 950,
+      "description": "Implement when quantum prediction service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 955,
+      "description": "Implement when AI recommendation service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 960,
+      "description": "Implement when quantum recommendation service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 965,
+      "description": "Implement when AI report enhancement service is available",
+      "category": "ai-engine",
+      "priority": "low",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 970,
+      "description": "Implement when AI visualization service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 975,
+      "description": "Implement when quantum visualization service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 990,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 995,
+      "description": "Implement when prediction rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 1000,
+      "description": "Implement when recommendation rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-analytics-insights.ts",
+      "line": 1005,
+      "description": "Implement when visualization rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-collaboration.ts",
+      "line": 1028,
+      "description": "Get real system load",
+      "category": "other",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-collaboration.ts",
+      "line": 1029,
+      "description": "Get real resource availability",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-collaboration.ts",
+      "line": 1036,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-collaboration.ts",
+      "line": 1041,
+      "description": "Implement when summary rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\advanced-voice-speech.ts",
+      "line": 1286,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 783,
+      "description": "Implement when action service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 788,
+      "description": "Implement when decision service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 793,
+      "description": "Implement when integration service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 798,
+      "description": "Implement when AI analysis service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 803,
+      "description": "Implement when notification service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 808,
+      "description": "Implement when custom task service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 813,
+      "description": "Implement when AI task analysis service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 818,
+      "description": "Implement when quantum task analysis service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 829,
+      "description": "Get real system load",
+      "category": "other",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 830,
+      "description": "Get real resource availability",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 837,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ai-workflow-automation.ts",
+      "line": 842,
+      "description": "Implement when insight rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\ar-vr-integration.ts",
+      "line": 1037,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\blockchain-integration.ts",
+      "line": 1037,
+      "description": "Implement when risk assessment service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\blockchain-integration.ts",
+      "line": 1047,
+      "description": "Implement when impact analysis service is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\blockchain-integration.ts",
+      "line": 1276,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\custom-ai-model-training.ts",
+      "line": 1227,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\edge-computing-integration.ts",
+      "line": 769,
+      "description": "Implement when historical data is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\edge-computing-integration.ts",
+      "line": 838,
+      "description": "Implement when optimization engine is available",
+      "category": "ai-engine",
+      "priority": "low",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\edge-computing-integration.ts",
+      "line": 843,
+      "description": "Implement improvement calculation",
+      "category": "other",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\edge-computing-integration.ts",
+      "line": 904,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\frontend\\src\\lib\\iot-device-management.ts",
+      "line": 1066,
+      "description": "Implement when rule engine is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "lib"
+    },
+    {
+      "file": "railway-1\\backend\\src\\ai-database\\AuditEngine.ts",
+      "line": 164,
+      "description": "Initialize Supabase client when environment variables are available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "ai-database"
+    },
+    {
+      "file": "railway-1\\backend\\src\\ai-database\\AuditEngine.ts",
+      "line": 211,
+      "description": "Store in appropriate audit table when Supabase is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "ai-database"
+    },
+    {
+      "file": "railway-1\\backend\\src\\api\\webhooks\\WebhookManager.ts",
+      "line": 340,
+      "description": "Implement actual webhook sending when axios is available",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "api"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 13,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 48,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 157,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 215,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 251,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 314,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 377,
+      "description": "Query AI-Governed Database for real networks",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 396,
+      "description": "Query AI-Governed Database for real slices",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 415,
+      "description": "Query AI-Governed Database for real connections",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 434,
+      "description": "Query AI-Governed Database for real analytics",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\5g-network-integration.js",
+      "line": 453,
+      "description": "Query AI-Governed Database for real optimizations",
+      "category": "ai-engine",
+      "priority": "low",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 13,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 44,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 84,
+      "description": "Query AI-Governed Database for real sessions",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 105,
+      "description": "Query AI-Governed Database for specific session",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 133,
+      "description": "Update in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 158,
+      "description": "Delete from AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 184,
+      "description": "Add participant to session in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 216,
+      "description": "Add AI assistant to session in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 249,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 317,
+      "description": "Start meeting in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 343,
+      "description": "End meeting in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 377,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-collaboration.js",
+      "line": 449,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+      "line": 13,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+      "line": 49,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+      "line": 148,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+      "line": 216,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+      "line": 276,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+      "line": 385,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+      "line": 427,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\advanced-voice-speech.js",
+      "line": 491,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\analytics.js",
+      "line": 36,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\analytics.js",
+      "line": 102,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\analytics.js",
+      "line": 170,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\analytics.js",
+      "line": 211,
+      "description": "Query AI-Governed Database for real insights",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\analytics.js",
+      "line": 230,
+      "description": "Query AI-Governed Database for real predictions",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\analytics.js",
+      "line": 249,
+      "description": "Query AI-Governed Database for real recommendations",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+      "line": 13,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+      "line": 46,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+      "line": 124,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+      "line": 177,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+      "line": 217,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+      "line": 259,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+      "line": 287,
+      "description": "Query AI-Governed Database for real sessions",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+      "line": 306,
+      "description": "Query AI-Governed Database for real devices",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\ar-vr-integration.js",
+      "line": 325,
+      "description": "Query AI-Governed Database for real experiences",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\billing.js",
+      "line": 435,
+      "description": "Implement PDF generation",
+      "category": "other",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 13,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 50,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 98,
+      "description": "Query AI-Governed Database for real networks",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 125,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 166,
+      "description": "Query AI-Governed Database for real transactions",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 193,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 236,
+      "description": "Query AI-Governed Database for real contracts",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 263,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 354,
+      "description": "Query AI-Governed Database for real governance proposals",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 381,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 435,
+      "description": "Query AI-Governed Database for real tokens",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 462,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 539,
+      "description": "Query AI-Governed Database for real NFTs",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 566,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\blockchain-integration.js",
+      "line": 604,
+      "description": "Query AI-Governed Database for real marketplaces",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 14,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 47,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 124,
+      "description": "Query AI-Governed Database for real models",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 145,
+      "description": "Query AI-Governed Database for specific model",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 173,
+      "description": "Update in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 198,
+      "description": "Delete from AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 218,
+      "description": "Start training in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 290,
+      "description": "Query AI-Governed Database for training jobs",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 448,
+      "description": "Make prediction using AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 479,
+      "description": "Query AI-Governed Database for all training jobs",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 686,
+      "description": "Update in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\custom-ai-model-training.js",
+      "line": 711,
+      "description": "Delete from AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 13,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 48,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 130,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 177,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 229,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 290,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 351,
+      "description": "Query AI-Governed Database for real nodes",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 370,
+      "description": "Query AI-Governed Database for real clusters",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 389,
+      "description": "Query AI-Governed Database for real workloads",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 408,
+      "description": "Query AI-Governed Database for real analytics",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\edge-computing-integration.js",
+      "line": 427,
+      "description": "Query AI-Governed Database for real optimizations",
+      "category": "ai-engine",
+      "priority": "low",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\invitations.js",
+      "line": 132,
+      "description": "Send invitation email",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\invitations.js",
+      "line": 333,
+      "description": "Send invitation email",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+      "line": 13,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+      "line": 46,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+      "line": 116,
+      "description": "Query AI-Governed Database for real devices",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+      "line": 144,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+      "line": 201,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+      "line": 291,
+      "description": "Query AI-Governed Database for real fleets",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\iot-device-management.js",
+      "line": 310,
+      "description": "Query AI-Governed Database for real device data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\scalability.js",
+      "line": 13,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\scalability.js",
+      "line": 54,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\scalability.js",
+      "line": 87,
+      "description": "Query AI-Governed Database for real scaling rules",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\scalability.js",
+      "line": 109,
+      "description": "Update in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\scalability.js",
+      "line": 134,
+      "description": "Delete from AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\scalability.js",
+      "line": 151,
+      "description": "Query AI-Governed Database for real node data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\scalability.js",
+      "line": 170,
+      "description": "Query AI-Governed Database for real performance data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\scalability.js",
+      "line": 205,
+      "description": "Implement actual scaling logic with AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\security.js",
+      "line": 54,
+      "description": "Get from user settings",
+      "category": "other",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\security.js",
+      "line": 334,
+      "description": "Implement session tracking",
+      "category": "other",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\security.js",
+      "line": 339,
+      "description": "Implement API call tracking",
+      "category": "integration",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 16,
+      "description": "Connect to AI-Governed Database for real data",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 48,
+      "description": "Save to AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 94,
+      "description": "Query AI-Governed Database for real workflows",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 135,
+      "description": "Query AI-Governed Database for specific workflow",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 163,
+      "description": "Update in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 188,
+      "description": "Delete from AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 208,
+      "description": "Execute workflow with AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 236,
+      "description": "Query AI-Governed Database for real executions",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 257,
+      "description": "Query AI-Governed Database for specific execution",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 290,
+      "description": "Add task to workflow in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 320,
+      "description": "Add connection to workflow in AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 342,
+      "description": "Query AI-Governed Database for real insights",
+      "category": "ai-engine",
+      "priority": "medium",
+      "module": "routes"
+    },
+    {
+      "file": "railway-1\\backend\\src\\routes\\workflow-automation.js",
+      "line": 369,
+      "description": "Perform AI optimization with AI-Governed Database",
+      "category": "ai-engine",
+      "priority": "low",
+      "module": "routes"
+    },
+    {
+      "file": "shared\\src\\logging\\logger.ts",
+      "line": 100,
+      "description": "Implement external logging service integration",
+      "category": "integration",
+      "priority": "medium",
+      "module": "logging"
+    }
+  ]
+}

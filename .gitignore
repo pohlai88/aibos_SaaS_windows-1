@@ -15,6 +15,9 @@
 *.secret
 *.env
 .env.*
+# Allow .env.example files for development
+!.env.example
+!.env.example.*
 .vault
 .kubeconfig
 *.p12
@@ -75,6 +78,8 @@ pids/
 .npm/
 .yarn-integrity
 .aibos-npm-cache/
+test-results-*.json
+BUILD_ANALYSIS.json
 
 ############## IDEs & OS ##############
 .vscode/
@@ -107,6 +112,9 @@ temp/
 
 ############## CUSTOM EXCEPTIONS ##############
 !shared/.env.example
+!railway-1/backend/.env.example
+!railway-1/frontend/.env.example
+!.env.example
 
 ############## SEE CONTRIBUTING.md FOR POLICY ##############
 .reports/

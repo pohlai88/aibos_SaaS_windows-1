@@ -1,0 +1,148 @@
+{
+  "id": "collaboration",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app", "core:auth", "ui"],
+  "permissions": {
+    "view": ["user", "admin"],
+    "create": ["user", "admin"],
+    "edit": ["user", "admin"],
+    "delete": ["admin"],
+    "share": ["user", "admin"],
+    "comment": ["user", "admin"],
+    "approve": ["admin"],
+    "manage_teams": ["admin"],
+    "manage_workspaces": ["admin"],
+    "view_analytics": ["user", "admin"]
+  },
+  "config": {
+    "defaults": {
+      "features": {
+        "real_time_collaboration": true,
+        "document_sharing": true,
+        "comment_system": true,
+        "version_control": true,
+        "approval_workflows": true,
+        "team_management": true,
+        "workspace_management": true,
+        "file_management": true,
+        "chat_integration": true,
+        "notification_system": true
+      },
+      "security": {
+        "access_control": true,
+        "data_encryption": true,
+        "audit_logging": true,
+        "permission_management": true,
+        "content_filtering": true
+      },
+      "performance": {
+        "real_time_sync": true,
+        "offline_support": true,
+        "caching": true,
+        "optimization": true
+      },
+      "components": {
+        "CollaborationDashboard": {
+          "enabled": true,
+          "features": {
+            "project_overview": true,
+            "team_activity": true,
+            "recent_files": true,
+            "quick_actions": true,
+            "notifications": true,
+            "search": true
+          }
+        },
+        "AdvancedCollaborationDashboard": {
+          "enabled": true,
+          "features": {
+            "advanced_analytics": true,
+            "workflow_automation": true,
+            "integration_management": true,
+            "custom_workflows": true,
+            "reporting": true,
+            "advanced_search": true
+          }
+        },
+        "TeamManagementDashboard": {
+          "enabled": true,
+          "features": {
+            "team_creation": true,
+            "member_management": true,
+            "role_assignment": true,
+            "permission_management": true,
+            "team_analytics": true,
+            "invitation_system": true
+          }
+        }
+      },
+      "ui": {
+        "theme": "auto",
+        "animations": true,
+        "responsive": true,
+        "accessibility": true
+      },
+      "performance": {
+        "lazyLoading": true,
+        "codeSplitting": true,
+        "memoization": true,
+        "virtualization": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "features": {
+          "real_time_collaboration": true,
+          "offline_support": false
+        },
+        "ui": {
+          "animations": false
+        }
+      },
+      "production": {
+        "features": {
+          "real_time_collaboration": true,
+          "offline_support": true
+        }
+      }
+    }
+  },
+  "features": {
+    "real_time_collaboration": true,
+    "document_sharing": true,
+    "comment_system": true,
+    "version_control": true,
+    "approval_workflows": true,
+    "team_management": true,
+    "workspace_management": true,
+    "file_management": true,
+    "chat_integration": true,
+    "notification_system": true,
+    "ui": true,
+    "performance": true,
+    "security": true
+  },
+  "ui": {
+    "theme": "auto",
+    "animations": true,
+    "accessibility": true
+  },
+  "performance": {
+    "lazy": true,
+    "cache": true,
+    "optimize": true,
+    "bundle": true
+  },
+  "security": {
+    "validate": true,
+    "sanitize": true,
+    "encrypt": true,
+    "audit": true
+  },
+  "lifecycle": {
+    "init": "initializeCollaboration",
+    "destroy": "cleanupCollaboration"
+  }
+}

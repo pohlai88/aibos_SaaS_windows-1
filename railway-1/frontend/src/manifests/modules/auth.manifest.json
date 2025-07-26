@@ -1,0 +1,155 @@
+{
+  "id": "auth",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app"],
+  "permissions": {
+    "login": ["guest", "user", "admin"],
+    "logout": ["user", "admin"],
+    "register": ["guest"],
+    "reset_password": ["guest"],
+    "change_password": ["user", "admin"],
+    "view_profile": ["user", "admin"],
+    "edit_profile": ["user", "admin"],
+    "manage_users": ["admin"],
+    "view_auth_logs": ["admin"],
+    "configure_auth": ["admin"]
+  },
+  "config": {
+    "defaults": {
+      "provider": "local",
+      "sessionTimeout": 3600,
+      "passwordPolicy": {
+        "minLength": 8,
+        "requireUppercase": true,
+        "requireLowercase": true,
+        "requireNumbers": true,
+        "requireSpecialChars": true
+      },
+      "MFA": {
+        "enabled": false,
+        "methods": ["totp", "sms", "email"],
+        "required": false
+      },
+      "OAuth": {
+        "google": false,
+        "github": false,
+        "microsoft": false,
+        "apple": false
+      },
+      "roles": {
+        "guest": ["login", "register", "reset_password"],
+        "user": ["login", "logout", "change_password", "view_profile", "edit_profile"],
+        "admin": ["login", "logout", "change_password", "view_profile", "edit_profile", "manage_users", "view_auth_logs", "configure_auth"]
+      },
+      "security": {
+        "maxLoginAttempts": 5,
+        "lockoutDuration": 900,
+        "requireEmailVerification": true,
+        "requirePhoneVerification": false,
+        "sessionInactivityTimeout": 1800,
+        "audit": true
+      },
+      "components": {
+        "LoginScreen": {
+          "enabled": true,
+          "features": {
+            "rememberMe": true,
+            "forgotPassword": true,
+            "socialLogin": false,
+            "guestAccess": false,
+            "autoFocus": true
+          }
+        },
+        "RegisterScreen": {
+          "enabled": true,
+          "features": {
+            "emailVerification": true,
+            "termsAcceptance": true,
+            "captcha": false,
+            "socialSignup": false
+          }
+        },
+        "ProfileScreen": {
+          "enabled": true,
+          "features": {
+            "avatarUpload": true,
+            "passwordChange": true,
+            "twoFactorSetup": true,
+            "sessionManagement": true
+          }
+        },
+        "AuthProvider": {
+          "enabled": true,
+          "features": {
+            "autoLogin": false,
+            "persistentSessions": true,
+            "roleBasedAccess": true,
+            "auditLogging": true
+          }
+        }
+      },
+      "ui": {
+        "theme": "auto",
+        "animations": true,
+        "responsive": true,
+        "accessibility": true
+      },
+      "performance": {
+        "lazyLoading": true,
+        "caching": true,
+        "optimization": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "security": {
+          "maxLoginAttempts": 10,
+          "requireEmailVerification": false
+        },
+        "ui": {
+          "animations": false
+        }
+      },
+      "production": {
+        "security": {
+          "maxLoginAttempts": 3,
+          "requireEmailVerification": true
+        }
+      }
+    }
+  },
+  "features": {
+    "authentication": true,
+    "authorization": true,
+    "session_management": true,
+    "password_management": true,
+    "profile_management": true,
+    "role_management": true,
+    "audit_logging": true,
+    "security": true,
+    "ui": true,
+    "performance": true
+  },
+  "ui": {
+    "theme": "auto",
+    "animations": true,
+    "accessibility": true
+  },
+  "performance": {
+    "lazy": true,
+    "cache": true,
+    "optimize": true
+  },
+  "security": {
+    "validate": true,
+    "sanitize": true,
+    "encrypt": true,
+    "audit": true
+  },
+  "lifecycle": {
+    "init": "initializeAuth",
+    "destroy": "cleanupAuth"
+  }
+}

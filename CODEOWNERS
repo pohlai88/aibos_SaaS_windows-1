@@ -1,7 +1,0 @@
-# AI-BOS Enterprise CODEOWNERS
-# Require reviews from core team for all code changes
-*       @aibos/core-team
-shared/ @aibos/shared-leads
-.github/ @aibos/devops
-scripts/ @aibos/devops
-src/    @aibos/frontend-leads

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Zap, Brain, Eye, Code, Play, Pause, RotateCcw, Download, Share, Settings, Activity } from 'lucide-react';
 
 // AI-BOS Integration
-import { aiBuilderSDK, PromptRequest, PromptResponse } from './AIBuilderSDK';
+import { getAIBuilderSDK, PromptRequest, PromptResponse } from './AIBuilderSDK';
 
 // ==================== TYPES ====================
 interface AIStreamingEngineProps {
@@ -188,7 +188,7 @@ export const AIStreamingEngine: React.FC<AIStreamingEngineProps> = ({
     setState(prev => ({ ...prev, isStreaming: true, currentPrompt: prompt }));
 
     try {
-      const response = await aiBuilderSDK.generateFromPrompt(
+      const response = await getAIBuilderSDK().generateFromPrompt(
         { prompt },
         {
           tenantId,

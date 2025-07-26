@@ -1,0 +1,204 @@
+{
+  "id": "ui",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app", "core:auth"],
+  "permissions": {
+    "view": ["user", "admin", "system"],
+    "render": ["user", "admin", "system"],
+    "customize": ["user", "admin", "system"],
+    "configure": ["admin", "system"],
+    "interact": ["user", "admin", "system"],
+    "animate": ["user", "admin", "system"],
+    "accessibility": ["user", "admin", "system"]
+  },
+  "config": {
+    "defaults": {
+      "theme": "auto",
+      "variant": "default",
+      "animations": true,
+      "accessibility": true,
+      "responsive": true,
+      "components": {
+        "Button": {
+          "enabled": true,
+          "variants": ["primary", "secondary", "outline", "ghost", "destructive", "link"],
+          "sizes": ["sm", "md", "lg", "xl"],
+          "features": {
+            "loading": true,
+            "disabled": true,
+            "icon": true,
+            "badge": true,
+            "group": true
+          }
+        },
+        "Input": {
+          "enabled": true,
+          "variants": ["default", "error", "success", "warning"],
+          "sizes": ["sm", "md", "lg"],
+          "types": ["text", "email", "password", "number", "search", "tel", "url", "textarea"],
+          "features": {
+            "validation": true,
+            "masking": true,
+            "autocomplete": true,
+            "clearable": true,
+            "prefix": true,
+            "suffix": true
+          }
+        },
+        "Modal": {
+          "enabled": true,
+          "sizes": ["sm", "md", "lg", "xl", "full"],
+          "features": {
+            "backdrop": true,
+            "closeOnEscape": true,
+            "closeOnOverlayClick": true,
+            "draggable": false,
+            "resizable": false,
+            "centered": true
+          }
+        },
+        "Toast": {
+          "enabled": true,
+          "types": ["success", "error", "warning", "info"],
+          "features": {
+            "autoDismiss": true,
+            "stacking": true,
+            "positioning": true,
+            "progress": true
+          }
+        },
+        "ContextMenu": {
+          "enabled": true,
+          "features": {
+            "keyboard": true,
+            "submenus": true,
+            "icons": true,
+            "shortcuts": true
+          }
+        },
+        "DashboardCard": {
+          "enabled": true,
+          "variants": ["default", "elevated", "outlined", "interactive"],
+          "features": {
+            "header": true,
+            "footer": true,
+            "actions": true,
+            "loading": true,
+            "collapsible": true
+          }
+        },
+        "GlobalSearch": {
+          "enabled": true,
+          "features": {
+            "autocomplete": true,
+            "filters": true,
+            "recent": true,
+            "shortcuts": true
+          }
+        },
+        "NotificationCenter": {
+          "enabled": true,
+          "features": {
+            "grouping": true,
+            "filtering": true,
+            "markAsRead": true,
+            "dismiss": true
+          }
+        },
+        "LoadingSpinner": {
+          "enabled": true,
+          "sizes": ["sm", "md", "lg"],
+          "features": {
+            "text": true,
+            "progress": true,
+            "overlay": true
+          }
+        },
+        "EmptyState": {
+          "enabled": true,
+          "features": {
+            "illustration": true,
+            "action": true,
+            "customizable": true
+          }
+        }
+      },
+      "performance": {
+        "lazyLoading": true,
+        "codeSplitting": true,
+        "memoization": true,
+        "virtualization": true
+      },
+      "accessibility": {
+        "ariaLabels": true,
+        "keyboardNavigation": true,
+        "screenReader": true,
+        "focusManagement": true,
+        "colorContrast": true,
+        "reducedMotion": true
+      },
+      "animations": {
+        "duration": 200,
+        "easing": "ease-in-out",
+        "reducedMotion": true,
+        "prefersReducedMotion": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "animations": false,
+        "performance": {
+          "lazyLoading": false,
+          "virtualization": false
+        },
+        "debug": true
+      },
+      "production": {
+        "animations": true,
+        "performance": {
+          "lazyLoading": true,
+          "virtualization": true
+        },
+        "debug": false
+      }
+    }
+  },
+  "features": {
+    "components": true,
+    "theming": true,
+    "animations": true,
+    "accessibility": true,
+    "responsive": true,
+    "performance": true,
+    "customization": true,
+    "validation": true,
+    "feedback": true,
+    "navigation": true,
+    "search": true,
+    "notifications": true
+  },
+  "ui": {
+    "theme": "auto",
+    "variant": "default",
+    "animations": true,
+    "accessibility": true
+  },
+  "performance": {
+    "lazy": true,
+    "cache": true,
+    "optimize": true,
+    "bundle": true
+  },
+  "security": {
+    "validate": true,
+    "sanitize": true,
+    "encrypt": false,
+    "audit": true
+  },
+  "lifecycle": {
+    "init": "initializeUI",
+    "destroy": "cleanupUI"
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "id": "auth",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app"],
+  "permissions": {
+    "login": ["guest", "user", "admin"],
+    "logout": ["user", "admin"],
+    "register": ["guest"],
+    "reset_password": ["guest"],
+    "change_password": ["user", "admin"],
+    "view_profile": ["user", "admin"],
+    "edit_profile": ["user", "admin"],
+    "manage_users": ["admin"],
+    "view_auth_logs": ["admin"],
+    "configure_auth": ["admin"]
+  },
+  "config": {
+    "defaults": {
+      "provider": "local",
+      "sessionTimeout": 3600,
+      "passwordPolicy": {
+        "minLength": 8,
+        "requireUppercase": true,
+        "requireLowercase": true,
+        "requireNumbers": true,
+        "requireSpecialChars": true
+      },
+      "MFA": {
+        "enabled": false,
+        "methods": ["totp", "sms", "email"],
+        "required": false
+      },
+      "OAuth": {
+        "google": false,
+        "github": false,
+        "microsoft": false,
+        "apple": false
+      },
+      "roles": {
+        "guest": ["login", "register", "reset_password"],
+        "user": ["login", "logout", "change_password", "view_profile", "edit_profile"],
+        "admin": ["login", "logout", "change_password", "view_profile", "edit_profile", "manage_users", "view_auth_logs", "configure_auth"]
+      },
+      "security": {
+        "maxLoginAttempts": 5,
+        "lockoutDuration": 900,
+        "requireEmailVerification": true,
+        "requirePhoneVerification": false,
+        "sessionInactivityTimeout": 1800,
+        "audit": true,
+        "bcryptRounds": 12
+      },
+      "features": {
+        "autoLogin": false,
+        "persistentSessions": true,
+        "roleBasedAccess": true,
+        "auditLogging": true,
+        "sessionManagement": true,
+        "passwordReset": true,
+        "emailVerification": true
+      },
+      "performance": {
+        "caching": true,
+        "rateLimiting": true,
+        "optimization": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "security": {
+          "maxLoginAttempts": 10,
+          "requireEmailVerification": false,
+          "bcryptRounds": 8
+        },
+        "features": {
+          "auditLogging": false
+        }
+      },
+      "production": {
+        "security": {
+          "maxLoginAttempts": 3,
+          "requireEmailVerification": true,
+          "bcryptRounds": 12
+        }
+      }
+    }
+  },
+  "api": {
+    "routes": {
+      "/auth/login": {
+        "method": "POST",
+        "permissions": ["login"],
+        "rateLimit": "5/minute",
+        "validation": ["email", "password"]
+      },
+      "/auth/register": {
+        "method": "POST",
+        "permissions": ["register"],
+        "rateLimit": "3/minute",
+        "validation": ["email", "password", "name", "tenant_name"]
+      },
+      "/auth/logout": {
+        "method": "POST",
+        "permissions": ["logout"],
+        "rateLimit": "10/minute",
+        "validation": []
+      },
+      "/auth/me": {
+        "method": "GET",
+        "permissions": ["view_profile"],
+        "rateLimit": "60/minute",
+        "validation": []
+      },
+      "/auth/refresh": {
+        "method": "POST",
+        "permissions": ["login"],
+        "rateLimit": "30/minute",
+        "validation": []
+      },
+      "/auth/reset-password": {
+        "method": "POST",
+        "permissions": ["reset_password"],
+        "rateLimit": "3/minute",
+        "validation": ["email"]
+      },
+      "/auth/change-password": {
+        "method": "POST",
+        "permissions": ["change_password"],
+        "rateLimit": "5/minute",
+        "validation": ["currentPassword", "newPassword"]
+      }
+    },
+    "middleware": {
+      "auth": ["jwt", "session"],
+      "validation": ["sanitize", "validate"],
+      "security": ["rateLimit", "cors", "helmet"]
+    },
+    "validators": {
+      "email": "email",
+      "password": "password",
+      "name": "string",
+      "tenant_name": "string",
+      "currentPassword": "password",
+      "newPassword": "password"
+    }
+  },
+  "security": {
+    "validate": true,
+    "sanitize": true,
+    "encrypt": true,
+    "audit": true
+  },
+  "lifecycle": {
+    "init": "initializeAuth",
+    "destroy": "cleanupAuth"
+  }
+}

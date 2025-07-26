@@ -3,13 +3,14 @@
 // Steve Jobs Philosophy: "Make it feel alive. Make it explain itself."
 
 import { Pool } from 'pg';
+import { env } from '../utils/env';
 import { SystemConsciousness, ConsciousEvent, EmotionalEvent } from './ConsciousnessEngine';
 
 export class ConsciousnessDatabase {
   private pool: Pool;
 
   constructor() {
-    const connectionString = process.env['DATABASE_URL'];
+    const connectionString = env.DATABASE_URL;
 
     if (!connectionString) {
       console.warn('⚠️ DATABASE_URL not configured - consciousness will run in memory-only mode');
@@ -20,7 +21,7 @@ export class ConsciousnessDatabase {
 
     this.pool = new Pool({
       connectionString,
-      ssl: process.env['NODE_ENV'] === 'production' ? { rejectUnauthorized: false } : false,
+      ssl: env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
       max: 20,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 2000

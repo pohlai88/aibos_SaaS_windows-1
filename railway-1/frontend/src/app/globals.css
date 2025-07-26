@@ -1,13 +1,247 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ==================== ACCESSIBILITY UTILITIES ==================== */
+/* ==================== DESIGN TOKENS (from shared package) ==================== */
 
-/* Screen reader only - hides content visually but keeps it accessible to screen readers */
+:root {
+  /* AI-BOS Color System */
+  --ai-purple-50: #faf5ff;
+  --ai-purple-100: #f3e8ff;
+  --ai-purple-200: #e9d5ff;
+  --ai-purple-300: #d8b4fe;
+  --ai-purple-400: #c084fc;
+  --ai-purple-500: #a855f7;
+  --ai-purple-600: #9333ea;
+  --ai-purple-700: #7c3aed;
+  --ai-purple-800: #6b21a8;
+  --ai-purple-900: #581c87;
+  
+  /* Opacity variants */
+  --ai-purple-500-10: rgba(168, 85, 247, 0.1);
+  --ai-purple-500-20: rgba(168, 85, 247, 0.2);
+  --ai-purple-500-50: rgba(168, 85, 247, 0.5);
+  --ai-purple-500-70: rgba(168, 85, 247, 0.7);
+  
+  /* Typography System */
+  --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  
+  /* Animation System */
+  --animation-duration-fast: 100ms;
+  --animation-duration-base: 200ms;
+  --animation-duration-slow: 300ms;
+  --animation-duration-slower: 500ms;
+  --animation-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --animation-easing-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* Spacing System */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  
+  /* Border Radius */
+  --radius-sm: 2px;
+  --radius-base: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+  
+  /* Z-Index System */
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-banner: 1200;
+  --z-overlay: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-tooltip: 1800;
+  --z-toast: 1700;
+  --z-notification: 1900;
+}
+
+/* ==================== VIRTUAL DESKTOP GRID PATTERN ==================== */
+
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(var(--ai-purple-500-10) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ai-purple-500-10) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* ==================== CUSTOM SCROLLBARS ==================== */
+
+::-webkit-scrollbar {
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ai-purple-500-50);
+  border-radius: var(--radius-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ai-purple-500-70);
+}
+
+/* ==================== WINDOW ANIMATIONS ==================== */
+
+.window-enter {
+  opacity: 0;
+  transform: scale(0.8) translateY(20px);
+}
+
+.window-enter-active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition: opacity var(--animation-duration-slow) var(--animation-easing-smooth),
+              transform var(--animation-duration-slow) var(--animation-easing-smooth);
+}
+
+.window-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.window-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity var(--animation-duration-slow) var(--animation-easing-smooth),
+              transform var(--animation-duration-slow) var(--animation-easing-smooth);
+}
+
+/* ==================== DOCK ANIMATIONS ==================== */
+
+.dock-item-bounce {
+  animation: dockBounce 0.6s var(--animation-easing-bounce);
+}
+
+@keyframes dockBounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+  }
+}
+
+/* ==================== CONSCIOUSNESS PARTICLES ==================== */
+
+.consciousness-particle {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* ==================== GLASS MORPHISM ==================== */
+
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+}
+
+/* ==================== FOCUS STATES ==================== */
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50;
+  font-family: var(--font-family-sans);
+}
+
+/* ==================== PERFORMANCE OPTIMIZATIONS ==================== */
+
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.paint-optimized {
+  contain: layout style paint;
+}
+
+.layout-stable {
+  contain: layout;
+}
+
+/* ==================== RESPONSIVE UTILITIES ==================== */
+
+@media (max-width: 768px) {
+  .virtual-desktop-controls {
+    @apply scale-75;
+  }
+}
+
+/* ==================== ACCESSIBILITY ENHANCEMENTS ==================== */
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .consciousness-particle,
+  .dock-item-bounce,
+  .window-enter,
+  .window-exit,
+  .window-enter-active,
+  .window-exit-active {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* High Contrast Support */
+@media (prefers-contrast: high) {
+  .glass {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+  }
+  
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(var(--ai-purple-500-20) 1px, transparent 1px),
+      linear-gradient(90deg, var(--ai-purple-500-20) 1px, transparent 1px);
+  }
+}
+
+/* Screen Reader Only */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -20,132 +254,46 @@
   border: 0;
 }
 
-/* ==================== WINDOW FOCUS STYLES ==================== */
-
-/* Enhanced focus styles for window controls */
-.window-focused button:focus {
-  outline: 2px solid rgba(255, 255, 255, 0.8);
+/* Focus Visible Enhancement */
+.focus-visible {
+  outline: 2px solid var(--ai-purple-500);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
-/* Window focus indicator */
-.aibos-window:focus-within {
-  box-shadow:
-    0 8px 32px 0 rgba(99,102,241,0.25),
-    0 0 0 2px rgba(99,102,241,0.5),
-    0 0 0 4px rgba(99,102,241,0.2);
-}
+/* ==================== DARK MODE ENHANCEMENTS ==================== */
 
-/* ==================== CURSOR STATES ==================== */
-
-/* Drag cursor states */
-.cursor-grab {
-  cursor: grab;
-}
-
-.cursor-grabbing {
-  cursor: grabbing;
-}
-
-/* ==================== ANIMATION ENHANCEMENTS ==================== */
-
-/* Smooth transitions for all interactive elements */
-button, .aibos-window {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ==================== RESPONSIVE DESIGN ==================== */
-
-/* Ensure windows don't overflow on smaller screens */
-@media (max-width: 768px) {
-  .aibos-window {
-    max-width: calc(100vw - 32px);
-    max-height: calc(100vh - 32px);
+@media (prefers-color-scheme: dark) {
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(var(--ai-purple-500-20) 1px, transparent 1px),
+      linear-gradient(90deg, var(--ai-purple-500-20) 1px, transparent 1px);
+  }
+  
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
 }
 
-@layer base {
-  html {
-    font-family: 'Inter', system-ui, sans-serif;
-  }
+/* ==================== PRINT STYLES ==================== */
 
-  body {
-    @apply bg-gray-50 text-gray-900;
+@media print {
+  .consciousness-particle,
+  .dock-item-bounce,
+  .window-enter,
+  .window-exit {
+    display: none !important;
   }
-
-  /* Custom Scrollbar Styles */
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  /* Dark mode scrollbar */
-  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-}
-
-@layer components {
-  .window-shadow {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-
-  .dock-item {
-    @apply transition-all duration-200 ease-in-out;
-  }
-
-  .dock-item:hover {
-    @apply transform scale-110;
-  }
-
-  .window-header {
-    @apply bg-gradient-to-r from-gray-100 to-gray-200 border-b border-gray-300;
-  }
-
-  .window-content {
-    @apply bg-white;
-  }
-
-  .button-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-  }
-
-  .button-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-  }
-
-  .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
-  }
-
-  .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
-  }
-}
-
-@layer utilities {
-  .text-shadow {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-
-  .backdrop-blur {
-    backdrop-filter: blur(10px);
+  
+  .glass,
+  .glass-dark {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    backdrop-filter: none !important;
   }
 }

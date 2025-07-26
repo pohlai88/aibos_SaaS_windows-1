@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": "./.cache/tsbuild",
+    "noEmitOnError": false,
+    "skipLibCheck": true,
+    "plugins": [
+      {
+        "name": "typescript-plugin-import-alias",
+        "mappings": {
+          "@/*": "./src/*"
+        }
+      }
+    ]
+  },
+  "exclude": [
+    "**/__tests__",
+    "**/dist",
+    "**/node_modules"
+  ]
+}

@@ -1,5 +1,5 @@
 // ==================== AI-BOS AI BACKEND CONNECTOR ====================
-// Universal AI API Integration Layer
+// Universal AI API Integration Layer with Ollama
 // Steve Jobs Philosophy: "The best way to predict the future is to invent it."
 
 import React, { useState, useCallback, useEffect } from 'react';
@@ -20,6 +20,8 @@ interface AIProvider {
   status: 'active' | 'inactive' | 'error';
   lastUsed: Date;
   usage: UsageMetrics;
+  isOllama?: boolean;
+  ollamaStatus?: string;
 }
 
 interface AIModel {
@@ -262,6 +264,72 @@ const PLACEHOLDER_PROVIDERS: AIProvider[] = [
       successRate: 0,
       errors: 0
     }
+  },
+  {
+    id: 'ollama',
+    name: 'Ollama (Local AI)',
+    models: [
+      {
+        id: 'llama3:8b',
+        name: 'Llama 3 8B',
+        provider: 'ollama',
+        type: 'text',
+        contextWindow: 8192,
+        maxTokens: 4096,
+        capabilities: ['text-generation', 'code-generation', 'json-generation'],
+        pricing: { input: 0, output: 0 }, // Free local inference
+        performance: { speed: 50, accuracy: 0.85, reliability: 0.95 }
+      },
+      {
+        id: 'codellama:7b',
+        name: 'Code Llama 7B',
+        provider: 'ollama',
+        type: 'code',
+        contextWindow: 16384,
+        maxTokens: 8192,
+        capabilities: ['code-generation', 'text-generation'],
+        pricing: { input: 0, output: 0 }, // Free local inference
+        performance: { speed: 45, accuracy: 0.90, reliability: 0.95 }
+      },
+      {
+        id: 'mistral:7b',
+        name: 'Mistral 7B',
+        provider: 'ollama',
+        type: 'text',
+        contextWindow: 8192,
+        maxTokens: 4096,
+        capabilities: ['text-generation', 'code-generation'],
+        pricing: { input: 0, output: 0 }, // Free local inference
+        performance: { speed: 55, accuracy: 0.88, reliability: 0.93 }
+      }
+    ],
+    capabilities: [
+      { type: 'text-generation', supported: true, quality: 'excellent' },
+      { type: 'code-generation', supported: true, quality: 'excellent' },
+      { type: 'json-generation', supported: true, quality: 'good' },
+      { type: 'function-calling', supported: false, quality: 'poor' },
+      { type: 'image-analysis', supported: false, quality: 'poor' }
+    ],
+    pricing: [
+      {
+        name: 'Free Local',
+        monthlyLimit: -1, // Unlimited
+        cost: 0,
+        features: ['Unlimited requests', 'Local processing', 'No data sent to cloud', 'Full privacy']
+      }
+    ],
+    status: 'active',
+    lastUsed: new Date(),
+    usage: {
+      totalRequests: 0,
+      totalTokens: 0,
+      totalCost: 0,
+      averageResponseTime: 0,
+      successRate: 100,
+      errors: 0
+    },
+    isOllama: true,
+    ollamaStatus: 'integrated'
   }
 ];
 

@@ -1,99 +1,24 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config, { isServer }) => {
-
-    // Handle Node.js modules in browser environment
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-        stream: false,
-        url: false,
-        zlib: false,
-        http: false,
-        https: false,
-        assert: false,
-        os: false,
-        path: false,
-        child_process: false,
-        util: false,
-        buffer: false,
-        events: false,
-        querystring: false,
-        punycode: false,
-        string_decoder: false,
-        timers: false,
-        tty: false,
-        vm: false,
-        constants: false,
-        domain: false,
-        dns: false,
-        dgram: false,
-        cluster: false,
-        module: false,
-        process: false,
-        inspector: false,
-        async_hooks: false,
-        http2: false,
-        perf_hooks: false,
-        repl: false,
-        readline: false,
-        v8: false,
-        worker_threads: false,
-        'supports-color': false,
-      };
-    }
-
-    return config;
-  },
-
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  experimental: {
+    typedRoutes: true
   },
 
   images: {
-    domains: ['localhost'],
-  },
-
-  async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    return [
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    remotePatterns: [
       {
-        source: '/api/:path*',
-        destination: `${apiUrl}/api/:path*`,
-      },
-    ];
+        protocol: 'https',
+        hostname: '**'
+      }
+    ]
   },
 
-  // Ensure TypeScript is properly configured
-  typescript: {
-    ignoreBuildErrors: false,
-  },
-
-  // Ensure ESLint is properly configured
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
-
-  // Experimental features for better performance
-  experimental: {
-    optimizeCss: true,
-    scrollRestoration: true,
-  },
-
-  // Output configuration for deployment
-  output: 'standalone',
-
-  // Compression for better performance
-  compress: true,
-
-  // Powered by header
-  poweredByHeader: false,
-
-  // Security headers
   async headers() {
     return [
       {
@@ -101,20 +26,31 @@ const nextConfig = {
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'DENY',
+            value: 'DENY'
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            value: 'nosniff'
           },
           {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
-          },
-        ],
-      },
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          }
+        ]
+      }
     ];
   },
+
+  env: {
+    AI_BOS_VERSION: process.env.AI_BOS_VERSION || '1.0.0',
+    AI_BOS_ENVIRONMENT: process.env.NODE_ENV || 'development',
+    ENABLE_AI_ENGINE: process.env.ENABLE_AI_ENGINE || 'true',
+    ENABLE_CONSCIOUSNESS: process.env.ENABLE_CONSCIOUSNESS || 'true'
+  },
+
+  output: 'standalone',
+  poweredByHeader: false,
+  trailingSlash: false
 };
 
 module.exports = nextConfig;

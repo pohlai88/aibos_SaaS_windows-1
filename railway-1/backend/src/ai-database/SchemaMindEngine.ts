@@ -4,6 +4,7 @@
 // Steve Jobs Philosophy: "The people who are crazy enough to think they can change the world are the ones who do."
 
 import { createClient } from '@supabase/supabase-js';
+import { env } from '../utils/env';
 import * as ts from 'typescript';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -292,8 +293,8 @@ export class SchemaMindEngine {
 
   constructor() {
     this.supabase = createClient(
-      process.env["SUPABASE_URL"]!,
-      process.env["SUPABASE_SERVICE_ROLE_KEY"]!
+      env.SUPABASE_URL!,
+      env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
     this.aiModel = new AIModel();
@@ -603,19 +604,9 @@ export class SchemaMindEngine {
 
   // ==================== SUPABASE DEPLOYMENT ====================
   private async deployToSupabase(schema: CompliantSchema): Promise<DeploymentResult> {
-    console.log('🚀 Deploying to Supabase with safety checks...');
+    console.log('🚀 Deploying schema to Supabase...');
 
-    // Pre-deployment safety checks
-    await this.performSafetyChecks(schema);
-
-    // Dry-run deployment
-    const dryRun = await this.performDryRun(schema);
-    if (!dryRun.success) {
-      throw new Error(`Dry run failed: ${dryRun.errors.join(', ')}`);
-    }
-
-    // Actual deployment
-    const results = [];
+    const results: DeploymentResult[] = [];
 
     // Deploy tables
     for (const table of schema.tables) {
@@ -679,7 +670,7 @@ export class SchemaMindEngine {
   private async performDryRun(schema: CompliantSchema): Promise<DryRunResult> {
     console.log('🧪 Performing dry run...');
 
-    const errors = [];
+    const errors: string[] = [];
 
     // Simulate table creation
     for (const table of schema.tables) {

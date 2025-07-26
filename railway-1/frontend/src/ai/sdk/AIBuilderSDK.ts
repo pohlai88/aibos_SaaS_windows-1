@@ -1183,7 +1183,15 @@ export class AIBuilderSDK {
 }
 
 // ==================== EXPORT SINGLETON ====================
-export const aiBuilderSDK = AIBuilderSDK.getInstance();
+// Export getter for singleton instance (lazy initialization)
+let _aiBuilderSDK: AIBuilderSDK | null = null;
+
+export const getAIBuilderSDK = () => {
+  if (!_aiBuilderSDK) {
+    _aiBuilderSDK = AIBuilderSDK.getInstance();
+  }
+  return _aiBuilderSDK;
+};
 
 // ==================== EXAMPLE USAGE ====================
 export const EXAMPLE_PROMPTS = [

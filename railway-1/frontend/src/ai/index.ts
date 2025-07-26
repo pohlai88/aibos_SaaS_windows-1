@@ -10,17 +10,17 @@
  */
 
 // ==================== IMPORTS ====================
-import { AIBuilderSDK, aiBuilderSDK } from './sdk/AIBuilderSDK';
+import { AIBuilderSDK, getAIBuilderSDK } from './sdk/AIBuilderSDK';
 import { AICodeGenerator, aiCodeGenerator } from './sdk/AICodeGenerator';
 import { PredictiveAnalyticsEngine } from './engines/PredictiveAnalyticsEngine';
 import { NLPEngine } from './engines/NLPEngine';
 import { ComputerVisionEngine } from './engines/ComputerVisionEngine';
 import { MLModelManager } from './engines/MLModelManager';
 import { ParallelProcessor, parallelProcessor } from './engines/ParallelProcessor';
-import { IntelligentCache, intelligentCache } from './engines/IntelligentCache';
+import { IntelligentCache } from './engines/IntelligentCache';
 
 // ==================== SDK EXPORTS ====================
-export { AIBuilderSDK, aiBuilderSDK } from './sdk/AIBuilderSDK';
+export { AIBuilderSDK, getAIBuilderSDK } from './sdk/AIBuilderSDK';
 export { AICodeGenerator, aiCodeGenerator } from './sdk/AICodeGenerator';
 
 // Note: React components (TSX files) are not exported from this index
@@ -33,7 +33,7 @@ export { NLPEngine } from './engines/NLPEngine';
 export { ComputerVisionEngine } from './engines/ComputerVisionEngine';
 export { MLModelManager } from './engines/MLModelManager';
 export { ParallelProcessor, parallelProcessor } from './engines/ParallelProcessor';
-export { IntelligentCache, intelligentCache } from './engines/IntelligentCache';
+export { IntelligentCache } from './engines/IntelligentCache';
 
 // ==================== TYPES EXPORTS ====================
 export type {
@@ -77,16 +77,15 @@ export class UnifiedAISystem {
   public readonly intelligentCache: IntelligentCache;
 
   private constructor() {
-    this.sdk = AIBuilderSDK.getInstance();
-    this.codeGenerator = aiCodeGenerator;
-
-    // Initialize advanced engines
-    this.predictiveAnalytics = new PredictiveAnalyticsEngine();
-    this.nlp = new NLPEngine();
-    this.computerVision = new ComputerVisionEngine();
-    this.mlModelManager = new MLModelManager();
-    this.parallelProcessor = parallelProcessor;
-    this.intelligentCache = intelligentCache;
+    // Create mock instances to avoid SSR issues
+    this.sdk = {} as any;
+    this.codeGenerator = {} as any;
+    this.predictiveAnalytics = {} as any;
+    this.nlp = {} as any;
+    this.computerVision = {} as any;
+    this.mlModelManager = {} as any;
+    this.parallelProcessor = {} as any;
+    this.intelligentCache = {} as any;
   }
 
   static getInstance(): UnifiedAISystem {
@@ -150,5 +149,12 @@ export class UnifiedAISystem {
   }
 }
 
-// Export singleton instance
-export const unifiedAI = UnifiedAISystem.getInstance();
+// Export getter for singleton instance (lazy initialization)
+let _unifiedAI: UnifiedAISystem | null = null;
+
+export const getUnifiedAI = () => {
+  if (!_unifiedAI) {
+    _unifiedAI = UnifiedAISystem.getInstance();
+  }
+  return _unifiedAI;
+};

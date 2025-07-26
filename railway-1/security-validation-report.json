@@ -1,0 +1,32 @@
+{
+  "phase": "4.3",
+  "timestamp": "2025-07-26T10:36:54.263Z",
+  "summary": {
+    "totalVulnerabilities": 1,
+    "critical": 0,
+    "high": 0,
+    "moderate": 1,
+    "low": 0,
+    "productionVulnerabilities": 0,
+    "developmentVulnerabilities": 1
+  },
+  "vulnerabilities": [
+    {
+      "package": "vitest",
+      "severity": "moderate",
+      "title": "Known vulnerability in development dependency",
+      "description": "vitest may have security vulnerabilities",
+      "isDevDependency": "1.0.0",
+      "via": [],
+      "fixAvailable": true
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "sensitive_vars",
+      "description": "Sensitive environment variables found: API_KEY",
+      "priority": "high"
+    }
+  ],
+  "securityScore": 85
+}

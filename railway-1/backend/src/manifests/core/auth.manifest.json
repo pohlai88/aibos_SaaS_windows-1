@@ -1,0 +1,176 @@
+{
+  "id": "core:auth",
+  "version": "1.0.0",
+  "type": "core",
+  "enabled": true,
+  "dependencies": ["core:app"],
+  "permissions": {
+    "login": ["anonymous"],
+    "logout": ["user", "admin", "system"],
+    "register": ["anonymous"],
+    "verify": ["user", "admin", "system"],
+    "refresh": ["user", "admin", "system"],
+    "reset_password": ["anonymous"],
+    "change_password": ["user", "admin", "system"],
+    "update_profile": ["user", "admin", "system"],
+    "view_profile": ["user", "admin", "system"],
+    "delete_account": ["user", "admin", "system"],
+    "manage_users": ["admin", "system"],
+    "manage_roles": ["admin", "system"],
+    "manage_permissions": ["admin", "system"],
+    "audit_logs": ["admin", "system"]
+  },
+  "config": {
+    "defaults": {
+      "provider": "jwt",
+      "sessionTimeout": 3600000,
+      "refreshTokenExpiry": 604800000,
+      "maxLoginAttempts": 5,
+      "lockoutDuration": 900000,
+      "passwordPolicy": {
+        "minLength": 12,
+        "requireUppercase": true,
+        "requireLowercase": true,
+        "requireNumbers": true,
+        "requireSpecialChars": true,
+        "maxAge": 7776000000
+      },
+      "mfa": {
+        "enabled": true,
+        "required": false,
+        "methods": ["totp", "sms", "email"],
+        "backupCodes": true
+      },
+      "providers": {
+        "jwt": {
+          "secret": "your-jwt-secret",
+          "algorithm": "HS256",
+          "expiresIn": "1h",
+          "refreshExpiresIn": "7d"
+        },
+        "oauth": {
+          "google": {
+            "enabled": true,
+            "clientId": "your-google-client-id",
+            "clientSecret": "your-google-client-secret",
+            "callbackUrl": "/auth/google/callback"
+          },
+          "github": {
+            "enabled": true,
+            "clientId": "your-github-client-id",
+            "clientSecret": "your-github-client-secret",
+            "callbackUrl": "/auth/github/callback"
+          },
+          "microsoft": {
+            "enabled": false,
+            "clientId": "your-microsoft-client-id",
+            "clientSecret": "your-microsoft-client-secret",
+            "callbackUrl": "/auth/microsoft/callback"
+          }
+        }
+      },
+      "roles": {
+        "anonymous": {
+          "permissions": ["login", "register", "reset_password"]
+        },
+        "user": {
+          "permissions": ["logout", "verify", "refresh", "change_password", "update_profile", "view_profile", "delete_account"]
+        },
+        "admin": {
+          "permissions": ["*"],
+          "inherits": ["user"]
+        },
+        "system": {
+          "permissions": ["*"],
+          "inherits": ["admin"]
+        }
+      },
+      "security": {
+        "bcryptRounds": 12,
+        "rateLimit": {
+          "login": 5,
+          "register": 3,
+          "reset_password": 3,
+          "verify": 10
+        },
+        "audit": {
+          "enabled": true,
+          "events": ["login", "logout", "register", "password_change", "profile_update", "role_change"],
+          "retention": 7776000000
+        }
+      },
+      "features": {
+        "registration": true,
+        "emailVerification": true,
+        "passwordReset": true,
+        "profileManagement": true,
+        "roleManagement": true,
+        "sessionManagement": true,
+        "auditLogging": true,
+        "oauth": true,
+        "mfa": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "sessionTimeout": 86400000,
+        "maxLoginAttempts": 10,
+        "lockoutDuration": 300000,
+        "security": {
+          "bcryptRounds": 8
+        },
+        "features": {
+          "emailVerification": false
+        }
+      },
+      "production": {
+        "sessionTimeout": 3600000,
+        "maxLoginAttempts": 5,
+        "lockoutDuration": 900000,
+        "security": {
+          "bcryptRounds": 12
+        },
+        "features": {
+          "emailVerification": true
+        }
+      }
+    }
+  },
+  "api": {
+    "routes": [
+      "/api/auth/login",
+      "/api/auth/logout",
+      "/api/auth/register",
+      "/api/auth/verify",
+      "/api/auth/refresh",
+      "/api/auth/reset-password",
+      "/api/auth/change-password",
+      "/api/auth/profile",
+      "/api/auth/users",
+      "/api/auth/roles",
+      "/api/auth/permissions",
+      "/api/auth/audit-logs"
+    ],
+    "middleware": [
+      "rateLimit",
+      "validation",
+      "auth"
+    ],
+    "validators": {
+      "email": "email",
+      "password": "password",
+      "userId": "uuid",
+      "roleId": "uuid"
+    }
+  },
+  "security": {
+    "rateLimit": 100,
+    "authRequired": false,
+    "roles": ["anonymous", "user", "admin", "system"],
+    "scopes": ["login", "logout", "register", "verify", "refresh", "reset_password", "change_password", "update_profile", "view_profile", "delete_account", "manage_users", "manage_roles", "manage_permissions", "audit_logs"]
+  },
+  "lifecycle": {
+    "init": "initializeAuth",
+    "destroy": "cleanupAuth"
+  }
+}

@@ -682,10 +682,4 @@ export class IntelligentCache {
   }
 }
 
-// Export singleton instance with default configuration
-export const intelligentCache = new IntelligentCache({
-  maxSize: 500 * 1024 * 1024, // 500MB
-  enableCompression: true,
-  evictionPolicy: 'hybrid',
-  enableMetrics: true
-});
+// Export the class only - no singleton instance

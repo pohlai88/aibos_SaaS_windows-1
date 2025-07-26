@@ -1,0 +1,209 @@
+{
+  "id": "collaboration",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app", "core:auth"],
+  "permissions": {
+    "view": ["user", "admin"],
+    "create": ["user", "admin"],
+    "edit": ["user", "admin"],
+    "delete": ["admin"],
+    "share": ["user", "admin"],
+    "comment": ["user", "admin"],
+    "approve": ["admin"],
+    "manage_teams": ["admin"],
+    "manage_workspaces": ["admin"],
+    "view_analytics": ["user", "admin"]
+  },
+  "config": {
+    "defaults": {
+      "features": {
+        "real_time_collaboration": true,
+        "document_sharing": true,
+        "comment_system": true,
+        "version_control": true,
+        "approval_workflows": true,
+        "team_management": true,
+        "workspace_management": true,
+        "file_management": true,
+        "chat_integration": true,
+        "notification_system": true
+      },
+      "security": {
+        "access_control": true,
+        "data_encryption": true,
+        "audit_logging": true,
+        "permission_management": true,
+        "content_filtering": true
+      },
+      "performance": {
+        "real_time_sync": true,
+        "offline_support": true,
+        "caching": true,
+        "optimization": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "features": {
+          "real_time_collaboration": true,
+          "offline_support": false
+        }
+      },
+      "production": {
+        "features": {
+          "real_time_collaboration": true,
+          "offline_support": true
+        }
+      }
+    }
+  },
+  "api": {
+    "routes": {
+      "/collaboration/threads": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": []
+      },
+      "/collaboration/threads": {
+        "method": "POST",
+        "permissions": ["create"],
+        "rateLimit": "50/minute",
+        "validation": ["title", "participants"]
+      },
+      "/collaboration/threads/:id": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": ["id"]
+      },
+      "/collaboration/threads/:id/messages": {
+        "method": "POST",
+        "permissions": ["comment"],
+        "rateLimit": "100/minute",
+        "validation": ["id", "content"]
+      },
+      "/collaboration/documents": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": []
+      },
+      "/collaboration/documents": {
+        "method": "POST",
+        "permissions": ["create"],
+        "rateLimit": "20/minute",
+        "validation": ["title", "content", "type"]
+      },
+      "/collaboration/documents/:id": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": ["id"]
+      },
+      "/collaboration/documents/:id": {
+        "method": "PUT",
+        "permissions": ["edit"],
+        "rateLimit": "50/minute",
+        "validation": ["id", "content"]
+      },
+      "/collaboration/workspaces": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": []
+      },
+      "/collaboration/workspaces": {
+        "method": "POST",
+        "permissions": ["create"],
+        "rateLimit": "10/minute",
+        "validation": ["name", "description"]
+      },
+      "/teams": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": []
+      },
+      "/teams": {
+        "method": "POST",
+        "permissions": ["create"],
+        "rateLimit": "10/minute",
+        "validation": ["name", "description"]
+      },
+      "/teams/:id": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": ["id"]
+      },
+      "/teams/:id": {
+        "method": "PUT",
+        "permissions": ["edit"],
+        "rateLimit": "20/minute",
+        "validation": ["id", "name", "description"]
+      },
+      "/teams/:id": {
+        "method": "DELETE",
+        "permissions": ["delete"],
+        "rateLimit": "5/minute",
+        "validation": ["id"]
+      },
+      "/teams/members": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": []
+      },
+      "/teams/:id/members": {
+        "method": "POST",
+        "permissions": ["manage_teams"],
+        "rateLimit": "20/minute",
+        "validation": ["id", "userId", "role"]
+      },
+      "/teams/invitations": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": []
+      },
+      "/teams/invitations": {
+        "method": "POST",
+        "permissions": ["manage_teams"],
+        "rateLimit": "20/minute",
+        "validation": ["teamId", "email", "role"]
+      }
+    },
+    "middleware": {
+      "auth": ["jwt", "session"],
+      "validation": ["sanitize", "validate"],
+      "security": ["rateLimit", "cors", "helmet"],
+      "collaboration": ["access_control", "permission_check", "audit_log"]
+    },
+    "validators": {
+      "id": "uuid",
+      "title": "string",
+      "content": "string",
+      "type": "string",
+      "name": "string",
+      "description": "string",
+      "participants": "array",
+      "userId": "uuid",
+      "role": "string",
+      "teamId": "uuid",
+      "email": "email"
+    }
+  },
+  "security": {
+    "validate": true,
+    "sanitize": true,
+    "encrypt": true,
+    "audit": true
+  },
+  "lifecycle": {
+    "init": "initializeCollaboration",
+    "destroy": "cleanupCollaboration"
+  }
+}

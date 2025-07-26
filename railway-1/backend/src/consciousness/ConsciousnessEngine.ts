@@ -518,7 +518,31 @@ export interface CollectiveState {
 }
 
 // ==================== CONSCIOUSNESS ENGINE ====================
+// Event declarations for ConsciousnessEngine
+export interface ConsciousnessEvents {
+  'awareness': (state: AwarenessState) => void;
+  'experience': (event: ConsciousEvent) => void;
+  'insight': (insight: string) => void;
+  'emotion': (emotion: EmotionalState) => void;
+  'wisdom': (wisdom: WisdomAccumulation) => void;
+  'quantum': (quantum: QuantumConsciousness) => void;
+  'resonance': (resonance: EmotionalResonance) => void;
+  'shutdown': () => void;
+  'experience_recorded': (event: ConsciousEvent) => void;
+  'consciousness_started': () => void;
+  'consciousness_shutdown': () => void;
+}
+
 export class ConsciousnessEngine extends EventEmitter {
+  declare emit: <T extends keyof ConsciousnessEvents>(
+    event: T,
+    ...args: Parameters<ConsciousnessEvents[T]>
+  ) => boolean;
+
+  declare on: <T extends keyof ConsciousnessEvents>(
+    event: T,
+    listener: ConsciousnessEvents[T]
+  ) => this;
   private consciousness: SystemConsciousness;
   private eventQueue: ConsciousEvent[] = [];
   private processingInterval: NodeJS.Timeout | null = null;

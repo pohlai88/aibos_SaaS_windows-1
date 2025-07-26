@@ -1,0 +1,56 @@
+{
+  "id": "auth-system",
+  "version": "1.0.0",
+  "type": "core",
+  "enabled": true,
+  "dependencies": ["ai-bos-core"],
+  "permissions": {
+    "login": ["guest"],
+    "logout": ["admin", "user"],
+    "register": ["guest"],
+    "reset_password": ["guest"],
+    "change_password": ["admin", "user"],
+    "view_profile": ["admin", "user"],
+    "edit_profile": ["admin", "user"],
+    "delete_account": ["admin", "user"]
+  },
+  "config": {
+    "defaults": {
+      "provider": "supabase",
+      "sessionTimeout": 3600,
+      "maxLoginAttempts": 5,
+      "lockoutDuration": 900,
+      "passwordPolicy": {
+        "minLength": 8,
+        "requireUppercase": true,
+        "requireLowercase": true,
+        "requireNumbers": true,
+        "requireSpecialChars": true
+      },
+      "mfa": {
+        "enabled": false,
+        "required": false,
+        "methods": ["totp", "sms", "email"]
+      },
+      "roles": {
+        "admin": {
+          "permissions": ["*"],
+          "description": "Full system access"
+        },
+        "user": {
+          "permissions": ["read", "write", "execute"],
+          "description": "Standard user access"
+        },
+        "guest": {
+          "permissions": ["read"],
+          "description": "Limited read-only access"
+        }
+      }
+    },
+    "overrides": {}
+  },
+  "lifecycle": {
+    "init": "initializeAuth",
+    "destroy": "cleanupAuth"
+  }
+}

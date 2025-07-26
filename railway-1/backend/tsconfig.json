@@ -1,80 +1,57 @@
 {
   "compilerOptions": {
-    // Language and Environment
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "module": "CommonJS",
+    "target": "ES2020",
+    "module": "ESNext",
     "moduleResolution": "node",
-    "allowImportingTsExtensions": false,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": false,
-    "allowJs": true,
-    "checkJs": false,
-
-    // Emit
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "lib": ["ES2020"],
     "outDir": "./dist",
     "rootDir": "./src",
-    "removeComments": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-
-    // Type Checking
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
-    "noFallthroughCasesInSwitch": true,
-
-    // Advanced
-    "useDefineForClassFields": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "noEmitOnError": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "strictPropertyInitialization": true,
-
-    // Path Mapping
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/routes/*": ["./routes/*"],
-      "@/middleware/*": ["./middleware/*"],
-      "@/services/*": ["./services/*"],
-      "@/utils/*": ["./utils/*"],
-      "@/types/*": ["./types/*"]
-    },
-
-    // Performance
-    "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "assumeChangesOnlyAffectDirectDependencies": true
+      "@/*": ["./src/*"],
+      "@/api/*": ["./src/api/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/middleware/*": ["./src/middleware/*"],
+      "@/routes/*": ["./src/routes/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/manifests/*": ["./src/manifests/*"],
+      "@aibos/shared-infrastructure/*": ["../../shared/src/*"]
+    }
   },
   "include": [
+    "src/**/*",
     "src/**/*.ts",
     "src/**/*.js"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "coverage",
     "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/__tests__/**"
-  ],
-  "ts-node": {
-    "esm": false,
-    "experimentalSpecifierResolution": "node"
-  }
-} 
+    "**/*.test.js",
+    "**/__tests__/**/*"
+  ]
+}

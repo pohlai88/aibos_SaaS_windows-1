@@ -15,7 +15,7 @@ import {
 import { DashboardCard } from '@/components/enterprise/DashboardCard';
 
 // ==================== QUANTUM CONSCIOUSNESS DASHBOARD ====================
-export const QuantumConsciousnessDashboard: React.FC = () => {
+export const ConsciousnessMetricsDashboard: React.FC = () => {
   const [quantumState, setQuantumState] = useState({
     coherence: 0.75,
     decoherence: 0.25,
@@ -495,4 +495,4 @@ export const QuantumConsciousnessDashboard: React.FC = () => {
   );
 };
 
-export default QuantumConsciousnessDashboard;
+export default ConsciousnessMetricsDashboard;

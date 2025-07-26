@@ -1,0 +1,43 @@
+{
+  "id": "ai-bos-core",
+  "version": "1.0.0",
+  "type": "core",
+  "enabled": true,
+  "dependencies": [],
+  "permissions": {
+    "read": ["admin", "user", "guest"],
+    "write": ["admin", "user"],
+    "delete": ["admin"],
+    "configure": ["admin"]
+  },
+  "config": {
+    "defaults": {
+      "appName": "AI-BOS",
+      "version": "1.0.0",
+      "environment": "development",
+      "features": {
+        "ai": true,
+        "consciousness": true,
+        "quantum": false,
+        "blockchain": false,
+        "iot": true,
+        "ar_vr": false
+      },
+      "performance": {
+        "enableTelemetry": true,
+        "enableCaching": true,
+        "enableCompression": true
+      },
+      "security": {
+        "enableCSP": true,
+        "enableHSTS": true,
+        "sessionTimeout": 3600
+      }
+    },
+    "overrides": {}
+  },
+  "lifecycle": {
+    "init": "initializeApp",
+    "destroy": "cleanupApp"
+  }
+}

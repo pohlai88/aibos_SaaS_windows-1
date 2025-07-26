@@ -1,0 +1,126 @@
+{
+  "id": "security",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app", "core:auth"],
+  "permissions": {
+    "view": ["user", "admin", "security"],
+    "monitor": ["admin", "security"],
+    "configure": ["admin", "security"],
+    "audit": ["admin", "security"],
+    "threat_detection": ["admin", "security"],
+    "incident_response": ["admin", "security"],
+    "compliance": ["admin", "security"],
+    "vulnerability_scan": ["admin", "security"],
+    "access_control": ["admin", "security"],
+    "encryption": ["admin", "security"],
+    "firewall": ["admin", "security"],
+    "backup": ["admin", "security"],
+    "recovery": ["admin", "security"]
+  },
+  "config": {
+    "defaults": {
+      "refreshInterval": 15000,
+      "maxAlerts": 100,
+      "threatLevels": ["low", "medium", "high", "critical"],
+      "securityCategories": ["authentication", "authorization", "data", "network", "application", "infrastructure"],
+      "alertStatuses": ["new", "investigating", "resolved", "false_positive"],
+      "features": {
+        "realTimeMonitoring": true,
+        "threatDetection": true,
+        "incidentResponse": true,
+        "complianceReporting": true,
+        "vulnerabilityScanning": true,
+        "accessControl": true,
+        "encryption": true,
+        "firewall": true,
+        "backup": true,
+        "recovery": true,
+        "auditLogging": true,
+        "alerting": true
+      },
+      "ui": {
+        "theme": "auto",
+        "layout": "dashboard",
+        "cardSize": "medium",
+        "animations": true,
+        "responsive": true,
+        "darkMode": true
+      },
+      "performance": {
+        "lazyLoading": true,
+        "virtualization": true,
+        "caching": true,
+        "debounce": 500
+      },
+      "security": {
+        "rateLimiting": true,
+        "auditLogging": true,
+        "dataEncryption": true,
+        "accessControl": true,
+        "sessionTimeout": 3600000,
+        "maxLoginAttempts": 5,
+        "passwordPolicy": {
+          "minLength": 12,
+          "requireUppercase": true,
+          "requireLowercase": true,
+          "requireNumbers": true,
+          "requireSpecialChars": true
+        }
+      },
+      "monitoring": {
+        "logRetention": 90,
+        "alertThresholds": {
+          "failedLogins": 10,
+          "suspiciousActivity": 5,
+          "dataBreach": 1,
+          "systemIntrusion": 1
+        },
+        "scanIntervals": {
+          "vulnerability": 86400000,
+          "compliance": 604800000,
+          "backup": 3600000
+        }
+      }
+    },
+    "overrides": {
+      "development": {
+        "refreshInterval": 5000,
+        "maxAlerts": 20,
+        "features": {
+          "debug": true,
+          "telemetry": true
+        },
+        "monitoring": {
+          "logRetention": 7,
+          "scanIntervals": {
+            "vulnerability": 300000,
+            "compliance": 3600000,
+            "backup": 60000
+          }
+        }
+      },
+      "production": {
+        "refreshInterval": 30000,
+        "maxAlerts": 200,
+        "features": {
+          "debug": false,
+          "telemetry": true
+        },
+        "monitoring": {
+          "logRetention": 365,
+          "scanIntervals": {
+            "vulnerability": 604800000,
+            "compliance": 2592000000,
+            "backup": 86400000
+          }
+        }
+      }
+    }
+  },
+  "lifecycle": {
+    "init": "initializeSecurity",
+    "destroy": "cleanupSecurity"
+  }
+}

@@ -148,3 +148,138 @@ export const entitiesAPI = {
   deleteRecord: (name: string, id: string, tenant_id: string) =>
     api.delete(`/entities/${name}/${id}`, { params: { tenant_id } }),
 };
+
+// ==================== CONSCIOUSNESS API ====================
+export const consciousnessAPI = {
+  // Get consciousness status
+  getStatus: () => api.get('/consciousness/status'),
+
+  // Get consciousness story
+  getStory: () => api.get('/consciousness/story'),
+
+  // Record experience
+  recordExperience: (experience: any) => api.post('/consciousness/experience', experience),
+
+  // Get consciousness metrics
+  getMetrics: () => api.get('/consciousness/metrics'),
+
+  // Evolve consciousness
+  evolve: (data: any) => api.post('/consciousness/evolve', data),
+
+  // Get consciousness history
+  getHistory: (params?: any) => api.get('/consciousness/history', { params }),
+
+  // Get emotional state
+  getEmotionalState: () => api.get('/consciousness/emotions'),
+
+  // Get quantum state
+  getQuantumState: () => api.get('/consciousness/quantum'),
+
+  // Get wisdom insights
+  getWisdom: () => api.get('/consciousness/wisdom'),
+
+  // Get evolution progress
+  getEvolution: () => api.get('/consciousness/evolution'),
+};
+
+// ==================== DATABASE API ====================
+export const databaseAPI = {
+  // Schema management
+  createSchemaVersion: (data: any) => api.post('/database/schemas', data),
+  getSchemaVersions: (params?: any) => api.get('/database/schemas', { params }),
+  getSchemaVersion: (id: string) => api.get(`/database/schemas/${id}`),
+  updateSchemaVersion: (id: string, data: any) => api.put(`/database/schemas/${id}`, data),
+  deleteSchemaVersion: (id: string) => api.delete(`/database/schemas/${id}`),
+
+  // Manifest management
+  createManifest: (data: any) => api.post('/database/manifests', data),
+  getManifests: (params?: any) => api.get('/database/manifests', { params }),
+  getManifest: (id: string) => api.get(`/database/manifests/${id}`),
+  updateManifest: (id: string, data: any) => api.put(`/database/manifests/${id}`, data),
+  deleteManifest: (id: string) => api.delete(`/database/manifests/${id}`),
+
+  // Approval workflow
+  submitManifest: (data: any) => api.post('/database/manifests/submit', data),
+  approveStep: (data: any) => api.post('/database/manifests/approve', data),
+  rejectStep: (data: any) => api.post('/database/manifests/reject', data),
+  getApprovalWorkflow: (manifestId: string) => api.get(`/database/manifests/${manifestId}/workflow`),
+
+  // Migration management
+  generateMigrationPlan: (data: any) => api.post('/database/migrations/plan', data),
+  executeMigration: (data: any) => api.post('/database/migrations/execute', data),
+  rollbackMigration: (data: any) => api.post('/database/migrations/rollback', data),
+  getMigrationHistory: (params?: any) => api.get('/database/migrations', { params }),
+
+  // Database health
+  getHealth: () => api.get('/database/health'),
+  getMetrics: () => api.get('/database/metrics'),
+  getAnalytics: (params?: any) => api.get('/database/analytics', { params }),
+};
+
+// ==================== WORKSPACE API ====================
+export const workspaceAPI = {
+  // Workspace management
+  createWorkspace: (data: any) => api.post('/workspaces', data),
+  getWorkspaces: (params?: any) => api.get('/workspaces', { params }),
+  getWorkspace: (id: string) => api.get(`/workspaces/${id}`),
+  updateWorkspace: (id: string, data: any) => api.put(`/workspaces/${id}`, data),
+  deleteWorkspace: (id: string) => api.delete(`/workspaces/${id}`),
+
+  // Workspace state
+  saveWorkspaceState: (id: string, state: any) => api.post(`/workspaces/${id}/state`, state),
+  getWorkspaceState: (id: string) => api.get(`/workspaces/${id}/state`),
+  exportWorkspace: (id: string) => api.get(`/workspaces/${id}/export`),
+  importWorkspace: (data: any) => api.post('/workspaces/import', data),
+};
+
+// ==================== SYSTEM API ====================
+export const systemAPI = {
+  // System health
+  getHealth: () => api.get('/health'),
+  getSystemInfo: () => api.get('/system/info'),
+  getSystemMetrics: () => api.get('/system/metrics'),
+
+  // Configuration
+  getConfig: () => api.get('/system/config'),
+  updateConfig: (data: any) => api.put('/system/config', data),
+
+  // Logs
+  getLogs: (params?: any) => api.get('/system/logs', { params }),
+  clearLogs: () => api.delete('/system/logs'),
+};
+
+// ==================== AI BACKEND CONNECTOR API ====================
+export const aiBackendAPI = {
+  // AI Provider Management
+  getProviders: () => api.get('/ai/providers'),
+  getProvider: (id: string) => api.get(`/ai/providers/${id}`),
+  connectProvider: (id: string) => api.post(`/ai/providers/${id}/connect`),
+  disconnectProvider: (id: string) => api.post(`/ai/providers/${id}/disconnect`),
+
+  // AI Model Management
+  getModels: (providerId?: string) => api.get('/ai/models', { params: { providerId } }),
+  getModel: (id: string) => api.get(`/ai/models/${id}`),
+
+  // AI Generation
+  generateText: (request: any) => api.post('/ai/generate/text', request),
+  generateCode: (request: any) => api.post('/ai/generate/code', request),
+  generateUI: (request: any) => api.post('/ai/generate/ui', request),
+  generateManifest: (request: any) => api.post('/ai/generate/manifest', request),
+  generateWorkflow: (request: any) => api.post('/ai/generate/workflow', request),
+
+  // AI Settings
+  getSettings: () => api.get('/ai/settings'),
+  updateSettings: (settings: any) => api.put('/ai/settings', settings),
+
+  // AI Usage & Metrics
+  getUsage: (providerId?: string) => api.get('/ai/usage', { params: { providerId } }),
+  getPerformance: () => api.get('/ai/performance'),
+  getRequests: (params?: any) => api.get('/ai/requests', { params }),
+
+  // Ollama Integration
+  getOllamaStatus: () => api.get('/ai/ollama/status'),
+  startOllama: () => api.post('/ai/ollama/start'),
+  stopOllama: () => api.post('/ai/ollama/stop'),
+  getOllamaModels: () => api.get('/ai/ollama/models'),
+  pullOllamaModel: (model: string) => api.post('/ai/ollama/pull', { model }),
+};

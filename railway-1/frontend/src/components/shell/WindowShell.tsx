@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, createContext, useContext } from 'react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
-import { WindowHeader, WindowContent, WindowFooter, WindowControls } from './index';
+// Window components not available yet - commented out imports
 
 // ==================== TYPES & INTERFACES ====================
 
@@ -521,42 +521,33 @@ const WindowShell: React.FC<WindowShellProps> = ({
         {showHeader && (
           <div className={currentTheme.header}>
             {customHeader || (
-              <WindowHeader
-                title={title}
-                isMaximized={state.isMaximized}
-                isDragging={state.isDragging}
-                isFocused={state.isFocused}
-                onDragStart={handleDragStart}
-                onMinimize={actions.minimize}
-                onMaximize={actions.maximize}
-                onClose={actions.close}
-                enableDoubleClickResize={true}
-              />
+              <div className="flex items-center justify-between p-2 bg-gray-100 dark:bg-gray-800">
+                <span className="text-sm font-medium">{title}</span>
+                <div className="flex space-x-1">
+                  <button onClick={actions.minimize} className="w-3 h-3 bg-yellow-500 rounded-full"></button>
+                  <button onClick={actions.maximize} className="w-3 h-3 bg-green-500 rounded-full"></button>
+                  <button onClick={actions.close} className="w-3 h-3 bg-red-500 rounded-full"></button>
+                </div>
+              </div>
             )}
           </div>
         )}
 
         {/* Content */}
         <div className={`${currentTheme.content} flex-1 relative`}>
-          <WindowContent
-            windowId={windowId}
-            showScrollIndicators={true}
-          >
+          <div className="p-4 overflow-auto">
             {children}
-          </WindowContent>
+          </div>
         </div>
 
         {/* Footer */}
         {showFooter && (
           <div className={currentTheme.footer}>
             {customFooter || (
-              <WindowFooter
-                windowId={windowId}
-                title={title}
-                isFocused={state.isFocused}
-                isMaximized={state.isMaximized}
-                onAction={onAction}
-              />
+              <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 text-xs text-gray-500">
+                <span>{title}</span>
+                <span>Ready</span>
+              </div>
             )}
           </div>
         )}

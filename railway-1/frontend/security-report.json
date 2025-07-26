@@ -1,0 +1,135 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "esbuild": {
+      "name": "esbuild",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1102341,
+          "name": "esbuild",
+          "dependency": "esbuild",
+          "title": "esbuild enables any website to send any requests to the development server and read the response",
+          "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-346"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+          },
+          "range": "<=0.24.2"
+        }
+      ],
+      "effects": [
+        "vite"
+      ],
+      "range": "<=0.24.2",
+      "nodes": [
+        "node_modules/esbuild"
+      ],
+      "fixAvailable": {
+        "name": "vitest",
+        "version": "1.6.1",
+        "isSemVerMajor": false
+      }
+    },
+    "vite": {
+      "name": "vite",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "esbuild"
+      ],
+      "effects": [
+        "vite-node",
+        "vitest"
+      ],
+      "range": "0.11.0 - 6.1.6",
+      "nodes": [
+        "railway-1/frontend/node_modules/vite-node/node_modules/vite",
+        "railway-1/frontend/node_modules/vitest/node_modules/vite"
+      ],
+      "fixAvailable": {
+        "name": "vitest",
+        "version": "1.6.1",
+        "isSemVerMajor": false
+      }
+    },
+    "vite-node": {
+      "name": "vite-node",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "vite"
+      ],
+      "effects": [
+        "vitest"
+      ],
+      "range": "<=2.2.0-beta.2",
+      "nodes": [
+        "railway-1/frontend/node_modules/vite-node"
+      ],
+      "fixAvailable": {
+        "name": "vitest",
+        "version": "1.6.1",
+        "isSemVerMajor": false
+      }
+    },
+    "vitest": {
+      "name": "vitest",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1102430,
+          "name": "vitest",
+          "dependency": "vitest",
+          "title": "Vitest allows Remote Code Execution when accessing a malicious website while Vitest API server is listening",
+          "url": "https://github.com/advisories/GHSA-9crc-q9x8-hgqq",
+          "severity": "critical",
+          "cwe": [
+            "CWE-1385"
+          ],
+          "cvss": {
+            "score": 9.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H"
+          },
+          "range": ">=1.0.0 <1.6.1"
+        },
+        "vite",
+        "vite-node"
+      ],
+      "effects": [],
+      "range": "0.0.1 - 0.0.12 || 0.0.29 - 0.0.122 || 0.3.3 - 2.2.0-beta.2",
+      "nodes": [
+        "railway-1/frontend/node_modules/vitest"
+      ],
+      "fixAvailable": {
+        "name": "vitest",
+        "version": "1.6.1",
+        "isSemVerMajor": false
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 3,
+      "high": 0,
+      "critical": 1,
+      "total": 4
+    },
+    "dependencies": {
+      "prod": 472,
+      "dev": 1146,
+      "optional": 68,
+      "peer": 6,
+      "peerOptional": 0,
+      "total": 1630
+    }
+  }
+}

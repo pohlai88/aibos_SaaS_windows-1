@@ -72,12 +72,26 @@ export class FileTransport implements LogTransport {
     if (this.buffer.length === 0) return;
 
     try {
-      const fs = await import('fs/promises');
-      const content = this.buffer.join('');
-      await fs.appendFile(this.filePath, content, 'utf8');
-      this.buffer = [];
+      // Only attempt file system operations in Node.js environment
+      if (typeof process !== 'undefined' && process.versions?.node) {
+        try {
+          // Dynamic import with type assertion to avoid TypeScript errors
+          const fs = await import('fs/promises' as any);
+          const content = this.buffer.join('');
+          await fs.appendFile(this.filePath, content, 'utf8');
+          this.buffer = [];
+        } catch (fsError) {
+          console.warn('File system operations not available:', fsError);
+          this.buffer = [];
+        }
+      } else {
+        // In browser environment, just clear the buffer
+        console.warn('File system operations disabled (non-Node environment)');
+        this.buffer = [];
+      }
     } catch (error) {
       console.error('Failed to write to log file:', error);
+      this.buffer = [];
     }
   }
 

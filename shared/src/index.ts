@@ -57,6 +57,10 @@ export * from './caching';
 
 export * from './analytics';
 
+// ==================== MANIFESTOR EXPORTS ====================
+
+export * from './manifestor';
+
 // ==================== MAIN EXPORTS ====================
 
 // Re-export the main design tokens for convenience
@@ -176,7 +180,8 @@ export const validateInfrastructure = (): boolean => {
       'error-handling',
       'performance',
       'security',
-      'accessibility'
+      'accessibility',
+      'manifestor'
     ];
 
     for (const module of requiredModules) {
@@ -193,3 +198,13 @@ export const validateInfrastructure = (): boolean => {
     return false;
   }
 };
+
+// ==================== MANIFESTOR INITIALIZATION ====================
+
+// Initialize shared manifestor when package is loaded
+import { initializeSharedManifestor } from './manifestor/loader';
+
+// Auto-initialize in browser environments
+if (typeof window !== 'undefined') {
+  initializeSharedManifestor();
+}

@@ -1,5 +1,5 @@
 // ==================== AI-BOS DATABASE API CLIENT ====================
-// Frontend Integration with Backend AI Database Automation
+// Frontend Integration with Backend AI Database Automation with Ollama
 // Steve Jobs Philosophy: "Simple can be harder than complex."
 
 // ==================== TYPES ====================
@@ -18,6 +18,8 @@ export interface DatabaseOrchestrationResponse {
   data: any;
   requestId: string;
   timestamp: string;
+  ollamaStatus?: string;
+  aiConfidence?: number;
 }
 
 export interface ComplianceVerificationResponse {
@@ -121,6 +123,8 @@ export interface DatabaseHealthResponse {
     retention: any;
     timestamp: string;
     recommendations: string[];
+    ollamaStatus?: string;
+    aiModel?: string;
   };
   requestId: string;
   timestamp: string;
@@ -443,6 +447,70 @@ class AIBOSDatabaseAPIClient {
   async performSecurityAudit(): Promise<SecurityAuditResponse> {
     return this.makeRequest<SecurityAuditResponse>('/security/audit', 'GET');
   }
+
+  // ==================== OLLAMA INTEGRATION METHODS ====================
+
+  /**
+   * Get Ollama status and AI model information
+   */
+  async getOllamaStatus(): Promise<{ status: string; model: string; temperature: number; ollamaStatus: string }> {
+    return this.makeRequest<{ status: string; model: string; temperature: number; ollamaStatus: string }>('/ai-database/health', 'GET');
+  }
+
+  /**
+   * Analyze schema with real Ollama AI inference
+   */
+  async analyzeSchemaWithOllama(schema: any): Promise<{
+    success: boolean;
+    data: {
+      quality: any;
+      complexity: any;
+      performance: any;
+      security: any;
+      compliance: any;
+      recommendations: any[];
+      risks: any[];
+      optimizations: any[];
+      confidence: number;
+    };
+    ollamaStatus: string;
+    aiConfidence: number;
+  }> {
+    return this.makeRequest('/ai-database/analyze-schema', 'POST', { schema });
+  }
+
+  /**
+   * Generate migration plan with real Ollama AI inference
+   */
+  async generateMigrationPlanWithOllama(oldSchema: any, newSchema: any): Promise<{
+    success: boolean;
+    data: {
+      steps: any[];
+      estimatedTime: number;
+      riskLevel: string;
+      aiConfidence: number;
+      recommendations: string[];
+    };
+    ollamaStatus: string;
+  }> {
+    return this.makeRequest('/ai-database/migration-plan', 'POST', { oldSchema, newSchema });
+  }
+
+  /**
+   * Optimize schema with real Ollama AI inference
+   */
+  async optimizeSchemaWithOllama(schema: any): Promise<{
+    success: boolean;
+    data: {
+      optimizedSchema: any;
+      changes: any[];
+      improvements: any[];
+      confidence: number;
+    };
+    ollamaStatus: string;
+  }> {
+    return this.makeRequest('/ai-database/optimize-schema', 'POST', { schema });
+  }
 }
 
 // ==================== SINGLETON INSTANCE ====================
@@ -549,6 +617,108 @@ export function useDatabaseHealth() {
   }, []);
 
   return { check, loading, error, health };
+}
+
+// ==================== OLLAMA INTEGRATION HOOKS ====================
+
+export function useOllamaStatus() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<any>(null);
+
+  const check = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await aiBOSDatabaseAPI.getOllamaStatus();
+      setStatus(response);
+      return response;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { check, loading, error, status };
+}
+
+export function useSchemaAnalysisWithOllama() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<any>(null);
+
+  const analyze = useCallback(async (schema: any) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await aiBOSDatabaseAPI.analyzeSchemaWithOllama(schema);
+      setAnalysis(response.data);
+      return response;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { analyze, loading, error, analysis };
+}
+
+export function useMigrationPlanWithOllama() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [plan, setPlan] = useState<any>(null);
+
+  const generate = useCallback(async (oldSchema: any, newSchema: any) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await aiBOSDatabaseAPI.generateMigrationPlanWithOllama(oldSchema, newSchema);
+      setPlan(response.data);
+      return response;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { generate, loading, error, plan };
+}
+
+export function useSchemaOptimizationWithOllama() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [optimization, setOptimization] = useState<any>(null);
+
+  const optimize = useCallback(async (schema: any) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await aiBOSDatabaseAPI.optimizeSchemaWithOllama(schema);
+      setOptimization(response.data);
+      return response;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { optimize, loading, error, optimization };
 }
 
 // ==================== UTILITY FUNCTIONS ====================

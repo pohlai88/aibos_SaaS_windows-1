@@ -1,0 +1,168 @@
+{
+  "id": "shared:components",
+  "version": "1.0.0",
+  "type": "component",
+  "enabled": true,
+  "dependencies": ["shared:design-system", "shared:utilities"],
+  "permissions": {
+    "read": ["user", "admin", "system"],
+    "write": ["admin", "system"],
+    "render": ["user", "admin", "system"],
+    "customize": ["user", "admin", "system"],
+    "configure": ["admin", "system"]
+  },
+  "config": {
+    "defaults": {
+      "theme": "auto",
+      "variant": "default",
+      "animations": true,
+      "accessibility": true,
+      "responsive": true,
+      "components": {
+        "Button": {
+          "enabled": true,
+          "variants": ["primary", "secondary", "outline", "ghost", "destructive"],
+          "sizes": ["sm", "md", "lg"],
+          "features": {
+            "loading": true,
+            "disabled": true,
+            "icon": true,
+            "badge": true
+          }
+        },
+        "Input": {
+          "enabled": true,
+          "variants": ["default", "error", "success", "warning"],
+          "sizes": ["sm", "md", "lg"],
+          "types": ["text", "email", "password", "number", "search", "tel", "url"],
+          "features": {
+            "validation": true,
+            "masking": true,
+            "autocomplete": true,
+            "clearable": true
+          }
+        },
+        "Card": {
+          "enabled": true,
+          "variants": ["default", "elevated", "outlined", "interactive"],
+          "padding": ["sm", "md", "lg", "xl"],
+          "features": {
+            "header": true,
+            "footer": true,
+            "actions": true,
+            "loading": true
+          }
+        },
+        "Modal": {
+          "enabled": true,
+          "sizes": ["sm", "md", "lg", "xl", "full"],
+          "features": {
+            "backdrop": true,
+            "closeOnEscape": true,
+            "closeOnOverlayClick": true,
+            "draggable": false,
+            "resizable": false
+          }
+        },
+        "Table": {
+          "enabled": true,
+          "features": {
+            "sorting": true,
+            "filtering": true,
+            "pagination": true,
+            "selection": true,
+            "virtualization": true
+          }
+        },
+        "Form": {
+          "enabled": true,
+          "features": {
+            "validation": true,
+            "autoSave": true,
+            "dirtyTracking": true,
+            "fieldArrays": true
+          }
+        },
+        "Navigation": {
+          "enabled": true,
+          "types": ["tabs", "breadcrumbs", "pagination", "menu"],
+          "features": {
+            "responsive": true,
+            "keyboard": true,
+            "accessibility": true
+          }
+        },
+        "Feedback": {
+          "enabled": true,
+          "types": ["toast", "alert", "progress", "skeleton"],
+          "features": {
+            "autoDismiss": true,
+            "stacking": true,
+            "positioning": true
+          }
+        }
+      },
+      "performance": {
+        "lazyLoading": true,
+        "codeSplitting": true,
+        "memoization": true,
+        "virtualization": true
+      },
+      "accessibility": {
+        "ariaLabels": true,
+        "keyboardNavigation": true,
+        "screenReader": true,
+        "focusManagement": true,
+        "colorContrast": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "animations": false,
+        "performance": {
+          "lazyLoading": false,
+          "virtualization": false
+        },
+        "debug": true
+      },
+      "production": {
+        "animations": true,
+        "performance": {
+          "lazyLoading": true,
+          "virtualization": true
+        },
+        "debug": false
+      }
+    }
+  },
+  "features": {
+    "components": true,
+    "theming": true,
+    "animations": true,
+    "accessibility": true,
+    "responsive": true,
+    "performance": true,
+    "customization": true,
+    "validation": true,
+    "feedback": true,
+    "navigation": true
+  },
+  "design": {
+    "theme": "auto",
+    "variant": "default",
+    "animations": true,
+    "accessibility": true
+  },
+  "performance": {
+    "lazy": true,
+    "cache": true,
+    "optimize": true,
+    "bundle": true
+  },
+  "security": {
+    "validate": true,
+    "sanitize": true,
+    "encrypt": false,
+    "audit": true
+  }
+}

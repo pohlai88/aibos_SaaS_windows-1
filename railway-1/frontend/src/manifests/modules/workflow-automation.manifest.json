@@ -1,0 +1,136 @@
+{
+  "id": "workflow-automation",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app", "core:auth", "ui"],
+  "permissions": {
+    "view": ["user", "admin"],
+    "create": ["user", "admin"],
+    "edit": ["user", "admin"],
+    "delete": ["admin"],
+    "execute": ["user", "admin"],
+    "schedule": ["user", "admin"],
+    "monitor": ["user", "admin"],
+    "configure": ["admin"],
+    "deploy": ["admin"],
+    "audit": ["admin"]
+  },
+  "config": {
+    "defaults": {
+      "features": {
+        "workflow_builder": true,
+        "automation_engine": true,
+        "scheduling": true,
+        "monitoring": true,
+        "execution_tracking": true,
+        "error_handling": true,
+        "version_control": true,
+        "templates": true,
+        "integration": true,
+        "analytics": true
+      },
+      "security": {
+        "access_control": true,
+        "audit_logging": true,
+        "execution_limits": true,
+        "resource_quota": true,
+        "approval_workflows": true
+      },
+      "performance": {
+        "parallel_execution": true,
+        "caching": true,
+        "optimization": true,
+        "scalability": true,
+        "resource_management": true
+      },
+      "components": {
+        "WorkflowAutomationDashboard": {
+          "enabled": true,
+          "features": {
+            "workflow_editor": true,
+            "execution_monitor": true,
+            "scheduler": true,
+            "templates": true,
+            "analytics": true,
+            "integration_manager": true
+          }
+        },
+        "PerformanceDashboard": {
+          "enabled": true,
+          "features": {
+            "performance_monitoring": true,
+            "optimization_tools": true,
+            "resource_tracking": true,
+            "bottleneck_detection": true
+          }
+        }
+      },
+      "ui": {
+        "theme": "auto",
+        "animations": true,
+        "responsive": true,
+        "accessibility": true
+      },
+      "performance": {
+        "lazyLoading": true,
+        "codeSplitting": true,
+        "memoization": true,
+        "virtualization": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "features": {
+          "parallel_execution": false,
+          "resource_quota": false
+        },
+        "ui": {
+          "animations": false
+        }
+      },
+      "production": {
+        "features": {
+          "parallel_execution": true,
+          "resource_quota": true
+        }
+      }
+    }
+  },
+  "features": {
+    "workflow_builder": true,
+    "automation_engine": true,
+    "scheduling": true,
+    "monitoring": true,
+    "execution_tracking": true,
+    "error_handling": true,
+    "version_control": true,
+    "templates": true,
+    "integration": true,
+    "analytics": true,
+    "ui": true,
+    "performance": true,
+    "security": true
+  },
+  "ui": {
+    "theme": "auto",
+    "animations": true,
+    "accessibility": true
+  },
+  "performance": {
+    "lazy": true,
+    "cache": true,
+    "optimize": true,
+    "bundle": true
+  },
+  "security": {
+    "validate": true,
+    "sanitize": true,
+    "encrypt": true,
+    "audit": true
+  },
+  "lifecycle": {
+    "init": "initializeWorkflowAutomation",
+    "destroy": "cleanupWorkflowAutomation"
+  }
+}

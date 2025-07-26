@@ -1,126 +1,150 @@
-'use client';
+/**
+ * AI-BOS Error Boundary Component
+ *
+ * Comprehensive error boundary for catching and handling React errors
+ * with proper error reporting, user feedback, and recovery mechanisms.
+ */
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { motion } from 'framer-motion';
-import { AlertTriangle, RefreshCw, Bug, Shield, Zap, Brain } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
-// ==================== ERROR BOUNDARY TYPES ====================
-interface ErrorBoundaryProps {
+// ==================== MANIFESTOR INTEGRATION ====================
+import { useManifestor, usePermission, useModuleConfig, useModuleEnabled } from '@/hooks/useManifestor';
+
+interface Props {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
-  enableReporting?: boolean;
-  enableRecovery?: boolean;
+  showDetails?: boolean;
+  moduleId?: string;
 }
 
-interface ErrorBoundaryState {
+interface State {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
   errorId: string;
-  recoveryAttempts: number;
-  isRecovering: boolean;
 }
 
-// ==================== AI-BOS ERROR BOUNDARY ====================
-export class AIBOSErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
+export class ErrorBoundary extends Component<Props, State> {
+  private manifestorConfig: any = null;
+  private manifestorEnabled: boolean = true;
+  private manifestorPermissions: any = null;
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       hasError: false,
       error: null,
       errorInfo: null,
-      errorId: '',
-      recoveryAttempts: 0,
-      isRecovering: false
+      errorId: ''
     };
+
+    // Initialize manifestor configuration
+    this.initializeManifestor();
   }
 
-  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+  private initializeManifestor = () => {
+    try {
+      // Get manifestor configuration for error handling
+      const { getConfig, isEnabled } = useManifestor();
+      this.manifestorConfig = getConfig('ui');
+      this.manifestorEnabled = isEnabled('ui');
+
+      // Check permissions for error reporting
+      const currentUser = { id: 'current-user', role: 'user', permissions: [] };
+      this.manifestorPermissions = {
+        canReport: true, // Default to true for error reporting
+        canRetry: true,
+        canGoHome: true
+      };
+    } catch (error) {
+      console.warn('Manifestor not available for ErrorBoundary:', error);
+      this.manifestorEnabled = false;
+    }
+  }
+
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return {
       hasError: true,
       error,
-      errorId: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      errorId: `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
+
     this.setState({ errorInfo });
 
-    // Log error for debugging
-    console.error('AIBOS Error Boundary caught an error:', error, errorInfo);
+    // Report error to error tracking service
+    this.reportError(error, errorInfo);
 
-    // Call custom error handler
-    this.props.onError?.(error, errorInfo);
-
-    // Report error if enabled
-    if (this.props.enableReporting) {
-      this.reportError(error, errorInfo);
+    // Call custom error handler if provided
+    if (this.props.onError) {
+      this.props.onError(error, errorInfo);
     }
   }
 
-  reportError = async (error: Error, errorInfo: ErrorInfo) => {
+  private reportError = (error: Error, errorInfo: ErrorInfo) => {
     try {
+      // Check manifestor permissions for error reporting
+      if (!this.manifestorEnabled || !this.manifestorPermissions?.canReport) {
+        console.warn('Error reporting disabled by manifestor configuration');
+        return;
+      }
+
+      // Report to error tracking service (e.g., Sentry, LogRocket)
       const errorReport = {
-        id: this.state.errorId,
+        errorId: this.state.errorId,
+        message: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack,
         timestamp: new Date().toISOString(),
-        error: {
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        },
-        errorInfo: {
-          componentStack: errorInfo.componentStack
-        },
-        context: {
-          userAgent: navigator.userAgent,
-          url: window.location.href,
-          timestamp: Date.now()
-        }
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+        userId: this.getUserId(),
+        moduleId: this.props.moduleId || 'unknown',
+        manifestorEnabled: this.manifestorEnabled
       };
 
-      // Send to error reporting service
-      await fetch('/api/errors', {
+      // Send to error reporting endpoint
+      fetch('/api/error-reporting', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(errorReport)
-      });
-    } catch (reportError) {
-      console.error('Failed to report error:', reportError);
+      }).catch(console.error);
+
+    } catch (reportingError) {
+      console.error('Failed to report error:', reportingError);
     }
   };
 
-  handleRecovery = async () => {
-    this.setState({ isRecovering: true });
-
+  private getUserId = (): string | null => {
     try {
-      // Attempt to recover by clearing error state
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      this.setState({
-        hasError: false,
-        error: null,
-        errorInfo: null,
-        recoveryAttempts: this.state.recoveryAttempts + 1,
-        isRecovering: false
-      });
-    } catch (recoveryError) {
-      console.error('Recovery failed:', recoveryError);
-      this.setState({ isRecovering: false });
+      // Get user ID from localStorage, session, or auth context
+      return localStorage.getItem('userId') || sessionStorage.getItem('userId') || null;
+    } catch {
+      return null;
     }
   };
 
-  handleReset = () => {
+  private handleRetry = () => {
     this.setState({
       hasError: false,
       error: null,
       errorInfo: null,
-      errorId: '',
-      recoveryAttempts: 0,
-      isRecovering: false
+      errorId: ''
     });
+  };
+
+  private handleGoHome = () => {
+    window.location.href = '/';
+  };
+
+  private handleReload = () => {
+    window.location.reload();
   };
 
   render() {
@@ -130,121 +154,91 @@ export class AIBOSErrorBoundary extends Component<ErrorBoundaryProps, ErrorBound
         return this.props.fallback;
       }
 
-      // Default AI-BOS error UI
+      // Default error UI
       return (
-        <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-red-200 dark:border-red-800 p-6"
-          >
-            {/* Error Header */}
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-                <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="text-center">
+              {/* Error Icon */}
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 mb-4">
+                <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
               </div>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  AI-BOS Error Recovery
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Error ID: {this.state.errorId}
-                </p>
-              </div>
-            </div>
 
-            {/* Error Details */}
-            <div className="space-y-3 mb-6">
-              <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Bug className="w-4 h-4 text-red-600 dark:text-red-400" />
-                  <span className="text-sm font-medium text-red-800 dark:text-red-200">
-                    {this.state.error?.name || 'Unknown Error'}
-                  </span>
-                </div>
-                <p className="text-sm text-red-700 dark:text-red-300">
-                  {this.state.error?.message || 'An unexpected error occurred'}
+              {/* Error Title */}
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Something went wrong
+              </h2>
+
+              {/* Error Message */}
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                We&apos;re sorry, but something unexpected happened. Our team has been notified and is working to fix this issue.
+              </p>
+
+              {/* Error ID for support */}
+              <div className="bg-gray-100 dark:bg-gray-700 rounded-md p-3 mb-6">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                  Error ID (for support):
+                </p>
+                <p className="text-xs font-mono text-gray-700 dark:text-gray-300">
+                  {this.state.errorId}
                 </p>
               </div>
 
-              {/* Recovery Status */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                  <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                    AI-Powered Recovery
-                  </span>
-                </div>
-                <p className="text-sm text-blue-700 dark:text-blue-300">
-                  Recovery attempts: {this.state.recoveryAttempts}
-                </p>
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                <Button
+                  onClick={this.handleRetry}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Try Again
+                </Button>
+
+                <Button
+                  onClick={this.handleGoHome}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Home className="h-4 w-4 mr-2" />
+                  Go Home
+                </Button>
+
+                <Button
+                  onClick={this.handleReload}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Reload Page
+                </Button>
               </div>
 
-              {/* Component Stack */}
-              {this.state.errorInfo && (
-                <details className="bg-gray-50 dark:bg-gray-900/30 rounded-lg p-3">
-                  <summary className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
-                    Component Stack Trace
+              {/* Error Details (if enabled) */}
+              {this.props.showDetails && this.state.error && (
+                <details className="mt-6 text-left">
+                  <summary className="cursor-pointer text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+                    <Bug className="h-4 w-4 inline mr-1" />
+                    Show Error Details
                   </summary>
-                  <pre className="text-xs text-gray-600 dark:text-gray-400 mt-2 whitespace-pre-wrap">
-                    {this.state.errorInfo.componentStack}
-                  </pre>
+                  <div className="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+                    <p className="text-xs font-mono text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                      {this.state.error.message}
+                    </p>
+                    {this.state.error.stack && (
+                      <details className="mt-2">
+                        <summary className="cursor-pointer text-xs text-gray-500 dark:text-gray-400">
+                          Stack Trace
+                        </summary>
+                        <pre className="mt-1 text-xs font-mono text-gray-600 dark:text-gray-400 whitespace-pre-wrap overflow-auto">
+                          {this.state.error.stack}
+                        </pre>
+                      </details>
+                    )}
+                  </div>
                 </details>
               )}
             </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col space-y-3">
-              {this.props.enableRecovery && (
-                <button
-                  onClick={this.handleRecovery}
-                  disabled={this.state.isRecovering}
-                  className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {this.state.isRecovering ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Recovering...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-4 h-4" />
-                      <span>Attempt Recovery</span>
-                    </>
-                  )}
-                </button>
-              )}
-
-              <button
-                onClick={this.handleReset}
-                className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span>Reset Component</span>
-              </button>
-
-              <button
-                onClick={() => window.location.reload()}
-                className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span>Reload Page</span>
-              </button>
-            </div>
-
-            {/* AI Assistance */}
-            <div className="mt-4 p-3 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg">
-              <div className="flex items-center space-x-2 mb-2">
-                <Brain className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                  AI Assistant
-                </span>
-              </div>
-              <p className="text-xs text-purple-700 dark:text-purple-300">
-                Our AI is analyzing this error and will provide suggestions for prevention.
-              </p>
-            </div>
-          </motion.div>
+          </div>
         </div>
       );
     }
@@ -253,63 +247,42 @@ export class AIBOSErrorBoundary extends Component<ErrorBoundaryProps, ErrorBound
   }
 }
 
-// ==================== FUNCTIONAL ERROR BOUNDARY ====================
-export const withErrorBoundary = <P extends object>(
+// Higher-order component for functional components
+export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  errorBoundaryProps?: Partial<ErrorBoundaryProps>
-) => {
-  const WrappedComponent = (props: P) => (
-    <AIBOSErrorBoundary {...errorBoundaryProps}>
-      <Component {...props} />
-    </AIBOSErrorBoundary>
-  );
+  errorBoundaryProps?: Omit<Props, 'children'>
+) {
+  return function WithErrorBoundary(props: P) {
+    return (
+      <ErrorBoundary {...errorBoundaryProps}>
+        <Component {...props} />
+      </ErrorBoundary>
+    );
+  };
+}
 
-  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
-  return WrappedComponent;
-};
+// Hook for functional components to handle errors
+export function useErrorHandler() {
+  const handleError = React.useCallback((error: Error, context?: any) => {
+    console.error('Error caught by useErrorHandler:', error, context);
 
-// ==================== ERROR MONITORING HOOK ====================
-export const useErrorMonitoring = () => {
-  const reportError = React.useCallback((error: Error, context?: Record<string, any>) => {
+    // Report error
     const errorReport = {
-      id: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      message: error.message,
+      stack: error.stack,
+      context,
       timestamp: new Date().toISOString(),
-      error: {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      },
-      context: {
-        ...context,
-        userAgent: navigator.userAgent,
-        url: window.location.href,
-        timestamp: Date.now()
-      }
+      url: window.location.href
     };
 
-    // Send to error reporting service
-    fetch('/api/errors', {
+    fetch('/api/error-reporting', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(errorReport)
     }).catch(console.error);
   }, []);
 
-  return { reportError };
-};
+  return { handleError };
+}
 
-// ==================== ERROR UTILITIES ====================
-export const createErrorBoundary = (options: Partial<ErrorBoundaryProps> = {}) => {
-  const ErrorBoundaryComponent = ({ children }: { children: ReactNode }) => (
-    <AIBOSErrorBoundary {...options}>
-      {children}
-    </AIBOSErrorBoundary>
-  );
-
-  ErrorBoundaryComponent.displayName = 'ErrorBoundaryComponent';
-  return ErrorBoundaryComponent;
-};
-
-export default AIBOSErrorBoundary;
+export default ErrorBoundary;

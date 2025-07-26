@@ -5,6 +5,18 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { EventEmitter } from 'events';
+import { env } from '../utils/env';
+
+// ==================== EVENT INTERFACES ====================
+interface AITelemetryEvents {
+  'eventRecorded': (event: TelemetryEvent) => void;
+  'feedbackProvided': (feedback: LearningFeedback) => void;
+  'eventProcessed': (event: TelemetryEvent) => void;
+  'insightGenerated': (insight: TelemetryInsight) => void;
+  'modelTrained': (model: LearningModel) => void;
+  'anomalyDetected': (anomaly: Anomaly) => void;
+  'patternFound': (pattern: Pattern) => void;
+}
 
 // ==================== CORE TYPES ====================
 export interface TelemetryEvent {
@@ -229,6 +241,16 @@ export interface TelemetrySummary {
 
 // ==================== AI TELEMETRY ENGINE ====================
 export class AITelemetryEngine extends EventEmitter {
+  declare emit: <T extends keyof AITelemetryEvents>(
+    event: T,
+    ...args: Parameters<AITelemetryEvents[T]>
+  ) => boolean;
+
+  declare on: <T extends keyof AITelemetryEvents>(
+    event: T,
+    listener: AITelemetryEvents[T]
+  ) => this;
+
   private events: Map<string, TelemetryEvent> = new Map();
   private feedback: Map<string, LearningFeedback> = new Map();
   private models: Map<string, LearningModel> = new Map();
@@ -267,7 +289,7 @@ export class AITelemetryEngine extends EventEmitter {
       metadata: {
         version: '1.0.0',
         environment: 'production',
-        instanceId: process.env['INSTANCE_ID'] || 'default',
+        instanceId: env.INSTANCE_ID || 'default',
         tags: [],
         ...metadata
       },

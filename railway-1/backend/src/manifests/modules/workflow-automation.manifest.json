@@ -1,0 +1,162 @@
+{
+  "id": "workflow-automation",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app", "core:auth"],
+  "permissions": {
+    "view": ["user", "admin"],
+    "create": ["user", "admin"],
+    "edit": ["user", "admin"],
+    "delete": ["admin"],
+    "execute": ["user", "admin"],
+    "schedule": ["user", "admin"],
+    "monitor": ["user", "admin"],
+    "configure": ["admin"],
+    "deploy": ["admin"],
+    "audit": ["admin"]
+  },
+  "config": {
+    "defaults": {
+      "features": {
+        "workflow_builder": true,
+        "automation_engine": true,
+        "scheduling": true,
+        "monitoring": true,
+        "execution_tracking": true,
+        "error_handling": true,
+        "version_control": true,
+        "templates": true,
+        "integration": true,
+        "analytics": true
+      },
+      "security": {
+        "access_control": true,
+        "audit_logging": true,
+        "execution_limits": true,
+        "resource_quota": true,
+        "approval_workflows": true
+      },
+      "performance": {
+        "parallel_execution": true,
+        "caching": true,
+        "optimization": true,
+        "scalability": true,
+        "resource_management": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "features": {
+          "parallel_execution": false,
+          "resource_quota": false
+        }
+      },
+      "production": {
+        "features": {
+          "parallel_execution": true,
+          "resource_quota": true
+        }
+      }
+    }
+  },
+  "api": {
+    "routes": {
+      "/workflow-automation/workflows": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": []
+      },
+      "/workflow-automation/workflows": {
+        "method": "POST",
+        "permissions": ["create"],
+        "rateLimit": "20/minute",
+        "validation": ["name", "description", "trigger", "conditions", "actions"]
+      },
+      "/workflow-automation/workflows/:id": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": ["id"]
+      },
+      "/workflow-automation/workflows/:id": {
+        "method": "PUT",
+        "permissions": ["edit"],
+        "rateLimit": "20/minute",
+        "validation": ["id", "name", "description", "trigger", "conditions", "actions"]
+      },
+      "/workflow-automation/workflows/:id": {
+        "method": "DELETE",
+        "permissions": ["delete"],
+        "rateLimit": "10/minute",
+        "validation": ["id"]
+      },
+      "/workflow-automation/workflows/:id/execute": {
+        "method": "POST",
+        "permissions": ["execute"],
+        "rateLimit": "50/minute",
+        "validation": ["id"]
+      },
+      "/workflow-automation/executions": {
+        "method": "GET",
+        "permissions": ["monitor"],
+        "rateLimit": "100/minute",
+        "validation": []
+      },
+      "/workflow-automation/executions/:id": {
+        "method": "GET",
+        "permissions": ["monitor"],
+        "rateLimit": "100/minute",
+        "validation": ["id"]
+      },
+      "/workflow-automation/templates": {
+        "method": "GET",
+        "permissions": ["view"],
+        "rateLimit": "100/minute",
+        "validation": []
+      },
+      "/workflow-automation/templates": {
+        "method": "POST",
+        "permissions": ["create"],
+        "rateLimit": "10/minute",
+        "validation": ["name", "description", "category", "template"]
+      },
+      "/workflow-automation/schedule": {
+        "method": "POST",
+        "permissions": ["schedule"],
+        "rateLimit": "20/minute",
+        "validation": ["workflowId", "schedule", "timezone"]
+      }
+    },
+    "middleware": {
+      "auth": ["jwt", "session"],
+      "validation": ["sanitize", "validate"],
+      "security": ["rateLimit", "cors", "helmet"],
+      "workflow": ["access_control", "execution_limits", "audit_log", "resource_quota"]
+    },
+    "validators": {
+      "id": "uuid",
+      "name": "string",
+      "description": "string",
+      "trigger": "string",
+      "conditions": "array",
+      "actions": "array",
+      "category": "string",
+      "template": "object",
+      "workflowId": "uuid",
+      "schedule": "string",
+      "timezone": "string"
+    }
+  },
+  "security": {
+    "validate": true,
+    "sanitize": true,
+    "encrypt": true,
+    "audit": true
+  },
+  "lifecycle": {
+    "init": "initializeWorkflowAutomation",
+    "destroy": "cleanupWorkflowAutomation"
+  }
+}

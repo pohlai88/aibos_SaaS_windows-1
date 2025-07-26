@@ -1,0 +1,139 @@
+{
+  "id": "shared:utilities",
+  "version": "1.0.0",
+  "type": "utility",
+  "enabled": true,
+  "dependencies": ["shared:design-system"],
+  "permissions": {
+    "read": ["user", "admin", "system"],
+    "write": ["admin", "system"],
+    "execute": ["user", "admin", "system"],
+    "configure": ["admin", "system"]
+  },
+  "config": {
+    "defaults": {
+      "validation": {
+        "strict": true,
+        "sanitize": true,
+        "transform": true
+      },
+      "formatting": {
+        "dateFormat": "ISO",
+        "numberFormat": "en-US",
+        "currencyFormat": "USD"
+      },
+      "caching": {
+        "enabled": true,
+        "ttl": 300000,
+        "maxSize": 1000
+      },
+      "logging": {
+        "level": "info",
+        "format": "json",
+        "transports": ["console"]
+      },
+      "security": {
+        "encryption": false,
+        "hashing": true,
+        "sanitization": true
+      },
+      "performance": {
+        "debounce": 300,
+        "throttle": 100,
+        "memoization": true
+      },
+      "functions": {
+        "validation": {
+          "email": true,
+          "phone": true,
+          "url": true,
+          "uuid": true,
+          "password": true
+        },
+        "formatting": {
+          "date": true,
+          "number": true,
+          "currency": true,
+          "phone": true,
+          "creditCard": true
+        },
+        "caching": {
+          "memory": true,
+          "localStorage": true,
+          "sessionStorage": true
+        },
+        "logging": {
+          "console": true,
+          "file": false,
+          "remote": false
+        },
+        "security": {
+          "hash": true,
+          "encrypt": false,
+          "sanitize": true,
+          "validate": true
+        },
+        "performance": {
+          "debounce": true,
+          "throttle": true,
+          "memoize": true,
+          "lazy": true
+        }
+      }
+    },
+    "overrides": {
+      "development": {
+        "validation": {
+          "strict": false
+        },
+        "logging": {
+          "level": "debug"
+        },
+        "caching": {
+          "ttl": 60000
+        }
+      },
+      "production": {
+        "validation": {
+          "strict": true
+        },
+        "logging": {
+          "level": "warn"
+        },
+        "caching": {
+          "ttl": 600000
+        }
+      }
+    }
+  },
+  "features": {
+    "validation": true,
+    "formatting": true,
+    "caching": true,
+    "logging": true,
+    "security": true,
+    "performance": true,
+    "helpers": true,
+    "transformers": true,
+    "sanitizers": true,
+    "validators": true
+  },
+  "design": {
+    "theme": "auto",
+    "variant": "default",
+    "animations": false,
+    "accessibility": true
+  },
+  "performance": {
+    "lazy": true,
+    "cache": true,
+    "optimize": true,
+    "bundle": true
+  },
+  "security": {
+    "validate": true,
+    "sanitize": true,
+    "encrypt": false,
+    "audit": true
+  }
+}

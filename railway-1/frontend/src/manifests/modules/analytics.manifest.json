@@ -1,0 +1,117 @@
+{
+  "id": "analytics",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app", "core:auth"],
+  "permissions": {
+    "view": ["user", "admin", "analyst"],
+    "export": ["admin", "analyst"],
+    "configure": ["admin", "analyst"],
+    "real_time": ["admin", "analyst"],
+    "historical": ["admin", "analyst"],
+    "predictive": ["admin", "analyst"],
+    "custom_reports": ["admin", "analyst"],
+    "data_visualization": ["user", "admin", "analyst"],
+    "insights": ["admin", "analyst"],
+    "alerts": ["admin", "analyst"],
+    "scheduling": ["admin", "analyst"],
+    "sharing": ["admin", "analyst"]
+  },
+  "config": {
+    "defaults": {
+      "refreshInterval": 30000,
+      "maxDataPoints": 1000,
+      "retentionPeriod": 90,
+      "chartTypes": ["line", "bar", "pie", "area", "scatter", "heatmap"],
+      "timeRanges": ["1h", "24h", "7d", "30d", "90d", "1y"],
+      "metrics": ["users", "sessions", "pageviews", "conversions", "revenue", "performance"],
+      "features": {
+        "realTimeAnalytics": true,
+        "historicalData": true,
+        "predictiveAnalytics": true,
+        "customReports": true,
+        "dataVisualization": true,
+        "insights": true,
+        "alerts": true,
+        "scheduling": true,
+        "sharing": true,
+        "export": true,
+        "comparison": true,
+        "segmentation": true
+      },
+      "ui": {
+        "theme": "auto",
+        "layout": "dashboard",
+        "cardSize": "medium",
+        "animations": true,
+        "responsive": true,
+        "darkMode": true,
+        "chartAnimations": true
+      },
+      "performance": {
+        "lazyLoading": true,
+        "virtualization": true,
+        "caching": true,
+        "debounce": 500,
+        "dataSampling": true,
+        "aggregation": true
+      },
+      "data": {
+        "samplingRate": 0.1,
+        "aggregationLevel": "hourly",
+        "compression": true,
+        "backup": true,
+        "archival": true
+      },
+      "export": {
+        "formats": ["csv", "json", "pdf", "excel"],
+        "maxRows": 10000,
+        "includeCharts": true,
+        "scheduling": true
+      },
+      "alerts": {
+        "thresholds": {
+          "highTraffic": 1000,
+          "lowConversion": 0.01,
+          "errorRate": 0.05,
+          "slowPerformance": 3000
+        },
+        "channels": ["email", "slack", "webhook"],
+        "frequency": "immediate"
+      }
+    },
+    "overrides": {
+      "development": {
+        "refreshInterval": 10000,
+        "maxDataPoints": 100,
+        "retentionPeriod": 7,
+        "features": {
+          "debug": true,
+          "telemetry": true
+        },
+        "performance": {
+          "dataSampling": false,
+          "aggregation": false
+        }
+      },
+      "production": {
+        "refreshInterval": 60000,
+        "maxDataPoints": 5000,
+        "retentionPeriod": 365,
+        "features": {
+          "debug": false,
+          "telemetry": true
+        },
+        "performance": {
+          "dataSampling": true,
+          "aggregation": true
+        }
+      }
+    }
+  },
+  "lifecycle": {
+    "init": "initializeAnalytics",
+    "destroy": "cleanupAnalytics"
+  }
+}

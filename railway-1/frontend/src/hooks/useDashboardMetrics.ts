@@ -55,7 +55,7 @@ export const useDashboardMetrics = (refreshInterval = 30000): UseDashboardMetric
   const fetch = useCallback(async (isRefresh = false, signal?: AbortSignal) => {
     // Prevent overlapping requests
     if (isRefetchingRef.current) {
-      console.warn('[useDashboardMetrics] Skipping overlapping request');
+      console.warn();
       return;
     }
 
@@ -81,7 +81,7 @@ export const useDashboardMetrics = (refreshInterval = 30000): UseDashboardMetric
 
         // Dev-friendly logging
         if (process.env.NODE_ENV === 'development') {
-          console.info(`[useDashboardMetrics] Updated @ ${new Date().toISOString()}`, combinedMetrics);
+          console.info(`[useDashboardMetrics] Metrics updated at ${new Date().toISOString()}`, combinedMetrics);
         }
       }
     } catch (err: any) {
@@ -91,7 +91,7 @@ export const useDashboardMetrics = (refreshInterval = 30000): UseDashboardMetric
         return;
       }
 
-      console.error('Dashboard metrics fetch failed:', err);
+      console.error();
       setError('⚠️ Unable to load dashboard data. Showing cached information.');
       setStatus('error');
 
@@ -105,11 +105,11 @@ export const useDashboardMetrics = (refreshInterval = 30000): UseDashboardMetric
             setStatus('idle');
             console.log('[useDashboardMetrics] Using cached data as fallback');
           } else {
-            console.warn('[useDashboardMetrics] Cached data is invalid, clearing cache');
+            console.warn();
             localStorage.removeItem('aibos-dashboard-metrics');
           }
         } catch (e) {
-          console.error('Failed to parse cached metrics:', e);
+          console.error();
           localStorage.removeItem('aibos-dashboard-metrics');
         }
       }
@@ -121,7 +121,7 @@ export const useDashboardMetrics = (refreshInterval = 30000): UseDashboardMetric
   const refetch = useCallback(async () => {
     // Debounce rapid refetch calls
     if (isRefetchingRef.current) {
-      console.warn('[useDashboardMetrics] Refetch already in progress');
+      console.warn();
       return;
     }
 

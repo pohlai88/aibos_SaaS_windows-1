@@ -1,0 +1,96 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./railway-1/frontend/src/*"],
+      "@/shared/*": ["./shared/src/*"],
+      "@/backend/*": ["./railway-1/backend/src/*"],
+      "@/components/*": ["./railway-1/frontend/src/components/*"],
+      "@/lib/*": ["./railway-1/frontend/src/lib/*"],
+      "@/ai/*": ["./railway-1/frontend/src/ai/*"],
+      "@/types/*": ["./railway-1/frontend/src/types/*"],
+      "@/manifests/*": ["./railway-1/frontend/src/manifests/*"]
+    },
+    "types": ["node", "vitest/globals"],
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "importHelpers": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true
+  },
+  "include": [
+    "railway-1/frontend/src/**/*",
+    "railway-1/backend/src/**/*",
+    "shared/src/**/*",
+    "scripts/**/*",
+    "types/**/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "**/dist",
+    "**/build",
+    "**/.next",
+    "**/.turbo",
+    "**/coverage",
+    "**/.git",
+    "**/tmp",
+    "**/temp"
+  ],
+  "references": [
+    {
+      "path": "./railway-1/frontend"
+    },
+    {
+      "path": "./railway-1/backend"
+    },
+    {
+      "path": "./shared"
+    }
+  ]
+}

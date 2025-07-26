@@ -1,0 +1,163 @@
+{
+  "id": "core:app",
+  "version": "1.0.0",
+  "type": "core",
+  "enabled": true,
+  "dependencies": [],
+  "permissions": {
+    "read": ["user", "admin", "system"],
+    "write": ["admin", "system"],
+    "delete": ["admin", "system"],
+    "configure": ["admin", "system"],
+    "monitor": ["admin", "system"],
+    "deploy": ["admin", "system"]
+  },
+  "config": {
+    "defaults": {
+      "appName": "AI-BOS Backend",
+      "version": "1.0.0",
+      "environment": "production",
+      "features": {
+        "manifestor": true,
+        "aiDatabase": true,
+        "consciousness": true,
+        "security": true,
+        "analytics": true,
+        "realtime": true,
+        "websockets": true,
+        "rateLimiting": true,
+        "caching": true,
+        "logging": true,
+        "monitoring": true,
+        "telemetry": true
+      },
+      "performance": {
+        "maxConcurrentRequests": 1000,
+        "requestTimeout": 30000,
+        "rateLimitWindow": 60000,
+        "rateLimitMax": 100,
+        "cacheTTL": 300000,
+        "maxMemoryUsage": 0.8
+      },
+      "security": {
+        "jwtSecret": "your-jwt-secret",
+        "bcryptRounds": 12,
+        "sessionTimeout": 3600000,
+        "maxLoginAttempts": 5,
+        "passwordPolicy": {
+          "minLength": 12,
+          "requireUppercase": true,
+          "requireLowercase": true,
+          "requireNumbers": true,
+          "requireSpecialChars": true
+        },
+        "cors": {
+          "origin": ["http://localhost:3000", "https://your-domain.com"],
+          "credentials": true,
+          "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+          "allowedHeaders": ["Content-Type", "Authorization"]
+        }
+      },
+      "database": {
+        "type": "supabase",
+        "url": "your-supabase-url",
+        "key": "your-supabase-key",
+        "poolSize": 10,
+        "connectionTimeout": 30000,
+        "queryTimeout": 30000
+      },
+      "ai": {
+        "providers": ["openai", "anthropic", "ollama"],
+        "defaultProvider": "openai",
+        "maxTokens": 4000,
+        "temperature": 0.7,
+        "timeout": 30000,
+        "retries": 3
+      },
+      "logging": {
+        "level": "info",
+        "format": "json",
+        "transports": ["console", "file"],
+        "filePath": "./logs/app.log",
+        "maxSize": "10m",
+        "maxFiles": 5
+      },
+      "monitoring": {
+        "enabled": true,
+        "interval": 60000,
+        "metrics": ["cpu", "memory", "requests", "errors", "responseTime"],
+        "alerts": {
+          "cpuThreshold": 0.8,
+          "memoryThreshold": 0.8,
+          "errorRateThreshold": 0.05,
+          "responseTimeThreshold": 5000
+        }
+      }
+    },
+    "overrides": {
+      "development": {
+        "environment": "development",
+        "features": {
+          "debug": true,
+          "telemetry": false
+        },
+        "performance": {
+          "maxConcurrentRequests": 100,
+          "rateLimitMax": 1000
+        },
+        "security": {
+          "cors": {
+            "origin": ["http://localhost:3000", "http://localhost:3001"]
+          }
+        },
+        "logging": {
+          "level": "debug"
+        }
+      },
+      "production": {
+        "environment": "production",
+        "features": {
+          "debug": false,
+          "telemetry": true
+        },
+        "performance": {
+          "maxConcurrentRequests": 5000,
+          "rateLimitMax": 100
+        },
+        "logging": {
+          "level": "warn"
+        }
+      }
+    }
+  },
+  "api": {
+    "routes": [
+      "/api/health",
+      "/api/status",
+      "/api/config",
+      "/api/manifestor/*"
+    ],
+    "middleware": [
+      "cors",
+      "helmet",
+      "rateLimit",
+      "auth",
+      "manifestor"
+    ],
+    "validators": {
+      "requestId": "uuid",
+      "timestamp": "iso8601",
+      "userId": "uuid"
+    }
+  },
+  "security": {
+    "rateLimit": 100,
+    "authRequired": true,
+    "roles": ["user", "admin", "system"],
+    "scopes": ["read", "write", "delete", "configure", "monitor", "deploy"]
+  },
+  "lifecycle": {
+    "init": "initializeApp",
+    "destroy": "cleanupApp"
+  }
+}

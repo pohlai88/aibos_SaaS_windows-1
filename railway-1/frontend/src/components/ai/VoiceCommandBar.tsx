@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, Volume2, Sparkles } from 'lucide-react';
 
+// ==================== MANIFESTOR INTEGRATION ====================
+import { useManifestor, usePermission, useModuleConfig, useModuleEnabled } from '@/hooks/useManifestor';
+
 interface VoiceCommand {
   id: string;
   phrase: string;
@@ -23,6 +26,20 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
   aiResponse = true,
   className = ""
 }) => {
+  // ==================== MANIFESTOR INTEGRATION ====================
+  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const moduleConfig = useModuleConfig('ai-components');
+  const isModuleEnabled = useModuleEnabled('ai-components');
+
+  // Check permissions for current user
+  const currentUser = { id: 'current-user', role: 'user', permissions: [] };
+  const canView = usePermission('ai-components', 'view', currentUser);
+  const canVoiceControl = usePermission('ai-components', 'voice_control', currentUser);
+
+  // Get configuration from manifest
+  const voiceConfig = moduleConfig.components?.VoiceCommandBar;
+  const features = moduleConfig.features;
+  const performance = moduleConfig.performance;
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -32,8 +49,34 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  // ==================== MANIFESTOR PERMISSION CHECKS ====================
+  if (manifestLoading) {
+    return <div className="animate-pulse bg-gray-200 rounded-lg h-16 w-full" />;
+  }
+
+  if (manifestError) {
+    return <div className="text-red-600 p-2">Voice Control Error</div>;
+  }
+
+  if (!isModuleEnabled) {
+    return <div className="text-gray-600 p-2">Voice Control Disabled</div>;
+  }
+
+  if (!canView || !canVoiceControl) {
+    return <div className="text-gray-600 p-2">Voice Control Access Denied</div>;
+  }
+
+  // Check if voice features are enabled
+  const speechRecognitionEnabled = voiceConfig?.features?.speech_recognition;
+  const voiceSynthesisEnabled = voiceConfig?.features?.voice_synthesis;
+  const commandExecutionEnabled = voiceConfig?.features?.command_execution;
+  const customCommandsEnabled = voiceConfig?.features?.custom_commands;
+  const noiseReductionEnabled = voiceConfig?.features?.noise_reduction;
+
   // Initialize speech recognition
   useEffect(() => {
+    if (!speechRecognitionEnabled) return;
+
     if (typeof window !== 'undefined') {
       // Check for speech recognition support
       const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;

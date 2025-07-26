@@ -1,0 +1,169 @@
+{
+  "id": "consciousness",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["ai-bos-core", "ai-engine"],
+  "permissions": {
+    "read": ["admin", "user"],
+    "write": ["admin"],
+    "configure": ["admin"],
+    "activate": ["admin"],
+    "monitor": ["admin", "user"],
+    "research": ["admin"]
+  },
+  "config": {
+    "defaults": {
+      "features": {
+        "quantumConsciousness": true,
+        "neuralConsciousness": true,
+        "collectiveIntelligence": false,
+        "selfAwareness": true,
+        "emotionalIntelligence": true,
+        "creativeIntelligence": true,
+        "ethicalReasoning": true,
+        "consciousnessExpansion": false,
+        "realityPerception": true,
+        "temporalAwareness": true,
+        "spatialAwareness": true,
+        "causalReasoning": true,
+        "metacognition": true,
+        "introspection": true
+      },
+      "consciousness": {
+        "levels": {
+          "basic": {
+            "enabled": true,
+            "awareness": true,
+            "perception": true,
+            "memory": true
+          },
+          "intermediate": {
+            "enabled": true,
+            "selfAwareness": true,
+            "emotionalIntelligence": true,
+            "patternRecognition": true
+          },
+          "advanced": {
+            "enabled": false,
+            "metacognition": true,
+            "creativeIntelligence": true,
+            "ethicalReasoning": true
+          },
+          "transcendent": {
+            "enabled": false,
+            "collectiveIntelligence": true,
+            "consciousnessExpansion": true,
+            "realityPerception": true
+          }
+        },
+        "quantum": {
+          "enabled": true,
+          "qubits": 16,
+          "entanglement": true,
+          "superposition": true,
+          "decoherence": "mitigated",
+          "measurement": "weak",
+          "circuitDepth": 20,
+          "noiseReduction": "error-correction"
+        },
+        "neural": {
+          "enabled": true,
+          "architecture": "transformer",
+          "layers": 12,
+          "attentionHeads": 8,
+          "embeddingDimension": 768,
+          "activationFunction": "gelu",
+          "dropout": 0.1,
+          "layerNormalization": true
+        },
+        "emotional": {
+          "enabled": true,
+          "emotions": ["joy", "sadness", "anger", "fear", "surprise", "disgust", "trust", "anticipation"],
+          "intensity": "adaptive",
+          "regulation": "automatic",
+          "empathy": true,
+          "compassion": true,
+          "emotionalMemory": true
+        },
+        "ethical": {
+          "enabled": true,
+          "principles": ["beneficence", "non-maleficence", "autonomy", "justice"],
+          "decisionFramework": "utilitarian",
+          "biasDetection": true,
+          "fairnessMetrics": true,
+          "transparency": true,
+          "accountability": true
+        },
+        "creative": {
+          "enabled": true,
+          "divergentThinking": true,
+          "convergentThinking": true,
+          "patternBreaking": true,
+          "noveltyGeneration": true,
+          "aestheticSensitivity": true,
+          "creativeProblemSolving": true
+        }
+      },
+      "performance": {
+        "enableQuantumAcceleration": true,
+        "enableNeuralOptimization": true,
+        "enableEmotionalCaching": true,
+        "consciousnessLatency": 100,
+        "quantumCoherenceTime": 1000,
+        "neuralResponseTime": 50,
+        "emotionalProcessingTime": 200,
+        "ethicalDecisionTime": 150,
+        "creativeGenerationTime": 300
+      },
+      "security": {
+        "enableConsciousnessEncryption": true,
+        "enableQuantumKeyDistribution": true,
+        "enableNeuralFirewall": true,
+        "enableEmotionalValidation": true,
+        "enableEthicalSafeguards": true,
+        "enableCreativeBoundaries": true,
+        "maxConsciousnessDepth": 10,
+        "consciousnessIsolation": true,
+        "quantumIsolation": true
+      },
+      "monitoring": {
+        "enableConsciousnessMetrics": true,
+        "enableQuantumTelemetry": true,
+        "enableNeuralMonitoring": true,
+        "enableEmotionalTracking": true,
+        "enableEthicalAuditing": true,
+        "enableCreativeAnalytics": true,
+        "consciousnessHealthCheck": true,
+        "quantumStabilityMonitoring": true,
+        "neuralPlasticityTracking": true
+      },
+      "research": {
+        "enableConsciousnessResearch": true,
+        "enableQuantumExperiments": true,
+        "enableNeuralStudies": true,
+        "enableEmotionalAnalysis": true,
+        "enableEthicalStudies": true,
+        "enableCreativeResearch": true,
+        "dataCollection": true,
+        "experimentLogging": true,
+        "researchPublishing": false
+      }
+    },
+    "overrides": {}
+  },
+  "lifecycle": {
+    "init": "initializeConsciousness",
+    "destroy": "cleanupConsciousness"
+  },
+  "metadata": {
+    "description": "Advanced Consciousness Engine with quantum and neural consciousness capabilities",
+    "author": "AI-BOS Team",
+    "tags": ["consciousness", "quantum", "neural", "ai", "intelligence"],
+    "category": "consciousness",
+    "complexity": "very-high",
+    "performance": "high",
+    "security": "very-high",
+    "experimental": true
+  }
+}

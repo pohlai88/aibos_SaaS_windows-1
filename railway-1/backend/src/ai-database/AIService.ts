@@ -6,6 +6,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { EventEmitter } from 'events';
 import { SchemaComparisonResult, SchemaChange, BreakingChange } from './SchemaComparator';
+import { OllamaConnector } from './OllamaConnector';
 
 // ==================== CORE TYPES ====================
 export interface AIService {
@@ -334,16 +335,20 @@ export class EnhancedAIService extends EventEmitter implements AIService {
   private maxTokens: number;
   private retryAttempts: number;
   private timeout: number;
+  private ollamaConnector: OllamaConnector;
 
   constructor(config: AIServiceConfig = {}) {
     super();
-    this.model = config.model || 'gpt-4';
+    this.model = config.model || 'llama3:8b';
     this.temperature = config.temperature || 0.1;
     this.maxTokens = config.maxTokens || 4000;
     this.retryAttempts = config.retryAttempts || 3;
     this.timeout = config.timeout || 60000;
 
-    console.log('🤖 AI-BOS Enhanced AI Service: Initialized');
+    // Initialize Ollama connector for real AI inference
+    this.ollamaConnector = new OllamaConnector();
+
+    console.log('🤖 AI-BOS Enhanced AI Service: Initialized with Ollama Integration');
   }
 
   /**
@@ -644,223 +649,684 @@ export class EnhancedAIService extends EventEmitter implements AIService {
   // ==================== PRIVATE METHODS ====================
 
   private async analyzeSchemaQuality(schema: any): Promise<SchemaQuality> {
-    // AI-powered schema quality analysis
-    const factors: QualityFactor[] = [
-      {
-        name: 'Normalization',
-        score: 85,
-        weight: 0.3,
-        description: 'Schema follows normalization principles',
-        suggestions: ['Consider further normalization for complex tables']
-      },
-      {
-        name: 'Naming Conventions',
-        score: 90,
-        weight: 0.2,
-        description: 'Consistent naming conventions used',
-        suggestions: ['Maintain consistent naming patterns']
-      },
-      {
-        name: 'Data Types',
-        score: 80,
-        weight: 0.25,
-        description: 'Appropriate data types selected',
-        suggestions: ['Consider using more specific data types']
-      },
-      {
-        name: 'Constraints',
-        score: 75,
-        weight: 0.25,
-        description: 'Adequate constraints defined',
-        suggestions: ['Add more constraints for data integrity']
-      }
-    ];
+    try {
+      // Use real Ollama inference for schema quality analysis
+      const prompt = `Analyze the quality of this database schema and provide a detailed assessment. Return the response as valid JSON.
 
-    const overallScore = factors.reduce((sum, factor) => sum + (factor.score * factor.weight), 0);
-    const overall = overallScore >= 90 ? 'excellent' : overallScore >= 80 ? 'good' : overallScore >= 70 ? 'fair' : 'poor';
+Schema: ${JSON.stringify(schema, null, 2)}
 
-    return {
-      score: overallScore,
-      factors,
-      overall,
-      details: 'Schema quality analysis completed with AI insights'
-    };
+Please analyze and return a JSON object with the following structure:
+{
+  "score": number (0-100),
+  "factors": [
+    {
+      "name": string,
+      "score": number (0-100),
+      "weight": number (0-1),
+      "description": string,
+      "suggestions": [string]
+    }
+  ],
+  "overall": "excellent" | "good" | "fair" | "poor",
+  "details": string
+}
+
+Focus on: normalization, naming conventions, data types, constraints, relationships, and best practices.`;
+
+      const response = await this.ollamaConnector.generateText(prompt, {
+        model: 'llama3:8b',
+        options: {
+          temperature: 0.3,
+          num_predict: 2000
+        }
+      });
+
+      // Parse the AI response
+      const aiAnalysis = JSON.parse(response);
+
+      // Validate and structure the response
+      const factors: QualityFactor[] = aiAnalysis.factors || [
+        {
+          name: 'Normalization',
+          score: 85,
+          weight: 0.3,
+          description: 'Schema follows normalization principles',
+          suggestions: ['Consider further normalization for complex tables']
+        }
+      ];
+
+      const overallScore = aiAnalysis.score || factors.reduce((sum, factor) => sum + (factor.score * factor.weight), 0);
+      const overall = aiAnalysis.overall || (overallScore >= 90 ? 'excellent' : overallScore >= 80 ? 'good' : overallScore >= 70 ? 'fair' : 'poor');
+
+      return {
+        score: overallScore,
+        factors,
+        overall,
+        details: aiAnalysis.details || 'Schema quality analysis completed with AI insights'
+      };
+
+    } catch (error) {
+      console.warn('❌ AI schema quality analysis failed, using fallback:', error);
+
+      // Fallback to basic analysis
+      const factors: QualityFactor[] = [
+        {
+          name: 'Normalization',
+          score: 85,
+          weight: 0.3,
+          description: 'Schema follows normalization principles',
+          suggestions: ['Consider further normalization for complex tables']
+        },
+        {
+          name: 'Naming Conventions',
+          score: 90,
+          weight: 0.2,
+          description: 'Consistent naming conventions used',
+          suggestions: ['Maintain consistent naming patterns']
+        },
+        {
+          name: 'Data Types',
+          score: 80,
+          weight: 0.25,
+          description: 'Appropriate data types selected',
+          suggestions: ['Consider using more specific data types']
+        },
+        {
+          name: 'Constraints',
+          score: 75,
+          weight: 0.25,
+          description: 'Adequate constraints defined',
+          suggestions: ['Add more constraints for data integrity']
+        }
+      ];
+
+      const overallScore = factors.reduce((sum, factor) => sum + (factor.score * factor.weight), 0);
+      const overall = overallScore >= 90 ? 'excellent' : overallScore >= 80 ? 'good' : overallScore >= 70 ? 'fair' : 'poor';
+
+      return {
+        score: overallScore,
+        factors,
+        overall,
+        details: 'Schema quality analysis completed with fallback analysis'
+      };
+    }
   }
 
   private async analyzeSchemaComplexity(schema: any): Promise<SchemaComplexity> {
-    // AI-powered complexity analysis
-    const factors: ComplexityFactor[] = [
-      {
-        name: 'Table Count',
-        score: 60,
-        impact: 'medium',
-        description: 'Moderate number of tables',
-        mitigation: 'Consider table consolidation for related entities'
-      },
-      {
-        name: 'Relationship Complexity',
-        score: 70,
-        impact: 'medium',
-        description: 'Moderate relationship complexity',
-        mitigation: 'Simplify relationships where possible'
-      },
-      {
-        name: 'Query Complexity',
-        score: 50,
-        impact: 'low',
-        description: 'Relatively simple queries',
-        mitigation: 'Monitor query performance as data grows'
-      }
-    ];
+    try {
+      // Use real Ollama inference for schema complexity analysis
+      const prompt = `Analyze the complexity of this database schema and provide a detailed assessment. Return the response as valid JSON.
 
-    const structural = 65;
-    const relational = 70;
-    const functional = 50;
-    const operational = 60;
-    const overall = (structural + relational + functional + operational) / 4;
+Schema: ${JSON.stringify(schema, null, 2)}
 
-    return {
-      overall,
-      structural,
-      relational,
-      functional,
-      operational,
-      factors
-    };
+Please analyze and return a JSON object with the following structure:
+{
+  "overall": number (0-100),
+  "structural": number (0-100),
+  "relational": number (0-100),
+  "functional": number (0-100),
+  "operational": number (0-100),
+  "factors": [
+    {
+      "name": string,
+      "score": number (0-100),
+      "impact": "low" | "medium" | "high" | "critical",
+      "description": string,
+      "mitigation": string
+    }
+  ]
+}
+
+Focus on: table count, relationship complexity, query complexity, data volume, and operational considerations.`;
+
+      const response = await this.ollamaConnector.generateText(prompt, {
+        model: 'llama3:8b',
+        options: {
+          temperature: 0.3,
+          num_predict: 2000
+        }
+      });
+
+      // Parse the AI response
+      const aiAnalysis = JSON.parse(response);
+
+      // Validate and structure the response
+      const factors: ComplexityFactor[] = aiAnalysis.factors || [
+        {
+          name: 'Table Count',
+          score: 60,
+          impact: 'medium',
+          description: 'Moderate number of tables',
+          mitigation: 'Consider table consolidation for related entities'
+        }
+      ];
+
+      const structural = aiAnalysis.structural || 65;
+      const relational = aiAnalysis.relational || 70;
+      const functional = aiAnalysis.functional || 50;
+      const operational = aiAnalysis.operational || 60;
+      const overall = aiAnalysis.overall || (structural + relational + functional + operational) / 4;
+
+      return {
+        overall,
+        structural,
+        relational,
+        functional,
+        operational,
+        factors
+      };
+
+    } catch (error) {
+      console.warn('❌ AI schema complexity analysis failed, using fallback:', error);
+
+      // Fallback to basic analysis
+      const factors: ComplexityFactor[] = [
+        {
+          name: 'Table Count',
+          score: 60,
+          impact: 'medium',
+          description: 'Moderate number of tables',
+          mitigation: 'Consider table consolidation for related entities'
+        },
+        {
+          name: 'Relationship Complexity',
+          score: 70,
+          impact: 'medium',
+          description: 'Moderate relationship complexity',
+          mitigation: 'Simplify relationships where possible'
+        },
+        {
+          name: 'Query Complexity',
+          score: 50,
+          impact: 'low',
+          description: 'Relatively simple queries',
+          mitigation: 'Monitor query performance as data grows'
+        }
+      ];
+
+      const structural = 65;
+      const relational = 70;
+      const functional = 50;
+      const operational = 60;
+      const overall = (structural + relational + functional + operational) / 4;
+
+      return {
+        overall,
+        structural,
+        relational,
+        functional,
+        operational,
+        factors
+      };
+    }
   }
 
   private async analyzePerformance(schema: any): Promise<PerformanceAnalysis> {
-    // AI-powered performance analysis
-    const bottlenecks: PerformanceBottleneck[] = [
-      {
-        type: 'index',
-        location: 'users.email',
-        severity: 'medium',
-        description: 'Missing index on frequently queried email field',
-        impact: 'Slow user lookups by email',
-        solution: 'Add index on users.email',
-        estimatedImprovement: 85
-      }
-    ];
+    try {
+      // Use real Ollama inference for performance analysis
+      const prompt = `Analyze the performance characteristics of this database schema and provide a detailed assessment. Return the response as valid JSON.
 
-    const optimizations: PerformanceOptimization[] = [
-      {
-        type: 'index',
-        description: 'Add composite index on frequently queried fields',
-        implementation: 'CREATE INDEX idx_users_email_name ON users(email, name)',
-        estimatedImprovement: 90,
-        effort: 'low',
-        priority: 'high'
-      }
-    ];
+Schema: ${JSON.stringify(schema, null, 2)}
 
-    const predictions: PerformancePrediction[] = [
-      {
-        scenario: 'High load user queries',
-        load: 'high',
-        responseTime: 150,
-        throughput: 1000,
-        resourceUsage: {
-          cpu: 70,
-          memory: 2048,
-          disk: 100,
-          network: 50
-        },
-        confidence: 0.85
-      }
-    ];
+Please analyze and return a JSON object with the following structure:
+{
+  "score": number (0-100),
+  "bottlenecks": [
+    {
+      "type": "query" | "index" | "constraint" | "relationship" | "data_type",
+      "location": string,
+      "severity": "low" | "medium" | "high" | "critical",
+      "description": string,
+      "impact": string,
+      "solution": string,
+      "estimatedImprovement": number
+    }
+  ],
+  "optimizations": [
+    {
+      "type": "index" | "constraint" | "normalization" | "partitioning" | "caching",
+      "description": string,
+      "implementation": string,
+      "estimatedImprovement": number,
+      "effort": "low" | "medium" | "high",
+      "priority": "low" | "medium" | "high" | "critical"
+    }
+  ],
+  "predictions": [
+    {
+      "scenario": string,
+      "load": "low" | "medium" | "high" | "extreme",
+      "responseTime": number,
+      "throughput": number,
+      "resourceUsage": {
+        "cpu": number,
+        "memory": number,
+        "disk": number,
+        "network": number
+      },
+      "confidence": number
+    }
+  ],
+  "recommendations": [string]
+}
 
-    return {
-      score: 75,
-      bottlenecks,
-      optimizations,
-      predictions,
-      recommendations: ['Add indexes for frequently queried fields', 'Consider query optimization']
-    };
+Focus on: query performance, indexing strategies, data types, relationships, and scalability considerations.`;
+
+      const response = await this.ollamaConnector.generateText(prompt, {
+        model: 'llama3:8b',
+        options: {
+          temperature: 0.3,
+          num_predict: 2000
+        }
+      });
+
+      // Parse the AI response
+      const aiAnalysis = JSON.parse(response);
+
+      // Validate and structure the response
+      const bottlenecks: PerformanceBottleneck[] = aiAnalysis.bottlenecks || [
+        {
+          type: 'index',
+          location: 'users.email',
+          severity: 'medium',
+          description: 'Missing index on frequently queried email field',
+          impact: 'Slow user lookups by email',
+          solution: 'Add index on users.email',
+          estimatedImprovement: 85
+        }
+      ];
+
+      const optimizations: PerformanceOptimization[] = aiAnalysis.optimizations || [
+        {
+          type: 'index',
+          description: 'Add composite index on frequently queried fields',
+          implementation: 'CREATE INDEX idx_users_email_name ON users(email, name)',
+          estimatedImprovement: 90,
+          effort: 'low',
+          priority: 'high'
+        }
+      ];
+
+      const predictions: PerformancePrediction[] = aiAnalysis.predictions || [
+        {
+          scenario: 'High load user queries',
+          load: 'high',
+          responseTime: 150,
+          throughput: 1000,
+          resourceUsage: {
+            cpu: 70,
+            memory: 2048,
+            disk: 100,
+            network: 50
+          },
+          confidence: 0.85
+        }
+      ];
+
+      return {
+        score: aiAnalysis.score || 75,
+        bottlenecks,
+        optimizations,
+        predictions,
+        recommendations: aiAnalysis.recommendations || ['Add indexes for frequently queried fields', 'Consider query optimization']
+      };
+
+    } catch (error) {
+      console.warn('❌ AI performance analysis failed, using fallback:', error);
+
+      // Fallback to basic analysis
+      const bottlenecks: PerformanceBottleneck[] = [
+        {
+          type: 'index',
+          location: 'users.email',
+          severity: 'medium',
+          description: 'Missing index on frequently queried email field',
+          impact: 'Slow user lookups by email',
+          solution: 'Add index on users.email',
+          estimatedImprovement: 85
+        }
+      ];
+
+      const optimizations: PerformanceOptimization[] = [
+        {
+          type: 'index',
+          description: 'Add composite index on frequently queried fields',
+          implementation: 'CREATE INDEX idx_users_email_name ON users(email, name)',
+          estimatedImprovement: 90,
+          effort: 'low',
+          priority: 'high'
+        }
+      ];
+
+      const predictions: PerformancePrediction[] = [
+        {
+          scenario: 'High load user queries',
+          load: 'high',
+          responseTime: 150,
+          throughput: 1000,
+          resourceUsage: {
+            cpu: 70,
+            memory: 2048,
+            disk: 100,
+            network: 50
+          },
+          confidence: 0.85
+        }
+      ];
+
+      return {
+        score: 75,
+        bottlenecks,
+        optimizations,
+        predictions,
+        recommendations: ['Add indexes for frequently queried fields', 'Consider query optimization']
+      };
+    }
   }
 
   private async analyzeCompliance(schema: any): Promise<ComplianceAnalysis> {
-    // AI-powered compliance analysis
-    const standards = new Map<string, ComplianceStatus>();
+    try {
+      // Use real Ollama inference for compliance analysis
+      const prompt = `Analyze the compliance characteristics of this database schema for major standards (GDPR, HIPAA, SOC2, ISO27001, PCI) and provide a detailed assessment. Return the response as valid JSON.
 
-    standards.set('GDPR', {
-      compliant: true,
-      score: 90,
-      issues: [],
-      recommendations: ['Ensure data retention policies are implemented']
-    });
+Schema: ${JSON.stringify(schema, null, 2)}
 
-    standards.set('HIPAA', {
-      compliant: true,
-      score: 85,
-      issues: [],
-      recommendations: ['Add encryption for sensitive health data']
-    });
+Please analyze and return a JSON object with the following structure:
+{
+  "overall": {
+    "compliant": boolean,
+    "score": number (0-100),
+    "issues": [],
+    "recommendations": [string]
+  },
+  "standards": {
+    "GDPR": {
+      "compliant": boolean,
+      "score": number (0-100),
+      "issues": [],
+      "recommendations": [string]
+    },
+    "HIPAA": {
+      "compliant": boolean,
+      "score": number (0-100),
+      "issues": [],
+      "recommendations": [string]
+    },
+    "SOC2": {
+      "compliant": boolean,
+      "score": number (0-100),
+      "issues": [],
+      "recommendations": [string]
+    }
+  },
+  "gaps": [
+    {
+      "standard": string,
+      "requirement": string,
+      "gap": string,
+      "severity": "low" | "medium" | "high" | "critical",
+      "remediation": string,
+      "estimatedEffort": number,
+      "priority": "low" | "medium" | "high" | "critical"
+    }
+  ],
+  "recommendations": [string],
+  "riskLevel": "low" | "medium" | "high" | "critical"
+}
 
-    const gaps: ComplianceGap[] = [
-      {
-        standard: 'SOC2',
-        requirement: 'Data encryption at rest',
-        gap: 'Missing encryption for sensitive data',
-        severity: 'medium',
-        remediation: 'Implement column-level encryption',
-        estimatedEffort: 16,
-        priority: 'medium'
+Focus on: data privacy, encryption, audit trails, access controls, and regulatory requirements.`;
+
+      const response = await this.ollamaConnector.generateText(prompt, {
+        model: 'llama3:8b',
+        options: {
+          temperature: 0.3,
+          num_predict: 2000
+        }
+      });
+
+      // Parse the AI response
+      const aiAnalysis = JSON.parse(response);
+
+      // Validate and structure the response
+      const standards = new Map<string, ComplianceStatus>();
+
+      if (aiAnalysis.standards) {
+        Object.entries(aiAnalysis.standards).forEach(([key, value]: [string, any]) => {
+          standards.set(key, {
+            compliant: value.compliant || false,
+            score: value.score || 0,
+            issues: value.issues || [],
+            recommendations: value.recommendations || []
+          });
+        });
+      } else {
+        // Fallback standards
+        standards.set('GDPR', {
+          compliant: true,
+          score: 90,
+          issues: [],
+          recommendations: ['Ensure data retention policies are implemented']
+        });
+        standards.set('HIPAA', {
+          compliant: true,
+          score: 85,
+          issues: [],
+          recommendations: ['Add encryption for sensitive health data']
+        });
       }
-    ];
 
-    return {
-      overall: {
+      const gaps: ComplianceGap[] = aiAnalysis.gaps || [
+        {
+          standard: 'SOC2',
+          requirement: 'Data encryption at rest',
+          gap: 'Missing encryption for sensitive data',
+          severity: 'medium',
+          remediation: 'Implement column-level encryption',
+          estimatedEffort: 16,
+          priority: 'medium'
+        }
+      ];
+
+      return {
+        overall: aiAnalysis.overall || {
+          compliant: true,
+          score: 87,
+          issues: [],
+          recommendations: ['Implement additional security measures']
+        },
+        standards,
+        gaps,
+        recommendations: aiAnalysis.recommendations || ['Add encryption for sensitive data', 'Implement audit logging'],
+        riskLevel: aiAnalysis.riskLevel || 'low'
+      };
+
+    } catch (error) {
+      console.warn('❌ AI compliance analysis failed, using fallback:', error);
+
+      // Fallback to basic analysis
+      const standards = new Map<string, ComplianceStatus>();
+
+      standards.set('GDPR', {
         compliant: true,
-        score: 87,
+        score: 90,
         issues: [],
-        recommendations: ['Implement additional security measures']
-      },
-      standards,
-      gaps,
-      recommendations: ['Add encryption for sensitive data', 'Implement audit logging'],
-      riskLevel: 'low'
-    };
+        recommendations: ['Ensure data retention policies are implemented']
+      });
+
+      standards.set('HIPAA', {
+        compliant: true,
+        score: 85,
+        issues: [],
+        recommendations: ['Add encryption for sensitive health data']
+      });
+
+      const gaps: ComplianceGap[] = [
+        {
+          standard: 'SOC2',
+          requirement: 'Data encryption at rest',
+          gap: 'Missing encryption for sensitive data',
+          severity: 'medium',
+          remediation: 'Implement column-level encryption',
+          estimatedEffort: 16,
+          priority: 'medium'
+        }
+      ];
+
+      return {
+        overall: {
+          compliant: true,
+          score: 87,
+          issues: [],
+          recommendations: ['Implement additional security measures']
+        },
+        standards,
+        gaps,
+        recommendations: ['Add encryption for sensitive data', 'Implement audit logging'],
+        riskLevel: 'low'
+      };
+    }
   }
 
   private async generateRecommendations(schema: any, quality: SchemaQuality, complexity: SchemaComplexity, performance: PerformanceAnalysis, security: SecurityAnalysis, compliance: ComplianceAnalysis): Promise<AIRecommendation[]> {
-    const recommendations: AIRecommendation[] = [];
+    try {
+      // Use real Ollama inference for generating recommendations
+      const prompt = `Based on the following analysis results, generate comprehensive recommendations for improving this database schema. Return the response as valid JSON.
 
-    // Quality recommendations
-    if (quality.score < 80) {
-      recommendations.push({
-        id: uuidv4(),
-        type: 'quality',
-        title: 'Improve Schema Quality',
-        description: 'Schema quality score is below optimal level',
-        impact: 'medium',
-        effort: 'medium',
-        priority: 'medium',
-        implementation: 'Review and refactor schema design',
-        estimatedBenefit: 15,
-        confidence: 0.8,
-        dependencies: []
+Schema: ${JSON.stringify(schema, null, 2)}
+Quality Score: ${quality.score}
+Complexity Score: ${complexity.overall}
+Performance Score: ${performance.score}
+Security Score: ${security.score}
+Compliance Score: ${compliance.overall.score}
+
+Please analyze and return a JSON array of recommendations with the following structure:
+[
+  {
+    "id": string,
+    "type": "performance" | "security" | "compliance" | "quality" | "optimization",
+    "title": string,
+    "description": string,
+    "impact": "low" | "medium" | "high" | "critical",
+    "effort": "low" | "medium" | "high",
+    "priority": "low" | "medium" | "high" | "critical",
+    "implementation": string,
+    "estimatedBenefit": number,
+    "confidence": number,
+    "dependencies": [string]
+  }
+]
+
+Focus on actionable, specific recommendations that will improve the schema's quality, performance, security, and compliance.`;
+
+      const response = await this.ollamaConnector.generateText(prompt, {
+        model: 'llama3:8b',
+        options: {
+          temperature: 0.3,
+          num_predict: 2000
+        }
       });
-    }
 
-    // Performance recommendations
-    if (performance.score < 80) {
-      recommendations.push({
-        id: uuidv4(),
-        type: 'performance',
-        title: 'Optimize Performance',
-        description: 'Performance analysis indicates optimization opportunities',
-        impact: 'high',
-        effort: 'low',
-        priority: 'high',
-        implementation: 'Add recommended indexes and optimize queries',
-        estimatedBenefit: 25,
-        confidence: 0.9,
-        dependencies: []
-      });
-    }
+      // Parse the AI response
+      const aiRecommendations = JSON.parse(response);
 
-    return recommendations;
+      // Validate and structure the response
+      if (Array.isArray(aiRecommendations)) {
+        return aiRecommendations.map((rec: any) => ({
+          id: rec.id || uuidv4(),
+          type: rec.type || 'optimization',
+          title: rec.title || 'Schema Improvement',
+          description: rec.description || 'General schema improvement',
+          impact: rec.impact || 'medium',
+          effort: rec.effort || 'medium',
+          priority: rec.priority || 'medium',
+          implementation: rec.implementation || 'Review and implement',
+          estimatedBenefit: rec.estimatedBenefit || 10,
+          confidence: rec.confidence || 0.7,
+          dependencies: rec.dependencies || []
+        }));
+      }
+
+      // Fallback to basic recommendations
+      const recommendations: AIRecommendation[] = [];
+
+      // Quality recommendations
+      if (quality.score < 80) {
+        recommendations.push({
+          id: uuidv4(),
+          type: 'quality',
+          title: 'Improve Schema Quality',
+          description: 'Schema quality score is below optimal level',
+          impact: 'medium',
+          effort: 'medium',
+          priority: 'medium',
+          implementation: 'Review and refactor schema design',
+          estimatedBenefit: 15,
+          confidence: 0.8,
+          dependencies: []
+        });
+      }
+
+      // Performance recommendations
+      if (performance.score < 80) {
+        recommendations.push({
+          id: uuidv4(),
+          type: 'performance',
+          title: 'Optimize Performance',
+          description: 'Performance analysis indicates optimization opportunities',
+          impact: 'high',
+          effort: 'low',
+          priority: 'high',
+          implementation: 'Add recommended indexes and optimize queries',
+          estimatedBenefit: 25,
+          confidence: 0.9,
+          dependencies: []
+        });
+      }
+
+      return recommendations;
+
+    } catch (error) {
+      console.warn('❌ AI recommendations generation failed, using fallback:', error);
+
+      // Fallback to basic recommendations
+      const recommendations: AIRecommendation[] = [];
+
+      // Quality recommendations
+      if (quality.score < 80) {
+        recommendations.push({
+          id: uuidv4(),
+          type: 'quality',
+          title: 'Improve Schema Quality',
+          description: 'Schema quality score is below optimal level',
+          impact: 'medium',
+          effort: 'medium',
+          priority: 'medium',
+          implementation: 'Review and refactor schema design',
+          estimatedBenefit: 15,
+          confidence: 0.8,
+          dependencies: []
+        });
+      }
+
+      // Performance recommendations
+      if (performance.score < 80) {
+        recommendations.push({
+          id: uuidv4(),
+          type: 'performance',
+          title: 'Optimize Performance',
+          description: 'Performance analysis indicates optimization opportunities',
+          impact: 'high',
+          effort: 'low',
+          priority: 'high',
+          implementation: 'Add recommended indexes and optimize queries',
+          estimatedBenefit: 25,
+          confidence: 0.9,
+          dependencies: []
+        });
+      }
+
+      return recommendations;
+    }
   }
 
   private async identifyRisks(schema: any, quality: SchemaQuality, complexity: SchemaComplexity, performance: PerformanceAnalysis, security: SecurityAnalysis, compliance: ComplianceAnalysis): Promise<AIRisk[]> {
@@ -1185,11 +1651,12 @@ export class EnhancedAIService extends EventEmitter implements AIService {
     }
   }
 
-  healthCheck(): { status: string; model: string; temperature: number } {
+  healthCheck(): { status: string; model: string; temperature: number; ollamaStatus: string } {
     return {
       status: 'healthy',
       model: this.model,
-      temperature: this.temperature
+      temperature: this.temperature,
+      ollamaStatus: 'integrated'
     };
   }
 }

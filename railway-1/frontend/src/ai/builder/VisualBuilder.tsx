@@ -12,7 +12,7 @@ import {
 
 // AI-BOS Integration
 import { AppManifest, manifestLoader } from '../../runtime/ManifestLoader';
-import { aiBuilderSDK, PromptRequest } from '../sdk/AIBuilderSDK';
+import { getAIBuilderSDK, PromptRequest } from '../sdk/AIBuilderSDK';
 import { AppContainer } from '../../runtime/AppContainer';
 
 // ==================== TYPES ====================
@@ -239,7 +239,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({
         }
       };
 
-      const response = await aiBuilderSDK.generateFromPrompt(request, {
+      const response = await getAIBuilderSDK().generateFromPrompt(request, {
         llmCallback: (stage, data) => {
           console.log(`AI Stage: ${stage}`, data);
         },

@@ -1,0 +1,80 @@
+{
+  "id": "ai-insights",
+  "version": "1.0.0",
+  "type": "module",
+  "enabled": true,
+  "dependencies": ["core:app", "core:auth", "ai-engine"],
+  "permissions": {
+    "view": ["user", "admin", "analyst"],
+    "create": ["admin", "analyst"],
+    "edit": ["admin", "analyst"],
+    "delete": ["admin"],
+    "export": ["admin", "analyst"],
+    "configure": ["admin"],
+    "monitor": ["admin", "analyst"],
+    "analyze": ["admin", "analyst"],
+    "optimize": ["admin"],
+    "predict": ["admin", "analyst"]
+  },
+  "config": {
+    "defaults": {
+      "refreshInterval": 30000,
+      "maxInsights": 50,
+      "confidenceThreshold": 0.7,
+      "impactLevels": ["low", "medium", "high", "critical"],
+      "categories": ["performance", "security", "optimization", "prediction", "anomaly", "recommendation"],
+      "statuses": ["pending", "in-progress", "completed", "failed"],
+      "features": {
+        "xai": true,
+        "hybridIntelligence": true,
+        "realTimeUpdates": true,
+        "export": true,
+        "filtering": true,
+        "search": true,
+        "sorting": true,
+        "pagination": true
+      },
+      "ui": {
+        "theme": "auto",
+        "layout": "grid",
+        "cardSize": "medium",
+        "animations": true,
+        "responsive": true
+      },
+      "performance": {
+        "lazyLoading": true,
+        "virtualization": false,
+        "caching": true,
+        "debounce": 300
+      },
+      "security": {
+        "rateLimiting": true,
+        "auditLogging": true,
+        "dataEncryption": true,
+        "accessControl": true
+      }
+    },
+    "overrides": {
+      "development": {
+        "refreshInterval": 10000,
+        "maxInsights": 20,
+        "features": {
+          "debug": true,
+          "telemetry": true
+        }
+      },
+      "production": {
+        "refreshInterval": 60000,
+        "maxInsights": 100,
+        "features": {
+          "debug": false,
+          "telemetry": true
+        }
+      }
+    }
+  },
+  "lifecycle": {
+    "init": "initializeAIInsights",
+    "destroy": "cleanupAIInsights"
+  }
+}
