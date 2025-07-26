@@ -248,7 +248,21 @@ export class ComputerVisionEngine {
   }
 
   private async detectObjects(image: string, options?: CVOptions): Promise<DetectedObject[]> {
-    // Simplified object detection implementation
+    try {
+      // 🔄 Future: TensorFlow.js implementation
+      // const tf = await import('@tensorflow/tfjs-node');
+      // return await this.tensorflowDetection(image, options);
+
+      // ✅ Current: Fallback implementation
+      logger.warn("Using fallback object detection – TensorFlow integration disabled.");
+      return this.fallbackObjectDetection(image, options);
+    } catch (error) {
+      logger.error("Object detection failed, using emergency fallback", { error });
+      return this.emergencyFallback();
+    }
+  }
+
+  private fallbackObjectDetection(image: string, options?: CVOptions): DetectedObject[] {
     return [
       {
         label: 'person',
@@ -261,9 +275,14 @@ export class ComputerVisionEngine {
           normalized: false
         },
         classId: 1,
-        metadata: { model: 'COCO-SSD' }
+        metadata: { model: 'COCO-SSD-Fallback' }
       }
     ];
+  }
+
+  private emergencyFallback(): DetectedObject[] {
+    logger.error("Emergency fallback triggered - no objects detected");
+    return [];
   }
 
   private async classifyImage(image: string, options?: CVOptions): Promise<ImageClassification> {
