@@ -11,8 +11,8 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { ParallelProcessor } from '@/ai/engines/ParallelProcessor';
-import { MLModelManager } from '@/ai/engines/MLModelManager';
-import { NLPEngine } from '@/ai/engines/NLPEngine';
+import { mlModelManager } from '@/ai/engines/MLModelManager';
+import { nlpEngine } from '@/ai/engines/NLPEngine';
 import { ComputerVisionEngine } from '@/ai/engines/ComputerVisionEngine';
 import { XAISystem } from './xai-system';
 import { HybridIntelligenceSystem } from './hybrid-intelligence';
@@ -119,8 +119,8 @@ export interface FusionConfig {
 export class MultiModalAIFusion {
   private static instance: MultiModalAIFusion;
   private parallelProcessor: ParallelProcessor;
-  private mlModelManager: MLModelManager;
-  private nlpEngine: NLPEngine;
+  private mlModelManager: typeof mlModelManager;
+  private nlpEngine: typeof nlpEngine;
   private computerVisionEngine: ComputerVisionEngine;
   private xaiSystem: XAISystem;
   private hybridIntelligence: HybridIntelligenceSystem;
@@ -145,8 +145,8 @@ export class MultiModalAIFusion {
       }
     });
 
-    this.mlModelManager = new MLModelManager();
-    this.nlpEngine = new NLPEngine();
+    this.mlModelManager = mlModelManager;
+    this.nlpEngine = nlpEngine;
     this.computerVisionEngine = new ComputerVisionEngine();
     this.xaiSystem = XAISystem.getInstance();
     this.hybridIntelligence = HybridIntelligenceSystem.getInstance();
@@ -270,11 +270,7 @@ export class MultiModalAIFusion {
 
         switch (modality.type) {
           case 'text':
-            result = await this.nlpEngine.process({
-              task: 'sentiment-analysis',
-              text: modality.content,
-              language: 'en'
-            });
+            result = await this.nlpEngine.analyzeSentiment(modality.content);
             break;
           case 'image':
             result = await this.computerVisionEngine.process({
@@ -285,8 +281,7 @@ export class MultiModalAIFusion {
           case 'data':
           case 'structured':
           case 'unstructured':
-            result = await this.mlModelManager.predict({
-              modelId: 'multi-modal-analyzer',
+            result = await this.mlModelManager.predict('multi-modal-analyzer', {
               input: modality.content,
               metadata: { modality: modality.type, source: modality.source }
             });
@@ -352,10 +347,13 @@ export class MultiModalAIFusion {
       for (let j = i + 1; j < modalities.length; j++) {
         const modalityA = modalities[i];
         const modalityB = modalities[j];
+
+        if (!modalityA || !modalityB) continue;
+
         const resultA = modalityResults[modalityA];
         const resultB = modalityResults[modalityB];
 
-        if (resultA.error || resultB.error) continue;
+        if (resultA?.error || resultB?.error) continue;
 
         const relationship = await this.analyzeModalityRelationship(modalityA, modalityB, resultA, resultB);
         relationships[`${modalityA}-${modalityB}`] = relationship;

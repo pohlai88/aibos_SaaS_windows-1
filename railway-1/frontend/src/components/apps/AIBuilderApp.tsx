@@ -5,7 +5,7 @@ import { Code, List, BarChart3, Grid3X3, Eye, Sparkles, Target, Lightbulb, Downl
 
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { getAIBuilderSDK, PromptRequest, PromptResponse } from '@/ai/sdk/AIBuilderSDK';
+import { getAIBuilderSDK, PromptRequest, PromptResponse, PromptOptions } from '@/ai/sdk/AIBuilderSDK';
 import { DashboardCard } from '@/components/ui/DashboardCard';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/empty-states/EmptyState';
@@ -155,7 +155,7 @@ export default function AIBuilderApp({ className, tenantId, userId }: AIBuilderA
       };
 
       // Generate app with streaming updates using AI Backend Connector
-      const response = await getAIBuilderSDK().generateFromPrompt(request, {
+      const promptOptions: PromptOptions = {
         llmCallback: async (stage: string, data?: any) => {
           const progressMap: Record<string, { progress: number; message: string }> = {
             'analyzing': { progress: 20, message: 'Analyzing prompt intent' },
@@ -190,11 +190,17 @@ export default function AIBuilderApp({ className, tenantId, userId }: AIBuilderA
             }
           }
         },
-        tenantId,
         domain: 'general',
         enableStreaming: true,
         confidenceThreshold: 0.7
-      });
+      };
+
+      // Only add tenantId if it exists
+      if (tenantId) {
+        promptOptions.tenantId = tenantId;
+      }
+
+      const response = await getAIBuilderSDK().generateFromPrompt(request, promptOptions);
 
       if (response.success && response.manifest) {
         // Process response using ResponseProcessor

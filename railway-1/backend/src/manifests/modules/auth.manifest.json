@@ -3,18 +3,46 @@
   "version": "1.0.0",
   "type": "module",
   "enabled": true,
-  "dependencies": ["core:app"],
+  "dependencies": [
+    "core:app"
+  ],
   "permissions": {
-    "login": ["guest", "user", "admin"],
-    "logout": ["user", "admin"],
-    "register": ["guest"],
-    "reset_password": ["guest"],
-    "change_password": ["user", "admin"],
-    "view_profile": ["user", "admin"],
-    "edit_profile": ["user", "admin"],
-    "manage_users": ["admin"],
-    "view_auth_logs": ["admin"],
-    "configure_auth": ["admin"]
+    "login": [
+      "guest",
+      "user",
+      "admin"
+    ],
+    "logout": [
+      "user",
+      "admin"
+    ],
+    "register": [
+      "guest"
+    ],
+    "reset_password": [
+      "guest"
+    ],
+    "change_password": [
+      "user",
+      "admin"
+    ],
+    "view_profile": [
+      "user",
+      "admin"
+    ],
+    "edit_profile": [
+      "user",
+      "admin"
+    ],
+    "manage_users": [
+      "admin"
+    ],
+    "view_auth_logs": [
+      "admin"
+    ],
+    "configure_auth": [
+      "admin"
+    ]
   },
   "config": {
     "defaults": {
@@ -29,7 +57,11 @@
       },
       "MFA": {
         "enabled": false,
-        "methods": ["totp", "sms", "email"],
+        "methods": [
+          "totp",
+          "sms",
+          "email"
+        ],
         "required": false
       },
       "OAuth": {
@@ -39,9 +71,28 @@
         "apple": false
       },
       "roles": {
-        "guest": ["login", "register", "reset_password"],
-        "user": ["login", "logout", "change_password", "view_profile", "edit_profile"],
-        "admin": ["login", "logout", "change_password", "view_profile", "edit_profile", "manage_users", "view_auth_logs", "configure_auth"]
+        "guest": [
+          "login",
+          "register",
+          "reset_password"
+        ],
+        "user": [
+          "login",
+          "logout",
+          "change_password",
+          "view_profile",
+          "edit_profile"
+        ],
+        "admin": [
+          "login",
+          "logout",
+          "change_password",
+          "view_profile",
+          "edit_profile",
+          "manage_users",
+          "view_auth_logs",
+          "configure_auth"
+        ]
       },
       "security": {
         "maxLoginAttempts": 5,
@@ -90,52 +141,96 @@
   "api": {
     "routes": {
       "/auth/login": {
-        "method": "POST",
-        "permissions": ["login"],
-        "rateLimit": "5/minute",
-        "validation": ["email", "password"]
+        "POST": {
+          "permissions": [
+            "login"
+          ],
+          "rateLimit": "5/minute",
+          "validation": [
+            "email",
+            "password"
+          ]
+        }
       },
       "/auth/register": {
-        "method": "POST",
-        "permissions": ["register"],
-        "rateLimit": "3/minute",
-        "validation": ["email", "password", "name", "tenant_name"]
+        "POST": {
+          "permissions": [
+            "register"
+          ],
+          "rateLimit": "3/minute",
+          "validation": [
+            "email",
+            "password",
+            "name",
+            "tenant_name"
+          ]
+        }
       },
       "/auth/logout": {
-        "method": "POST",
-        "permissions": ["logout"],
-        "rateLimit": "10/minute",
-        "validation": []
+        "POST": {
+          "permissions": [
+            "logout"
+          ],
+          "rateLimit": "10/minute",
+          "validation": []
+        }
       },
       "/auth/me": {
-        "method": "GET",
-        "permissions": ["view_profile"],
-        "rateLimit": "60/minute",
-        "validation": []
+        "GET": {
+          "permissions": [
+            "view_profile"
+          ],
+          "rateLimit": "60/minute",
+          "validation": []
+        }
       },
       "/auth/refresh": {
-        "method": "POST",
-        "permissions": ["login"],
-        "rateLimit": "30/minute",
-        "validation": []
+        "POST": {
+          "permissions": [
+            "login"
+          ],
+          "rateLimit": "30/minute",
+          "validation": []
+        }
       },
       "/auth/reset-password": {
-        "method": "POST",
-        "permissions": ["reset_password"],
-        "rateLimit": "3/minute",
-        "validation": ["email"]
+        "POST": {
+          "permissions": [
+            "reset_password"
+          ],
+          "rateLimit": "3/minute",
+          "validation": [
+            "email"
+          ]
+        }
       },
       "/auth/change-password": {
-        "method": "POST",
-        "permissions": ["change_password"],
-        "rateLimit": "5/minute",
-        "validation": ["currentPassword", "newPassword"]
+        "POST": {
+          "permissions": [
+            "change_password"
+          ],
+          "rateLimit": "5/minute",
+          "validation": [
+            "currentPassword",
+            "newPassword"
+          ]
+        }
       }
     },
     "middleware": {
-      "auth": ["jwt", "session"],
-      "validation": ["sanitize", "validate"],
-      "security": ["rateLimit", "cors", "helmet"]
+      "auth": [
+        "jwt",
+        "session"
+      ],
+      "validation": [
+        "sanitize",
+        "validate"
+      ],
+      "security": [
+        "rateLimit",
+        "cors",
+        "helmet"
+      ]
     },
     "validators": {
       "email": "email",

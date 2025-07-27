@@ -93,7 +93,7 @@ export interface ManifestValidationResult {
   isValid: boolean;
   errors: string[];
   warnings: string[];
-  manifest?: AppManifest;
+  manifest: AppManifest | undefined;
   metadata: {
     validationTime: number;
     schemaVersion: number;
@@ -314,6 +314,7 @@ export class ManifestLoader {
         isValid: false,
         errors,
         warnings,
+        manifest: undefined,
         metadata: {
           validationTime: Date.now() - startTime,
           schemaVersion: 0,

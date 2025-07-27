@@ -95,7 +95,7 @@ export interface CollaborationMetadata {
   visibility: 'public' | 'private' | 'team' | 'organization';
   settings: CollaborationSettings;
   aiInsights: AIInsight[];
-  quantumAnalysis?: QuantumAnalysis;
+  quantumAnalysis?: QuantumAnalysis | undefined;
 }
 
 export interface CollaborationSettings {
@@ -657,7 +657,7 @@ class AdvancedCollaborationSystem {
         settings: this.getDefaultSettings(),
         aiInsights: [],
         quantumAnalysis: undefined
-      },
+      } as CollaborationMetadata,
       aiEnhanced,
       quantumEnhanced,
       createdAt: new Date(),
@@ -776,7 +776,7 @@ class AdvancedCollaborationSystem {
         settings: this.getDefaultSettings(),
         aiInsights: [],
         quantumAnalysis: undefined
-      },
+      } as CollaborationMetadata,
       aiEnhanced,
       quantumEnhanced,
       createdAt: new Date(),
@@ -843,7 +843,7 @@ class AdvancedCollaborationSystem {
         settings: this.getDefaultSettings(),
         aiInsights: [],
         quantumAnalysis: undefined
-      },
+      } as CollaborationMetadata,
       aiEnhanced,
       quantumEnhanced,
       createdAt: new Date(),

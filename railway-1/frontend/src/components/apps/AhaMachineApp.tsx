@@ -84,12 +84,29 @@ class AhaMachineAI {
     // Select pattern based on context and consciousness level
     const patterns = this.neuralPatterns.sort((a, b) => b.strength - a.strength);
 
+    // Ensure we have at least one pattern
+    if (patterns.length === 0) {
+      // Return a default pattern if none exist
+      return {
+        id: 'default-pattern',
+        pattern: 'Pattern Recognition',
+        strength: 0.5,
+        connections: 0,
+        lastActivated: new Date()
+      };
+    }
+
+    // Create a safe fallback pattern - we know it exists because we checked length
+    const fallbackPattern = patterns[0] as NeuralPattern;
+
     if (context.consciousnessLevel > 0.7) {
-      return patterns[0]; // Strongest pattern for high consciousness
+      return fallbackPattern; // Strongest pattern for high consciousness
     } else if (context.timeOfDay < 12) {
-      return patterns.find(p => p.pattern === 'Creative Synthesis') || patterns[0];
+      const creativePattern = patterns.find(p => p.pattern === 'Creative Synthesis');
+      return creativePattern || fallbackPattern;
     } else {
-      return patterns.find(p => p.pattern === 'Pattern Recognition') || patterns[0];
+      const recognitionPattern = patterns.find(p => p.pattern === 'Pattern Recognition');
+      return recognitionPattern || fallbackPattern;
     }
   }
 
@@ -125,7 +142,8 @@ class AhaMachineAI {
       }
     ];
 
-    const selected = patterns[Math.floor(Math.random() * patterns.length)];
+    const randomIndex = Math.floor(Math.random() * patterns.length);
+    const selected = patterns[randomIndex] as typeof patterns[0];
 
     return {
       id: Date.now().toString(),
@@ -157,7 +175,8 @@ class AhaMachineAI {
       }
     ];
 
-    const selected = insights[Math.floor(Math.random() * insights.length)];
+    const randomIndex = Math.floor(Math.random() * insights.length);
+    const selected = insights[randomIndex] as typeof insights[0];
 
     return {
       id: Date.now().toString(),
@@ -184,12 +203,13 @@ class AhaMachineAI {
       },
       {
         title: "Your Subconscious Works on Problems While You Sleep",
-        content: "The solutions to complex problems often appear after a good night's sleep. This isn't magic - your brain continues processing information during sleep, making connections you can't see while awake. The key is to work on a problem, then let it 'incubate' overnight.",
-        tags: ['sleep', 'subconscious', 'problem-solving', 'incubation']
+        content: "The best solutions often come when you're not actively thinking about a problem. Your brain continues processing information during sleep, making connections you wouldn't make while awake. This is why 'sleeping on it' actually works.",
+        tags: ['creativity', 'sleep', 'subconscious', 'problem-solving']
       }
     ];
 
-    const selected = insights[Math.floor(Math.random() * insights.length)];
+    const randomIndex = Math.floor(Math.random() * insights.length);
+    const selected = insights[randomIndex] as typeof insights[0];
 
     return {
       id: Date.now().toString(),
@@ -221,7 +241,8 @@ class AhaMachineAI {
       }
     ];
 
-    const selected = predictions[Math.floor(Math.random() * predictions.length)];
+    const randomIndex = Math.floor(Math.random() * predictions.length);
+    const selected = predictions[randomIndex] as typeof predictions[0];
 
     return {
       id: Date.now().toString(),
@@ -253,7 +274,8 @@ class AhaMachineAI {
       }
     ];
 
-    const selected = connections[Math.floor(Math.random() * connections.length)];
+    const randomIndex = Math.floor(Math.random() * connections.length);
+    const selected = connections[randomIndex] as typeof connections[0];
 
     return {
       id: Date.now().toString(),

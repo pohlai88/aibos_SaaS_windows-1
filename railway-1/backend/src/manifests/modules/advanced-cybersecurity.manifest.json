@@ -66,76 +66,80 @@
   "api": {
     "routes": {
       "/advanced-cybersecurity/threats": {
-        "method": "GET",
-        "permissions": ["threat_detection"],
-        "rateLimit": "100/minute",
-        "validation": []
-      },
-      "/advanced-cybersecurity/threats": {
-        "method": "POST",
-        "permissions": ["threat_detection"],
-        "rateLimit": "50/minute",
-        "validation": ["type", "severity", "source", "description"]
-      },
-      "/advanced-cybersecurity/incidents": {
-        "method": "GET",
-        "permissions": ["incident_response"],
-        "rateLimit": "100/minute",
-        "validation": []
+        "GET": {
+          "permissions": ["threat_detection"],
+          "rateLimit": "100/minute",
+          "validation": []
+        },
+        "POST": {
+          "permissions": ["threat_detection"],
+          "rateLimit": "50/minute",
+          "validation": ["type", "severity", "source", "description"]
+        }
       },
       "/advanced-cybersecurity/incidents": {
-        "method": "POST",
-        "permissions": ["incident_response"],
-        "rateLimit": "20/minute",
-        "validation": ["title", "description", "severity", "type"]
+        "GET": {
+          "permissions": ["incident_response"],
+          "rateLimit": "100/minute",
+          "validation": []
+        },
+        "POST": {
+          "permissions": ["incident_response"],
+          "rateLimit": "20/minute",
+          "validation": ["title", "description", "severity", "type"]
+        }
       },
       "/advanced-cybersecurity/vulnerabilities": {
-        "method": "GET",
-        "permissions": ["vulnerability_scan"],
-        "rateLimit": "50/minute",
-        "validation": []
+        "GET": {
+          "permissions": ["vulnerability_scan"],
+          "rateLimit": "50/minute",
+          "validation": []
+        }
       },
       "/advanced-cybersecurity/vulnerabilities/scan": {
-        "method": "POST",
-        "permissions": ["vulnerability_scan"],
-        "rateLimit": "10/minute",
-        "validation": ["target", "scan_type"]
+        "POST": {
+          "permissions": ["vulnerability_scan"],
+          "rateLimit": "10/minute",
+          "validation": ["target", "scan_type"]
+        }
       },
       "/advanced-cybersecurity/penetration-tests": {
-        "method": "GET",
-        "permissions": ["penetration_test"],
-        "rateLimit": "50/minute",
-        "validation": []
-      },
-      "/advanced-cybersecurity/penetration-tests": {
-        "method": "POST",
-        "permissions": ["penetration_test"],
-        "rateLimit": "5/minute",
-        "validation": ["target", "test_type", "scope"]
+        "GET": {
+          "permissions": ["penetration_test"],
+          "rateLimit": "50/minute",
+          "validation": []
+        },
+        "POST": {
+          "permissions": ["penetration_test"],
+          "rateLimit": "5/minute",
+          "validation": ["target", "test_type", "scope"]
+        }
       },
       "/advanced-cybersecurity/compliance": {
-        "method": "GET",
-        "permissions": ["compliance_monitor"],
-        "rateLimit": "100/minute",
-        "validation": []
+        "GET": {
+          "permissions": ["compliance_monitor"],
+          "rateLimit": "100/minute",
+          "validation": []
+        }
       },
       "/advanced-cybersecurity/compliance/audit": {
-        "method": "POST",
-        "permissions": ["compliance_monitor"],
-        "rateLimit": "10/minute",
-        "validation": ["framework", "scope"]
+        "POST": {
+          "permissions": ["compliance_monitor"],
+          "rateLimit": "10/minute",
+          "validation": ["framework", "scope"]
+        }
       },
       "/advanced-cybersecurity/access-control": {
-        "method": "GET",
-        "permissions": ["access_control"],
-        "rateLimit": "100/minute",
-        "validation": []
-      },
-      "/advanced-cybersecurity/access-control": {
-        "method": "POST",
-        "permissions": ["access_control"],
-        "rateLimit": "50/minute",
-        "validation": ["user_id", "resource", "permission"]
+        "GET": {
+          "permissions": ["access_control"],
+          "rateLimit": "100/minute",
+          "validation": []
+        },
+        "POST": {
+          "permissions": ["access_control"],
+          "rateLimit": "50/minute",
+          "validation": ["user_id", "resource", "permission"]
+        }
       }
     },
     "middleware": {

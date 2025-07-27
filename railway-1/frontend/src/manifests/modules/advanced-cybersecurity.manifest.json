@@ -45,7 +45,11 @@
         "machine_learning": true,
         "ai_detection": true,
         "automation": true,
-        "scalability": true
+        "scalability": true,
+        "lazyLoading": true,
+        "codeSplitting": true,
+        "memoization": true,
+        "virtualization": true
       },
       "components": {
         "AdvancedSecurityDashboard": {
@@ -74,12 +78,6 @@
         "animations": true,
         "responsive": true,
         "accessibility": true
-      },
-      "performance": {
-        "lazyLoading": true,
-        "codeSplitting": true,
-        "memoization": true,
-        "virtualization": true
       }
     },
     "overrides": {

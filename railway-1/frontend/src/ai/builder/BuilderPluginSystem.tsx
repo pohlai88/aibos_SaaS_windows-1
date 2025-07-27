@@ -248,7 +248,7 @@ export const BuilderPluginSystem: React.FC<BuilderPluginSystemProps> = ({
         ...prev,
         installations: prev.installations.map(inst =>
           inst.id === installation.id
-            ? { ...inst, progress: installSteps[i].progress }
+            ? { ...inst, progress: installSteps[i]?.progress ?? 0 }
             : inst
         )
       }));
@@ -321,12 +321,21 @@ export const BuilderPluginSystem: React.FC<BuilderPluginSystemProps> = ({
       analytics: {
         ...prev.analytics,
         [pluginId]: {
-          ...prev.analytics[pluginId],
+          pluginId,
           usage: {
             totalUses: (prev.analytics[pluginId]?.usage.totalUses || 0) + 1,
             dailyUses: (prev.analytics[pluginId]?.usage.dailyUses || 0) + 1,
             weeklyUses: (prev.analytics[pluginId]?.usage.weeklyUses || 0) + 1,
             monthlyUses: (prev.analytics[pluginId]?.usage.monthlyUses || 0) + 1
+          },
+          performance: prev.analytics[pluginId]?.performance || {
+            averageLoadTime: 0,
+            memoryUsage: 0,
+            errorRate: 0
+          },
+          userFeedback: prev.analytics[pluginId]?.userFeedback || {
+            rating: 0,
+            reviews: []
           }
         }
       }
@@ -408,7 +417,9 @@ export const BuilderPluginSystem: React.FC<BuilderPluginSystemProps> = ({
           ...prev,
           marketplace: {
             ...prev.marketplace,
-            trending: prev.marketplace.trending.slice(1).concat(prev.marketplace.trending[0])
+            trending: prev.marketplace.trending.length > 0
+              ? prev.marketplace.trending.slice(1).concat(prev.marketplace.trending[0]!)
+              : prev.marketplace.trending
           }
         }));
       }, 60000); // Every minute

@@ -1,9 +1,78 @@
 {
   "name": "aibos-shared-infrastructure",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "World-class shared infrastructure for AI-BOS platform - Design System, Error Handling, Performance, Security, Accessibility",
+  "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./design-system": {
+      "types": "./dist/design-system/index.d.ts",
+      "import": "./dist/design-system/index.js",
+      "require": "./dist/design-system/index.cjs"
+    },
+    "./error-handling": {
+      "types": "./dist/error-handling/index.d.ts",
+      "import": "./dist/error-handling/index.js",
+      "require": "./dist/error-handling/index.cjs"
+    },
+    "./performance": {
+      "types": "./dist/performance/index.d.ts",
+      "import": "./dist/performance/index.js",
+      "require": "./dist/performance/index.cjs"
+    },
+    "./security": {
+      "types": "./dist/security/index.d.ts",
+      "import": "./dist/security/index.js",
+      "require": "./dist/security/index.cjs"
+    },
+    "./accessibility": {
+      "types": "./dist/accessibility/index.d.ts",
+      "import": "./dist/accessibility/index.js",
+      "require": "./dist/accessibility/index.cjs"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.js",
+      "require": "./dist/types/index.cjs"
+    },
+    "./constants": {
+      "types": "./dist/constants/index.d.ts",
+      "import": "./dist/constants/index.js",
+      "require": "./dist/constants/index.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs"
+    },
+    "./validation": {
+      "types": "./dist/validation/index.d.ts",
+      "import": "./dist/validation/index.js",
+      "require": "./dist/validation/index.cjs"
+    },
+    "./logging": {
+      "types": "./dist/logging/index.d.ts",
+      "import": "./dist/logging/index.js",
+      "require": "./dist/logging/index.cjs"
+    },
+    "./caching": {
+      "types": "./dist/caching/index.d.ts",
+      "import": "./dist/caching/index.js",
+      "require": "./dist/caching/index.cjs"
+    },
+    "./analytics": {
+      "types": "./dist/analytics/index.d.ts",
+      "import": "./dist/analytics/index.js",
+      "require": "./dist/analytics/index.cjs"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -20,60 +89,6 @@
     "prepublishOnly": "npm run clean && npm run build",
     "docs": "typedoc src/index.ts --out docs",
     "validate": "npm run lint && npm run type-check && npm run test"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./design-system": {
-      "types": "./dist/design-system/index.d.ts",
-      "default": "./dist/design-system/index.js"
-    },
-    "./error-handling": {
-      "types": "./dist/error-handling/index.d.ts",
-      "default": "./dist/error-handling/index.js"
-    },
-    "./performance": {
-      "types": "./dist/performance/index.d.ts",
-      "default": "./dist/performance/index.js"
-    },
-    "./security": {
-      "types": "./dist/security/index.d.ts",
-      "default": "./dist/security/index.js"
-    },
-    "./accessibility": {
-      "types": "./dist/accessibility/index.d.ts",
-      "default": "./dist/accessibility/index.js"
-    },
-    "./types": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./dist/types/index.js"
-    },
-    "./constants": {
-      "types": "./dist/constants/index.d.ts",
-      "default": "./dist/constants/index.js"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "default": "./dist/utils/index.js"
-    },
-    "./validation": {
-      "types": "./dist/validation/index.d.ts",
-      "default": "./dist/validation/index.js"
-    },
-    "./logging": {
-      "types": "./dist/logging/index.d.ts",
-      "default": "./dist/logging/index.js"
-    },
-    "./caching": {
-      "types": "./dist/caching/index.d.ts",
-      "default": "./dist/caching/index.js"
-    },
-    "./analytics": {
-      "types": "./dist/analytics/index.d.ts",
-      "default": "./dist/analytics/index.js"
-    }
   },
   "keywords": [
     "ai-bos",
@@ -147,7 +162,6 @@
     "access": "public"
   },
   "sideEffects": false,
-  "module": "dist/index.js",
   "unpkg": "dist/index.js",
   "jsdelivr": "dist/index.js"
 }

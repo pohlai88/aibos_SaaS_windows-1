@@ -249,7 +249,7 @@ const Terminal: React.FC = () => {
       if (autoCompleteSuggestions.length > 0) {
         setState(prev => ({
           ...prev,
-          currentCommand: autoCompleteSuggestions[0]
+          currentCommand: autoCompleteSuggestions[0] || ''
         }));
       }
     }

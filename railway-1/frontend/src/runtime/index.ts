@@ -24,7 +24,7 @@ export { default as SessionReplayRecorder } from './SessionReplayRecorder';
 export { default as BackendLoggingEndpoint } from './BackendLoggingEndpoint';
 
 // ==================== STEVE JOBS-LEVEL FEATURES ====================
-export { default as BuilderCoachMode } from '../ai/builder/BuilderCoachMode';
+export { BuilderCoachMode } from '../ai/builder/BuilderCoachMode';
 
 // ==================== RUNTIME CONSTANTS ====================
 export const RUNTIME_VERSION = '3.0.0';

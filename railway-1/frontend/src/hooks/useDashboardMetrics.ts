@@ -64,9 +64,10 @@ export const useDashboardMetrics = (refreshInterval = 30000): UseDashboardMetric
       setStatus(isRefresh ? 'refreshing' : 'loading');
       setError(null);
 
+      const requestConfig = signal ? { signal } : {};
       const [metricsRes, systemRes] = await Promise.all([
-        api.get('/dashboard/metrics', { signal }),
-        api.get('/dashboard/system-status', { signal }),
+        api.get('/dashboard/metrics', requestConfig),
+        api.get('/dashboard/system-status', requestConfig),
       ]);
 
       if (metricsRes.data.success) {

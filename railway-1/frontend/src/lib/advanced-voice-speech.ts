@@ -533,13 +533,15 @@ class AdvancedVoiceSpeechSystem {
         entities: [],
         keywords: [],
         aiInsights: [],
-        quantumAnalysis: quantumOptimized ? {
-          quantumState: 'initialized',
-          superposition: 0.5,
-          entanglement: [],
-          quantumAdvantage: false,
-          quantumSpeedup: 1.0
-        } : undefined
+        ...(quantumOptimized && {
+          quantumAnalysis: {
+            quantumState: 'initialized',
+            superposition: 0.5,
+            entanglement: [],
+            quantumAdvantage: false,
+            quantumSpeedup: 1.0
+          }
+        })
       },
       aiEnhanced,
       quantumOptimized,
@@ -930,7 +932,7 @@ class AdvancedVoiceSpeechSystem {
         entities,
         keywords,
         aiInsights,
-        quantumAnalysis
+        ...(quantumAnalysis && { quantumAnalysis })
       };
     } catch (error) {
       console.error('[ADVANCED-VOICE-SPEECH] Voice analysis failed', { error });
@@ -941,15 +943,14 @@ class AdvancedVoiceSpeechSystem {
         intent: { primary: '', confidence: 0, intents: [], aiDetected: false, quantumEnhanced: false },
         entities: [],
         keywords: [],
-        aiInsights: [],
-        quantumAnalysis: undefined
+        aiInsights: []
       };
     }
   }
 
   private async analyzeEmotion(text: string, aiDetected: boolean, quantumEnhanced: boolean): Promise<EmotionAnalysis> {
     const emotions: EmotionType[] = ['happy', 'sad', 'angry', 'fearful', 'surprised', 'disgusted', 'neutral'];
-    const primary = emotions[Math.floor(Math.random() * emotions.length)];
+    const primary: EmotionType = emotions[Math.floor(Math.random() * emotions.length)] || 'neutral';
     const confidence = aiDetected ? 0.85 + Math.random() * 0.15 : 0.6 + Math.random() * 0.2;
 
     const emotionScores: EmotionScore[] = emotions.map(emotion => ({
@@ -970,7 +971,7 @@ class AdvancedVoiceSpeechSystem {
 
   private async analyzeSentiment(text: string, aiAnalyzed: boolean, quantumEnhanced: boolean): Promise<SentimentAnalysis> {
     const sentiments: SentimentType[] = ['positive', 'negative', 'neutral', 'mixed'];
-    const overall = sentiments[Math.floor(Math.random() * sentiments.length)];
+    const overall: SentimentType = sentiments[Math.floor(Math.random() * sentiments.length)] || 'neutral';
     const confidence = aiAnalyzed ? 0.88 + Math.random() * 0.12 : 0.65 + Math.random() * 0.25;
 
     const sentimentScores: SentimentScore[] = sentiments.map(sentiment => ({
@@ -991,7 +992,7 @@ class AdvancedVoiceSpeechSystem {
 
   private async analyzeIntent(text: string, aiDetected: boolean, quantumEnhanced: boolean): Promise<IntentAnalysis> {
     const intents = ['query', 'command', 'question', 'statement', 'greeting', 'farewell'];
-    const primary = intents[Math.floor(Math.random() * intents.length)];
+    const primary: string = intents[Math.floor(Math.random() * intents.length)] || 'query';
     const confidence = aiDetected ? 0.9 + Math.random() * 0.1 : 0.7 + Math.random() * 0.2;
 
     const intentScores: IntentScore[] = intents.map(intent => ({
@@ -1151,7 +1152,7 @@ class AdvancedVoiceSpeechSystem {
   private async extractIntent(command: string, aiOptimized: boolean): Promise<string> {
     // Simulate intent extraction
     const intents = ['open_app', 'search', 'navigate', 'control', 'query'];
-    return intents[Math.floor(Math.random() * intents.length)];
+    return intents[Math.floor(Math.random() * intents.length)] || 'query';
   }
 
   private async extractParameters(command: string, intent: string, aiOptimized: boolean): Promise<Record<string, any>> {

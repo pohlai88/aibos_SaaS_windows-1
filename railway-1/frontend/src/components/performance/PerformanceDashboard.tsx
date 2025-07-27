@@ -163,7 +163,7 @@ const sharedRateLimiter = RateLimiter;
 
 export function PerformanceDashboard({ className, tenantId, userId }: PerformanceDashboardProps) {
   // ==================== MANIFESTOR INTEGRATION ====================
-  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const { manifestor, health, isHealthy } = useManifestor();
   const moduleConfig = useModuleConfig('workflow-automation');
   const isModuleEnabled = useModuleEnabled('workflow-automation');
 
@@ -178,12 +178,8 @@ export function PerformanceDashboard({ className, tenantId, userId }: Performanc
   const performance = moduleConfig.performance;
 
   // ==================== MANIFESTOR PERMISSION CHECKS ====================
-  if (manifestLoading) {
+  if (!isHealthy) {
     return <div className="animate-pulse bg-gray-200 rounded-lg h-96 w-full" />;
-  }
-
-  if (manifestError) {
-    return <div className="text-red-600 p-4">Performance Dashboard Error</div>;
   }
 
   if (!isModuleEnabled) {
@@ -224,23 +220,17 @@ export function PerformanceDashboard({ className, tenantId, userId }: Performanc
 
       for (const metric of currentMetrics) {
         // Use Predictive Analytics Engine for forecasting
-        const prediction = await predictiveEngine.process({
-          task: 'time-series-forecasting',
-          data: [
-            { timestamp: new Date(Date.now() - 3600000), value: metric.value * 0.95 }, // 1 hour ago
-            { timestamp: new Date(Date.now() - 1800000), value: metric.value * 0.98 }, // 30 min ago
-            { timestamp: new Date(), value: metric.value } // Current
-          ],
-          options: {
-            model: 'arima',
-            parameters: { periods: 1 },
-            validation: { method: 'time-series', split: 0.8 }
-          }
-        });
+        const historicalData = [
+          metric.value * 0.95, // 1 hour ago
+          metric.value * 0.98, // 30 min ago
+          metric.value // Current
+        ];
 
-        if (prediction.result && prediction.result.predictions) {
-          const predictedValue = prediction.result.predictions[0]?.data || metric.value;
-          const confidence = prediction.confidence;
+        const prediction = await predictiveEngine.forecastTimeSeries(historicalData, 1);
+
+        if (prediction.predictions && prediction.predictions.length > 0) {
+          const predictedValue = prediction.predictions[0]?.value || metric.value;
+          const confidence = prediction.accuracy;
           const trend = predictedValue > metric.value ? 'up' : predictedValue < metric.value ? 'down' : 'stable';
 
           predictiveMetrics.push({
@@ -480,6 +470,7 @@ export function PerformanceDashboard({ className, tenantId, userId }: Performanc
       setRefreshInterval(interval);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [fetchMetrics, autoRefresh]);
 
   useEffect(() => {

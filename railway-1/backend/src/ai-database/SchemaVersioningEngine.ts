@@ -113,7 +113,7 @@ export interface RollbackPlan {
 export interface RollbackStep {
   id: string;
   order: number;
-  type: 'schema_rollback' | 'data_restore' | 'validation' | 'cleanup';
+  type: 'schema_rollback' | 'datarestore' | 'validation' | 'cleanup';
   description: string;
   sql?: string;
   validation?: string;
@@ -1306,7 +1306,7 @@ export class SchemaVersioningEngine extends EventEmitter {
   }
 
   private assessDataLossRisk(steps: RollbackStep[]): 'none' | 'minimal' | 'moderate' | 'high' {
-    const dataSteps = steps.filter(step => step.type === 'data_restore');
+    const dataSteps = steps.filter(step => step.type === 'datarestore');
     if (dataSteps.length === 0) return 'none';
     if (dataSteps.length === 1) return 'minimal';
     if (dataSteps.length <= 3) return 'moderate';

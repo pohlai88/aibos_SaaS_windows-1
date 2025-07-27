@@ -4,7 +4,7 @@
  */
 
 export interface LogContext {
-  module: string;
+  module?: string;
   version?: string;
   requestId?: string;
   userId?: string;
@@ -26,12 +26,12 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
 class Logger {
   private logLevel: LogLevel = 'info';
-  private isDevelopment: boolean = process.env.NODE_ENV === 'development';
-  private isProduction: boolean = process.env.NODE_ENV === 'production';
+  private isDevelopment: boolean = typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
+  private isProduction: boolean = typeof process !== 'undefined' && process.env?.NODE_ENV === 'production';
   private requestIdCounter: number = 0;
 
   constructor() {
-    this.logLevel = (process.env.LOG_LEVEL as LogLevel) || 'info';
+    this.logLevel = (typeof process !== 'undefined' && process.env?.LOG_LEVEL as LogLevel) || 'info';
   }
 
   private shouldLog(level: LogLevel): boolean {
@@ -50,7 +50,7 @@ class Logger {
     const baseContext: LogContext = {
       module: context.module || 'unknown',
       version: context.version || '1.0.0',
-      environment: process.env.NODE_ENV || 'development',
+      environment: typeof process !== 'undefined' ? process.env?.NODE_ENV || 'development' : 'development',
       ...context
     };
 
@@ -98,24 +98,27 @@ class Logger {
 
   private sendToExternalLogger(entry: LogEntry): void {
     // TODO: Implement external logging service integration
-    // This would send critical errors to services like Sentry, LogRocket, etc.
+    // This would typically send to services like DataDog, New Relic, etc.
   }
 
   debug(message: string, context: LogContext = {}): void {
-    this.output(this.formatMessage('debug', message, context));
+    const entry = this.formatMessage('debug', message, context);
+    this.output(entry);
   }
 
   info(message: string, context: LogContext = {}): void {
-    this.output(this.formatMessage('info', message, context));
+    const entry = this.formatMessage('info', message, context);
+    this.output(entry);
   }
 
   warn(message: string, context: LogContext = {}): void {
-    this.output(this.formatMessage('warn', message, context));
+    const entry = this.formatMessage('warn', message, context);
+    this.output(entry);
   }
 
   error(message: string, context: LogContext = {}, error?: Error): void {
     const entry = this.formatMessage('error', message, context);
-    if (error) {
+    if (error?.stack) {
       entry.stack = error.stack;
     }
     this.output(entry);
@@ -123,66 +126,44 @@ class Logger {
 
   fatal(message: string, context: LogContext = {}, error?: Error): void {
     const entry = this.formatMessage('fatal', message, context);
-    if (error) {
+    if (error?.stack) {
       entry.stack = error.stack;
     }
     this.output(entry);
   }
 
-  // Performance logging
   time(label: string, context: LogContext = {}): () => void {
-    const start = performance.now();
-    const requestId = `req_${++this.requestIdCounter}`;
-
-    this.debug(`Starting timer: ${label}`, { ...context, requestId });
+    const startTime = Date.now();
+    this.info(`Started: ${label}`, context);
 
     return () => {
-      const duration = performance.now() - start;
-      this.info(`Timer completed: ${label}`, {
-        ...context,
-        requestId,
-        duration: `${duration.toFixed(2)}ms`
-      });
+      const duration = Date.now() - startTime;
+      this.info(`Completed: ${label} (${duration}ms)`, context);
     };
   }
 
-  // Request logging
   request(method: string, url: string, context: LogContext = {}): void {
-    this.info(`HTTP ${method} ${url}`, { ...context, type: 'request' });
+    this.info(`${method} ${url}`, { ...context, type: 'request' });
   }
 
   response(status: number, url: string, context: LogContext = {}): void {
-    const level = status >= 400 ? 'error' : 'info';
-    this[level](`HTTP ${status} ${url}`, { ...context, type: 'response' });
+    this.info(`${status} ${url}`, { ...context, type: 'response' });
   }
 
-  // AI-specific logging
   aiModel(model: string, action: string, context: LogContext = {}): void {
     this.info(`AI Model: ${model} - ${action}`, { ...context, type: 'ai_model' });
   }
 
   aiPrediction(model: string, confidence: number, context: LogContext = {}): void {
-    this.info(`AI Prediction: ${model} (${(confidence * 100).toFixed(1)}%)`, {
-      ...context,
-      type: 'ai_prediction',
-      confidence
-    });
+    this.info(`AI Prediction: ${model} (${confidence}%)`, { ...context, type: 'ai_prediction' });
   }
 
-  // Manifestor-specific logging
   manifestor(action: string, module: string, context: LogContext = {}): void {
-    this.info(`Manifestor: ${action}`, { ...context, type: 'manifestor', module });
+    this.info(`Manifestor: ${action} - ${module}`, { ...context, type: 'manifestor' });
   }
 
-  // Performance metrics
   performance(metric: string, value: number, unit: string, context: LogContext = {}): void {
-    this.info(`Performance: ${metric} = ${value}${unit}`, {
-      ...context,
-      type: 'performance',
-      metric,
-      value,
-      unit
-    });
+    this.info(`Performance: ${metric} = ${value}${unit}`, { ...context, type: 'performance' });
   }
 }
 
@@ -196,3 +177,5 @@ export const warn = (message: string, context?: LogContext) => logger.warn(messa
 export const error = (message: string, context?: LogContext, err?: Error) => logger.error(message, context, err);
 export const fatal = (message: string, context?: LogContext, err?: Error) => logger.fatal(message, context, err);
 export const time = (label: string, context?: LogContext) => logger.time(label, context);
+
+export default logger;

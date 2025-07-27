@@ -27,7 +27,9 @@ export const VoiceCommandBar: React.FC<VoiceCommandBarProps> = ({
   className = ""
 }) => {
   // ==================== MANIFESTOR INTEGRATION ====================
-  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const { manifestor, health, isHealthy } = useManifestor();
+  const manifestLoading = false; // TODO: Add loading state to useManifestor
+  const manifestError = null; // TODO: Add error state to useManifestor
   const moduleConfig = useModuleConfig('ai-components');
   const isModuleEnabled = useModuleEnabled('ai-components');
 

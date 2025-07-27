@@ -41,7 +41,11 @@
         "real_time_sync": true,
         "offline_support": true,
         "caching": true,
-        "optimization": true
+        "optimization": true,
+        "lazyLoading": true,
+        "codeSplitting": true,
+        "memoization": true,
+        "virtualization": true
       },
       "components": {
         "CollaborationDashboard": {
@@ -83,12 +87,6 @@
         "animations": true,
         "responsive": true,
         "accessibility": true
-      },
-      "performance": {
-        "lazyLoading": true,
-        "codeSplitting": true,
-        "memoization": true,
-        "virtualization": true
       }
     },
     "overrides": {

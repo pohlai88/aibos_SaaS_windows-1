@@ -6,7 +6,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { ManifestorEngine, Manifest, User } from '@/lib/manifestor';
+import { ManifestorEngine, Manifest, User, Manifestor } from '@/lib/manifestor';
 import { loadManifests, getManifestLoader, ManifestLoader } from '@/lib/manifestor/loader';
 
 // ==================== MANIFESTOR CONTEXT ====================
@@ -104,7 +104,7 @@ export function ManifestorProvider({ children, initialUser }: ManifestorProvider
         setError(null);
 
         // Initialize Manifestor Engine
-        const manifestorInstance = ManifestorEngine.getInstance();
+        const manifestorInstance = Manifestor;
         setManifestor(manifestorInstance);
 
         // Load all manifests
@@ -327,7 +327,7 @@ export function ManifestorGuard({
   // Check required permission
   if (requiredPermission && currentUser) {
     const [resource, action] = requiredPermission.split(':');
-    if (!can(resource, action, currentUser)) {
+    if (resource && action && !can(resource, action, currentUser)) {
       return fallback || <div>Access denied</div>;
     }
   }

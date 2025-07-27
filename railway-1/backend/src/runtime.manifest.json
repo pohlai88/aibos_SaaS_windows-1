@@ -1,0 +1,63 @@
+{
+  "version": "v1.0.2",
+  "buildTimestamp": "2025-07-27T02:00:00Z",
+  "modules": [
+    "consciousness",
+    "ai-database",
+    "telemetry",
+    "manifestor",
+    "api",
+    "middleware",
+    "lib"
+  ],
+  "coreFiles": [
+    "index.ts",
+    "ConsciousnessDatabase.ts",
+    "ConsciousnessEngine.ts",
+    "ConsciousLineageOrchestrator.ts",
+    "AIService.ts",
+    "SchemaVersioningEngine.ts",
+    "AuditEngine.ts",
+    "ComplianceEngine.ts",
+    "SecurityEngine.ts",
+    "SchemaMindEngine.ts",
+    "DatabaseConnector.ts",
+    "AITelemetryEngine.ts",
+    "LifecycleManager.ts",
+    "HealthMonitor.ts",
+    "Logger.ts"
+  ],
+  "endpoints": [
+    "/",
+    "/health",
+    "/healthz",
+    "/readyz",
+    "/api/health",
+    "/api/status",
+    "/api/database",
+    "/api/telemetry"
+  ],
+  "dependencies": {
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "compression": "^1.8.1",
+    "ws": "^8.18.3",
+    "pg": "^8.11.3",
+    "redis": "^4.7.1",
+    "winston": "^3.17.0",
+    "zod": "^3.22.4"
+  },
+  "healthChecks": [
+    "database",
+    "consciousness",
+    "telemetry",
+    "memory",
+    "resources"
+  ],
+  "lastValidated": "2025-07-27T02:00:00Z",
+  "integrity": {
+    "checksum": "sha256:runtime-manifest-v1.0.2",
+    "signature": "ai-bos-enterprise-grade"
+  }
+}

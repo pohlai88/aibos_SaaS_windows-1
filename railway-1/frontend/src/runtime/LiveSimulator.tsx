@@ -277,17 +277,22 @@ export const LiveSimulator: React.FC<LiveSimulatorProps> = ({
     // Randomly trigger security alerts
     if (Math.random() < 0.1) {
       const alert = securityChecks[Math.floor(Math.random() * securityChecks.length)];
-      const securityAlert: SecurityAlert = {
-        ...alert,
-        timestamp: new Date()
-      };
+      if (alert) {
+        const securityAlert: SecurityAlert = {
+          type: alert.type,
+          message: alert.message,
+          severity: alert.severity,
+          timestamp: new Date(),
+          details: alert.details
+        };
 
-      setState(prev => ({
-        ...prev,
-        securityEvents: [...prev.securityEvents, securityAlert]
-      }));
+        setState(prev => ({
+          ...prev,
+          securityEvents: [...prev.securityEvents, securityAlert]
+        }));
 
-      onSecurityAlert?.(securityAlert);
+        onSecurityAlert?.(securityAlert);
+      }
     }
   }, [onSecurityAlert]);
 

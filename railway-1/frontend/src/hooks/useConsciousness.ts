@@ -475,18 +475,10 @@ export const useConsciousness = (autoRefresh: boolean = true): UseConsciousnessR
             });
             break;
           case 'ml':
-            results.ml = await mlModelManager.predict({
-              modelId: 'consciousness-analyzer',
-              input: data,
-              metadata: { source: 'consciousness-hook' }
-            });
+            results.ml = await mlModelManager.predict('consciousness-analyzer', data);
             break;
           case 'nlp':
-            results.nlp = await nlpEngine.process({
-              task: 'sentiment-analysis',
-              text: typeof data === 'string' ? data : JSON.stringify(data),
-              language: 'en'
-            });
+            results.nlp = await nlpEngine.analyzeSentiment(typeof data === 'string' ? data : JSON.stringify(data));
             break;
           case 'vision':
             if (data.image || data.visual) {
@@ -518,11 +510,7 @@ export const useConsciousness = (autoRefresh: boolean = true): UseConsciousnessR
 
   const analyzeWithML = useCallback(async (data: any) => {
     try {
-      const result = await mlModelManager.predict({
-        modelId: 'consciousness-analyzer',
-        input: data,
-        metadata: { source: 'consciousness-hook', type: 'ml-analysis' }
-      });
+      const result = await mlModelManager.predict('consciousness-analyzer', data);
 
       await recordExperience({
         type: 'ml_analysis',
@@ -541,11 +529,7 @@ export const useConsciousness = (autoRefresh: boolean = true): UseConsciousnessR
 
   const processWithNLP = useCallback(async (text: string) => {
     try {
-      const result = await nlpEngine.process({
-        task: 'sentiment-analysis',
-        text: text,
-        language: 'en'
-      });
+      const result = await nlpEngine.analyzeSentiment(text);
 
       await recordExperience({
         type: 'nlp_processing',

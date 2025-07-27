@@ -319,6 +319,11 @@ export class EdgeComputingSlice {
       const index = this.slice.edgeNodes.findIndex(node => node.id === nodeId);
       if (index !== -1) {
         const node = this.slice.edgeNodes[index];
+        if (!node) {
+          console.warn(`Node with ID ${nodeId} not found`);
+          return;
+        }
+
         this.slice.edgeNodes.splice(index, 1);
         this.slice.metrics.totalNodes--;
         if (node.status === 'online') {

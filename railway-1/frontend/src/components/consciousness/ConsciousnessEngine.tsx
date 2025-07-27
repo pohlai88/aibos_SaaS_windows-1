@@ -139,7 +139,7 @@ export const ConsciousnessProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     const colorIndex = Math.floor(value * (colors[type].length - 1));
-    return colors[type][colorIndex];
+    return colors[type][colorIndex] || colors[type][0] || '#000000';
   }, [emotionalState]);
 
   const getQuantumTransform = useCallback((type: 'breathing' | 'pulsing' | 'floating') => {
@@ -189,7 +189,8 @@ export const ConsciousnessProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     const personalityResponses = responses[quantumState.personality as keyof typeof responses] || responses.curious;
-    return personalityResponses[Math.floor(Math.random() * personalityResponses.length)];
+    const randomIndex = Math.floor(Math.random() * personalityResponses.length);
+    return personalityResponses[randomIndex] || personalityResponses[0] || "Let's explore this together.";
   }, [quantumState.personality]);
 
   // ==================== CONTEXT VALUE ====================
@@ -222,7 +223,7 @@ export const BreathingIcon: React.FC<{
   intensity?: number;
 }> = ({ children, consciousnessType = 'joy', intensity = 1 }) => {
   const { getConsciousnessColor, getQuantumTransform } = useConsciousness();
-  const color = getConsciousnessColor(consciousnessType);
+  const color = getConsciousnessColor(consciousnessType as keyof EmotionalState);
 
   return (
     <motion.div

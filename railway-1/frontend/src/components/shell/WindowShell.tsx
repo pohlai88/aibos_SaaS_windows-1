@@ -142,15 +142,17 @@ class GestureVoiceEngine {
     let isGestureActive = false;
 
     const handleTouchStart = (e: TouchEvent) => {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      startTime = Date.now();
-      isGestureActive = true;
-      callbacks.onGestureStart?.();
+      if (e.touches[0]) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        startTime = Date.now();
+        isGestureActive = true;
+        callbacks.onGestureStart?.();
+      }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!isGestureActive) return;
+      if (!isGestureActive || !e.touches[0]) return;
 
       const deltaX = e.touches[0].clientX - startX;
       const deltaY = e.touches[0].clientY - startY;
@@ -509,8 +511,8 @@ const WindowShell: React.FC<WindowShellProps> = ({
         }}
         initial="hidden"
         animate={state.isMinimized ? 'minimized' : state.isMaximized ? 'maximized' : 'visible'}
-        variants={animated ? animationVariants : undefined}
-        transition={animated ? { duration: 0.3, ease: 'easeOut' } : undefined}
+        {...(animated && { variants: animationVariants })}
+        {...(animated && { transition: { duration: 0.3, ease: 'easeOut' } })}
         onMouseDown={handleFocus}
         role="dialog"
         aria-modal="true"

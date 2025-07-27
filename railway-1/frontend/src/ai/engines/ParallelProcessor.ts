@@ -137,11 +137,14 @@ export class ParallelProcessor {
       let inserted = false;
 
       for (let i = 0; i < this.requestQueue.length; i++) {
-        const itemScore = this.calculatePriorityScore(this.requestQueue[i].request.priority);
-        if (priorityScore > itemScore) {
-          this.requestQueue.splice(i, 0, queueItem);
-          inserted = true;
-          break;
+        const queueItemAtIndex = this.requestQueue[i];
+        if (queueItemAtIndex) {
+          const itemScore = this.calculatePriorityScore(queueItemAtIndex.request.priority);
+          if (priorityScore > itemScore) {
+            this.requestQueue.splice(i, 0, queueItem);
+            inserted = true;
+            break;
+          }
         }
       }
 
@@ -213,12 +216,13 @@ export class ParallelProcessor {
 
       batchItems.forEach((item, index) => {
         const result = batchResults[index];
-        if (result.success) {
+        if (result && result.success) {
           item.resolve(result);
           this.metrics.totalProcessed++;
         } else {
           // Retry logic for failed items in batch
-          this.handleFailedRequest(item, result.error || 'Batch processing failed');
+          const errorMessage = result?.error || 'Batch processing failed';
+          this.handleFailedRequest(item, errorMessage);
         }
       });
     } catch (error) {
@@ -373,14 +377,22 @@ export class ParallelProcessor {
     // Simulate batch processing
     await this.delay(200 + Math.random() * 800);
 
-    return requests.map(request => ({
-      id: request.id,
-      success: Math.random() > 0.2, // 20% failure rate for simulation
-      data: { batch: true, ...this.generateMockResponse(request) },
-      processingTime: 0,
-      provider: 'ai-processor-batch',
-      error: Math.random() > 0.2 ? undefined : 'Batch processing error'
-    }));
+    return requests.map(request => {
+      const isSuccess = Math.random() > 0.2; // 20% failure rate for simulation
+      const response: AIResponse = {
+        id: request.id,
+        success: isSuccess,
+        data: { batch: true, ...this.generateMockResponse(request) },
+        processingTime: 0,
+        provider: 'ai-processor-batch'
+      };
+
+      if (!isSuccess) {
+        response.error = 'Batch processing error';
+      }
+
+      return response;
+    });
   }
 
   /**
@@ -489,7 +501,7 @@ export class ParallelProcessor {
         this.startMetricsCollection();
       } else if (!newConfig.enableMetrics && this.metricsInterval) {
         clearInterval(this.metricsInterval);
-        this.metricsInterval = undefined;
+        this.metricsInterval = undefined as any;
       }
     }
   }
@@ -504,7 +516,7 @@ export class ParallelProcessor {
     // Stop metrics collection
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
-      this.metricsInterval = undefined;
+      this.metricsInterval = undefined as any;
     }
 
     // Wait for active requests to complete

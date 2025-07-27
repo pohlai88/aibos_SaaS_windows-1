@@ -42,7 +42,11 @@
         "caching": true,
         "optimization": true,
         "scalability": true,
-        "resource_management": true
+        "resource_management": true,
+        "lazyLoading": true,
+        "codeSplitting": true,
+        "memoization": true,
+        "virtualization": true
       },
       "components": {
         "WorkflowAutomationDashboard": {
@@ -71,12 +75,6 @@
         "animations": true,
         "responsive": true,
         "accessibility": true
-      },
-      "performance": {
-        "lazyLoading": true,
-        "codeSplitting": true,
-        "memoization": true,
-        "virtualization": true
       }
     },
     "overrides": {
@@ -111,17 +109,6 @@
     "ui": true,
     "performance": true,
     "security": true
-  },
-  "ui": {
-    "theme": "auto",
-    "animations": true,
-    "accessibility": true
-  },
-  "performance": {
-    "lazy": true,
-    "cache": true,
-    "optimize": true,
-    "bundle": true
   },
   "security": {
     "validate": true,

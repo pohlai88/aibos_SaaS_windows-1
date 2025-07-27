@@ -536,7 +536,6 @@ class AdvancedAnalyticsInsightsSystem {
     const reportSchedule: ReportSchedule = {
       id: uuidv4(),
       ...schedule,
-      lastRun: undefined,
       nextRun: this.calculateNextRun(schedule.frequency, schedule.time)
     };
 
@@ -829,6 +828,11 @@ class AdvancedAnalyticsInsightsSystem {
     const insights: Insight[] = [];
 
     try {
+      // Check if data array is empty or has no elements
+      if (!data || data.length === 0) {
+        return insights;
+      }
+
       // Simple anomaly detection
       const values = data.map(d => d.value);
       const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
@@ -836,14 +840,18 @@ class AdvancedAnalyticsInsightsSystem {
       const stdDev = Math.sqrt(variance);
 
       const latestValue = values[values.length - 1];
+      if (latestValue === undefined) {
+        return insights;
+      }
+
       const zScore = Math.abs((latestValue - mean) / stdDev);
 
       if (zScore > 2) {
         const insight: Insight = {
           id: uuidv4(),
           type: 'anomaly',
-          title: `Anomaly Detected in ${data[0].metric}`,
-          description: `Value ${latestValue} is ${zScore.toFixed(2)} standard deviations from the mean`,
+          title: `Anomaly Detected in ${data[0]?.metric ?? 'unknown metric'}`,
+          description: `Value ${String(latestValue)} is ${zScore.toFixed(2)} standard deviations from the mean`,
           confidence: Math.min(0.95, zScore / 3),
           impact: zScore > 3 ? 'high' : 'medium',
           data,

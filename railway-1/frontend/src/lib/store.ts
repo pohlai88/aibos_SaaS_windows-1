@@ -320,15 +320,25 @@ export const useAIBOSStore = create<AIBOSStore>()(
 
         // App Actions
         setAppState: (appId, state) =>
-          set((store) => ({
-            apps: {
-              ...store.apps,
-              [appId]: {
-                ...store.apps[appId],
-                ...state
+          set((store) => {
+            const existingApp = store.apps[appId];
+            const updatedApp: AppState = {
+              id: appId,
+              isRunning: existingApp?.isRunning ?? false,
+              isInstalled: existingApp?.isInstalled ?? false,
+              lastUsed: existingApp?.lastUsed ?? new Date().toISOString(),
+              usageCount: existingApp?.usageCount ?? 0,
+              settings: existingApp?.settings ?? {},
+              ...state
+            };
+
+            return {
+              apps: {
+                ...store.apps,
+                [appId]: updatedApp
               }
-            }
-          })),
+            };
+          }),
 
         installApp: (appId) =>
           set((state) => ({

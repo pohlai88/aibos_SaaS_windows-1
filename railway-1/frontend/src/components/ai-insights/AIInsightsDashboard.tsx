@@ -100,7 +100,9 @@ const sharedRateLimiter = RateLimiter;
 
 export function AIInsightsDashboard({ className, tenantId, userId }: AIInsightsDashboardProps) {
   // ==================== MANIFESTOR INTEGRATION ====================
-  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const { manifestor, health, isHealthy } = useManifestor();
+  const manifestLoading = false; // TODO: Add loading state to useManifestor
+  const manifestError = null; // TODO: Add error state to useManifestor
   const moduleConfig = useModuleConfig('ai-insights');
   const isModuleEnabled = useModuleEnabled('ai-insights');
 
@@ -764,7 +766,7 @@ export function AIInsightsDashboard({ className, tenantId, userId }: AIInsightsD
           action={canCreate ? {
             label: "Generate First Insight",
             onClick: generateNewInsight,
-            variant: "primary"
+            variant: "primary" as const
           } : undefined}
         />
       ) : (

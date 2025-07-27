@@ -730,7 +730,9 @@ class BlockchainIntegrationSystem {
         content: description,
         parameters: {},
         aiAnalysis: await this.performAIAnalysis(description, type),
-        quantumAnalysis: quantumOptimized ? await this.performQuantumAnalysis(description) : undefined,
+        ...(quantumOptimized && {
+          quantumAnalysis: await this.performQuantumAnalysis(description)
+        }),
         riskAssessment: await this.performRiskAssessment(description, type),
         impactAnalysis: await this.performImpactAnalysis(description, type)
       },
@@ -889,7 +891,9 @@ class BlockchainIntegrationSystem {
           inferenceTime: 0.1
         },
         aiAnalysis: await this.performAIAnalysis('AI Model NFT', 'model_deployment'),
-        quantumAnalysis: quantumOptimized ? await this.performQuantumAnalysis('AI Model NFT') : undefined
+        ...(quantumOptimized && {
+          quantumAnalysis: await this.performQuantumAnalysis('AI Model NFT')
+        })
       },
       ownership: {
         owner: '0x0000000000000000000000000000000000000000',

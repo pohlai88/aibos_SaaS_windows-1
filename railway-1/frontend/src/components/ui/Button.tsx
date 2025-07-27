@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
 // ==================== MANIFESTOR INTEGRATION ====================
@@ -24,9 +24,25 @@ export function Button({
   ...props
 }: ButtonProps) {
   // ==================== MANIFESTOR INTEGRATION ====================
-  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const { manifestor, health, isHealthy } = useManifestor();
   const moduleConfig = useModuleConfig('ui');
   const isModuleEnabled = useModuleEnabled('ui');
+
+  // Create the missing properties that the component expects
+  const can = useCallback((resource: string, action: string, user: any) => {
+    return manifestor.can(resource, action, user);
+  }, [manifestor]);
+
+  const getConfig = useCallback((moduleId: string) => {
+    return manifestor.getConfig(moduleId);
+  }, [manifestor]);
+
+  const isEnabled = useCallback((moduleId: string) => {
+    return manifestor.isEnabled(moduleId);
+  }, [manifestor]);
+
+  const manifestLoading = !isHealthy;
+  const manifestError = health?.error || null;
 
   // Check permissions for current user
   const currentUser = { id: 'current-user', role: 'user', permissions: [] };

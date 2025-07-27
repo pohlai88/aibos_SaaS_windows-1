@@ -256,9 +256,12 @@ export default App;`,
     const lineIndex = suggestion.line - 1;
 
     if (lineIndex >= 0 && lineIndex < lines.length) {
-      lines[lineIndex] = lines[lineIndex].substring(0, suggestion.column - 1) + suggestion.text + lines[lineIndex].substring(suggestion.column - 1);
-      const newCode = lines.join('\n');
-      setCode(newCode);
+      const currentLine = lines[lineIndex];
+      if (currentLine !== undefined) {
+        lines[lineIndex] = currentLine.substring(0, suggestion.column - 1) + suggestion.text + currentLine.substring(suggestion.column - 1);
+        const newCode = lines.join('\n');
+        setCode(newCode);
+      }
     }
 
     setShowSuggestions(false);

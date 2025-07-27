@@ -142,8 +142,8 @@ export default function QuantumConsciousnessDashboard({ className = '' }: Quantu
     try {
       const request: QuantumOperationRequest = {
         operation: operationForm.operation,
-        qubits: operationForm.qubits.length > 0 ? operationForm.qubits : undefined,
-        data: operationForm.data ? JSON.parse(operationForm.data) : undefined,
+        ...(operationForm.qubits.length > 0 && { qubits: operationForm.qubits }),
+        ...(operationForm.data && { data: JSON.parse(operationForm.data) }),
         parameters: operationForm.parameters,
         consciousnessContext: {
           sessionId: selectedSession?.id,

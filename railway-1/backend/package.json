@@ -7,9 +7,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only --esm src/index.ts",
-    "test-server": "ts-node-dev --respawn --transpile-only --esm src/test-server.ts",
-    "simple": "node simple-server.js",
-    "ollama-test": "node ollama-test.js",
+    "dev:fallback": "node --loader ts-node/esm src/index.ts",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
@@ -26,7 +24,7 @@
     "migrate": "node dist/migrations/index.js",
     "seed": "node dist/seed/index.js",
     "deploy": "npm run build && railway up",
-    "debug": "DEBUG=aibos:*,express:* ts-node-dev --respawn --transpile-only --esm --inspect=9229 src/index.ts",
+    "debug": "DEBUG=aibos:*,express:* ts-node-dev --respawn --transpile-only --inspect=9229 src/index.ts",
     "debug:memory": "node --inspect=9229 --max-old-space-size=4096 dist/index.js",
     "debug:cpu": "node --inspect=9229 --cpu-prof dist/index.js",
     "debug:profile": "clinic doctor -- node dist/index.js",
@@ -39,7 +37,7 @@
   "dependencies": {
     "@aibos/shared-infrastructure": "file:../../shared/aibos-shared-infrastructure-1.0.0.tgz",
     "@supabase/supabase-js": "2.39.8",
-    "aibos-shared-infrastructure": "^1.0.0",
+    "aibos-shared-infrastructure": "1.0.1",
     "bcryptjs": "^2.4.3",
     "compression": "1.8.1",
     "cors": "2.8.5",
@@ -59,6 +57,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/compression": "1.8.1",
     "@types/cors": "2.8.12",
     "@types/crypto-js": "4.1.2",
     "@types/express": "4.17.17",
@@ -73,6 +72,10 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-security": "3.0.1",
+    "eslint-plugin-unicorn": "49.0.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.4.0",
     "ts-node-dev": "^2.0.0",
@@ -98,21 +101,19 @@
       "<rootDir>/src"
     ],
     "testMatch": [
-      "**/__tests__/**/*.test.ts"
+      "**/__tests__/**/*.ts",
+      "**/?(*.)+(spec|test).ts"
     ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
     "collectCoverageFrom": [
       "src/**/*.ts",
-      "!src/**/*.d.ts",
-      "!src/index.ts"
-    ],
-    "coverageDirectory": "coverage",
-    "coverageReporters": [
-      "text",
-      "lcov",
-      "html"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/__tests__/setup.ts"
+      "!src/**/*.d.ts"
     ]
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   }
 }

@@ -141,7 +141,7 @@ export const RevolutionaryDesktop: React.FC = () => {
     }
   ]);
 
-  const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceEnvironment>(workspaces[0]);
+  const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceEnvironment>(workspaces[0]!);
   const [showEmptyState, setShowEmptyState] = useState(true);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [consciousnessParticles, setConsciousnessParticles] = useState<Array<{
@@ -201,11 +201,11 @@ export const RevolutionaryDesktop: React.FC = () => {
     const adaptLayoutToConsciousness = () => {
       // Adapt workspace based on consciousness level
       if (consciousnessLevel > 0.8) {
-        setActiveWorkspace(workspaces.find(w => w.type === 'quantum') || workspaces[0]);
+        setActiveWorkspace(workspaces.find(w => w.type === 'quantum') || workspaces[0]!);
       } else if (consciousnessLevel > 0.6) {
-        setActiveWorkspace(workspaces.find(w => w.type === 'creative') || workspaces[0]);
+        setActiveWorkspace(workspaces.find(w => w.type === 'creative') || workspaces[0]!);
       } else {
-        setActiveWorkspace(workspaces.find(w => w.type === 'analytical') || workspaces[0]);
+        setActiveWorkspace(workspaces.find(w => w.type === 'analytical') || workspaces[0]!);
       }
     };
 
@@ -274,6 +274,10 @@ export const RevolutionaryDesktop: React.FC = () => {
     }, [emptyStateMessages.length]);
 
     const message = emptyStateMessages[currentMessage];
+
+    if (!message) {
+      return null;
+    }
 
     return (
       <motion.div

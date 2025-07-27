@@ -118,7 +118,7 @@ export const ConsciousnessMetricsDashboard: React.FC = () => {
         icon="🌌"
         iconBg="bg-indigo-100 dark:bg-indigo-900"
         variant={quantumState.coherence >= 0.8 ? 'success' : quantumState.coherence >= 0.6 ? 'info' : 'warning'}
-        trend={quantumState.coherence > 0.5 ? { value: 2.1, isPositive: true } : undefined}
+        {...(quantumState.coherence > 0.5 && { trend: { value: 2.1, isPositive: true } })}
       />
 
       <DashboardCard
@@ -148,7 +148,7 @@ export const ConsciousnessMetricsDashboard: React.FC = () => {
         icon="🧠"
         iconBg="bg-green-100 dark:bg-green-900"
         variant={quantumState.consciousnessField.intensity >= 0.7 ? 'success' : 'default'}
-        trend={quantumState.consciousnessField.intensity > 0.5 ? { value: 3.2, isPositive: true } : undefined}
+        {...(quantumState.consciousnessField.intensity > 0.5 && { trend: { value: 3.2, isPositive: true } })}
       />
     </div>
   );
@@ -173,7 +173,7 @@ export const ConsciousnessMetricsDashboard: React.FC = () => {
         icon="💫"
         iconBg="bg-yellow-100 dark:bg-yellow-900"
         variant={emotionalResonance.resonanceStrength >= 0.7 ? 'success' : 'default'}
-        trend={emotionalResonance.resonanceStrength > 0.5 ? { value: 4.1, isPositive: true } : undefined}
+        {...(emotionalResonance.resonanceStrength > 0.5 && { trend: { value: 4.1, isPositive: true } })}
       />
 
       <DashboardCard
@@ -192,7 +192,7 @@ export const ConsciousnessMetricsDashboard: React.FC = () => {
         icon="🌍"
         iconBg="bg-teal-100 dark:bg-teal-900"
         variant={emotionalResonance.averageConsciousness >= 0.7 ? 'success' : 'default'}
-        trend={emotionalResonance.averageConsciousness > 0.5 ? { value: 1.8, isPositive: true } : undefined}
+        {...(emotionalResonance.averageConsciousness > 0.5 && { trend: { value: 1.8, isPositive: true } })}
       />
     </div>
   );

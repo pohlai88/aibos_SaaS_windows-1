@@ -457,7 +457,7 @@ export class TypeScriptParser {
     return {
       name: decoratorName,
       arguments: arguments_,
-      metadata: this.generateDecoratorMetadata(decoratorName, arguments_),
+      metadata: this.generateDecoratorMetadata(decoratorName, Array.from(arguments)),
       purpose: this.getDecoratorPurpose(decoratorName),
       impact: this.getDecoratorImpact(decoratorName),
       compliance: this.getDecoratorCompliance(decoratorName),
@@ -584,7 +584,7 @@ export class TypeScriptParser {
       switch (decorator.name) {
         case 'sensitive':
           property.sensitivity.level = 'confidential';
-          property.sensitivity.classification = 'sensitive_data';
+          property.sensitivity.classification = 'sensitivedata';
           break;
         case 'phi':
           property.sensitivity.level = 'restricted';
@@ -707,7 +707,7 @@ export class TypeScriptParser {
 
       if (sensitiveProperties.length > 0) {
         const policy: PolicyDefinition = {
-          name: `${interface_.name}_sensitive_data_policy`,
+          name: `${interface_.name}_sensitivedata_policy`,
           type: 'rls',
           table: interface_.name,
           condition: 'auth.role() IN (\'admin\', \'data_steward\')',
@@ -831,7 +831,7 @@ export class TypeScriptParser {
   private generateDataSensitivity(): DataSensitivity {
     return {
       level: 'internal',
-      classification: 'business_data',
+      classification: 'businessdata',
       handling: 'standard',
       encryption: 'none',
       access: 'role_based',
@@ -1023,7 +1023,7 @@ class AIModel {
   }
 
   async classifyData(interface_: TypeScriptInterface): Promise<string> {
-    return 'business_data';
+    return 'businessdata';
   }
 }
 

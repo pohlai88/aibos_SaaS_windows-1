@@ -517,11 +517,7 @@ export class AdvancedAIOrchestration {
         });
 
       case 'analyzer':
-        return await this.mlModelManager.predict({
-          modelId: 'workflow-analyzer',
-          input: step.result || {},
-          metadata: { workflowId: workflow.id, stepId: step.id }
-        });
+        return await this.mlModelManager.predict('workflow-analyzer', step.result || {});
 
       case 'optimizer':
         return await this.optimizeStep(step, workflow);

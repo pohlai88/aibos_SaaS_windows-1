@@ -73,7 +73,7 @@ interface Workspace {
 
 export const CollaborationDashboard: React.FC = () => {
   // ==================== MANIFESTOR INTEGRATION ====================
-  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const { manifestor, health, isHealthy } = useManifestor();
   const moduleConfig = useModuleConfig('collaboration');
   const isModuleEnabled = useModuleEnabled('collaboration');
 
@@ -109,12 +109,8 @@ export const CollaborationDashboard: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // ==================== MANIFESTOR PERMISSION CHECKS ====================
-  if (manifestLoading) {
+  if (!isHealthy) {
     return <div className="animate-pulse bg-gray-200 rounded-lg h-96 w-full" />;
-  }
-
-  if (manifestError) {
-    return <div className="text-red-600 p-4">Collaboration Error</div>;
   }
 
   if (!isModuleEnabled) {

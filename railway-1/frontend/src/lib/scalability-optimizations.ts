@@ -459,24 +459,38 @@ class ScalabilityOptimizationsSystem {
 
     let selectedNode: LoadBalancerNode;
 
-    switch (loadBalancer.algorithm) {
-      case 'round_robin':
-        selectedNode = this.roundRobinSelection(healthyNodes);
-        break;
-      case 'least_connections':
-        selectedNode = this.leastConnectionsSelection(healthyNodes);
-        break;
-      case 'weighted':
-        selectedNode = this.weightedSelection(healthyNodes);
-        break;
-      case 'ai_optimized':
-        selectedNode = await this.aiOptimizedSelection(healthyNodes, request);
-        break;
-      case 'quantum_enhanced':
-        selectedNode = await this.quantumEnhancedSelection(healthyNodes, request);
-        break;
-      default:
-        selectedNode = healthyNodes[0];
+    // Handle different algorithms
+    if (loadBalancer.algorithm === 'round_robin') {
+      selectedNode = this.roundRobinSelection(healthyNodes);
+    } else if (loadBalancer.algorithm === 'least_connections') {
+      selectedNode = this.leastConnectionsSelection(healthyNodes);
+    } else if (loadBalancer.algorithm === 'weighted') {
+      selectedNode = this.weightedSelection(healthyNodes);
+    } else if (loadBalancer.algorithm === 'ai_optimized') {
+      selectedNode = await this.aiOptimizedSelection(healthyNodes, request);
+    } else if (loadBalancer.algorithm === 'quantum_enhanced') {
+      selectedNode = await this.quantumEnhancedSelection(healthyNodes, request);
+    } else {
+      if (healthyNodes.length === 0) {
+        throw new Error('No healthy nodes available for load distribution');
+      }
+      const fallbackNode = healthyNodes[0];
+      if (!fallbackNode) {
+        throw new Error('No healthy nodes available for load distribution');
+      }
+      selectedNode = fallbackNode;
+    }
+
+    // Ensure we have a valid node (fallback to first healthy node if needed)
+    if (!selectedNode) {
+      if (healthyNodes.length === 0) {
+        throw new Error('No healthy nodes available for fallback');
+      }
+      const fallbackNode = healthyNodes[0];
+      if (!fallbackNode) {
+        throw new Error('No healthy nodes available for fallback');
+      }
+      selectedNode = fallbackNode;
     }
 
     // Update node performance
@@ -510,17 +524,30 @@ class ScalabilityOptimizationsSystem {
 
   private roundRobinSelection(nodes: LoadBalancerNode[]): LoadBalancerNode {
     // Simple round-robin implementation
+    if (nodes.length === 0) {
+      throw new Error('No nodes available for round-robin selection');
+    }
     const index = Math.floor(Math.random() * nodes.length);
-    return nodes[index];
+    const selectedNode = nodes[index];
+    if (!selectedNode) {
+      throw new Error('Failed to select node from array');
+    }
+    return selectedNode;
   }
 
   private leastConnectionsSelection(nodes: LoadBalancerNode[]): LoadBalancerNode {
+    if (nodes.length === 0) {
+      throw new Error('No nodes available for least connections selection');
+    }
     return nodes.reduce((min, current) =>
       current.performance.activeConnections < min.performance.activeConnections ? current : min
     );
   }
 
   private weightedSelection(nodes: LoadBalancerNode[]): LoadBalancerNode {
+    if (nodes.length === 0) {
+      throw new Error('No nodes available for weighted selection');
+    }
     const totalWeight = nodes.reduce((sum, node) => sum + node.weight, 0);
     let random = Math.random() * totalWeight;
 
@@ -531,35 +558,79 @@ class ScalabilityOptimizationsSystem {
       }
     }
 
-    return nodes[0];
+    const fallbackNode = nodes[0];
+    if (!fallbackNode) {
+      throw new Error('No fallback node available');
+    }
+    return fallbackNode;
   }
 
   private async aiOptimizedSelection(nodes: LoadBalancerNode[], request: any): Promise<LoadBalancerNode> {
-    const analysis = await this.xaiSystem.explainDecision('optimization', {
-      nodes,
-      request,
-      currentLoad: this.getCurrentLoadMetrics()
-    }, {});
+    try {
+      if (nodes.length === 0) {
+        throw new Error('No nodes available for AI optimization');
+      }
 
-    const selectedNodeId = analysis.context?.recommendedNode || nodes[0].id;
-    return nodes.find(node => node.id === selectedNodeId) || nodes[0];
+      const analysis = await this.xaiSystem.explainDecision('optimization', {
+        nodes,
+        request,
+        currentLoad: this.getCurrentLoadMetrics()
+      }, {});
+
+      const selectedNodeId = analysis.context?.recommendedNode || nodes[0]?.id;
+      const foundNode = nodes.find(node => node.id === selectedNodeId);
+      const fallbackNode = nodes[0];
+
+      if (!fallbackNode) {
+        throw new Error('No fallback node available');
+      }
+
+      return foundNode || fallbackNode;
+    } catch (error) {
+      console.warn('[SCALABILITY-OPTIMIZATIONS] AI optimization failed, falling back to first node:', error);
+      const fallbackNode = nodes[0];
+      if (!fallbackNode) {
+        throw new Error('No fallback node available for AI optimization');
+      }
+      return fallbackNode;
+    }
   }
 
   private async quantumEnhancedSelection(nodes: LoadBalancerNode[], request: any): Promise<LoadBalancerNode> {
-    const quantumData = {
-      nodes: JSON.stringify(nodes),
-      request: JSON.stringify(request),
-      timestamp: Date.now()
-    };
+    try {
+      if (nodes.length === 0) {
+        throw new Error('No nodes available for quantum enhancement');
+      }
 
-    const result = await quantumConsciousness.performQuantumOperation({
-      operation: 'learn',
-      data: quantumData,
-      parameters: { learningRate: 0.1 }
-    });
+      const quantumData = {
+        nodes: JSON.stringify(nodes),
+        request: JSON.stringify(request),
+        timestamp: Date.now()
+      };
 
-    const selectedNodeId = result.result?.selectedNode;
-    return nodes.find(node => node.id === selectedNodeId) || nodes[0];
+      const result = await quantumConsciousness.performQuantumOperation({
+        operation: 'learn',
+        data: quantumData,
+        parameters: { learningRate: 0.1 }
+      });
+
+      const selectedNodeId = result.result?.selectedNode;
+      const foundNode = nodes.find(node => node.id === selectedNodeId);
+      const fallbackNode = nodes[0];
+
+      if (!fallbackNode) {
+        throw new Error('No fallback node available');
+      }
+
+      return foundNode || fallbackNode;
+    } catch (error) {
+      console.warn('[SCALABILITY-OPTIMIZATIONS] Quantum optimization failed, falling back to first node:', error);
+      const fallbackNode = nodes[0];
+      if (!fallbackNode) {
+        throw new Error('No fallback node available for quantum enhancement');
+      }
+      return fallbackNode;
+    }
   }
 
   // ==================== RESOURCE MANAGEMENT ====================
@@ -847,7 +918,11 @@ class ScalabilityOptimizationsSystem {
 
     if (recentMetrics.length < 2) return 'stable';
 
-    const previousValue = recentMetrics[recentMetrics.length - 2].value;
+    const previousMetric = recentMetrics[recentMetrics.length - 2];
+    if (!previousMetric) {
+      return 'stable';
+    }
+    const previousValue = previousMetric.value;
     const change = currentValue - previousValue;
 
     if (Math.abs(change) < 0.1) return 'stable';
@@ -863,7 +938,7 @@ class ScalabilityOptimizationsSystem {
       gpu: 0.5,
       quantum: 1.0
     };
-    return costs[type] || 0.1;
+    return costs[type] ?? 0.1;
   }
 
   private async scaleUpResourcePool(pool: ResourcePool, requiredAmount: number): Promise<boolean> {

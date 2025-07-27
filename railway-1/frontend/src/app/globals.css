@@ -1,8 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind base;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind components;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind utilities;
 
 /* ==================== DESIGN TOKENS (from shared package) ==================== */
@@ -19,17 +22,17 @@
   --ai-purple-700: #7c3aed;
   --ai-purple-800: #6b21a8;
   --ai-purple-900: #581c87;
-  
+
   /* Opacity variants */
   --ai-purple-500-10: rgba(168, 85, 247, 0.1);
   --ai-purple-500-20: rgba(168, 85, 247, 0.2);
   --ai-purple-500-50: rgba(168, 85, 247, 0.5);
   --ai-purple-500-70: rgba(168, 85, 247, 0.7);
-  
+
   /* Typography System */
   --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-family-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  
+
   /* Animation System */
   --animation-duration-fast: 100ms;
   --animation-duration-base: 200ms;
@@ -38,7 +41,7 @@
   --animation-easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --animation-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   --animation-easing-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  
+
   /* Spacing System */
   --spacing-1: 4px;
   --spacing-2: 8px;
@@ -51,7 +54,7 @@
   --spacing-12: 48px;
   --spacing-16: 64px;
   --spacing-20: 80px;
-  
+
   /* Border Radius */
   --radius-sm: 2px;
   --radius-base: 4px;
@@ -60,7 +63,7 @@
   --radius-xl: 12px;
   --radius-2xl: 16px;
   --radius-full: 9999px;
-  
+
   /* Z-Index System */
   --z-dropdown: 1000;
   --z-sticky: 1100;
@@ -178,6 +181,7 @@
 /* ==================== FOCUS STATES ==================== */
 
 .focus-ring {
+  /* stylelint-disable-next-line at-rule-no-unknown */
   @apply focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50;
   font-family: var(--font-family-sans);
 }
@@ -203,6 +207,7 @@
 
 @media (max-width: 768px) {
   .virtual-desktop-controls {
+    /* stylelint-disable-next-line at-rule-no-unknown */
     @apply scale-75;
   }
 }
@@ -228,12 +233,12 @@
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.4);
   }
-  
+
   .glass-dark {
     background: rgba(0, 0, 0, 0.4);
     border: 2px solid rgba(255, 255, 255, 0.3);
   }
-  
+
   .bg-grid-pattern {
     background-image:
       linear-gradient(var(--ai-purple-500-20) 1px, transparent 1px),
@@ -268,12 +273,12 @@
       linear-gradient(var(--ai-purple-500-20) 1px, transparent 1px),
       linear-gradient(90deg, var(--ai-purple-500-20) 1px, transparent 1px);
   }
-  
+
   .glass {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
   .glass-dark {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -289,7 +294,7 @@
   .window-exit {
     display: none !important;
   }
-  
+
   .glass,
   .glass-dark {
     background: white !important;

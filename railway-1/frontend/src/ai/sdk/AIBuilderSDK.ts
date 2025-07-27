@@ -540,7 +540,7 @@ export class AIBuilderSDK {
         maxMemory: 50,
         timeout: 5000,
       },
-    };
+    } as AppManifest;
   }
 
   /**
@@ -815,7 +815,7 @@ export class AIBuilderSDK {
     } else if (params.domain) {
       // Load domain-specific templates
       this.promptTemplates = {
-        [params.domain]: DEFAULT_PROMPT_TEMPLATES[params.domain] || DEFAULT_PROMPT_TEMPLATES.general
+        [params.domain]: DEFAULT_PROMPT_TEMPLATES[params.domain] || DEFAULT_PROMPT_TEMPLATES.general || []
       };
     }
   }
@@ -833,12 +833,12 @@ export class AIBuilderSDK {
       if (!tenantTemplates[template.domain]) {
         tenantTemplates[template.domain] = [];
       }
-      tenantTemplates[template.domain].push(template);
+      tenantTemplates[template.domain]!.push(template);
     } else {
       if (!this.promptTemplates[template.domain]) {
         this.promptTemplates[template.domain] = [];
       }
-      this.promptTemplates[template.domain].push(template);
+      this.promptTemplates[template.domain]!.push(template);
     }
   }
 
@@ -1022,7 +1022,7 @@ export class AIBuilderSDK {
       custom: '/icons/app.svg',
     };
 
-    return icons[intent.appType] || icons.custom;
+    return icons[intent.appType as keyof typeof icons] ?? icons.custom ?? '/icons/app.svg';
   }
 
   /**

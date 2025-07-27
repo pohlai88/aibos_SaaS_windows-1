@@ -28,7 +28,7 @@ import { useAIBOSStore } from '@/lib/store';
 import { useManifestor, usePermission, useModuleConfig, useModuleEnabled } from '@/hooks/useManifestor';
 
 // ==================== REVOLUTIONARY AI INTEGRATION ====================
-import { getAIBuilderSDK, PromptRequest, PromptResponse } from '@/ai/sdk/AIBuilderSDK';
+import { getAIBuilderSDK, PromptRequest, PromptResponse, PromptOptions } from '@/ai/sdk/AIBuilderSDK';
 import { IntelligentCache } from '@/ai/engines/IntelligentCache';
 import {
   designTokens,
@@ -163,7 +163,9 @@ const COMPLEXITIES = [
 
 export function AIBuilder({ className, tenantId, userId }: AIBuilderProps) {
   // ==================== MANIFESTOR INTEGRATION ====================
-  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const { manifestor, health, isHealthy } = useManifestor();
+  const manifestLoading = false; // TODO: Add loading state to useManifestor
+  const manifestError = null; // TODO: Add error state to useManifestor
   const moduleConfig = useModuleConfig('ai-components');
   const isModuleEnabled = useModuleEnabled('ai-components');
 
@@ -269,15 +271,21 @@ export function AIBuilder({ className, tenantId, userId }: AIBuilderProps) {
 
       // Generate with AI Builder SDK
       const startTime = Date.now();
-      const response: PromptResponse = await builderSDK.generateFromPrompt(promptRequest, {
+      const promptOptions: PromptOptions = {
         llmCallback: (stage, data) => {
           sharedLogger.info();
         },
-        tenantId,
         domain: state.selectedDomain,
         enableStreaming: true,
         confidenceThreshold: 0.7
-      });
+      };
+
+      // Only add tenantId if it exists
+      if (tenantId) {
+        promptOptions.tenantId = tenantId;
+      }
+
+      const response: PromptResponse = await builderSDK.generateFromPrompt(promptRequest, promptOptions);
 
       const processingTime = Date.now() - startTime;
 
@@ -303,7 +311,7 @@ export function AIBuilder({ className, tenantId, userId }: AIBuilderProps) {
         suggestions: response.suggestions,
         processingTime,
         tokenTrace: response.tokenTrace
-      };
+      } as GeneratedApp;
 
       // Cache the result
               await getIntelligentCache().set(cacheKey, generatedApp, {

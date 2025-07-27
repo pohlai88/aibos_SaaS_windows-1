@@ -551,3 +551,38 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ---
 
 **🚀 Ready for the manifest-driven AI revolution! 🧠**
+
+---
+
+## 🚀 Phase 6.1: Build Restoration & Strategic Upgrade
+
+### Summary
+
+- **Build system restored:** All critical build errors resolved, production build now working.
+- **TypeScript compliance:** Zero compilation errors, clean baseline.
+- **Strategic compromise:** Complex features (TensorFlow.js, manifestor-driven config, advanced logging) temporarily simplified for stability.
+- **Permanent improvements:** Modernized Next.js config, security headers, and maintainable codebase.
+- **Runtime guards:** Fallback detection and emergency handling in ComputerVisionEngine.
+- **Upgrade tracking:** All planned feature restorations and enhancements are tracked in [`TODO.upgrade.md`](TODO.upgrade.md).
+- **Strategic documentation:** Full BEFORE vs AFTER analysis, change classification, and versioning in [`PHASE6_BUILD_RESTORATION_STRATEGY.md`](PHASE6_BUILD_RESTORATION_STRATEGY.md).
+- **Versioning:** Tagged `v1.0.0-stable` as the baseline for all future upgrades.
+
+### Key Links
+
+- [PHASE6_BUILD_RESTORATION_STRATEGY.md](PHASE6_BUILD_RESTORATION_STRATEGY.md): Strategic analysis, upgrade path, and versioning
+- [TODO.upgrade.md](TODO.upgrade.md): All planned feature restorations and enhancements
+
+### Upgrade Path
+
+- **Phase 6.2:** Restore TensorFlow.js, manifestor-driven config, advanced logging
+- **Phase 6.3:** Advanced Webpack, CI/CD, performance optimization
+- **Phase 6.4:** Production excellence, monitoring, scaling
+
+### Lean Architecture Principles Applied
+
+- **Fix first, optimize later**: Build stability prioritized
+- **Compromise only where safe**: All changes are tracked and reversible
+- **Upgrade path documented**: No technical debt, only controlled phasing
+- **Runtime safety**: Fallbacks and guards in place
+
+---

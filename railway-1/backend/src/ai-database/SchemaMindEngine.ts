@@ -559,7 +559,7 @@ export class SchemaMindEngine {
         // Temporal trigger
         {
           name: `${table.name}_temporal_trigger`,
-          function: 'manage_temporal_data()',
+          function: 'manage_temporaldata()',
           events: ['INSERT', 'UPDATE'],
           timing: 'BEFORE' as const,
           metadata: { description: 'Manages temporal data lineage' } as TriggerMetadata
@@ -1139,7 +1139,7 @@ class AuditEngine {
   async generateAuditTrails(tables: TableDefinition[]): Promise<AuditTrail> {
     return {
       userActions: 'audit_user_actions',
-      dataAccess: 'audit_data_access',
+      dataAccess: 'auditdata_access',
       schemaChanges: 'audit_schema_changes',
       complianceEvents: 'audit_compliance_events'
     };

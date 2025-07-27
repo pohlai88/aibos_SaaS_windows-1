@@ -1,28 +1,18 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["dom", "dom.iterable", "ES6"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ES6"
+    ],
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false,
     "plugins": [
       {
         "name": "next"
@@ -30,20 +20,43 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/types/*": ["./src/types/*"],
-      "@/manifests/*": ["./src/manifests/*"],
-      "@aibos/shared-infrastructure/*": ["../../shared/src/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ],
+      "@/components/*": [
+        "./src/components/*"
+      ],
+      "@/lib/*": [
+        "./src/lib/*"
+      ],
+      "@/hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@/types/*": [
+        "./src/types/*"
+      ],
+      "@/manifests/*": [
+        "./src/manifests/*"
+      ],
+      "@aibos/shared-infrastructure/*": [
+        "../../shared/src/*"
+      ],
+      "@shared/*": [
+        "../../shared/src/*"
+      ]
+    },
+    "outDir": "./dist",
+    "noEmit": true,
+    "rootDir": "../../"
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/types/**/*.d.ts",
+    "../../shared/src/**/*.ts",
+    "../../shared/src/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

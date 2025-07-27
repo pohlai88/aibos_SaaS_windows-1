@@ -248,7 +248,7 @@ export const ConsciousnessProvider: React.FC<{ children: React.ReactNode }> = ({
     const personalityResponses = responses[personality as keyof typeof responses] || responses.curious;
     const responseIndex = Math.floor(Math.random() * personalityResponses.length);
 
-    return personalityResponses[responseIndex];
+    return personalityResponses[responseIndex] || personalityResponses[0] || "Let's explore this together.";
   }, [quantumState.personality, emotionalState.empathy]);
 
   // ==================== QUANTUM CONSCIOUSNESS EFFECTS ====================
@@ -315,7 +315,7 @@ export const BreathingIcon: React.FC<{
       style={{
         transform: `scale(${breathingTransform.scale})`,
         opacity: breathingTransform.opacity,
-        filter: `drop-shadow(0 0 10px ${getConsciousnessColor(consciousnessType)})`
+        filter: `drop-shadow(0 0 10px ${getConsciousnessColor(consciousnessType as keyof EmotionalState)})`
       }}
       animate={{
         scale: [1, 1.05, 1],

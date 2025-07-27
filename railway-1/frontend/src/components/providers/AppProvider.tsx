@@ -93,28 +93,36 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const closeWindow = (windowId: string) => {
     setWindows(prev => prev.filter(w => w.id !== windowId));
-    
+
     if (activeWindow === windowId) {
       const remainingWindows = windows.filter(w => w.id !== windowId);
       if (remainingWindows.length > 0) {
         const lastWindow = remainingWindows[remainingWindows.length - 1];
-        setActiveWindowState(lastWindow.id);
+        if (lastWindow) {
+          setActiveWindowState(lastWindow.id);
+        } else {
+          setActiveWindowState(null);
+        }
       } else {
         setActiveWindowState(null);
       }
     }
   };
 
-  const minimizeWindow = (windowId: string) => {
-    setWindows(prev => prev.map(w => 
+    const minimizeWindow = (windowId: string) => {
+    setWindows(prev => prev.map(w =>
       w.id === windowId ? { ...w, isMinimized: true, isActive: false } : w
     ));
-    
+
     if (activeWindow === windowId) {
       const remainingWindows = windows.filter(w => w.id !== windowId);
       if (remainingWindows.length > 0) {
         const lastWindow = remainingWindows[remainingWindows.length - 1];
-        setActiveWindowState(lastWindow.id);
+        if (lastWindow) {
+          setActiveWindowState(lastWindow.id);
+        } else {
+          setActiveWindowState(null);
+        }
       } else {
         setActiveWindowState(null);
       }
@@ -122,7 +130,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const maximizeWindow = (windowId: string) => {
-    setWindows(prev => prev.map(w => 
+    setWindows(prev => prev.map(w =>
       w.id === windowId ? { ...w, isMaximized: !w.isMaximized } : w
     ));
   };
@@ -137,13 +145,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateWindowPosition = (windowId: string, position: { x: number; y: number }) => {
-    setWindows(prev => prev.map(w => 
+    setWindows(prev => prev.map(w =>
       w.id === windowId ? { ...w, position } : w
     ));
   };
 
   const updateWindowSize = (windowId: string, size: { width: number; height: number }) => {
-    setWindows(prev => prev.map(w => 
+    setWindows(prev => prev.map(w =>
       w.id === windowId ? { ...w, size } : w
     ));
   };
@@ -176,4 +184,4 @@ export function useApp() {
     throw new Error('useApp must be used within an AppProvider');
   }
   return context;
-} 
+}

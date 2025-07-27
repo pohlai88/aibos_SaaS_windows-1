@@ -3,18 +3,47 @@
   "version": "1.0.0",
   "type": "module",
   "enabled": true,
-  "dependencies": ["core:app", "core:auth"],
+  "dependencies": [
+    "core:app",
+    "core:auth"
+  ],
   "permissions": {
-    "view": ["user", "admin"],
-    "create": ["user", "admin"],
-    "edit": ["user", "admin"],
-    "delete": ["admin"],
-    "share": ["user", "admin"],
-    "comment": ["user", "admin"],
-    "approve": ["admin"],
-    "manage_teams": ["admin"],
-    "manage_workspaces": ["admin"],
-    "view_analytics": ["user", "admin"]
+    "view": [
+      "user",
+      "admin"
+    ],
+    "create": [
+      "user",
+      "admin"
+    ],
+    "edit": [
+      "user",
+      "admin"
+    ],
+    "delete": [
+      "admin"
+    ],
+    "share": [
+      "user",
+      "admin"
+    ],
+    "comment": [
+      "user",
+      "admin"
+    ],
+    "approve": [
+      "admin"
+    ],
+    "manage_teams": [
+      "admin"
+    ],
+    "manage_workspaces": [
+      "admin"
+    ],
+    "view_analytics": [
+      "user",
+      "admin"
+    ]
   },
   "config": {
     "defaults": {
@@ -62,125 +91,155 @@
   "api": {
     "routes": {
       "/collaboration/threads": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": []
-      },
-      "/collaboration/threads": {
-        "method": "POST",
-        "permissions": ["create"],
-        "rateLimit": "50/minute",
-        "validation": ["title", "participants"]
+        "POST": {
+          "permissions": [
+            "create"
+          ],
+          "rateLimit": "50/minute",
+          "validation": [
+            "title",
+            "participants"
+          ]
+        }
       },
       "/collaboration/threads/:id": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": ["id"]
+        "GET": {
+          "permissions": [
+            "view"
+          ],
+          "rateLimit": "100/minute",
+          "validation": [
+            "id"
+          ]
+        }
       },
       "/collaboration/threads/:id/messages": {
-        "method": "POST",
-        "permissions": ["comment"],
-        "rateLimit": "100/minute",
-        "validation": ["id", "content"]
+        "POST": {
+          "permissions": [
+            "comment"
+          ],
+          "rateLimit": "100/minute",
+          "validation": [
+            "id",
+            "content"
+          ]
+        }
       },
       "/collaboration/documents": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": []
-      },
-      "/collaboration/documents": {
-        "method": "POST",
-        "permissions": ["create"],
-        "rateLimit": "20/minute",
-        "validation": ["title", "content", "type"]
-      },
-      "/collaboration/documents/:id": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": ["id"]
+        "POST": {
+          "permissions": [
+            "create"
+          ],
+          "rateLimit": "20/minute",
+          "validation": [
+            "title",
+            "content",
+            "type"
+          ]
+        }
       },
       "/collaboration/documents/:id": {
-        "method": "PUT",
-        "permissions": ["edit"],
-        "rateLimit": "50/minute",
-        "validation": ["id", "content"]
+        "PUT": {
+          "permissions": [
+            "edit"
+          ],
+          "rateLimit": "50/minute",
+          "validation": [
+            "id",
+            "content"
+          ]
+        }
       },
       "/collaboration/workspaces": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": []
-      },
-      "/collaboration/workspaces": {
-        "method": "POST",
-        "permissions": ["create"],
-        "rateLimit": "10/minute",
-        "validation": ["name", "description"]
-      },
-      "/teams": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": []
+        "POST": {
+          "permissions": [
+            "create"
+          ],
+          "rateLimit": "10/minute",
+          "validation": [
+            "name",
+            "description"
+          ]
+        }
       },
       "/teams": {
-        "method": "POST",
-        "permissions": ["create"],
-        "rateLimit": "10/minute",
-        "validation": ["name", "description"]
+        "POST": {
+          "permissions": [
+            "create"
+          ],
+          "rateLimit": "10/minute",
+          "validation": [
+            "name",
+            "description"
+          ]
+        }
       },
       "/teams/:id": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": ["id"]
-      },
-      "/teams/:id": {
-        "method": "PUT",
-        "permissions": ["edit"],
-        "rateLimit": "20/minute",
-        "validation": ["id", "name", "description"]
-      },
-      "/teams/:id": {
-        "method": "DELETE",
-        "permissions": ["delete"],
-        "rateLimit": "5/minute",
-        "validation": ["id"]
+        "DELETE": {
+          "permissions": [
+            "delete"
+          ],
+          "rateLimit": "5/minute",
+          "validation": [
+            "id"
+          ]
+        }
       },
       "/teams/members": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": []
+        "GET": {
+          "permissions": [
+            "view"
+          ],
+          "rateLimit": "100/minute",
+          "validation": []
+        }
       },
       "/teams/:id/members": {
-        "method": "POST",
-        "permissions": ["manage_teams"],
-        "rateLimit": "20/minute",
-        "validation": ["id", "userId", "role"]
+        "POST": {
+          "permissions": [
+            "manage_teams"
+          ],
+          "rateLimit": "20/minute",
+          "validation": [
+            "id",
+            "userId",
+            "role"
+          ]
+        }
       },
       "/teams/invitations": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": []
-      },
-      "/teams/invitations": {
-        "method": "POST",
-        "permissions": ["manage_teams"],
-        "rateLimit": "20/minute",
-        "validation": ["teamId", "email", "role"]
+        "POST": {
+          "permissions": [
+            "manage_teams"
+          ],
+          "rateLimit": "20/minute",
+          "validation": [
+            "teamId",
+            "email",
+            "role"
+          ]
+        }
       }
     },
     "middleware": {
-      "auth": ["jwt", "session"],
-      "validation": ["sanitize", "validate"],
-      "security": ["rateLimit", "cors", "helmet"],
-      "collaboration": ["access_control", "permission_check", "audit_log"]
+      "auth": [
+        "jwt",
+        "session"
+      ],
+      "validation": [
+        "sanitize",
+        "validate"
+      ],
+      "security": [
+        "rateLimit",
+        "cors",
+        "helmet"
+      ],
+      "collaboration": [
+        "access_control",
+        "permission_check",
+        "audit_log"
+      ]
     },
     "validators": {
       "id": "uuid",

@@ -63,7 +63,7 @@ const ConnectivityTest: React.FC<ConnectivityTestProps> = ({
         status: result.connected ? 'connected' : 'disconnected',
         responseTime,
         lastChecked: new Date(),
-        error: result.connected ? undefined : result.error
+        ...(result.connected ? {} : { error: result.error })
       };
     } catch (error) {
       return {
@@ -210,16 +210,20 @@ const ConnectivityTest: React.FC<ConnectivityTestProps> = ({
 
     const newServices = [...services];
     results.forEach((result, index) => {
-      if (result.status === 'fulfilled') {
-        newServices[index + 1] = result.value; // +1 because frontend is at index 0
-      } else {
-        newServices[index + 1] = {
-          name: newServices[index + 1].name,
-          status: 'error',
-          responseTime: 0,
-          lastChecked: new Date(),
-          error: 'Test failed'
-        };
+      const serviceIndex = index + 1; // +1 because frontend is at index 0
+      if (serviceIndex < newServices.length) {
+        if (result.status === 'fulfilled') {
+          newServices[serviceIndex] = result.value;
+        } else {
+          const existingService = newServices[serviceIndex];
+          newServices[serviceIndex] = {
+            name: existingService?.name || `Service ${serviceIndex}`,
+            status: 'error',
+            responseTime: 0,
+            lastChecked: new Date(),
+            error: 'Test failed'
+          };
+        }
       }
     });
 

@@ -619,18 +619,18 @@ class AdvancedSecurityComplianceSystem {
   async addToAuditTrail(event: SecurityEvent): Promise<void> {
     const auditEntry: AuditTrail = {
       id: uuidv4(),
-      userId: event.userId,
-      sessionId: event.sessionId,
       action: event.action,
       resource: event.resource,
       timestamp: event.timestamp,
-      ipAddress: event.ipAddress,
-      userAgent: event.userAgent,
       result: event.result,
       metadata: event.metadata,
       complianceTags: event.complianceImpact,
       retentionPeriod: this.calculateRetentionPeriod(event),
-      encrypted: true
+      encrypted: true,
+      ...(event.userId && { userId: event.userId }),
+      ...(event.sessionId && { sessionId: event.sessionId }),
+      ...(event.ipAddress && { ipAddress: event.ipAddress }),
+      ...(event.userAgent && { userAgent: event.userAgent })
     };
 
     this.auditTrail.push(auditEntry);

@@ -3,7 +3,8 @@
 // Enterprise Grade - Production Ready
 // Steve Jobs Philosophy: "Quality is more important than quantity."
 
-import { SchemaVersioningEngine, SchemaVersion, SchemaDiff, MigrationPlan, RollbackPlan } from '../SchemaVersioningEngine';
+import { SchemaVersioningEngine } from '../SchemaVersioningEngine';
+import type { SchemaVersion } from '../SchemaVersioningEngine';
 
 describe('SchemaVersioningEngine', () => {
   let versioningEngine: SchemaVersioningEngine;
@@ -229,7 +230,7 @@ describe('SchemaVersioningEngine', () => {
     });
 
     it('should calculate migration time correctly', async () => {
-      const version1 = await versioningEngine.createSchemaVersion(sampleSchema1, sampleMetadata);
+      await versioningEngine.createSchemaVersion(sampleSchema1, sampleMetadata);
       const version2 = await versioningEngine.createSchemaVersion(sampleSchema2, sampleMetadata);
       const migrationPlan = await versioningEngine.generateMigrationPlan(version2);
 
@@ -278,13 +279,13 @@ describe('SchemaVersioningEngine', () => {
     it('should get all versions', () => {
       const versions = versioningEngine.getVersions();
       expect(versions).toHaveLength(1);
-      expect(versions[0].id).toBe(version.id);
+      expect(versions[0]!.id).toBe(version.id);
     });
 
     it('should get specific version', () => {
       const retrievedVersion = versioningEngine.getVersion(version.id);
       expect(retrievedVersion).toBeDefined();
-      expect(retrievedVersion?.id).toBe(version.id);
+      expect(retrievedVersion!.id).toBe(version.id);
     });
 
     it('should return undefined for non-existent version', () => {
@@ -331,7 +332,7 @@ describe('SchemaVersioningEngine', () => {
 
   describe('Performance', () => {
     it('should handle large schemas efficiently', async () => {
-      const largeSchema = {
+      const largeSchema: any = {
         tables: {}
       };
 

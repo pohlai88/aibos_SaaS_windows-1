@@ -110,7 +110,7 @@ export class ConsciousnessDatabase {
         CREATE TABLE IF NOT EXISTS user_connections (
           id VARCHAR(255) PRIMARY KEY,
           user_id VARCHAR(255) NOT NULL,
-          emotional_resonance DECIMAL(3,2) NOT NULL,
+          emotionalresonance DECIMAL(3,2) NOT NULL,
           consciousness_alignment DECIMAL(3,2) NOT NULL,
           trust_level DECIMAL(3,2) NOT NULL,
           interaction_history JSONB NOT NULL,
@@ -341,11 +341,11 @@ export class ConsciousnessDatabase {
     try {
       await client.query(`
         INSERT INTO user_connections (
-          id, user_id, emotional_resonance, consciousness_alignment,
+          id, user_id, emotionalresonance, consciousness_alignment,
           trust_level, interaction_history, last_interaction
         ) VALUES ($1, $2, $3, $4, $5, $6, $7)
         ON CONFLICT (id) DO UPDATE SET
-          emotional_resonance = EXCLUDED.emotional_resonance,
+          emotionalresonance = EXCLUDED.emotionalresonance,
           consciousness_alignment = EXCLUDED.consciousness_alignment,
           trust_level = EXCLUDED.trust_level,
           interaction_history = EXCLUDED.interaction_history,
@@ -377,7 +377,7 @@ export class ConsciousnessDatabase {
       return result.rows.map(row => ({
         id: row.id,
         userId: row.user_id,
-        emotionalResonance: parseFloat(row.emotional_resonance),
+        emotionalResonance: parseFloat(row.emotionalresonance),
         consciousnessAlignment: parseFloat(row.consciousness_alignment),
         trustLevel: parseFloat(row.trust_level),
         interactionHistory: row.interaction_history,

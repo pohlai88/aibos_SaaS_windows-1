@@ -60,7 +60,7 @@ interface ComplianceFramework {
 
 export const SecurityDashboard: React.FC = () => {
   // ==================== MANIFESTOR INTEGRATION ====================
-  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const { manifestor, health, isHealthy } = useManifestor();
   const moduleConfig = useModuleConfig('security');
   const isModuleEnabled = useModuleEnabled('security');
 
@@ -299,30 +299,12 @@ export const SecurityDashboard: React.FC = () => {
   );
 
   // ==================== MANIFESTOR PERMISSION CHECKS ====================
-  if (manifestLoading) {
+  if (!isHealthy) {
     return (
       <div className="h-full bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-500 dark:text-gray-400">Loading Manifestor...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (manifestError) {
-    return (
-      <div className="h-full bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden flex items-center justify-center">
-        <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Manifestor Error</h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-4">{manifestError}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Retry
-          </button>
         </div>
       </div>
     );

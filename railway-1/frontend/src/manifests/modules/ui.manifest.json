@@ -15,10 +15,7 @@
   },
   "config": {
     "defaults": {
-      "theme": "auto",
-      "variant": "default",
       "animations": true,
-      "accessibility": true,
       "responsive": true,
       "components": {
         "Button": {
@@ -129,7 +126,9 @@
         "lazyLoading": true,
         "codeSplitting": true,
         "memoization": true,
-        "virtualization": true
+        "virtualization": true,
+        "optimize": true,
+        "bundle": true
       },
       "accessibility": {
         "ariaLabels": true,
@@ -138,12 +137,6 @@
         "focusManagement": true,
         "colorContrast": true,
         "reducedMotion": true
-      },
-      "animations": {
-        "duration": 200,
-        "easing": "ease-in-out",
-        "reducedMotion": true,
-        "prefersReducedMotion": true
       }
     },
     "overrides": {
@@ -179,18 +172,7 @@
     "search": true,
     "notifications": true
   },
-  "ui": {
-    "theme": "auto",
-    "variant": "default",
-    "animations": true,
-    "accessibility": true
-  },
-  "performance": {
-    "lazy": true,
-    "cache": true,
-    "optimize": true,
-    "bundle": true
-  },
+
   "security": {
     "validate": true,
     "sanitize": true,

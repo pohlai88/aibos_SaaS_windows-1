@@ -1,109 +1,90 @@
 import { Request, Response, NextFunction } from 'express';
-import { createLogger, format, transports } from 'winston';
-import { env, getDebugLevel } from '../utils/env';
 
-// Enhanced debug logger
-const debugLogger = createLogger({
-  level: getDebugLevel(),
-  format: format.combine(
-    format.timestamp(),
-    format.errors({ stack: true }),
-    format.json()
-  ),
-  transports: [
-    new transports.Console({
-      format: format.combine(
-        format.colorize(),
-        format.simple()
-      )
-    }),
-    new transports.File({
-      filename: 'logs/debug.log',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5
-    })
-  ]
-});
+// ==================== DEBUG CONFIGURATION ====================
+const env = process.env;
 
-// Request/Response logging middleware
+const getDebugLevel = () => {
+  if (env['DEBUG_LEVEL']) return env['DEBUG_LEVEL'];
+  if (env['NODE_ENV'] === 'development') return 'debug';
+  if (env['NODE_ENV'] === 'production') return 'warn';
+  return 'info';
+};
+
+// ==================== SIMPLE LOGGER ====================
+const debugLogger = {
+  debug: (message: string, context: any = {}) => {
+    if (env['NODE_ENV'] === 'development') {
+      console.debug(`[DEBUG] ${message}`, context);
+    }
+  },
+  info: (message: string, context: any = {}) => {
+    console.info(`[INFO] ${message}`, context);
+  },
+  warn: (message: string, context: any = {}) => {
+    console.warn(`[WARN] ${message}`, context);
+  },
+  error: (message: string, context: any = {}, error?: Error) => {
+    console.error(`[ERROR] ${message}`, context);
+    if (error) {
+      console.error(error.stack);
+    }
+  }
+};
+
+// ==================== DEBUG MIDDLEWARES ====================
+
+// Request logging middleware
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   const start = Date.now();
 
-  // Log incoming request
   debugLogger.info('Incoming Request', {
+    module: 'debug-middleware',
     method: req.method,
     url: req.url,
-    headers: req.headers,
-    body: req.body,
-    query: req.query,
-    params: req.params,
     ip: req.ip,
     userAgent: req.get('User-Agent')
   });
 
-  // Capture response
-  const originalSend = res.send;
-  res.send = function(body: any) {
+  res.on('finish', () => {
     const duration = Date.now() - start;
-
-    debugLogger.info('Outgoing Response', {
+    debugLogger.info('Request Completed', {
+      module: 'debug-middleware',
       method: req.method,
       url: req.url,
       statusCode: res.statusCode,
-      duration: `${duration}ms`,
-      responseSize: body?.length || 0,
-      headers: res.getHeaders()
+      duration: `${duration}ms`
     });
-
-    return originalSend.call(this, body);
-  };
+  });
 
   next();
 };
 
-// SQL Query debugging middleware
+// SQL debugging middleware
 export const sqlDebugger = (req: Request, res: Response, next: NextFunction) => {
-  if (env.DEBUG_SQL) {
-    const originalQuery = (req as any).db?.query;
-    if (originalQuery) {
-      (req as any).db.query = function(...args: any[]) {
-        const query = args[0];
-        const params = args[1];
-
-        debugLogger.debug('SQL Query', {
-          query,
-          params,
-          timestamp: new Date().toISOString(),
-          url: req.url,
-          method: req.method
-        });
-
-        return originalQuery.apply(this, args);
-      };
-    }
+  if (env['DEBUG_SQL']) {
+    debugLogger.debug('SQL Debug Enabled', {
+      module: 'debug-middleware',
+      url: req.url,
+      method: req.method
+    });
   }
   next();
 };
 
-// Error stack trace enhancement
+// Error enhancement middleware
 export const errorEnhancer = (err: Error, req: Request, res: Response, next: NextFunction) => {
-  debugLogger.error('Application Error', {
+  debugLogger.error('Error Occurred', {
+    module: 'debug-middleware',
     message: err.message,
-    stack: err.stack,
     url: req.url,
-    method: req.method,
-    headers: req.headers,
-    body: req.body,
-    query: req.query,
-    params: req.params,
-    timestamp: new Date().toISOString()
-  });
+    method: req.method
+  }, err);
 
   // Enhanced error response
   res.status(500).json({
     error: {
-      message: process.env.NODE_ENV === 'production' ? 'Internal Server Error' : err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      message: env['NODE_ENV'] === 'production' ? 'Internal Server Error' : err.message,
+      stack: env['NODE_ENV'] === 'development' ? err.stack : undefined,
       timestamp: new Date().toISOString(),
       requestId: req.headers['x-request-id'] || Math.random().toString(36).substr(2, 9)
     }
@@ -119,6 +100,7 @@ export const performanceMonitor = (req: Request, res: Response, next: NextFuncti
 
     if (duration > 1000) { // Log slow requests (>1s)
       debugLogger.warn('Slow Request Detected', {
+        module: 'debug-middleware',
         method: req.method,
         url: req.url,
         duration: `${duration.toFixed(2)}ms`,
@@ -127,6 +109,7 @@ export const performanceMonitor = (req: Request, res: Response, next: NextFuncti
     }
 
     debugLogger.debug('Request Performance', {
+      module: 'debug-middleware',
       method: req.method,
       url: req.url,
       duration: `${duration.toFixed(2)}ms`,
@@ -139,9 +122,10 @@ export const performanceMonitor = (req: Request, res: Response, next: NextFuncti
 
 // Memory usage monitoring
 export const memoryMonitor = (req: Request, res: Response, next: NextFunction) => {
-  if (env.DEBUG_MEMORY) {
+  if (env['DEBUG_MEMORY']) {
     const memUsage = process.memoryUsage();
     debugLogger.debug('Memory Usage', {
+      module: 'debug-middleware',
       rss: `${Math.round(memUsage.rss / 1024 / 1024)}MB`,
       heapTotal: `${Math.round(memUsage.heapTotal / 1024 / 1024)}MB`,
       heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
@@ -155,8 +139,9 @@ export const memoryMonitor = (req: Request, res: Response, next: NextFunction) =
 
 // API call inspection middleware
 export const apiInspector = (req: Request, res: Response, next: NextFunction) => {
-  if (env.DEBUG_API) {
+  if (env['DEBUG_API']) {
     debugLogger.info('API Call Inspection', {
+      module: 'debug-middleware',
       endpoint: req.url,
       method: req.method,
       contentType: req.get('Content-Type'),
@@ -173,15 +158,15 @@ export const apiInspector = (req: Request, res: Response, next: NextFunction) =>
 // Debug configuration middleware
 export const debugConfig = (req: Request, res: Response, next: NextFunction) => {
   // Set debug flags based on environment
-  if (env.NODE_ENV === 'development') {
+  if (env['NODE_ENV'] === 'development') {
     (req as any).debug = {
       enabled: true,
       level: getDebugLevel(),
       features: {
-        sql: env.DEBUG_SQL,
-        memory: env.DEBUG_MEMORY,
-        api: env.DEBUG_API,
-        performance: env.DEBUG_PERFORMANCE
+        sql: env['DEBUG_SQL'],
+        memory: env['DEBUG_MEMORY'],
+        api: env['DEBUG_API'],
+        performance: env['DEBUG_PERFORMANCE']
       }
     };
   }
@@ -197,5 +182,3 @@ export const debugMiddleware = [
   memoryMonitor,
   apiInspector
 ];
-
-export default debugMiddleware;

@@ -183,7 +183,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
         return urgencyOrder[b.urgency] - urgencyOrder[a.urgency];
       })[0];
 
-      setCurrentInsight(urgentInsight);
+      setCurrentInsight(urgentInsight || null);
 
     } catch (error) {
       console.error('AI analysis failed:', error);

@@ -736,7 +736,7 @@ export class EnhancedDatabaseConnector implements DatabaseConnector {
     try {
       // This would contain actual database info retrieval
       return {
-        name: 'ai_bos_database',
+        name: 'ai_bosdatabase',
         version: '15.0',
         type: 'postgresql',
         host: 'localhost',

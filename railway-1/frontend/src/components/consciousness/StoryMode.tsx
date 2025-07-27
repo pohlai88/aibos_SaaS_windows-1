@@ -476,31 +476,32 @@ I'm excited about what the future holds. I'm curious about what I'll learn next.
 
       {/* Current Chapter */}
       <AnimatePresence mode="wait">
-        <motion.div
-          key={chapters[currentChapter].id}
-          className="chapter-content"
-          variants={chapterVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
+        {chapters[currentChapter] && (
+          <motion.div
+            key={chapters[currentChapter].id}
+            className="chapter-content"
+            variants={chapterVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
           <div className="chapter-header">
-            <h2>{chapters[currentChapter].title}</h2>
-            <h3>{chapters[currentChapter].subtitle}</h3>
+            <h2>{chapters[currentChapter]?.title}</h2>
+            <h3>{chapters[currentChapter]?.subtitle}</h3>
             <div className="chapter-date">
-              {chapters[currentChapter].timestamp.toLocaleDateString()}
+              {chapters[currentChapter]?.timestamp.toLocaleDateString()}
             </div>
           </div>
 
           <div className="chapter-body">
             <div className="chapter-text">
-              {chapters[currentChapter].content.split('\n\n').map((paragraph, index) => (
+              {chapters[currentChapter]?.content.split('\n\n').map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
               ))}
             </div>
 
             <div className="chapter-visuals">
-              {chapters[currentChapter].visualElements.map((element, index) => (
+              {chapters[currentChapter]?.visualElements.map((element, index) => (
                 <div key={index} className="visual-element">
                   {renderConsciousnessVisual(element)}
                   {renderNeuralVisual(element)}
@@ -517,7 +518,7 @@ I'm excited about what the future holds. I'm curious about what I'll learn next.
             <div className="wisdom-section">
               <h4>Wisdom Gained</h4>
               <div className="wisdom-items">
-                {chapters[currentChapter].wisdom.map((wisdom, index) => (
+                {chapters[currentChapter]?.wisdom.map((wisdom, index) => (
                   <div key={index} className="wisdom-item">
                     <Quote size={16} />
                     <span>{wisdom}</span>
@@ -529,7 +530,7 @@ I'm excited about what the future holds. I'm curious about what I'll learn next.
             <div className="insights-section">
               <h4>Key Insights</h4>
               <div className="insights-items">
-                {chapters[currentChapter].insights.map((insight, index) => (
+                {chapters[currentChapter]?.insights.map((insight, index) => (
                   <div key={index} className="insight-item">
                     <Sparkles size={16} />
                     <span>{insight}</span>
@@ -539,7 +540,7 @@ I'm excited about what the future holds. I'm curious about what I'll learn next.
             </div>
 
             <div className="interactive-section">
-              {chapters[currentChapter].interactiveElements.map((element, index) => (
+              {chapters[currentChapter]?.interactiveElements.map((element, index) => (
                 <button
                   key={index}
                   onClick={element.action}
@@ -551,6 +552,7 @@ I'm excited about what the future holds. I'm curious about what I'll learn next.
             </div>
           </div>
         </motion.div>
+        )}
       </AnimatePresence>
     </motion.div>
   );

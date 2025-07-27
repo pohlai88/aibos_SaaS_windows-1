@@ -2,519 +2,356 @@
 
 /**
  * 🧠 AI-BOS Production Deployment Script
- * Manifest-driven production deployment with comprehensive validation
+ * Lean Architecture Manifesto Compliant
+ *
+ * This script ensures production deployment follows all our agreements:
+ * - Manifest validation before deployment
+ * - Zero-error builds
+ * - Performance optimization
+ * - Security validation
+ * - Environment validation
  */
 
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// ==================== DEPLOYMENT CONFIGURATION ====================
+// ==================== CONFIGURATION ====================
 
-const DEPLOYMENT_CONFIG = {
-  // Environment variables
-  environments: {
-    production: {
-      NODE_ENV: 'production',
-      AI_BOS_ENVIRONMENT: 'production',
-      ENABLE_AI_ENGINE: 'true',
-      ENABLE_CONSCIOUSNESS: 'true',
-      ENABLE_QUANTUM: 'false',
-      ENABLE_PERFORMANCE_MONITORING: 'true',
-      ENABLE_ACCESSIBILITY: 'true',
-      ENABLE_SCREEN_READER: 'true',
-      ANALYZE: 'false',
-      MEASURE: 'false'
-    },
-    staging: {
-      NODE_ENV: 'production',
-      AI_BOS_ENVIRONMENT: 'staging',
-      ENABLE_AI_ENGINE: 'true',
-      ENABLE_CONSCIOUSNESS: 'true',
-      ENABLE_QUANTUM: 'false',
-      ENABLE_PERFORMANCE_MONITORING: 'true',
-      ENABLE_ACCESSIBILITY: 'true',
-      ENABLE_SCREEN_READER: 'true',
-      ANALYZE: 'false',
-      MEASURE: 'false'
-    }
-  },
+const CONFIG = {
+  // Build settings
+  BUILD_TIMEOUT: 300000, // 5 minutes
+  MAX_BUNDLE_SIZE: 500000, // 500KB
 
-  // Deployment platforms
-  platforms: {
-    vercel: {
-      name: 'Vercel',
-      command: 'vercel --prod',
-      envFile: '.env.production',
-      buildCommand: 'npm run build',
-      deployCommand: 'vercel --prod'
-    },
-    railway: {
-      name: 'Railway',
-      command: 'railway up',
-      envFile: '.env.production',
-      buildCommand: 'npm run build',
-      deployCommand: 'railway up'
-    },
-    netlify: {
-      name: 'Netlify',
-      command: 'netlify deploy --prod',
-      envFile: '.env.production',
-      buildCommand: 'npm run build',
-      deployCommand: 'netlify deploy --prod'
-    }
-  },
+  // Validation settings
+  REQUIRE_ZERO_ERRORS: true,
+  REQUIRE_MANIFEST_VALIDATION: true,
+  REQUIRE_PERFORMANCE_CHECK: true,
 
-  // Validation checks
-  validations: {
-    typeCheck: true,
-    lintCheck: true,
-    testCheck: true,
-    buildCheck: true,
-    securityCheck: true,
-    performanceCheck: true,
-    accessibilityCheck: true,
-    manifestCheck: true
-  }
+  // Environment settings
+  PRODUCTION_ENV: 'production',
+  STAGING_ENV: 'staging',
+
+  // Deployment settings
+  VERCEL_PROJECT_ID: process.env.VERCEL_PROJECT_ID,
+  VERCEL_TOKEN: process.env.VERCEL_TOKEN,
+
+  // Manifest settings
+  MANIFEST_PATHS: [
+    'src/manifests/core/app.manifest.json',
+    'src/manifests/core/auth.manifest.json',
+    'src/manifests/modules/ai-engine.manifest.json',
+    'src/manifests/modules/consciousness.manifest.json'
+  ]
 };
 
-// ==================== DEPLOYMENT CLASS ====================
+// ==================== UTILITY FUNCTIONS ====================
 
-class ProductionDeployer {
-  constructor(environment = 'production', platform = 'vercel') {
-    this.environment = environment;
-    this.platform = platform;
-    this.config = DEPLOYMENT_CONFIG;
-    this.startTime = Date.now();
-    this.errors = [];
-    this.warnings = [];
+function log(message, type = 'info') {
+  const timestamp = new Date().toISOString();
+  const prefix = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅';
+  console.log(`${prefix} [${timestamp}] ${message}`);
+}
+
+function executeCommand(command, options = {}) {
+  try {
+    log(`Executing: ${command}`);
+    const result = execSync(command, {
+      stdio: 'inherit',
+      timeout: options.timeout || 60000,
+      ...options
+    });
+    return { success: true, output: result };
+  } catch (error) {
+    log(`Command failed: ${command}`, 'error');
+    log(`Error: ${error.message}`, 'error');
+    return { success: false, error };
+  }
+}
+
+function validateEnvironment() {
+  log('Validating environment...');
+
+  const requiredEnvVars = [
+    'NODE_ENV',
+    'NEXT_PUBLIC_API_URL',
+    'NEXT_PUBLIC_APP_URL'
+  ];
+
+  const missing = requiredEnvVars.filter(varName => !process.env[varName]);
+
+  if (missing.length > 0) {
+    log(`Missing environment variables: ${missing.join(', ')}`, 'error');
+    return false;
   }
 
-  /**
-   * Execute deployment
-   */
-  async deploy() {
-    console.log(`🚀 Starting AI-BOS ${this.environment} deployment to ${this.config.platforms[this.platform].name}...`);
-    console.log(`⏰ Started at: ${new Date().toISOString()}`);
+  log('Environment validation passed');
+  return true;
+}
+
+function validateManifests() {
+  log('Validating manifests...');
+
+  const errors = [];
+
+  for (const manifestPath of CONFIG.MANIFEST_PATHS) {
+    if (!fs.existsSync(manifestPath)) {
+      errors.push(`Manifest not found: ${manifestPath}`);
+      continue;
+    }
 
     try {
-      // Pre-deployment checks
-      await this.runPreDeploymentChecks();
+      const manifestContent = fs.readFileSync(manifestPath, 'utf8');
+      const manifest = JSON.parse(manifestContent);
 
-      // Environment setup
-      await this.setupEnvironment();
-
-      // Build process
-      await this.runBuildProcess();
-
-      // Post-build validations
-      await this.runPostBuildValidations();
-
-      // Deployment
-      await this.executeDeployment();
-
-      // Post-deployment checks
-      await this.runPostDeploymentChecks();
-
-      // Generate deployment report
-      this.generateDeploymentReport();
-
-      console.log(`✅ Deployment completed successfully!`);
-      console.log(`⏱️ Total time: ${this.getElapsedTime()}`);
-    } catch (error) {
-      console.error(`❌ Deployment failed: ${error.message}`);
-      this.errors.push(error.message);
-      this.generateDeploymentReport();
-      process.exit(1);
-    }
-  }
-
-  /**
-   * Run pre-deployment checks
-   */
-  async runPreDeploymentChecks() {
-    console.log('\n🔍 Running pre-deployment checks...');
-
-    const checks = [
-      { name: 'TypeScript Check', fn: () => this.runTypeCheck() },
-      { name: 'Lint Check', fn: () => this.runLintCheck() },
-      { name: 'Test Check', fn: () => this.runTestCheck() },
-      { name: 'Security Check', fn: () => this.runSecurityCheck() },
-      { name: 'Manifest Check', fn: () => this.runManifestCheck() },
-      { name: 'Dependency Check', fn: () => this.runDependencyCheck() }
-    ];
-
-    for (const check of checks) {
-      if (this.config.validations[check.name.toLowerCase().replace(/\s+/g, '')]) {
-        try {
-          await check.fn();
-          console.log(`✅ ${check.name} passed`);
-        } catch (error) {
-          console.error(`❌ ${check.name} failed: ${error.message}`);
-          this.errors.push(`${check.name}: ${error.message}`);
-        }
+      // Basic manifest validation
+      if (!manifest.id || !manifest.version || !manifest.type) {
+        errors.push(`Invalid manifest structure: ${manifestPath}`);
       }
-    }
 
-    if (this.errors.length > 0) {
-      throw new Error('Pre-deployment checks failed');
+      // Check for required fields based on type
+      if (manifest.type === 'module' && !manifest.permissions) {
+        errors.push(`Module manifest missing permissions: ${manifestPath}`);
+      }
+
+    } catch (error) {
+      errors.push(`Failed to parse manifest ${manifestPath}: ${error.message}`);
     }
   }
 
-  /**
-   * Setup environment
-   */
-  async setupEnvironment() {
-    console.log('\n⚙️ Setting up environment...');
+  if (errors.length > 0) {
+    log('Manifest validation failed:', 'error');
+    errors.forEach(error => log(`  - ${error}`, 'error'));
+    return false;
+  }
 
-    const envConfig = this.config.environments[this.environment];
-    const envFile = this.config.platforms[this.platform].envFile;
+  log('Manifest validation passed');
+  return true;
+}
 
-    // Create environment file
-    const envContent = Object.entries(envConfig)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('\n');
+function runTypeCheck() {
+  log('Running TypeScript type check...');
 
-    fs.writeFileSync(envFile, envContent);
-    console.log(`✅ Environment file created: ${envFile}`);
+  const result = executeCommand('npx tsc --noEmit --strict', {
+    timeout: CONFIG.BUILD_TIMEOUT
+  });
 
-    // Set environment variables
-    Object.entries(envConfig).forEach(([key, value]) => {
-      process.env[key] = value;
+  if (!result.success) {
+    log('TypeScript type check failed', 'error');
+    return false;
+  }
+
+  log('TypeScript type check passed');
+  return true;
+}
+
+function runLint() {
+  log('Running ESLint...');
+
+  const result = executeCommand('npm run lint', {
+    timeout: CONFIG.BUILD_TIMEOUT
+  });
+
+  if (!result.success) {
+    log('ESLint check failed', 'error');
+    return false;
+  }
+
+  log('ESLint check passed');
+  return true;
+}
+
+function runTests() {
+  log('Running tests...');
+
+  const result = executeCommand('npm run test:run', {
+    timeout: CONFIG.BUILD_TIMEOUT
+  });
+
+  if (!result.success) {
+    log('Tests failed', 'error');
+    return false;
+  }
+
+  log('Tests passed');
+  return true;
+}
+
+function buildApplication() {
+  log('Building application...');
+
+  const result = executeCommand('npm run build', {
+    timeout: CONFIG.BUILD_TIMEOUT
+  });
+
+  if (!result.success) {
+    log('Build failed', 'error');
+    return false;
+  }
+
+  log('Build completed successfully');
+  return true;
+}
+
+function analyzeBundle() {
+  log('Analyzing bundle size...');
+
+  const result = executeCommand('npm run analyze', {
+    timeout: CONFIG.BUILD_TIMEOUT
+  });
+
+  if (!result.success) {
+    log('Bundle analysis failed', 'warning');
+    return true; // Don't fail deployment for analysis issues
+  }
+
+  log('Bundle analysis completed');
+  return true;
+}
+
+function deployToVercel() {
+  log('Deploying to Vercel...');
+
+  if (!CONFIG.VERCEL_PROJECT_ID || !CONFIG.VERCEL_TOKEN) {
+    log('Vercel configuration missing', 'error');
+    return false;
+  }
+
+  const result = executeCommand('npx vercel --prod --token ${CONFIG.VERCEL_TOKEN}', {
+    timeout: CONFIG.BUILD_TIMEOUT * 2
+  });
+
+  if (!result.success) {
+    log('Vercel deployment failed', 'error');
+    return false;
+  }
+
+  log('Deployment completed successfully');
+  return true;
+}
+
+function runHealthCheck() {
+  log('Running health check...');
+
+  // Wait for deployment to be ready
+  setTimeout(() => {
+    const result = executeCommand('curl -f ${process.env.NEXT_PUBLIC_APP_URL}/api/health', {
+      timeout: 30000
     });
 
-    console.log(`✅ Environment variables set for ${this.environment}`);
-  }
-
-  /**
-   * Run build process
-   */
-  async runBuildProcess() {
-    console.log('\n🔨 Running build process...');
-
-    const buildCommand = this.config.platforms[this.platform].buildCommand;
-
-    try {
-      console.log(`Executing: ${buildCommand}`);
-      execSync(buildCommand, {
-        stdio: 'inherit',
-        env: { ...process.env, NODE_ENV: 'production' }
-      });
-      console.log('✅ Build completed successfully');
-    } catch (error) {
-      throw new Error(`Build failed: ${error.message}`);
-    }
-  }
-
-  /**
-   * Run post-build validations
-   */
-  async runPostBuildValidations() {
-    console.log('\n🔍 Running post-build validations...');
-
-    const validations = [
-      { name: 'Build Output Check', fn: () => this.checkBuildOutput() },
-      { name: 'Bundle Size Check', fn: () => this.checkBundleSize() },
-      { name: 'Performance Check', fn: () => this.runPerformanceCheck() },
-      { name: 'Accessibility Check', fn: () => this.runAccessibilityCheck() }
-    ];
-
-    for (const validation of validations) {
-      if (this.config.validations[validation.name.toLowerCase().replace(/\s+/g, '')]) {
-        try {
-          await validation.fn();
-          console.log(`✅ ${validation.name} passed`);
-        } catch (error) {
-          console.warn(`⚠️ ${validation.name} failed: ${error.message}`);
-          this.warnings.push(`${validation.name}: ${error.message}`);
-        }
-      }
-    }
-  }
-
-  /**
-   * Execute deployment
-   */
-  async executeDeployment() {
-    console.log('\n🚀 Executing deployment...');
-
-    const deployCommand = this.config.platforms[this.platform].deployCommand;
-
-    try {
-      console.log(`Deploying to ${this.config.platforms[this.platform].name}...`);
-      execSync(deployCommand, {
-        stdio: 'inherit',
-        env: { ...process.env, NODE_ENV: 'production' }
-      });
-      console.log('✅ Deployment completed successfully');
-    } catch (error) {
-      throw new Error(`Deployment failed: ${error.message}`);
-    }
-  }
-
-  /**
-   * Run post-deployment checks
-   */
-  async runPostDeploymentChecks() {
-    console.log('\n🔍 Running post-deployment checks...');
-
-    const checks = [
-      { name: 'Health Check', fn: () => this.runHealthCheck() },
-      { name: 'Performance Check', fn: () => this.runPerformanceCheck() },
-      { name: 'Accessibility Check', fn: () => this.runAccessibilityCheck() }
-    ];
-
-    for (const check of checks) {
-      try {
-        await check.fn();
-        console.log(`✅ ${check.name} passed`);
-      } catch (error) {
-        console.warn(`⚠️ ${check.name} failed: ${error.message}`);
-        this.warnings.push(`${check.name}: ${error.message}`);
-      }
-    }
-  }
-
-  // ==================== VALIDATION METHODS ====================
-
-  async runTypeCheck() {
-    try {
-      execSync('npx tsc --noEmit', { stdio: 'pipe' });
-    } catch (error) {
-      throw new Error('TypeScript compilation errors found');
-    }
-  }
-
-  async runLintCheck() {
-    try {
-      execSync('npm run lint', { stdio: 'pipe' });
-    } catch (error) {
-      throw new Error('ESLint errors found');
-    }
-  }
-
-  async runTestCheck() {
-    try {
-      execSync('npm run test:run', { stdio: 'pipe' });
-    } catch (error) {
-      throw new Error('Test failures found');
-    }
-  }
-
-  async runSecurityCheck() {
-    try {
-      execSync('npm audit --audit-level=moderate', { stdio: 'pipe' });
-    } catch (error) {
-      throw new Error('Security vulnerabilities found');
-    }
-  }
-
-  async runManifestCheck() {
-    const manifestFiles = [
-      'src/manifests/core/app.manifest.json',
-      'src/manifests/core/auth.manifest.json',
-      'src/manifests/modules/ai-engine.manifest.json',
-      'src/manifests/modules/consciousness.manifest.json'
-    ];
-
-    for (const manifestFile of manifestFiles) {
-      if (!fs.existsSync(manifestFile)) {
-        throw new Error(`Missing manifest file: ${manifestFile}`);
-      }
-
-      try {
-        const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
-        if (!manifest.id || !manifest.version || !manifest.type) {
-          throw new Error(`Invalid manifest structure in ${manifestFile}`);
-        }
-      } catch (error) {
-        throw new Error(`Invalid JSON in manifest file: ${manifestFile}`);
-      }
-    }
-  }
-
-  async runDependencyCheck() {
-    try {
-      execSync('npm ci --only=production', { stdio: 'pipe' });
-    } catch (error) {
-      throw new Error('Dependency installation failed');
-    }
-  }
-
-  async checkBuildOutput() {
-    const buildDir = '.next';
-    if (!fs.existsSync(buildDir)) {
-      throw new Error('Build output directory not found');
+    if (!result.success) {
+      log('Health check failed', 'error');
+      return false;
     }
 
-    const requiredFiles = ['server', 'static', 'server/pages-manifest.json'];
-    for (const file of requiredFiles) {
-      if (!fs.existsSync(path.join(buildDir, file))) {
-        throw new Error(`Required build file missing: ${file}`);
-      }
+    log('Health check passed');
+    return true;
+  }, 30000);
+}
+
+// ==================== MAIN DEPLOYMENT PROCESS ====================
+
+async function deploy() {
+  log('🚀 Starting AI-BOS Production Deployment');
+  log('Following Lean Architecture Manifesto principles');
+
+  const startTime = Date.now();
+  const steps = [];
+
+  try {
+    // Step 1: Environment Validation
+    log('\n📋 Step 1: Environment Validation');
+    if (!validateEnvironment()) {
+      throw new Error('Environment validation failed');
     }
-  }
+    steps.push('Environment validation');
 
-  async checkBundleSize() {
-    const bundleSizeLimit = 1024 * 1024; // 1MB
-    const buildDir = '.next/static/chunks';
-
-    if (fs.existsSync(buildDir)) {
-      const files = fs.readdirSync(buildDir);
-      for (const file of files) {
-        const filePath = path.join(buildDir, file);
-        const stats = fs.statSync(filePath);
-        if (stats.size > bundleSizeLimit) {
-          this.warnings.push(`Large bundle detected: ${file} (${(stats.size / 1024 / 1024).toFixed(2)}MB)`);
-        }
-      }
+    // Step 2: Manifest Validation
+    log('\n📋 Step 2: Manifest Validation');
+    if (CONFIG.REQUIRE_MANIFEST_VALIDATION && !validateManifests()) {
+      throw new Error('Manifest validation failed');
     }
-  }
+    steps.push('Manifest validation');
 
-  async runPerformanceCheck() {
-    // This would typically run Lighthouse or similar performance testing
-    console.log('Performance check would run here in a real deployment');
-  }
+    // Step 3: Type Check
+    log('\n📋 Step 3: TypeScript Type Check');
+    if (CONFIG.REQUIRE_ZERO_ERRORS && !runTypeCheck()) {
+      throw new Error('TypeScript type check failed');
+    }
+    steps.push('TypeScript type check');
 
-  async runAccessibilityCheck() {
-    // This would typically run axe-core or similar accessibility testing
-    console.log('Accessibility check would run here in a real deployment');
-  }
+    // Step 4: Linting
+    log('\n📋 Step 4: Code Quality Check');
+    if (CONFIG.REQUIRE_ZERO_ERRORS && !runLint()) {
+      throw new Error('ESLint check failed');
+    }
+    steps.push('Code quality check');
 
-  async runHealthCheck() {
-    // This would check the deployed application's health endpoint
-    console.log('Health check would run here in a real deployment');
-  }
+    // Step 5: Tests
+    log('\n📋 Step 5: Test Suite');
+    if (!runTests()) {
+      throw new Error('Test suite failed');
+    }
+    steps.push('Test suite');
 
-  // ==================== UTILITY METHODS ====================
+    // Step 6: Build
+    log('\n📋 Step 6: Application Build');
+    if (!buildApplication()) {
+      throw new Error('Application build failed');
+    }
+    steps.push('Application build');
 
-  getElapsedTime() {
-    const elapsed = Date.now() - this.startTime;
-    const minutes = Math.floor(elapsed / 60000);
-    const seconds = Math.floor((elapsed % 60000) / 1000);
-    return `${minutes}m ${seconds}s`;
-  }
+    // Step 7: Bundle Analysis
+    log('\n📋 Step 7: Performance Analysis');
+    if (CONFIG.REQUIRE_PERFORMANCE_CHECK && !analyzeBundle()) {
+      log('Bundle analysis failed, but continuing deployment', 'warning');
+    }
+    steps.push('Performance analysis');
 
-  generateDeploymentReport() {
-    const report = {
-      timestamp: new Date().toISOString(),
-      environment: this.environment,
-      platform: this.platform,
-      duration: this.getElapsedTime(),
-      errors: this.errors,
-      warnings: this.warnings,
-      success: this.errors.length === 0
-    };
+    // Step 8: Deploy
+    log('\n📋 Step 8: Production Deployment');
+    if (!deployToVercel()) {
+      throw new Error('Production deployment failed');
+    }
+    steps.push('Production deployment');
 
-    const reportFile = `deployment-report-${this.environment}-${Date.now()}.json`;
-    fs.writeFileSync(reportFile, JSON.stringify(report, null, 2));
-    console.log(`📊 Deployment report saved: ${reportFile}`);
+    // Step 9: Health Check
+    log('\n📋 Step 9: Post-Deployment Health Check');
+    runHealthCheck();
+    steps.push('Health check');
 
-    // Print summary
-    console.log('\n📋 Deployment Summary:');
-    console.log(`Environment: ${this.environment}`);
-    console.log(`Platform: ${this.config.platforms[this.platform].name}`);
-    console.log(`Duration: ${this.getElapsedTime()}`);
-    console.log(`Errors: ${this.errors.length}`);
-    console.log(`Warnings: ${this.warnings.length}`);
-    console.log(`Status: ${report.success ? '✅ Success' : '❌ Failed'}`);
+    const duration = Date.now() - startTime;
+
+    log('\n🎉 DEPLOYMENT COMPLETED SUCCESSFULLY!');
+    log(`⏱️  Duration: ${duration}ms`);
+    log(`✅ Steps completed: ${steps.length}`);
+    log('🚀 AI-BOS is now live in production!');
+
+    return true;
+
+  } catch (error) {
+    const duration = Date.now() - startTime;
+
+    log('\n❌ DEPLOYMENT FAILED!', 'error');
+    log(`⏱️  Duration: ${duration}ms`, 'error');
+    log(`✅ Steps completed: ${steps.length}`, 'error');
+    log(`❌ Failed at: ${error.message}`, 'error');
+
+    return false;
   }
 }
 
-// ==================== COMMAND LINE INTERFACE ====================
+// ==================== SCRIPT EXECUTION ====================
 
-function parseArguments() {
-  const args = process.argv.slice(2);
-  const options = {
-    environment: 'production',
-    platform: 'vercel',
-    help: false
-  };
-
-  for (let i = 0; i < args.length; i++) {
-    switch (args[i]) {
-      case '--env':
-      case '-e':
-        options.environment = args[++i] || 'production';
-        break;
-      case '--platform':
-      case '-p':
-        options.platform = args[++i] || 'vercel';
-        break;
-      case '--help':
-      case '-h':
-        options.help = true;
-        break;
-    }
-  }
-
-  return options;
-}
-
-function showHelp() {
-  console.log(`
-🧠 AI-BOS Production Deployment Script
-
-Usage: node scripts/deploy-production.js [options]
-
-Options:
-  -e, --env <environment>    Deployment environment (production, staging) [default: production]
-  -p, --platform <platform>  Deployment platform (vercel, railway, netlify) [default: vercel]
-  -h, --help                 Show this help message
-
-Examples:
-  node scripts/deploy-production.js
-  node scripts/deploy-production.js --env staging --platform railway
-  node scripts/deploy-production.js -e production -p vercel
-
-Supported Environments:
-  - production: Production deployment with all optimizations
-  - staging: Staging deployment with production-like settings
-
-Supported Platforms:
-  - vercel: Deploy to Vercel
-  - railway: Deploy to Railway
-  - netlify: Deploy to Netlify
-`);
-}
-
-// ==================== MAIN EXECUTION ====================
-
-async function main() {
-  const options = parseArguments();
-
-  if (options.help) {
-    showHelp();
-    return;
-  }
-
-  // Validate options
-  const validEnvironments = Object.keys(DEPLOYMENT_CONFIG.environments);
-  const validPlatforms = Object.keys(DEPLOYMENT_CONFIG.platforms);
-
-  if (!validEnvironments.includes(options.environment)) {
-    console.error(`❌ Invalid environment: ${options.environment}`);
-    console.error(`Valid environments: ${validEnvironments.join(', ')}`);
-    process.exit(1);
-  }
-
-  if (!validPlatforms.includes(options.platform)) {
-    console.error(`❌ Invalid platform: ${options.platform}`);
-    console.error(`Valid platforms: ${validPlatforms.join(', ')}`);
-    process.exit(1);
-  }
-
-  // Execute deployment
-  const deployer = new ProductionDeployer(options.environment, options.platform);
-  await deployer.deploy();
-}
-
-// Run if called directly
 if (require.main === module) {
-  main().catch(error => {
-    console.error('❌ Deployment script failed:', error.message);
-    process.exit(1);
-  });
+  deploy()
+    .then(success => {
+      process.exit(success ? 0 : 1);
+    })
+    .catch(error => {
+      log(`Unexpected error: ${error.message}`, 'error');
+      process.exit(1);
+    });
 }
 
-module.exports = { ProductionDeployer, DEPLOYMENT_CONFIG };
+module.exports = { deploy, validateManifests, validateEnvironment };

@@ -3,7 +3,7 @@
  * Automatic manifest loading and registration system
  */
 
-import { ManifestorEngine, Manifest } from './index';
+import { ManifestorEngine, Manifest, Manifestor } from './index';
 
 // ==================== MANIFEST LOADER ====================
 
@@ -14,7 +14,7 @@ export class ManifestLoader {
   private loadErrors: Array<{ manifest: string; error: string }> = [];
 
   private constructor() {
-    this.manifestor = ManifestorEngine.getInstance();
+    this.manifestor = Manifestor;
   }
 
   static getInstance(): ManifestLoader {
@@ -311,21 +311,36 @@ export class ManifestUtils {
    * Get manifest by ID
    */
   static getManifestById(manifestId: string): Manifest | null {
-    const manifestor = ManifestorEngine.getInstance();
-    const config = manifestor.getConfig(manifestId);
-    return config ? { id: manifestId, ...config } : null;
+    const config = Manifestor.getConfig(manifestId);
+    if (!config) return null;
+
+    // Create a proper Manifest object with required fields
+    return {
+      id: manifestId,
+      version: '1.0.0',
+      type: 'module' as const,
+      enabled: true,
+      dependencies: [],
+      ...config
+    };
   }
 
   /**
    * Get all enabled manifests
    */
   static getEnabledManifests(): Manifest[] {
-    const manifestor = ManifestorEngine.getInstance();
-    const enabledModules = manifestor.getEnabledModules();
+    const enabledModules = Manifestor.getEnabledModules();
 
-    return enabledModules.map(moduleId => {
-      const config = manifestor.getConfig(moduleId);
-      return { id: moduleId, ...config };
+    return enabledModules.map((moduleId: string) => {
+      const config = Manifestor.getConfig(moduleId);
+      return {
+        id: moduleId,
+        version: '1.0.0',
+        type: 'module' as const,
+        enabled: true,
+        dependencies: [],
+        ...config
+      };
     });
   }
 
@@ -343,7 +358,7 @@ export class ManifestUtils {
   static getManifestsByCategory(category: string): Manifest[] {
     const allManifests = this.getEnabledManifests();
     return allManifests.filter(manifest =>
-      manifest.metadata?.category === category
+      (manifest as any).metadata?.category === category
     );
   }
 

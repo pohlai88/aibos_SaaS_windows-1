@@ -369,15 +369,17 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({
   // ==================== HISTORY MANAGEMENT ====================
   const undo = useCallback(() => {
     setState(prev => {
-      if (prev.historyIndex > 0) {
+      if (prev.historyIndex > 0 && prev.history.length > 0) {
         const newIndex = prev.historyIndex - 1;
-        return {
-          ...prev,
-          canvas: prev.history[newIndex],
-          historyIndex: newIndex,
-          canUndo: newIndex > 0,
-          canRedo: true
-        };
+        if (newIndex >= 0 && newIndex < prev.history.length) {
+          return {
+            ...prev,
+            canvas: prev.history[newIndex]!,
+            historyIndex: newIndex,
+            canUndo: newIndex > 0,
+            canRedo: true
+          };
+        }
       }
       return prev;
     });
@@ -387,13 +389,15 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({
     setState(prev => {
       if (prev.historyIndex < prev.history.length - 1) {
         const newIndex = prev.historyIndex + 1;
-        return {
-          ...prev,
-          canvas: prev.history[newIndex],
-          historyIndex: newIndex,
-          canUndo: true,
-          canRedo: newIndex < prev.history.length - 1
-        };
+        if (newIndex >= 0 && newIndex < prev.history.length) {
+          return {
+            ...prev,
+            canvas: prev.history[newIndex]!,
+            historyIndex: newIndex,
+            canUndo: true,
+            canRedo: newIndex < prev.history.length - 1
+          };
+        }
       }
       return prev;
     });

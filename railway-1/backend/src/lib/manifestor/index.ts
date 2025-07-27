@@ -340,7 +340,7 @@ class ManifestorEngine {
 
     // GET /api/manifestor/manifests/:id
     router.get('/manifests/:id', (req: Request, res: Response) => {
-      const manifest = this.manifests.get(req.params.id);
+      const manifest = this.manifests.get(req.params['id'] || '');
       if (!manifest) {
         res.status(404).json({ success: false, error: 'Manifest not found' });
         return;

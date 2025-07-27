@@ -527,8 +527,8 @@ export const RevenueEngine: React.FC = () => {
                   </div>
                   <div className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      {Object.entries(subscriptions[0].usage).map(([key, value]) => {
-                        const tier = PRICING_TIERS.find(t => t.id === subscriptions[0].tierId);
+                      {subscriptions[0] && Object.entries(subscriptions[0].usage).map(([key, value]) => {
+                        const tier = PRICING_TIERS.find(t => t.id === subscriptions[0]?.tierId);
                         const limit = tier?.limits[key as keyof typeof tier.limits] || 0;
                         const percentage = getUsagePercentage(value, limit);
 

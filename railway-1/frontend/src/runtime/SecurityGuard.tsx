@@ -291,7 +291,7 @@ export const SecurityGuard: React.FC<SecurityGuardProps> = ({
       const threat: SecurityThreat = {
         id: `threat-${Date.now()}`,
         timestamp: new Date(),
-        type: threatTypes[Math.floor(Math.random() * threatTypes.length)],
+        type: threatTypes[Math.floor(Math.random() * threatTypes.length)] || 'malicious_request',
         severity: Math.random() > 0.7 ? 'critical' : Math.random() > 0.4 ? 'high' : 'medium',
         source: `user-${Math.floor(Math.random() * 1000)}`,
         target: manifest.app_id,

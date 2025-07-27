@@ -624,6 +624,9 @@ class NLPEngine {
   }
 }
 
+// Export the class for type usage
+export { NLPEngine };
+
 // Singleton instance
 export const nlpEngine = new NLPEngine();
 export default nlpEngine;

@@ -85,7 +85,10 @@ export function TerminalLoginScreen() {
     let currentIndex = 0;
     const interval = setInterval(() => {
       if (currentIndex < bootSequence.length) {
-        setTerminalOutput(prev => [...prev, bootSequence[currentIndex]]);
+        const line = bootSequence[currentIndex];
+        if (line !== undefined) {
+          setTerminalOutput(prev => [...prev, line]);
+        }
         currentIndex++;
       } else {
         clearInterval(interval);
@@ -154,6 +157,7 @@ export function TerminalLoginScreen() {
 
       return () => clearInterval(timer);
     }
+    return undefined;
   }, [lockoutTime]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -193,14 +197,16 @@ export function TerminalLoginScreen() {
 
   const fillDemoCredentials = () => {
     const randomDemo = demoCredentials[Math.floor(Math.random() * demoCredentials.length)];
-    setEmail(randomDemo.email);
-    setPassword(randomDemo.password);
-    setError('');
+    if (randomDemo) {
+      setEmail(randomDemo.email);
+      setPassword(randomDemo.password);
+      setError('');
 
-    // Auto-focus password field after filling
-    setTimeout(() => {
-      passwordInputRef.current?.focus();
-    }, 100);
+      // Auto-focus password field after filling
+      setTimeout(() => {
+        passwordInputRef.current?.focus();
+      }, 100);
+    }
   };
 
   const handleModeSwitch = (mode: 'classic' | 'modern') => {

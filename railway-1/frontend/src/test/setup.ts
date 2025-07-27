@@ -1,3 +1,4 @@
+// @ts-ignore - Vitest types are available at runtime
 import { vi } from 'vitest';
 
 // Mock TensorFlow.js for testing
@@ -67,10 +68,12 @@ vi.mock('../../shared/src/logging/logger', () => ({
 }));
 
 // Global test setup
+// @ts-ignore - Vitest globals are available at runtime
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
+// @ts-ignore - Vitest globals are available at runtime
 afterEach(() => {
   vi.clearAllMocks();
 });

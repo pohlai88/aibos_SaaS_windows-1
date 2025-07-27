@@ -1,0 +1,260 @@
+{
+  "version": "v1.0.0",
+  "name": "eslint-enterprise-manifest",
+  "description": "Enterprise-grade ESLint configuration governed by manifest system",
+  "type": "code-quality",
+  "category": "linting",
+  "priority": "critical",
+  "ai_metadata": {
+    "purpose": "code_quality_enforcement",
+    "target_languages": ["typescript", "javascript", "tsx", "jsx"],
+    "security_level": "enterprise",
+    "performance_impact": "minimal",
+    "runtime_overhead": "zero",
+    "ai_interpretable": true,
+    "manifest_driven": true,
+    "compliance_level": "fortune_500"
+  },
+  "permissions": {
+    "read": ["code_files", "configuration"],
+    "write": ["lint_reports", "cache"],
+    "execute": ["lint_analysis", "security_scan", "performance_check"]
+  },
+  "configuration": {
+    "cache": {
+      "enabled": true,
+      "location": "./.eslintcache",
+      "strategy": "intelligent"
+    },
+    "performance": {
+      "runtime_overhead": "zero",
+      "caching_enabled": true,
+      "parallel_processing": true
+    },
+    "security": {
+      "level": "enterprise",
+      "plugins": ["eslint-plugin-security"],
+      "rules": [
+        "security/detect-object-injection",
+        "security/detect-non-literal-regexp",
+        "security/detect-unsafe-regex",
+        "security/detect-buffer-noassert",
+        "security/detect-child-process",
+        "security/detect-disable-mustache-escape",
+        "security/detect-eval-with-expression",
+        "security/detect-no-csrf-before-method-override",
+        "security/detect-non-literal-fs-filename",
+        "security/detect-non-literal-require",
+        "security/detect-possible-timing-attacks",
+        "security/detect-pseudoRandomBytes"
+      ]
+    },
+    "code_quality": {
+      "plugins": ["@typescript-eslint", "eslint-plugin-unicorn", "eslint-plugin-import"],
+      "strict_mode": true,
+      "type_safety": "full",
+      "dead_code_prevention": true
+    },
+    "import_organization": {
+      "enabled": true,
+      "order": ["builtin", "external", "internal", "parent", "sibling", "index"],
+      "newlines_between": true,
+      "alphabetize": true
+    },
+    "testing": {
+      "environment": "jest",
+      "relaxed_rules": [
+        "@typescript-eslint/no-explicit-any",
+        "@typescript-eslint/no-non-null-assertion",
+        "no-console",
+        "unicorn/no-array-for-each",
+        "unicorn/no-array-reduce"
+      ]
+    }
+  },
+  "rules": {
+    "typescript": {
+      "no-unused-vars": {
+        "level": "error",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      },
+      "no-explicit-any": "warn",
+      "explicit-function-return-type": "off",
+      "explicit-module-boundary-types": "off",
+      "no-non-null-assertion": "warn",
+      "prefer-const": "error",
+      "no-var-requires": "error"
+    },
+    "security": {
+      "detect-object-injection": "warn",
+      "detect-non-literal-regexp": "warn",
+      "detect-unsafe-regex": "warn",
+      "detect-buffer-noassert": "warn",
+      "detect-child-process": "warn",
+      "detect-disable-mustache-escape": "warn",
+      "detect-eval-with-expression": "error",
+      "detect-no-csrf-before-method-override": "warn",
+      "detect-non-literal-fs-filename": "warn",
+      "detect-non-literal-require": "warn",
+      "detect-possible-timing-attacks": "warn",
+      "detect-pseudoRandomBytes": "warn"
+    },
+    "unicorn": {
+      "prefer-array-some": "error",
+      "prefer-array-find": "error",
+      "prefer-array-index-of": "error",
+      "prefer-includes": "error",
+      "prefer-string-starts-ends-with": "error",
+      "prefer-string-slice": "error",
+      "prefer-optional-catch-binding": "error",
+      "prefer-regexp-test": "error",
+      "prefer-date-now": "error",
+      "prefer-ternary": "error",
+      "no-console-spaces": "error",
+      "no-hex-escape": "error",
+      "no-process-exit": "error",
+      "error-message": "error",
+      "escape-case": "error",
+      "no-array-instanceof": "error",
+      "no-lonely-if": "error",
+      "no-new-buffer": "error",
+      "no-unsafe-regex": "error",
+      "prefer-add-event-listener": "error",
+      "prefer-query-selector": "error",
+      "throw-new-error": "error",
+      "no-for-loop": "error",
+      "prefer-spread": "error",
+      "prefer-array-flat": "error",
+      "prefer-array-flat-map": "error",
+      "prefer-object-from-entries": "error",
+      "prefer-negative-index": "error",
+      "prefer-prototype-methods": "error",
+      "prefer-set-has": "error",
+      "prefer-switch": "error",
+      "prefer-type-error": "error",
+      "require-array-join-separator": "error",
+      "require-number-to-fixed-digits-argument": "error",
+      "require-post-message-target-origin": "error",
+      "string-content": "error",
+      "template-indent": "error",
+      "no-array-callback-reference": "error",
+      "no-array-for-each": "error",
+      "no-array-push-push": "error",
+      "no-array-reduce": "error",
+      "no-document-cookie": "error",
+      "no-empty-file": "error",
+      "no-instanceof-array": "error",
+      "no-useless-undefined": "error",
+      "number-literal-case": "error",
+      "prefer-math-trunc": "error",
+      "prefer-modern-dom-apis": "error",
+      "prefer-number-properties": "error",
+      "prefer-reflect-apply": "error",
+      "prefer-string-replace-all": "error"
+    },
+    "import": {
+      "order": {
+        "level": "error",
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      },
+      "no-unresolved": "error",
+      "no-duplicates": "error",
+      "no-unused-modules": "warn",
+      "no-relative-parent-imports": "warn"
+    },
+    "general": {
+      "no-console": "warn",
+      "no-debugger": "error",
+      "no-duplicate-imports": "error",
+      "no-unused-expressions": "error",
+      "prefer-const": "error",
+      "no-var": "error",
+      "no-eval": "error",
+      "no-implied-eval": "error",
+      "no-new-func": "error",
+      "eqeqeq": ["error", "always"],
+      "curly": ["error", "all"],
+      "no-multiple-empty-lines": ["error", { "max": 2 }],
+      "no-trailing-spaces": "error",
+      "eol-last": "error",
+      "prefer-template": "error",
+      "object-shorthand": "error",
+      "prefer-arrow-callback": "error"
+    }
+  },
+  "environments": {
+    "typescript": {
+      "files": ["**/*.ts", "**/*.tsx"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint", "security", "unicorn", "import"]
+    },
+    "javascript": {
+      "files": ["**/*.js"],
+      "plugins": ["security", "import"]
+    },
+    "testing": {
+      "files": ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**/*"],
+      "env": { "jest": true },
+      "relaxed_rules": [
+        "@typescript-eslint/no-explicit-any",
+        "@typescript-eslint/no-non-null-assertion",
+        "no-console",
+        "unicorn/no-array-for-each",
+        "unicorn/no-array-reduce"
+      ]
+    }
+  },
+  "dependencies": {
+    "required": [
+      "eslint",
+      "@typescript-eslint/parser",
+      "@typescript-eslint/eslint-plugin",
+      "eslint-config-prettier",
+      "eslint-plugin-security",
+      "eslint-plugin-import",
+      "eslint-plugin-unicorn"
+    ],
+    "optional": [
+      "prettier"
+    ]
+  },
+  "telemetry": {
+    "enabled": true,
+    "metrics": [
+      "lint_performance",
+      "rule_violations",
+      "security_issues",
+      "code_quality_score"
+    ],
+    "reporting": "manifest_driven"
+  },
+  "compliance": {
+    "standards": [
+      "fortune_500",
+      "enterprise_grade",
+      "lean_architecture",
+      "zero_error_principle"
+    ],
+    "certifications": [
+      "security_best_practices",
+      "performance_optimized",
+      "type_safe",
+      "manifest_driven"
+    ]
+  },
+  "version_control": {
+    "tracked": true,
+    "review_required": true,
+    "change_log": "maintained"
+  },
+  "last_updated": "2024-12-27T02:00:00Z",
+  "maintainer": "ai-bos-enterprise-team",
+  "status": "production_ready"
+}

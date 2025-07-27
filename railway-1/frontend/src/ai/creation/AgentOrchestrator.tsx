@@ -396,11 +396,13 @@ export const AgentOrchestrator: React.FC = () => {
   useEffect(() => {
     if (state.isActive && state.taskQueue.length > 0 && !state.currentTask) {
       const nextTask = state.taskQueue[0];
-      setState(prev => ({
-        ...prev,
-        taskQueue: prev.taskQueue.slice(1)
-      }));
-      processTask(nextTask);
+      if (nextTask) {
+        setState(prev => ({
+          ...prev,
+          taskQueue: prev.taskQueue.slice(1)
+        }));
+        processTask(nextTask);
+      }
     }
   }, [state.isActive, state.taskQueue, state.currentTask, processTask]);
 

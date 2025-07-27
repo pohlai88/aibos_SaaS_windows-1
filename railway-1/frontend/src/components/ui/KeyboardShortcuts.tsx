@@ -305,6 +305,7 @@ const KeyboardShortcuts: React.FC = () => {
       document.addEventListener('keydown', handleRecordingKeyDown);
       return () => document.removeEventListener('keydown', handleRecordingKeyDown);
     }
+    return undefined;
   }, [isRecording, handleRecordingKeyDown]);
 
   // ==================== SEARCH FUNCTIONALITY ====================

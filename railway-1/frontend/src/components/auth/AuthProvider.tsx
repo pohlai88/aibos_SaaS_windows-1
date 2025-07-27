@@ -36,7 +36,7 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // ==================== MANIFESTOR INTEGRATION ====================
-  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const { manifestor, health, isHealthy } = useManifestor();
   const moduleConfig = useModuleConfig('auth');
   const isModuleEnabled = useModuleEnabled('auth');
 
@@ -65,12 +65,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   } = useAIBOSStore();
 
   // ==================== MANIFESTOR PERMISSION CHECKS ====================
-  if (manifestLoading) {
+  if (!isHealthy) {
     return <div className="animate-pulse bg-gray-200 rounded-lg h-screen w-full" />;
-  }
-
-  if (manifestError) {
-    return <div className="text-red-600 p-4">Authentication Error</div>;
   }
 
   if (!isModuleEnabled) {

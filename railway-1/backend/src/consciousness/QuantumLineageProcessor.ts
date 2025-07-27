@@ -146,7 +146,7 @@ export class QuantumLineageProcessor extends EventEmitter {
 
     } catch (error) {
       console.error('❌ Error processing quantum event:', error);
-      this.emit('quantum_error', {
+      this.emit('quantumerror', {
         error: error instanceof Error ? error.message : 'Unknown error',
         eventId: event.id,
         timestamp: new Date()
@@ -368,7 +368,7 @@ export class QuantumLineageProcessor extends EventEmitter {
         id: uuidv4(),
         condition: 'New feature request received',
         probability: 0.3,
-        trigger: 'feature_request',
+        trigger: 'featurerequest',
         outcome: 'Innovation cycle started',
         timestamp: new Date()
       }

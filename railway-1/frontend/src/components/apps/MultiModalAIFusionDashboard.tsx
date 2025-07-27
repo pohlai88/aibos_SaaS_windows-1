@@ -219,7 +219,7 @@ export default function MultiModalAIFusionDashboard({ className, tenantId, userI
       const modalityData: ModalityData[] = modalities.map((modality, index) => ({
         type: modality.type,
         content: modality.content,
-        metadata: modality.metadata,
+        metadata: modality.metadata || {},
         confidence: modality.confidence || 0.8,
         timestamp: new Date(),
         source: modality.source || `user-input-${index}`

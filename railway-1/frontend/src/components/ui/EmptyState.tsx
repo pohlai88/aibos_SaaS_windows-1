@@ -394,7 +394,7 @@ export const DataEmptyState: React.FC<{
     actionLabel={actionLabel}
     onAction={onAction}
     variant="info"
-    helpText={helpText}
+    {...(helpText && { helpText })}
     size="md"
   />
 );

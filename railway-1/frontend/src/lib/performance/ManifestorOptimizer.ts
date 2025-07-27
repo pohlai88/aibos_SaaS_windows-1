@@ -3,7 +3,7 @@
  * Manifest-driven performance optimization system
  */
 
-import { ManifestorEngine } from '../manifestor';
+import { Manifestor } from '../manifestor';
 
 // ==================== PERFORMANCE OPTIMIZATION TYPES ====================
 
@@ -53,12 +53,12 @@ export interface MonitoringConfig {
 
 export class ManifestorOptimizer {
   private static instance: ManifestorOptimizer;
-  private manifestor: ManifestorEngine;
+  private manifestor: typeof Manifestor;
   private performanceMetrics: Map<string, any> = new Map();
   private bundleAnalytics: Map<string, any> = new Map();
 
   private constructor() {
-    this.manifestor = ManifestorEngine.getInstance();
+    this.manifestor = Manifestor;
   }
 
   static getInstance(): ManifestorOptimizer {
@@ -161,7 +161,7 @@ export class ManifestorOptimizer {
   /**
    * Generate dynamic import configuration for code splitting
    */
-  generateDynamicImports(): Record<string, string> {
+  generateDynamicImports(): Record<string, () => Promise<any>> {
     const config = this.getBundleConfig();
 
     if (!config.enableCodeSplitting) {
@@ -171,8 +171,8 @@ export class ManifestorOptimizer {
     return {
       // AI Engine components
       'ai-engine': () => import('@/components/ai/AIBuilder'),
-      'computer-vision': () => import('@/components/ai/ComputerVisionEngine'),
-      'nlp-engine': () => import('@/components/ai/NLPEngine'),
+      'voice-command': () => import('@/components/ai/VoiceCommandBar'),
+      'revolutionary-dashboard': () => import('@/components/ai/RevolutionaryDashboard'),
 
       // Dashboard components
       'ai-insights': () => import('@/components/ai-insights/AIInsightsDashboard'),

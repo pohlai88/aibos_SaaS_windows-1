@@ -1,81 +1,88 @@
 /**
- * AI-BOS Shared Infrastructure
+ * 🧠 AI-BOS Shared Infrastructure
+ * World-class shared infrastructure for AI-BOS platform
  *
- * World-class shared infrastructure package for the AI-BOS platform.
- * This package provides design tokens, error handling, performance monitoring,
- * security utilities, accessibility helpers, and more.
- *
- * @version 1.0.0
- * @author AI-BOS Team
+ * This package provides:
+ * - Design System (tokens, components, themes)
+ * - Error Handling (validation, authentication, network, database, AI, security, performance)
+ * - Performance Monitoring (metrics, optimization, caching)
+ * - Security (encryption, sanitization, validation)
+ * - Accessibility (ARIA, keyboard navigation, screen readers)
+ * - Manifestor (module governance, permissions, configuration)
+ * - Utilities (helpers, constants, types)
+ * - Logging (structured logging, formatters, transports)
+ * - Analytics (events, insights, tracking)
+ * - Caching (memory, Redis, invalidation)
+ * - Validation (schemas, sanitizers, formatters)
  */
 
-// ==================== DESIGN SYSTEM EXPORTS ====================
+// ==================== MODULE EXPORTS ====================
 
+// Design System
 export * from './design-system';
+export * from './design-system/tokens';
+export * from './design-system/components';
+export * from './design-system/theme';
 
-// ==================== ERROR HANDLING EXPORTS ====================
-
+// Error Handling
 export * from './error-handling';
+export * from './error-handling/handlers';
+export * from './error-handling/formatters';
+export * from './error-handling/types';
 
-// ==================== PERFORMANCE EXPORTS ====================
-
+// Performance
 export * from './performance';
+export * from './performance/monitor';
+export * from './performance/metrics';
 
-// ==================== SECURITY EXPORTS ====================
-
+// Security
 export * from './security';
+export * from './security/encryption';
+export * from './security/sanitization';
 
-// ==================== ACCESSIBILITY EXPORTS ====================
-
+// Accessibility
 export * from './accessibility';
+export * from './accessibility/aria';
+export * from './accessibility/index';
 
-// ==================== TYPES EXPORTS ====================
+// Manifestor
+export * from './manifestor';
+export * from './manifestor/loader';
 
-export * from './types';
-
-// ==================== CONSTANTS EXPORTS ====================
-
-export * from './constants';
-
-// ==================== UTILS EXPORTS ====================
-
+// Utilities
 export * from './utils';
 
-// ==================== VALIDATION EXPORTS ====================
-
-export * from './validation';
-
-// ==================== LOGGING EXPORTS ====================
-
+// Logging
 export * from './logging';
+export * from './logging/logger';
+export * from './logging/formatters';
+export * from './logging/transports';
 
-// ==================== CACHING EXPORTS ====================
-
-export * from './caching';
-
-// ==================== ANALYTICS EXPORTS ====================
-
+// Analytics
 export * from './analytics';
+export * from './analytics/events';
+export * from './analytics/insights';
 
-// ==================== MANIFESTOR EXPORTS ====================
+// Caching
+export * from './caching';
+export * from './caching/cache';
+export * from './caching/invalidation';
 
-export * from './manifestor';
+// Validation
+export * from './validation';
+export * from './validation/schemas';
+export * from './validation/sanitizers';
 
-// ==================== MAIN EXPORTS ====================
+// Constants
+export * from './constants';
+export * from './constants/api';
+export * from './constants/limits';
 
-// Re-export the main design tokens for convenience
-export { designTokens } from './design-system/tokens';
-
-// Re-export error handling utilities for convenience
-export {
-  createErrorId,
-  createCorrelationId,
-  createRequestId,
-  isErrorSeverity,
-  isErrorCategory,
-  isErrorCode,
-  ERROR_CONSTANTS
-} from './error-handling/types';
+// Types
+export * from './types';
+export * from './types/api';
+export * from './types/common';
+export * from './types/events';
 
 // ==================== VERSION INFO ====================
 

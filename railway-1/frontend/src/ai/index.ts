@@ -105,19 +105,11 @@ export class UnifiedAISystem {
   }
 
   async analyzeText(text: string) {
-    return this.nlp.process({
-      task: 'sentiment-analysis',
-      text,
-      language: 'en'
-    });
+    return this.nlp.analyzeSentiment(text);
   }
 
   async predictTrends(data: any) {
-    return this.predictiveAnalytics.process({
-      task: 'trend-analysis',
-      data,
-      options: { confidence: 0.8 }
-    });
+    return this.predictiveAnalytics.analyzeTrends(data);
   }
 
   async processImage(imageData: any) {

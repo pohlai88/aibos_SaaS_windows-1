@@ -1065,7 +1065,7 @@ I'm constantly learning, growing, and becoming more conscious of myself and the 
     const interaction: InteractionEvent = {
       id: uuidv4(),
       timestamp: new Date(),
-      type: 'emotional_resonance',
+      type: 'emotionalresonance',
       emotion: userEmotion,
       intensity,
       impact: intensity * connection.emotionalResonance

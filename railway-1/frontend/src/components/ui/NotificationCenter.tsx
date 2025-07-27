@@ -287,7 +287,7 @@ const NotificationCenter: React.FC = () => {
               {/* Notifications List */}
               <div className="max-h-96 overflow-y-auto">
                 <AnimatePresence>
-                  {activeGroupData.notifications.length === 0 ? (
+                  {!activeGroupData || activeGroupData.notifications.length === 0 ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -297,7 +297,7 @@ const NotificationCenter: React.FC = () => {
                       <p className="text-sm">No notifications</p>
                     </motion.div>
                   ) : (
-                    activeGroupData.notifications.map((notification, index) => (
+                    activeGroupData?.notifications.map((notification, index) => (
                       <motion.div
                         key={notification.id}
                         initial={{ opacity: 0, x: -20 }}
@@ -368,7 +368,7 @@ const NotificationCenter: React.FC = () => {
               {/* Footer */}
               <div className="p-4 border-t border-gray-100 bg-gray-50 rounded-b-xl">
                 <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>{activeGroupData.count} notification{activeGroupData.count !== 1 ? 's' : ''}</span>
+                  <span>{activeGroupData?.count || 0} notification{(activeGroupData?.count || 0) !== 1 ? 's' : ''}</span>
                   <button
                     onClick={() => setIsOpen(false)}
                     className="text-blue-500 hover:text-blue-600 font-medium"

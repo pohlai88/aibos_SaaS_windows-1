@@ -278,7 +278,7 @@ export class ConsciousLineageOrchestrator extends EventEmitter {
 
     } catch (error) {
       console.error('❌ Error tracking consciousness event:', error);
-      this.emit('consciousness_error', {
+      this.emit('consciousnesserror', {
         error: error instanceof Error ? error.message : 'Unknown error',
         eventId: event.id,
         timestamp: new Date()

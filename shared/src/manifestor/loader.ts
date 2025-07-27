@@ -32,7 +32,6 @@ export async function loadSharedManifests(): Promise<void> {
             theme: 'auto',
             variant: 'default',
             animations: true,
-            accessibility: true,
             responsive: true,
             tokens: {
               colors: {
@@ -112,12 +111,10 @@ export async function loadSharedManifests(): Promise<void> {
           overrides: {
             development: {
               animations: false,
-              accessibility: true,
               debug: true
             },
             production: {
               animations: true,
-              accessibility: true,
               debug: false
             }
           }
@@ -126,7 +123,6 @@ export async function loadSharedManifests(): Promise<void> {
           darkMode: true,
           customThemes: true,
           animations: true,
-          accessibility: true,
           responsive: true,
           customization: true,
           tokens: true,
@@ -137,8 +133,7 @@ export async function loadSharedManifests(): Promise<void> {
         design: {
           theme: 'auto',
           variant: 'default',
-          animations: true,
-          accessibility: true
+          animations: true
         },
         performance: {
           lazy: true,
@@ -277,8 +272,7 @@ export async function loadSharedManifests(): Promise<void> {
         design: {
           theme: 'auto',
           variant: 'default',
-          animations: false,
-          accessibility: true
+          animations: false
         },
         performance: {
           lazy: true,
@@ -312,7 +306,6 @@ export async function loadSharedManifests(): Promise<void> {
             theme: 'auto',
             variant: 'default',
             animations: true,
-            accessibility: true,
             responsive: true,
             components: {
               Button: {
@@ -384,8 +377,7 @@ export async function loadSharedManifests(): Promise<void> {
                 types: ['tabs', 'breadcrumbs', 'pagination', 'menu'],
                 features: {
                   responsive: true,
-                  keyboard: true,
-                  accessibility: true
+                  keyboard: true
                 }
               },
               Feedback: {
@@ -435,7 +427,6 @@ export async function loadSharedManifests(): Promise<void> {
           components: true,
           theming: true,
           animations: true,
-          accessibility: true,
           responsive: true,
           performance: true,
           customization: true,
@@ -446,14 +437,7 @@ export async function loadSharedManifests(): Promise<void> {
         design: {
           theme: 'auto',
           variant: 'default',
-          animations: true,
-          accessibility: true
-        },
-        performance: {
-          lazy: true,
-          cache: true,
-          optimize: true,
-          bundle: true
+          animations: true
         },
         security: {
           validate: true,

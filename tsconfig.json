@@ -29,7 +29,6 @@
       "@/types/*": ["./railway-1/frontend/src/types/*"],
       "@/manifests/*": ["./railway-1/frontend/src/manifests/*"]
     },
-    "types": ["node", "vitest/globals"],
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
@@ -81,16 +80,5 @@
     "**/.git",
     "**/tmp",
     "**/temp"
-  ],
-  "references": [
-    {
-      "path": "./railway-1/frontend"
-    },
-    {
-      "path": "./railway-1/backend"
-    },
-    {
-      "path": "./shared"
-    }
   ]
 }

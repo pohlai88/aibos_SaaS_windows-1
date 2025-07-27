@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { ManifestorEngine, Manifest, User } from '@/lib/manifestor';
+import { Manifestor, Manifest, User } from '@/lib/manifestor';
 
 // ==================== CORE MANIFESTOR HOOKS ====================
 
@@ -12,7 +12,7 @@ import { ManifestorEngine, Manifest, User } from '@/lib/manifestor';
  * Main Manifestor hook for component integration
  */
 export function useManifestor() {
-  const [manifestor] = useState(() => ManifestorEngine.getInstance());
+  const [manifestor] = useState(() => Manifestor);
   const [health, setHealth] = useState<any>(null);
 
   useEffect(() => {
@@ -361,6 +361,6 @@ export function useComponentManifestor(componentId: string) {
     manifestor,
     canRender: isEnabled && isHealthy,
     getConfig: (key: string) => config[key],
-    hasFeature: (feature: string) => config.features?.[feature] || false
+    hasFeature: (feature: string) => config.features?.[feature] ?? false
   }), [config, isEnabled, isHealthy, manifestor]);
 }

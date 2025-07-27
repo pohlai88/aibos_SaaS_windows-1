@@ -147,6 +147,7 @@ export const MonitoringDashboard: React.FC = () => {
       const interval = setInterval(fetchMonitoringData, 30000);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [fetchMonitoringData, autoRefresh]);
 
   const getStatusColor = (status: string) => {

@@ -7,7 +7,7 @@ import { useManifestor, usePermission, useModuleConfig, useModuleEnabled } from 
 
 export const AdvancedSecurityDashboard: React.FC = () => {
   // ==================== MANIFESTOR INTEGRATION ====================
-  const { can, getConfig, isEnabled, health, loading: manifestLoading, error: manifestError } = useManifestor();
+  const { manifestor, health, isHealthy } = useManifestor();
   const moduleConfig = useModuleConfig('advanced-cybersecurity');
   const isModuleEnabled = useModuleEnabled('advanced-cybersecurity');
 
@@ -32,12 +32,8 @@ export const AdvancedSecurityDashboard: React.FC = () => {
   const { addNotification } = useAIBOSStore();
 
   // ==================== MANIFESTOR PERMISSION CHECKS ====================
-  if (manifestLoading) {
+  if (!isHealthy) {
     return <div className="animate-pulse bg-gray-200 rounded-lg h-96 w-full" />;
-  }
-
-  if (manifestError) {
-    return <div className="text-red-600 p-4">Advanced Security Error</div>;
   }
 
   if (!isModuleEnabled) {

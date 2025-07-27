@@ -119,7 +119,7 @@ export function withModuleConfig(moduleId: string) {
  * Middleware to validate request against manifest validators
  */
 export function validateRequest(validators: Record<string, any>) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       const errors: string[] = [];
 
@@ -142,7 +142,7 @@ export function validateRequest(validators: Record<string, any>) {
       }
 
       if (errors.length > 0) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: 'Validation failed',
           code: 'VALIDATION_ERROR',
@@ -153,7 +153,7 @@ export function validateRequest(validators: Record<string, any>) {
       next();
     } catch (error) {
       console.error('Request validation failed:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: 'Request validation failed',
         code: 'VALIDATION_ERROR'

@@ -469,7 +469,9 @@ class AIWorkflowAutomationSystem {
         // Update execution status based on task result
         if (taskExecution.status === 'failed') {
           execution.status = 'failed';
-          execution.error = taskExecution.error;
+          if (taskExecution.error) {
+            execution.error = taskExecution.error;
+          }
           break;
         }
 
@@ -513,9 +515,7 @@ class AIWorkflowAutomationSystem {
       taskId: task.id,
       status: 'running',
       startTime: new Date(),
-      retryCount: 0,
-      aiAnalysis: undefined,
-      quantumAnalysis: undefined
+      retryCount: 0
     };
 
     try {

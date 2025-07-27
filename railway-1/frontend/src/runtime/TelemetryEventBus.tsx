@@ -171,10 +171,10 @@ export const TelemetryEventBus: React.FC<TelemetryEventBusProps> = ({
         const event: TelemetryEvent = {
           id: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           timestamp: new Date(),
-          type: randomEventType,
+          type: randomEventType || 'user:interaction',
           source: 'system',
           target: 'telemetry',
-          data: generateEventData(randomEventType),
+          data: generateEventData(randomEventType || 'user:interaction'),
           metadata: {
             tenantId,
             userId,
@@ -336,7 +336,9 @@ export const TelemetryEventBus: React.FC<TelemetryEventBusProps> = ({
       return acc;
     }, {} as Record<number, number>);
 
-    const trendDirection = eventCounts[recentEvents.length - 1] > eventCounts[0] ? 'increasing' : 'decreasing';
+    const lastCount = eventCounts[recentEvents.length - 1];
+    const firstCount = eventCounts[0];
+    const trendDirection = lastCount && firstCount && lastCount > firstCount ? 'increasing' : 'decreasing';
     trends.push({
       direction: trendDirection,
       description: `Event frequency is ${trendDirection}`,

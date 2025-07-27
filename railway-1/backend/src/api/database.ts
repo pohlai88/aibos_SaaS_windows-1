@@ -5,17 +5,12 @@
 
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
-import AIDatabaseSystem, { getAIDatabaseSystem } from '../ai-database';
+import { getAIDatabaseSystem } from '../ai-database';
 import {
   SchemaVersion,
   SchemaVersionMetadata,
-  SchemaDiff,
-  MigrationPlan,
-  RollbackPlan,
   BreakingChange,
-  SchemaManifest,
-  ApprovalWorkflow,
-  ApprovalStep
+  SchemaManifest
 } from '../ai-database';
 import { SchemaManifestMetadata } from '../ai-database/SchemaManifestGovernance';
 

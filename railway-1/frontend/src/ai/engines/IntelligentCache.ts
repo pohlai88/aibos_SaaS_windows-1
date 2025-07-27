@@ -238,8 +238,8 @@ export class IntelligentCache {
         size: finalSize,
         priority: options.priority || 5,
         compressed,
-        dependencies: options.dependencies,
-        metadata: options.metadata
+        ...(options.dependencies && { dependencies: options.dependencies }),
+        ...(options.metadata && { metadata: options.metadata })
       };
 
       // Check if we need to evict entries
@@ -559,9 +559,14 @@ export class IntelligentCache {
     const predictions: string[] = [];
 
     // Simple pattern: if A -> B happens often, predict B when A occurs
-    for (let i = 0; i < this.accessSequence.length - 1; i++) {
-      if (this.accessSequence[i] === lastKey) {
-        predictions.push(this.accessSequence[i + 1]);
+    if (lastKey) {
+      for (let i = 0; i < this.accessSequence.length - 1; i++) {
+        if (this.accessSequence[i] === lastKey) {
+          const nextKey = this.accessSequence[i + 1];
+          if (nextKey) {
+            predictions.push(nextKey);
+          }
+        }
       }
     }
 
@@ -667,15 +672,15 @@ export class IntelligentCache {
     // Clear intervals
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
-      this.metricsInterval = undefined;
+      this.metricsInterval = undefined as any;
     }
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
-      this.cleanupInterval = undefined;
+      this.cleanupInterval = undefined as any;
     }
     if (this.warmingInterval) {
       clearInterval(this.warmingInterval);
-      this.warmingInterval = undefined;
+      this.warmingInterval = undefined as any;
     }
 
     await this.clear();

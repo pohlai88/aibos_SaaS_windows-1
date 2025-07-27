@@ -246,7 +246,40 @@ class OllamaIntegration {
         model: request.model
       });
 
-      return response.body;
+      // Transform the raw stream to parse JSON chunks into OllamaResponse objects
+      let buffer = '';
+      return response.body
+        .pipeThrough(new TextDecoderStream())
+        .pipeThrough(new TransformStream({
+          transform(chunk, controller) {
+            buffer += chunk;
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+            for (const line of lines) {
+              if (line.trim()) {
+                try {
+                  const data = JSON.parse(line) as OllamaResponse;
+                  controller.enqueue(data);
+                } catch (e) {
+                  // Ignore parsing errors for malformed JSON
+                  console.warn('Failed to parse Ollama response line:', line);
+                }
+              }
+            }
+          },
+          flush(controller) {
+            // Process any remaining data in buffer
+            if (buffer.trim()) {
+              try {
+                const data = JSON.parse(buffer) as OllamaResponse;
+                controller.enqueue(data);
+              } catch (e) {
+                console.warn('Failed to parse final Ollama response:', buffer);
+              }
+            }
+          }
+        }));
     } catch (error) {
       logger.error('Ollama streaming failed', {
         module: 'ollama-integration',

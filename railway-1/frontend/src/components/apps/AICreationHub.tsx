@@ -117,7 +117,17 @@ const CREATION_MODES: CreationMode[] = [
 
 export default function AICreationHub({ className, tenantId, userId }: AICreationHubProps) {
   // ==================== STATE MANAGEMENT ====================
-  const [activeMode, setActiveMode] = useState<CreationMode>(CREATION_MODES[0]);
+  const [activeMode, setActiveMode] = useState<CreationMode>(() => {
+    // Ensure we have a valid default mode
+    return CREATION_MODES[0] || {
+      id: 'default',
+      name: 'Default Creation',
+      description: 'Default creation mode',
+      icon: Layers,
+      components: ['prompt', 'response'],
+      complexity: 'simple'
+    };
+  });
   const [currentWorkflow, setCurrentWorkflow] = useState<CreationWorkflow | null>(null);
   const [workflows, setWorkflows] = useState<CreationWorkflow[]>([]);
   const [isCreating, setIsCreating] = useState(false);

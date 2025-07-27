@@ -160,7 +160,7 @@ export function getEnabledComponents(): string[] {
 
   const config = getConfig('shared:components', 'components');
   return Object.entries(config || {})
-    .filter(([_, componentConfig]) => componentConfig?.enabled)
+    .filter(([_, componentConfig]) => componentConfig && typeof componentConfig === 'object' && 'enabled' in componentConfig && componentConfig.enabled)
     .map(([name, _]) => name);
 }
 

@@ -120,6 +120,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       document.addEventListener('keydown', handleKeyDown);
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
+    return undefined;
   }, [isOpen, items, activeIndex, onClose]);
 
   // ==================== CLICK OUTSIDE HANDLER ====================
@@ -135,6 +136,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
+    return undefined;
   }, [isOpen, onClose]);
 
   // ==================== SUBMENU POSITIONING ====================
@@ -269,7 +271,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
               isOpen={true}
               position={{ x: 0, y: 0 }}
               onClose={handleSubmenuClose}
-              onItemClick={onItemClick}
+              {...(onItemClick && { onItemClick })}
             />
           </div>
         )}

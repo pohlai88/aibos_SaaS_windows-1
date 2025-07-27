@@ -34,6 +34,8 @@ If deployment fails, check:
 3. **Dependencies**: All required packages are in `package.json`
 4. **Build logs**: Check Vercel build logs for specific error messages
 
+## 🛠️ Development
+
 ### Local Development
 
 ```bash
@@ -49,6 +51,92 @@ The application will be available at `http://localhost:3000`
 npm run build
 npm start
 ```
+
+## 🔧 Debugging & Monitoring
+
+### Debug Scripts
+
+The frontend includes enhanced debugging capabilities:
+
+```bash
+# Performance debugging
+npm run debug:performance    # Enable performance monitoring
+npm run debug:memory         # Enable memory monitoring
+npm run debug:api           # Enable API request/response logging
+npm run debug:profile       # Enable component profiling
+npm run debug:bundle        # Analyze bundle size
+
+# Health checks
+npm run health:check        # Check application health
+
+# Production builds
+npm run build:prod          # Optimized production build
+npm run start:prod          # Start production server
+```
+
+### Environment Variables for Debugging
+
+Add these to your `.env.local` for enhanced debugging:
+
+```bash
+# Debug Configuration
+NEXT_PUBLIC_DEBUG_MEMORY=true
+NEXT_PUBLIC_DEBUG_PERFORMANCE=true
+NEXT_PUBLIC_DEBUG_API=true
+NEXT_PUBLIC_DEBUG_PROFILE=true
+NEXT_PUBLIC_DEBUG_LEVEL=debug
+
+# Instance Configuration
+NEXT_PUBLIC_INSTANCE_ID=your-instance-id
+```
+
+### Debug Utilities
+
+The frontend includes a comprehensive debug utility system:
+
+```typescript
+import { debug, logger, performanceMonitor } from '@/lib/debug';
+
+// Performance monitoring
+performanceMonitor.startTimer('my-operation');
+// ... your code ...
+performanceMonitor.endTimer('my-operation');
+
+// Async performance monitoring
+const result = await performanceMonitor.measureAsync('api-call', async () => {
+  return await api.get('/data');
+});
+
+// Logging
+logger.debug('Debug message', { context: 'data' });
+logger.info('Info message');
+logger.warn('Warning message');
+logger.error('Error message', { error: new Error('Something went wrong') });
+
+// Component performance monitoring
+const MyComponent = debug.withPerformanceMonitoring(Component, 'MyComponent');
+```
+
+## 🔒 Security
+
+The application implements comprehensive security headers:
+
+- **Content Security Policy (CSP)**: Restricts resource loading
+- **X-Frame-Options**: Prevents clickjacking
+- **X-Content-Type-Options**: Prevents MIME type sniffing
+- **Strict-Transport-Security**: Enforces HTTPS
+- **Referrer-Policy**: Controls referrer information
+- **Permissions-Policy**: Restricts browser features
+
+## 📊 Performance Monitoring
+
+Built-in performance monitoring includes:
+
+- **Core Web Vitals tracking**
+- **Bundle size monitoring**
+- **API response time tracking**
+- **Component render performance**
+- **Memory usage monitoring**
 
 ## Project Structure
 

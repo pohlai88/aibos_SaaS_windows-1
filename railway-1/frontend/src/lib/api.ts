@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import { apiDebugger, performanceMonitor } from './debug';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://aibos-railay-1-production.up.railway.app/api';
 
@@ -10,15 +11,25 @@ export const api = axios.create({
   },
 });
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and debug logging
 api.interceptors.request.use(
   (config) => {
+    const startTime = performance.now();
+
+    // Add auth token
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('aibos_token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
+
+    // Debug logging
+    apiDebugger.logRequest(config.url || '', config.method || 'GET', config.data);
+
+    // Store start time for performance monitoring
+    (config as any).startTime = startTime;
+
     return config;
   },
   (error: AxiosError) => {
@@ -27,11 +38,13 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle auth errors and network issues
+// Response interceptor to handle auth errors, network issues, and debug logging
 // Add connection status checker
 export const checkConnection = async () => {
   try {
-    const response = await api.get('/health', { timeout: 5000 });
+    const response = await performanceMonitor.measureAsync('connection-check', () =>
+      api.get('/health', { timeout: 5000 })
+    );
     return { connected: true, status: response.status };
   } catch (error: unknown) {
     const axiosError = error as AxiosError;
@@ -42,12 +55,27 @@ export const checkConnection = async () => {
   }
 };
 
-// Enhanced response interceptor
+// Enhanced response interceptor with debugging
 api.interceptors.response.use(
   (response) => {
+    const duration = performance.now() - (response.config as any).startTime;
+
+    // Debug logging
+    apiDebugger.logResponse(
+      response.config.url || '',
+      response.status,
+      response.data,
+      duration
+    );
+
     return response;
   },
   (error: AxiosError) => {
+    const duration = performance.now() - (error.config as any)?.startTime;
+
+    // Debug logging
+    apiDebugger.logError(error.config?.url || '', error);
+
     console.error('API Error:', error);
 
     if (error.response?.status === 401) {
@@ -73,29 +101,33 @@ api.interceptors.response.use(
   }
 );
 
-// API helper functions
+// API helper functions with performance monitoring
 export const authAPI = {
   login: (email: string, password: string) =>
-    api.post('/auth/login', { email, password }),
+    performanceMonitor.measureAsync('auth-login', () =>
+      api.post('/auth/login', { email, password })
+    ),
 
   register: (email: string, password: string, name: string, tenant_name: string) =>
-    api.post('/auth/register', { email, password, name, tenant_name }),
+    performanceMonitor.measureAsync('auth-register', () =>
+      api.post('/auth/register', { email, password, name, tenant_name })
+    ),
 
-  me: () => api.get('/auth/me'),
+  me: () => performanceMonitor.measureAsync('auth-me', () => api.get('/auth/me')),
 
-  logout: () => api.post('/auth/logout'),
+  logout: () => performanceMonitor.measureAsync('auth-logout', () => api.post('/auth/logout')),
 };
 
 export const manifestsAPI = {
-  list: () => api.get('/manifests'),
+  list: () => performanceMonitor.measureAsync('manifests-list', () => api.get('/manifests')),
 
-  get: (id: string) => api.get(`/manifests/${id}`),
+  get: (id: string) => performanceMonitor.measureAsync('manifests-get', () => api.get(`/manifests/${id}`)),
 
-  create: (data: any) => api.post('/manifests', data),
+  create: (data: any) => performanceMonitor.measureAsync('manifests-create', () => api.post('/manifests', data)),
 
-  update: (id: string, data: any) => api.put(`/manifests/${id}`, data),
+  update: (id: string, data: any) => performanceMonitor.measureAsync('manifests-update', () => api.put(`/manifests/${id}`, data)),
 
-  delete: (id: string) => api.delete(`/manifests/${id}`),
+  delete: (id: string) => performanceMonitor.measureAsync('manifests-delete', () => api.delete(`/manifests/${id}`)),
 };
 
 export const appsAPI = {

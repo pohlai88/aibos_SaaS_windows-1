@@ -40,7 +40,7 @@ const TIME_ZONES: TimeZone[] = [
 
 const ClockApp: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedTimeZone, setSelectedTimeZone] = useState<TimeZone>(TIME_ZONES[0]);
+  const [selectedTimeZone, setSelectedTimeZone] = useState<TimeZone>(TIME_ZONES[0]!);
   const [stopwatchTime, setStopwatchTime] = useState(0);
   const [isStopwatchRunning, setIsStopwatchRunning] = useState(false);
   const [timers, setTimers] = useState<Timer[]>([]);

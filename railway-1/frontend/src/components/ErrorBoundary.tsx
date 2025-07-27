@@ -47,10 +47,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private initializeManifestor = () => {
     try {
-      // Get manifestor configuration for error handling
-      const { getConfig, isEnabled } = useManifestor();
-      this.manifestorConfig = getConfig('ui');
-      this.manifestorEnabled = isEnabled('ui');
+      // For class components, we'll use default values since hooks can't be used here
+      this.manifestorConfig = null;
+      this.manifestorEnabled = true;
 
       // Check permissions for error reporting
       const currentUser = { id: 'current-user', role: 'user', permissions: [] };
@@ -73,7 +72,7 @@ export class ErrorBoundary extends Component<Props, State> {
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
 
     this.setState({ errorInfo });
@@ -147,7 +146,7 @@ export class ErrorBoundary extends Component<Props, State> {
     window.location.reload();
   };
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       // Custom fallback UI
       if (this.props.fallback) {

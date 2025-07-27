@@ -282,6 +282,7 @@ const GlobalSearch: React.FC = () => {
       document.addEventListener('keydown', handleKeyDown);
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
+    return undefined;
   }, [isOpen, handleKeyDown]);
 
   useEffect(() => {

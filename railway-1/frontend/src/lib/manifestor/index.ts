@@ -33,7 +33,7 @@ export interface ManifestorHealth {
   timestamp: number;
 }
 
-class ManifestorEngine {
+export class ManifestorEngine {
   private manifests: Map<string, Manifest> = new Map();
   private cache: Map<string, any> = new Map();
   private telemetry: Array<{ action: string; module: string; timestamp: number }> = [];

@@ -1000,26 +1000,26 @@ class DigitalTwinIntegrationSystem {
 
     switch (type) {
       case 'performance':
-        optimizedMetrics.syncLatency *= 0.8;
-        optimizedMetrics.renderTime *= 0.85;
-        optimizedMetrics.executionTime *= 0.9;
+        if (optimizedMetrics.syncLatency !== undefined) optimizedMetrics.syncLatency *= 0.8;
+        if (optimizedMetrics.renderTime !== undefined) optimizedMetrics.renderTime *= 0.85;
+        if (optimizedMetrics.executionTime !== undefined) optimizedMetrics.executionTime *= 0.9;
         break;
       case 'synchronization':
-        optimizedMetrics.syncLatency *= 0.7;
-        optimizedMetrics.syncThroughput *= 1.2;
-        optimizedMetrics.syncAccuracy *= 1.05;
+        if (optimizedMetrics.syncLatency !== undefined) optimizedMetrics.syncLatency *= 0.7;
+        if (optimizedMetrics.syncThroughput !== undefined) optimizedMetrics.syncThroughput *= 1.2;
+        if (optimizedMetrics.syncAccuracy !== undefined) optimizedMetrics.syncAccuracy *= 1.05;
         break;
       case 'prediction':
-        optimizedMetrics.predictionAccuracy *= 1.1;
-        optimizedMetrics.aiAccuracy *= 1.08;
+        if (optimizedMetrics.predictionAccuracy !== undefined) optimizedMetrics.predictionAccuracy *= 1.1;
+        if (optimizedMetrics.aiAccuracy !== undefined) optimizedMetrics.aiAccuracy *= 1.08;
         break;
       case 'modeling':
-        optimizedMetrics.renderTime *= 0.75;
-        optimizedMetrics.updateRate *= 1.15;
+        if (optimizedMetrics.renderTime !== undefined) optimizedMetrics.renderTime *= 0.75;
+        if (optimizedMetrics.updateRate !== undefined) optimizedMetrics.updateRate *= 1.15;
         break;
       case 'simulation':
-        optimizedMetrics.executionTime *= 0.8;
-        optimizedMetrics.aiInferenceTime *= 0.9;
+        if (optimizedMetrics.executionTime !== undefined) optimizedMetrics.executionTime *= 0.8;
+        if (optimizedMetrics.aiInferenceTime !== undefined) optimizedMetrics.aiInferenceTime *= 0.9;
         break;
     }
 
@@ -1031,8 +1031,10 @@ class DigitalTwinIntegrationSystem {
     let totalImprovement = 0;
 
     keys.forEach(key => {
-      if (before[key] > 0) {
-        const improvement = ((after[key] - before[key]) / before[key]) * 100;
+      const beforeValue = before[key];
+      const afterValue = after[key];
+      if (beforeValue !== undefined && afterValue !== undefined && beforeValue > 0) {
+        const improvement = ((afterValue - beforeValue) / beforeValue) * 100;
         totalImprovement += improvement;
       }
     });

@@ -175,13 +175,18 @@ class BackendIntegration {
     const url = `${baseUrl}/api/${endpoint}`;
 
     try {
-      const response = await fetch(url, {
+      const requestInit: RequestInit = {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: data ? JSON.stringify(data) : undefined,
-      });
+      };
+
+      if (data) {
+        requestInit.body = JSON.stringify(data);
+      }
+
+      const response = await fetch(url, requestInit);
 
       if (!response.ok) {
         throw new Error(`API call failed: ${response.statusText}`);

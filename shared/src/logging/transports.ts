@@ -73,7 +73,7 @@ export class FileTransport implements LogTransport {
 
     try {
       // Only attempt file system operations in Node.js environment
-      if (typeof process !== 'undefined' && process.versions?.node) {
+      if (typeof process !== 'undefined' && process.versions?.node && typeof window === 'undefined') {
         try {
           // Dynamic import with type assertion to avoid TypeScript errors
           const fs = await import('fs/promises' as any);
@@ -86,7 +86,7 @@ export class FileTransport implements LogTransport {
         }
       } else {
         // In browser environment, just clear the buffer
-        console.warn('File system operations disabled (non-Node environment)');
+        console.warn('File system operations disabled (browser environment)');
         this.buffer = [];
       }
     } catch (error) {

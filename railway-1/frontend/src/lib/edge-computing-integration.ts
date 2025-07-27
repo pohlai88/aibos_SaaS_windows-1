@@ -457,13 +457,15 @@ class EdgeComputingIntegrationSystem {
           optimizationLevel: 0,
           aiOptimized: aiEnhanced
         },
-        quantumPerformance: quantumOptimized ? {
-          quantumState: 'initialized',
-          superposition: 0.5,
-          entanglement: [],
-          quantumAdvantage: false,
-          quantumSpeedup: 1.0
-        } : undefined,
+        ...(quantumOptimized && {
+          quantumPerformance: {
+            quantumState: 'initialized',
+            superposition: 0.5,
+            entanglement: [],
+            quantumAdvantage: false,
+            quantumSpeedup: 1.0
+          }
+        }),
         metrics: {
           totalNodes: 0,
           activeNodes: 0,

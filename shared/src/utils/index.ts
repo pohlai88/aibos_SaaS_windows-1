@@ -1,4 +1,14 @@
 // Utility functions infrastructure
 export * from './formatting';
 export * from './validation';
-export * from './helpers';
+// Export helpers but avoid conflicts with formatting
+export {
+  debounce,
+  throttle,
+  memoize,
+  lazy,
+  validateEmail,
+  validateUrl,
+  validateUuid,
+  formatNumber
+} from './helpers';

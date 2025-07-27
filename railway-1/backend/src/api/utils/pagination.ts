@@ -310,8 +310,8 @@ export class PaginationUtils {
    * Get nested value from object
    */
   private static getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, key) => {
-      return current && current[key] !== undefined ? current[key] : undefined;
+          return path.split('.').reduce((current, pathPart) => {
+      return current && current[pathPart] !== undefined ? current[pathPart] : undefined;
     }, obj);
   }
 
@@ -321,9 +321,9 @@ export class PaginationUtils {
   private static setNestedValue(obj: any, path: string, value: any): void {
     const keys = path.split('.');
     const lastKey = keys.pop()!;
-    const target = keys.reduce((current, key) => {
-      if (!current[key]) current[key] = {};
-      return current[key];
+          const target = keys.reduce((current, pathPart) => {
+      if (!current[pathPart]) current[pathPart] = {};
+      return current[pathPart];
     }, obj);
     target[lastKey] = value;
   }

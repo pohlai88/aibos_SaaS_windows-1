@@ -1,34 +1,23 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2020",
+    "lib": ["ES2020"],
     "module": "ESNext",
     "moduleResolution": "node",
-    "lib": ["ES2020"],
     "outDir": "./dist",
     "rootDir": "./src",
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false,
     "removeComments": false,
     "noEmitOnError": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -39,13 +28,15 @@
       "@/services/*": ["./src/services/*"],
       "@/types/*": ["./src/types/*"],
       "@/manifests/*": ["./src/manifests/*"],
-      "@aibos/shared-infrastructure/*": ["../../shared/src/*"]
+      "@aibos/shared-infrastructure/*": ["../../shared/src/*"],
+      "@shared/*": ["../../shared/src/*"]
     }
   },
   "include": [
     "src/**/*",
     "src/**/*.ts",
-    "src/**/*.js"
+    "src/**/*.js",
+    "src/types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules",

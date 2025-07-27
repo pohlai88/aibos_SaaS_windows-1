@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
-const { supabase } = require('../lib/supabase'); // Assuming supabase client is in ../lib/supabase.js
+const { supabase } = require('../utils/supabase'); // Fixed import path
 
 // ==================== CUSTOM AI MODEL TRAINING API ROUTES ====================
 

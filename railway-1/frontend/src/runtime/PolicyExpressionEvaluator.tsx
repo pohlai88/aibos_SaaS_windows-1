@@ -445,13 +445,13 @@ export const PolicyExpressionEvaluator: React.FC<PolicyExpressionEvaluatorProps>
           },
           resource: {
             id: `resource-${Math.floor(Math.random() * 1000)}`,
-            type: ['document', 'user', 'api', 'database'][Math.floor(Math.random() * 4)],
+            type: ['document', 'user', 'api', 'database'][Math.floor(Math.random() * 4)] || 'document',
             sensitivity: ['low', 'medium', 'high', 'critical'][Math.floor(Math.random() * 4)] as any,
             owner: userId,
             metadata: {}
           },
           action: {
-            type: ['read', 'write', 'delete', 'execute'][Math.floor(Math.random() * 4)],
+            type: ['read', 'write', 'delete', 'execute'][Math.floor(Math.random() * 4)] || 'read',
             target: 'resource',
             data: {},
             timestamp: new Date()

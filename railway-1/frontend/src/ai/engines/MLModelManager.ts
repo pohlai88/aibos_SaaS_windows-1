@@ -644,6 +644,9 @@ class MLModelManager {
   }
 }
 
+// Export the class for type usage
+export { MLModelManager };
+
 // Singleton instance
 export const mlModelManager = new MLModelManager();
 export default mlModelManager;

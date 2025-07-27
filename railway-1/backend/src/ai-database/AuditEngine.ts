@@ -134,7 +134,7 @@ export type AuditEventType =
   | 'consent_granted'
   | 'consent_withdrawn'
   | 'data_breach'
-  | 'incident_response'
+  | 'incidentresponse'
   | 'compliance_violation'
   | 'security_alert'
   | 'performance_degradation'
@@ -142,10 +142,10 @@ export type AuditEventType =
   | 'governance_approval'
   | 'governance_rejection'
   | 'data_quality_issue'
-  | 'privacy_request'
+  | 'privacyrequest'
   | 'gdpr_rights_exercise'
   | 'hipaa_phi_access'
-  | 'pci_card_data_access'
+  | 'pci_carddata_access'
   | 'iso27001_control_check'
   | 'soc2_control_verification';
 
@@ -182,14 +182,14 @@ export class AuditEngine {
 
     return {
       userActions: 'audit_user_actions',
-      dataAccess: 'audit_data_access',
+      dataAccess: 'auditdata_access',
       schemaChanges: 'audit_schema_changes',
       complianceEvents: 'audit_compliance_events',
       securityEvents: 'audit_security_events',
       performanceEvents: 'audit_performance_events',
       systemEvents: 'audit_system_events',
       governanceEvents: 'audit_governance_events',
-      dataLineage: 'audit_data_lineage',
+      dataLineage: 'auditdata_lineage',
       changeHistory: 'audit_change_history'
     };
   }
@@ -443,21 +443,21 @@ export class AuditEngine {
   private getAuditTableName(eventType: AuditEventType): string {
     const tableMap: Record<AuditEventType, string> = {
       user_action: 'audit_user_actions',
-      data_access: 'audit_data_access',
+      data_access: 'auditdata_access',
       schema_change: 'audit_schema_changes',
       compliance_event: 'audit_compliance_events',
       security_event: 'audit_security_events',
       performance_event: 'audit_performance_events',
       system_event: 'audit_system_events',
       governance_event: 'audit_governance_events',
-      data_lineage: 'audit_data_lineage',
+      data_lineage: 'auditdata_lineage',
       authentication: 'audit_authentication',
       authorization: 'audit_authorization',
-      data_modification: 'audit_data_modifications',
-      data_export: 'audit_data_exports',
-      data_import: 'audit_data_imports',
+      data_modification: 'auditdata_modifications',
+      data_export: 'auditdata_exports',
+      data_import: 'auditdata_imports',
       backup: 'audit_backups',
-      restore: 'audit_restores',
+      restore: 'auditrestores',
       migration: 'audit_migrations',
       configuration_change: 'audit_configuration_changes',
       policy_change: 'audit_policy_changes',
@@ -467,18 +467,18 @@ export class AuditEngine {
       consent_granted: 'audit_consent_events',
       consent_withdrawn: 'audit_consent_events',
       data_breach: 'audit_security_events',
-      incident_response: 'audit_security_events',
+      incidentresponse: 'audit_security_events',
       compliance_violation: 'audit_compliance_events',
       security_alert: 'audit_security_events',
       performance_degradation: 'audit_performance_events',
       system_failure: 'audit_system_events',
       governance_approval: 'audit_governance_events',
       governance_rejection: 'audit_governance_events',
-      data_quality_issue: 'audit_data_lineage',
-      privacy_request: 'audit_compliance_events',
+      data_quality_issue: 'auditdata_lineage',
+      privacyrequest: 'audit_compliance_events',
       gdpr_rights_exercise: 'audit_compliance_events',
       hipaa_phi_access: 'audit_compliance_events',
-      pci_card_data_access: 'audit_compliance_events',
+      pci_carddata_access: 'audit_compliance_events',
       iso27001_control_check: 'audit_compliance_events',
       soc2_control_verification: 'audit_compliance_events'
     };
@@ -751,22 +751,22 @@ export class AuditEngine {
   }
 
   private groupByEventType(events: AuditEvent[]): Record<string, number> {
-    return events.reduce((acc, event) => {
-      acc[event.eventType] = (acc[event.eventType] || 0) + 1;
+    return events.reduce((acc, evt) => {
+      acc[evt.eventType] = (acc[evt.eventType] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
   }
 
   private groupByUser(events: AuditEvent[]): Record<string, number> {
-    return events.reduce((acc, event) => {
-      acc[event.userId] = (acc[event.userId] || 0) + 1;
+    return events.reduce((acc, evt) => {
+      acc[evt.userId] = (acc[evt.userId] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
   }
 
   private groupByResource(events: AuditEvent[]): Record<string, number> {
-    return events.reduce((acc, event) => {
-      acc[event.resource] = (acc[event.resource] || 0) + 1;
+    return events.reduce((acc, evt) => {
+      acc[evt.resource] = (acc[evt.resource] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
   }

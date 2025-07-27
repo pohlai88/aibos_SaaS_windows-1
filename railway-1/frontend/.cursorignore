@@ -1,0 +1,39 @@
+# ====================== #
+#  AI-BOS Frontend       #
+#  Cursor Configuration  #
+# ====================== #
+
+# Allow .env files for Cursor IntelliSense
+# These are still ignored by .gitignore for security
+!.env
+!.env.local
+!.env.development
+!.env.development.local
+!.env.test
+!.env.test.local
+!.env.production
+!.env.production.local
+
+# Build artifacts (keep these ignored)
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+.turbo/
+.cache/
+
+# Dependencies (keep these ignored)
+node_modules/
+
+# Logs (keep these ignored)
+*.log
+logs/
+
+# OS files (keep these ignored)
+.DS_Store
+Thumbs.db
+
+# IDE files (keep these ignored)
+.vscode/
+.idea/

@@ -61,25 +61,29 @@ class TerminalExecutor {
   async executeCommand(command: string): Promise<string> {
     const [cmd, ...args] = command.trim().split(' ');
 
+    if (!cmd) {
+      return '';
+    }
+
     switch (cmd.toLowerCase()) {
       case 'ls':
       case 'dir':
         return this.listDirectory(args[0] || this.currentDirectory);
 
       case 'cd':
-        return this.changeDirectory(args[0]);
+        return this.changeDirectory(args[0] || '');
 
       case 'pwd':
         return this.currentDirectory;
 
       case 'cat':
-        return this.readFile(args[0]);
+        return this.readFile(args[0] || '');
 
       case 'mkdir':
-        return this.createDirectory(args[0]);
+        return this.createDirectory(args[0] || '');
 
       case 'rm':
-        return this.removeItem(args[0]);
+        return this.removeItem(args[0] || '');
 
       case 'top':
         return this.showSystemStats();
@@ -109,10 +113,7 @@ class TerminalExecutor {
         return this.evolveSystem();
 
       default:
-        if (cmd) {
-          return `Command not found: ${cmd}. Type &apos;help&apos; for available commands.`;
-        }
-        return '';
+        return `Command not found: ${cmd}. Type &apos;help&apos; for available commands.`;
     }
   }
 
@@ -446,14 +447,20 @@ const TerminalApp: React.FC = () => {
       if (commandHistoryIndex < commandHistory.length - 1) {
         const newIndex = commandHistoryIndex + 1;
         setCommandHistoryIndex(newIndex);
-        setCurrentCommand(commandHistory[commandHistory.length - 1 - newIndex].command);
+        const historyItem = commandHistory[commandHistory.length - 1 - newIndex];
+        if (historyItem) {
+          setCurrentCommand(historyItem.command);
+        }
       }
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (commandHistoryIndex > 0) {
         const newIndex = commandHistoryIndex - 1;
         setCommandHistoryIndex(newIndex);
-        setCurrentCommand(commandHistory[commandHistory.length - 1 - newIndex].command);
+        const historyItem = commandHistory[commandHistory.length - 1 - newIndex];
+        if (historyItem) {
+          setCurrentCommand(historyItem.command);
+        }
       } else if (commandHistoryIndex === 0) {
         setCommandHistoryIndex(-1);
         setCurrentCommand('');
@@ -465,7 +472,7 @@ const TerminalApp: React.FC = () => {
         cmd.startsWith(currentCommand.toLowerCase())
       );
       if (matchingCommands.length === 1) {
-        setCurrentCommand(matchingCommands[0]);
+        setCurrentCommand(matchingCommands[0] || '');
       } else if (matchingCommands.length > 1) {
         setSuggestions(matchingCommands);
       }

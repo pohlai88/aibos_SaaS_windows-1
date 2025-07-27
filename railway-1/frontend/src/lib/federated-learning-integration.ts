@@ -978,21 +978,21 @@ class FederatedLearningIntegrationSystem {
 
     switch (type) {
       case 'communication':
-        optimizedMetrics.communicationEfficiency *= 1.2;
+        if (optimizedMetrics.communicationEfficiency !== undefined) optimizedMetrics.communicationEfficiency *= 1.2;
         break;
       case 'privacy':
-        optimizedMetrics.privacyLevel *= 1.1;
+        if (optimizedMetrics.privacyLevel !== undefined) optimizedMetrics.privacyLevel *= 1.1;
         break;
       case 'convergence':
-        optimizedMetrics.convergence *= 1.15;
-        optimizedMetrics.averageAccuracy *= 1.1;
+        if (optimizedMetrics.convergence !== undefined) optimizedMetrics.convergence *= 1.15;
+        if (optimizedMetrics.averageAccuracy !== undefined) optimizedMetrics.averageAccuracy *= 1.1;
         break;
       case 'efficiency':
-        optimizedMetrics.communicationEfficiency *= 1.25;
-        optimizedMetrics.convergence *= 1.1;
+        if (optimizedMetrics.communicationEfficiency !== undefined) optimizedMetrics.communicationEfficiency *= 1.25;
+        if (optimizedMetrics.convergence !== undefined) optimizedMetrics.convergence *= 1.1;
         break;
       case 'security':
-        optimizedMetrics.privacyLevel *= 1.05;
+        if (optimizedMetrics.privacyLevel !== undefined) optimizedMetrics.privacyLevel *= 1.05;
         break;
     }
 
@@ -1004,8 +1004,10 @@ class FederatedLearningIntegrationSystem {
     let totalImprovement = 0;
 
     keys.forEach(key => {
-      if (before[key] > 0) {
-        const improvement = ((after[key] - before[key]) / before[key]) * 100;
+      const beforeValue = before[key];
+      const afterValue = after[key];
+      if (beforeValue !== undefined && afterValue !== undefined && beforeValue > 0) {
+        const improvement = ((afterValue - beforeValue) / beforeValue) * 100;
         totalImprovement += improvement;
       }
     });

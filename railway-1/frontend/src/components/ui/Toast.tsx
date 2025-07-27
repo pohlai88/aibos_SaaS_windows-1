@@ -53,6 +53,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onClose }) => {
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [toast.id, toast.duration, onClose]);
 
   const getIcon = () => {

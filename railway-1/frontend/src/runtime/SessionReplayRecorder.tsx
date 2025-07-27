@@ -490,7 +490,7 @@ export const SessionReplayRecorder: React.FC<SessionReplayRecorderProps> = ({
     const errors = events.filter(e => e.type === 'error').length;
 
     const intervals = events.slice(1).map((event, index) =>
-      event.timestamp - events[index].timestamp
+      event.timestamp - (events[index]?.timestamp || event.timestamp)
     );
 
     const memoryUsage = (performance as any).memory ? (performance as any).memory.usedJSHeapSize : 0;

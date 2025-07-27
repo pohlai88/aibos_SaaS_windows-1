@@ -3,7 +3,23 @@
  * Real predictive analytics with AI model integration
  */
 
-import { logger } from '@aibos/shared-infrastructure/logging';
+// Local logger implementation to avoid import issues
+const logger = {
+  info: (message: string, context?: any) => console.log(`[INFO] ${message}`, context),
+  error: (message: string, context?: any, error?: Error) => console.error(`[ERROR] ${message}`, context, error),
+  warn: (message: string, context?: any) => console.warn(`[WARN] ${message}`, context),
+  debug: (message: string, context?: any) => console.debug(`[DEBUG] ${message}`, context),
+  time: (label: string, context?: any) => {
+    const start = performance.now();
+    return () => {
+      const duration = performance.now() - start;
+      console.log(`[TIMER] ${label}: ${duration.toFixed(2)}ms`, context);
+    };
+  },
+  performance: (metric: string, value: number, unit: string, context?: any) => {
+    console.log(`[PERF] ${metric}: ${value}${unit}`, context);
+  }
+};
 
 export interface TimeSeriesForecast {
   predictions: Array<{
@@ -168,7 +184,7 @@ class PredictiveAnalyticsEngine {
       this.isInitialized = true;
       logger.info('Predictive Analytics Engine initialized successfully', { module: 'predictive-analytics' });
     } catch (error) {
-      logger.error('Failed to initialize Predictive Analytics Engine', { module: 'predictive-analytics' }, error);
+      logger.error('Failed to initialize Predictive Analytics Engine', { module: 'predictive-analytics' }, error as Error);
       throw error;
     }
   }
@@ -219,7 +235,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Time series forecasting failed', { module: 'predictive-analytics' }, error);
+      logger.error('Time series forecasting failed', { module: 'predictive-analytics' }, error as Error);
       throw error;
     }
   }
@@ -240,7 +256,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Trend analysis failed', { module: 'predictive-analytics' }, error);
+      logger.error('Trend analysis failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -260,7 +276,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Anomaly detection failed', { module: 'predictive-analytics' }, error);
+      logger.error('Anomaly detection failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -280,7 +296,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Regression analysis failed', { module: 'predictive-analytics' }, error);
+      logger.error('Regression analysis failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -300,7 +316,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Classification failed', { module: 'predictive-analytics' }, error);
+      logger.error('Classification failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -320,7 +336,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Clustering failed', { module: 'predictive-analytics' }, error);
+      logger.error('Clustering failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -340,7 +356,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Recommendation generation failed', { module: 'predictive-analytics' }, error);
+      logger.error('Recommendation generation failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -360,7 +376,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Risk assessment failed', { module: 'predictive-analytics' }, error);
+      logger.error('Risk assessment failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -380,7 +396,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Demand forecasting failed', { module: 'predictive-analytics' }, error);
+      logger.error('Demand forecasting failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -400,7 +416,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Customer segmentation failed', { module: 'predictive-analytics' }, error);
+      logger.error('Customer segmentation failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -420,7 +436,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Churn prediction failed', { module: 'predictive-analytics' }, error);
+      logger.error('Churn prediction failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -440,7 +456,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Fraud detection failed', { module: 'predictive-analytics' }, error);
+      logger.error('Fraud detection failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -460,7 +476,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Market analysis failed', { module: 'predictive-analytics' }, error);
+      logger.error('Market analysis failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -480,7 +496,7 @@ class PredictiveAnalyticsEngine {
 
       return result;
     } catch (error) {
-      logger.error('Price prediction failed', { module: 'predictive-analytics' }, error);
+      logger.error('Price prediction failed', { module: 'predictive-analytics' }, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -495,6 +511,9 @@ class PredictiveAnalyticsEngine {
     };
   }
 }
+
+// Export the class for type usage
+export { PredictiveAnalyticsEngine };
 
 // Singleton instance
 export const predictiveAnalyticsEngine = new PredictiveAnalyticsEngine();

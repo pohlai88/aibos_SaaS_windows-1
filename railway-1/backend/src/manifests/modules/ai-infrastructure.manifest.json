@@ -3,16 +3,38 @@
   "version": "1.0.0",
   "type": "module",
   "enabled": true,
-  "dependencies": ["core:app", "core:auth"],
+  "dependencies": [
+    "core:app",
+    "core:auth"
+  ],
   "permissions": {
-    "view": ["user", "admin"],
-    "build": ["user", "admin"],
-    "train": ["admin"],
-    "deploy": ["admin"],
-    "configure": ["admin"],
-    "monitor": ["user", "admin"],
-    "optimize": ["admin"],
-    "scale": ["admin"]
+    "view": [
+      "user",
+      "admin"
+    ],
+    "build": [
+      "user",
+      "admin"
+    ],
+    "train": [
+      "admin"
+    ],
+    "deploy": [
+      "admin"
+    ],
+    "configure": [
+      "admin"
+    ],
+    "monitor": [
+      "user",
+      "admin"
+    ],
+    "optimize": [
+      "admin"
+    ],
+    "scale": [
+      "admin"
+    ]
   },
   "config": {
     "defaults": {
@@ -20,24 +42,47 @@
         "openai": {
           "enabled": true,
           "apiKey": "${OPENAI_API_KEY}",
-          "models": ["gpt-4", "gpt-3.5-turbo", "dall-e-3"],
-          "features": ["chat", "completion", "image-generation"],
+          "models": [
+            "gpt-4",
+            "gpt-3.5-turbo",
+            "dall-e-3"
+          ],
+          "features": [
+            "chat",
+            "completion",
+            "image-generation"
+          ],
           "rateLimit": "1000/minute",
           "timeout": 30000
         },
         "anthropic": {
           "enabled": false,
           "apiKey": "${ANTHROPIC_API_KEY}",
-          "models": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"],
-          "features": ["chat", "completion"],
+          "models": [
+            "claude-3-opus",
+            "claude-3-sonnet",
+            "claude-3-haiku"
+          ],
+          "features": [
+            "chat",
+            "completion"
+          ],
           "rateLimit": "500/minute",
           "timeout": 30000
         },
         "ollama": {
           "enabled": true,
           "url": "http://localhost:11434",
-          "models": ["llama2", "mistral", "codellama"],
-          "features": ["chat", "completion", "local"],
+          "models": [
+            "llama2",
+            "mistral",
+            "codellama"
+          ],
+          "features": [
+            "chat",
+            "completion",
+            "local"
+          ],
           "rateLimit": "100/minute",
           "timeout": 60000
         }
@@ -116,71 +161,138 @@
   "api": {
     "routes": {
       "/ai-infrastructure/models": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": []
+        "GET": {
+          "permissions": [
+            "view"
+          ],
+          "rateLimit": "100/minute",
+          "validation": []
+        }
       },
       "/ai-infrastructure/models/:id": {
-        "method": "GET",
-        "permissions": ["view"],
-        "rateLimit": "100/minute",
-        "validation": ["id"]
+        "GET": {
+          "permissions": [
+            "view"
+          ],
+          "rateLimit": "100/minute",
+          "validation": [
+            "id"
+          ]
+        }
       },
       "/ai-infrastructure/chat": {
-        "method": "POST",
-        "permissions": ["build"],
-        "rateLimit": "50/minute",
-        "validation": ["model", "messages"]
+        "POST": {
+          "permissions": [
+            "build"
+          ],
+          "rateLimit": "50/minute",
+          "validation": [
+            "model",
+            "messages"
+          ]
+        }
       },
       "/ai-infrastructure/completion": {
-        "method": "POST",
-        "permissions": ["build"],
-        "rateLimit": "50/minute",
-        "validation": ["model", "prompt"]
+        "POST": {
+          "permissions": [
+            "build"
+          ],
+          "rateLimit": "50/minute",
+          "validation": [
+            "model",
+            "prompt"
+          ]
+        }
       },
       "/ai-infrastructure/generate-image": {
-        "method": "POST",
-        "permissions": ["build"],
-        "rateLimit": "20/minute",
-        "validation": ["model", "prompt"]
+        "POST": {
+          "permissions": [
+            "build"
+          ],
+          "rateLimit": "20/minute",
+          "validation": [
+            "model",
+            "prompt"
+          ]
+        }
       },
       "/ai-infrastructure/train": {
-        "method": "POST",
-        "permissions": ["train"],
-        "rateLimit": "10/minute",
-        "validation": ["model", "data"]
+        "POST": {
+          "permissions": [
+            "train"
+          ],
+          "rateLimit": "10/minute",
+          "validation": [
+            "model",
+            "data"
+          ]
+        }
       },
       "/ai-infrastructure/deploy": {
-        "method": "POST",
-        "permissions": ["deploy"],
-        "rateLimit": "5/minute",
-        "validation": ["model", "config"]
+        "POST": {
+          "permissions": [
+            "deploy"
+          ],
+          "rateLimit": "5/minute",
+          "validation": [
+            "model",
+            "config"
+          ]
+        }
       },
       "/ai-infrastructure/optimize": {
-        "method": "POST",
-        "permissions": ["optimize"],
-        "rateLimit": "10/minute",
-        "validation": ["model", "optimization_type"]
+        "POST": {
+          "permissions": [
+            "optimize"
+          ],
+          "rateLimit": "10/minute",
+          "validation": [
+            "model",
+            "optimization_type"
+          ]
+        }
       },
       "/ai-infrastructure/monitor": {
-        "method": "GET",
-        "permissions": ["monitor"],
-        "rateLimit": "60/minute",
-        "validation": []
+        "GET": {
+          "permissions": [
+            "monitor"
+          ],
+          "rateLimit": "60/minute",
+          "validation": []
+        }
       },
       "/ai-infrastructure/scale": {
-        "method": "POST",
-        "permissions": ["scale"],
-        "rateLimit": "5/minute",
-        "validation": ["action", "resources"]
+        "POST": {
+          "permissions": [
+            "scale"
+          ],
+          "rateLimit": "5/minute",
+          "validation": [
+            "action",
+            "resources"
+          ]
+        }
       }
     },
     "middleware": {
-      "auth": ["jwt", "session"],
-      "validation": ["sanitize", "validate"],
-      "security": ["rateLimit", "cors", "helmet"],
-      "ai": ["model_validation", "input_validation", "output_validation"]
+      "auth": [
+        "jwt",
+        "session"
+      ],
+      "validation": [
+        "sanitize",
+        "validate"
+      ],
+      "security": [
+        "rateLimit",
+        "cors",
+        "helmet"
+      ],
+      "ai": [
+        "model_validation",
+        "input_validation",
+        "output_validation"
+      ]
     },
     "validators": {
       "model": "string",

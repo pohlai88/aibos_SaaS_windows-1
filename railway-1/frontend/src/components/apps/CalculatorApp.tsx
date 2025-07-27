@@ -228,8 +228,10 @@ class CalculatorEngine {
         const numbers = this.extractNumbers(expression);
         if (numbers.length >= 4) {
           const [principal, rate, time, compounds] = numbers;
-          const amount = principal * Math.pow(1 + rate / (100 * compounds), compounds * time);
-          return `Compound interest: $${amount.toFixed(2)}`;
+          if (principal !== undefined && rate !== undefined && time !== undefined && compounds !== undefined) {
+            const amount = principal * Math.pow(1 + rate / (100 * compounds), compounds * time);
+            return `Compound interest: $${amount.toFixed(2)}`;
+          }
         }
       }
 
@@ -237,8 +239,10 @@ class CalculatorEngine {
         const numbers = this.extractNumbers(expression);
         if (numbers.length >= 2) {
           const [a, b] = numbers;
-          const c = Math.sqrt(a * a + b * b);
-          return `Hypotenuse = ${c.toFixed(2)}`;
+          if (a !== undefined && b !== undefined) {
+            const c = Math.sqrt(a * a + b * b);
+            return `Hypotenuse = ${c.toFixed(2)}`;
+          }
         }
       }
 

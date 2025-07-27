@@ -54,7 +54,7 @@ interface AppContainerState {
   error?: string;
   loadTime?: number;
   memoryUsage?: number;
-  timeoutId?: NodeJS.Timeout;
+  timeoutId?: NodeJS.Timeout | undefined;
 }
 
 // ==================== GLOBAL RUNTIME BUS ====================
@@ -248,7 +248,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({
           loadTime: state.loadTime || 0,
           apiCalls: metrics.apiCalls,
         }
-      } : undefined
+      } : undefined as any
     };
   };
 
@@ -511,8 +511,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({
         position: 'relative',
         width: '100%',
         height: '100%',
-        overflow: 'hidden',
-        ...style
+        overflow: 'hidden'
       }}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -663,7 +662,7 @@ export const useAppRuntime = () => {
           console.log(`[${manifest.app_id}] Navigate to: ${path}`);
         }
       },
-      devtools: options?.enableDevtools ? {
+      devtools: {
         log: (message: string, level: 'info' | 'warn' | 'error') => {
           console.log(`[${manifest.app_id}] ${level}: ${message}`);
         },
@@ -672,7 +671,7 @@ export const useAppRuntime = () => {
           loadTime: 0,
           apiCalls: 0,
         }
-      } : undefined
+      }
     };
     setContext(runtimeContext);
     return runtimeContext;

@@ -848,23 +848,23 @@ class QuantumComputingIntegrationSystem {
 
     switch (type) {
       case 'algorithm':
-        optimizedMetrics.quantumSpeedup *= 1.5;
-        optimizedMetrics.averageFidelity *= 1.1;
+        if (optimizedMetrics.quantumSpeedup !== undefined) optimizedMetrics.quantumSpeedup *= 1.5;
+        if (optimizedMetrics.averageFidelity !== undefined) optimizedMetrics.averageFidelity *= 1.1;
         break;
       case 'error_correction':
-        optimizedMetrics.errorRate *= 0.5;
-        optimizedMetrics.averageFidelity *= 1.05;
+        if (optimizedMetrics.errorRate !== undefined) optimizedMetrics.errorRate *= 0.5;
+        if (optimizedMetrics.averageFidelity !== undefined) optimizedMetrics.averageFidelity *= 1.05;
         break;
       case 'resource':
-        optimizedMetrics.activeQubits *= 1.2;
-        optimizedMetrics.executedGates *= 1.3;
+        if (optimizedMetrics.activeQubits !== undefined) optimizedMetrics.activeQubits *= 1.2;
+        if (optimizedMetrics.executedGates !== undefined) optimizedMetrics.executedGates *= 1.3;
         break;
       case 'security':
-        optimizedMetrics.averageFidelity *= 1.02;
+        if (optimizedMetrics.averageFidelity !== undefined) optimizedMetrics.averageFidelity *= 1.02;
         break;
       case 'efficiency':
-        optimizedMetrics.quantumSpeedup *= 1.25;
-        optimizedMetrics.errorRate *= 0.8;
+        if (optimizedMetrics.quantumSpeedup !== undefined) optimizedMetrics.quantumSpeedup *= 1.25;
+        if (optimizedMetrics.errorRate !== undefined) optimizedMetrics.errorRate *= 0.8;
         break;
     }
 
@@ -876,8 +876,10 @@ class QuantumComputingIntegrationSystem {
     let totalImprovement = 0;
 
     keys.forEach(key => {
-      if (before[key] > 0) {
-        const improvement = ((after[key] - before[key]) / before[key]) * 100;
+      const beforeValue = before[key];
+      const afterValue = after[key];
+      if (beforeValue !== undefined && afterValue !== undefined && beforeValue > 0) {
+        const improvement = ((afterValue - beforeValue) / beforeValue) * 100;
         totalImprovement += improvement;
       }
     });

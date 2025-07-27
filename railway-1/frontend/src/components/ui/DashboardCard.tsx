@@ -168,8 +168,8 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
         className
       )}
       onClick={onClick}
-      whileHover={interactive ? { scale: 1.02 } : undefined}
-      whileTap={interactive ? { scale: 0.98 } : undefined}
+      {...(interactive && { whileHover: { scale: 1.02 } })}
+      {...(interactive && { whileTap: { scale: 0.98 } })}
     >
       <div className="flex items-center justify-between">
         <div className="space-y-1">

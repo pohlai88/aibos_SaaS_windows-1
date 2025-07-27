@@ -40,8 +40,8 @@ interface CodeGenRequest {
 
 interface GeneratedCode {
   code: string;
-  tests?: string;
-  docs?: string;
+  tests?: string | undefined;
+  docs?: string | undefined;
   dependencies: string[];
   metadata: {
     complexity: 'low' | 'medium' | 'high';
@@ -339,7 +339,7 @@ Format as JSON with fields: explanation, breakdown, concepts, improvements
         qualityScore: this.extractQualityScore(response.output),
         securityWarnings: this.extractSecurityWarnings(response.output)
       }
-    };
+    } as GeneratedCode;
   }
 
   private parseAnalysis(response: SimpleAIResponse): CodeAnalysis {
@@ -391,12 +391,12 @@ Format as JSON with fields: explanation, breakdown, concepts, improvements
       })
     ];
 
-    return Array.from(new Set(dependencies.filter(dep => dep && !dep.startsWith('.'))));
+    return Array.from(new Set(dependencies.filter(dep => dep && !dep.startsWith('.')).filter(Boolean))) as string[];
   }
 
   private extractQualityScore(content: string): number {
     const scoreMatch = content.match(/quality[\s\w]*:?\s*(\d+)/i);
-    return scoreMatch ? parseInt(scoreMatch[1]) : 85;
+    return scoreMatch && scoreMatch[1] ? parseInt(scoreMatch[1], 10) : 85;
   }
 
   private extractSecurityWarnings(content: string): string[] {

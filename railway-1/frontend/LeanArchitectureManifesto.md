@@ -486,3 +486,28 @@ Real-time UI ← WebSocket ← AI Analysis ← Schema Engine ← Data Storage
 | **Performance** | Runtime overhead | Zero overhead with caching |
 | **Security** | Scattered permissions | Centralized manifest-based access |
 | **Scalability** | Monolithic architecture | Modular, swappable components |
+
+---
+
+## 🚀 Phase 6.1 Implementation & Upgrade Path
+
+### Strategic Build Restoration (December 2024)
+- **Compromise-first, enhance-later:** Temporarily simplified complex features (TensorFlow.js, manifestor-driven config, advanced logging) to restore build stability.
+- **Permanent Lean improvements:** Modernized Next.js config, security headers, and maintainable codebase.
+- **Runtime safety:** Fallback detection and emergency handling implemented in ComputerVisionEngine.
+- **Upgrade tracking:** All planned feature restorations and enhancements are tracked in [`TODO.upgrade.md`](../TODO.upgrade.md).
+- **Strategic documentation:** BEFORE vs AFTER analysis, change classification, and versioning in [`PHASE6_BUILD_RESTORATION_STRATEGY.md`](../PHASE6_BUILD_RESTORATION_STRATEGY.md).
+- **Versioning:** Tagged `v1.0.0-stable` as the baseline for all future upgrades.
+
+### Lean Architecture Principles in Action
+- **Fix first, optimize later:** Build stability is always the first priority.
+- **Controlled phasing:** All compromises are tracked and reversible, with a clear upgrade path.
+- **No technical debt:** Every temporary downgrade is documented and scheduled for restoration.
+- **Runtime guards:** Fallbacks and monitoring ensure production safety.
+- **Transparent versioning:** Each phase is tagged and documented for auditability.
+
+### Next Steps
+- **Phase 6.2:** Restore advanced features incrementally, always maintaining a working build.
+- **Continuous improvement:** Each upgrade is benchmarked against the v1.0.0-stable baseline.
+
+---

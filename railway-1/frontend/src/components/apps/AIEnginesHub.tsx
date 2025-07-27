@@ -328,11 +328,7 @@ export default function AIEnginesHub({ className, tenantId, userId }: AIEnginesH
         ));
       }
 
-      const result = await mlModelManager.predict({
-        modelId: 'default-model',
-        input,
-        metadata: { source: 'ai-engines-hub' }
-      });
+      const result = await mlModelManager.predict('default-model', input);
 
       setProcessingTasks(prev => prev.map(t =>
         t.id === task.id ? {
@@ -379,11 +375,7 @@ export default function AIEnginesHub({ className, tenantId, userId }: AIEnginesH
         ));
       }
 
-      const result = await nlpEngine.process({
-        task: 'sentiment-analysis',
-        text: input.text || input,
-        language: 'en'
-      });
+      const result = await nlpEngine.analyzeSentiment(input.text || input);
 
       setProcessingTasks(prev => prev.map(t =>
         t.id === task.id ? {

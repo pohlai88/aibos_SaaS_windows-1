@@ -195,21 +195,13 @@ export class SecurityMiddleware {
    */
   rateLimiter() {
     return rateLimit({
-      windowMs: this.config.rateLimit.windowMs,
-      max: this.config.rateLimit.max,
-      message: {
-        success: false,
-        error: {
-          code: 'RATE_LIMIT_EXCEEDED',
-          message: this.config.rateLimit.message,
-          details: {
+      windowMs: this.config.rateLimit.windowMs, max: this.config.rateLimit.max, message: {
+        success: false, error: {
+          code: 'RATE_LIMIT_EXCEEDED', message: this.config.rateLimit.message, details: {
             retryAfter: this.config.rateLimit.windowMs / 1000
           }
         }
-      },
-      standardHeaders: this.config.rateLimit.standardHeaders,
-      legacyHeaders: this.config.rateLimit.legacyHeaders,
-      handler: (req: Request, res: Response) => {
+      }, standardHeaders: this.config.rateLimit.standardHeaders, legacyHeaders: this.config.rateLimit.legacyHeaders, handler: (req: Request, res: Response) => {
         res.status(429).json({
           success: false,
           error: {

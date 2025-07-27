@@ -858,6 +858,7 @@ export const DesktopView: React.FC = () => {
       window.addEventListener('mousemove', handleMouseMove);
       return () => window.removeEventListener('mousemove', handleMouseMove);
     }
+    return undefined;
   }, [mouseX, mouseY]);
 
   // ==================== CONSCIOUSNESS EVOLUTION ====================
@@ -937,6 +938,7 @@ export const DesktopView: React.FC = () => {
       window.addEventListener('keydown', handleKeyDown);
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
+    return undefined;
   }, [workspaces, activeWindow, windows, createWorkspace, switchWorkspace, handleWindowClose, handleWindowMinimize, focusWindow]);
 
   // ==================== PERFORMANCE OPTIMIZATION ====================

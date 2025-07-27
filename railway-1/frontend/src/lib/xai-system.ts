@@ -387,13 +387,19 @@ export class XAISystem {
     // Simulate bias assessment
     const biasScore = Math.random() * 0.2; // Low bias score
 
-    return {
+    const biasAssessment: BiasAssessment = {
       demographicParity: 1 - biasScore,
       equalizedOdds: 1 - biasScore * 0.8,
       individualFairness: 1 - biasScore * 0.6,
-      biasDetected: biasScore > 0.1,
-      biasDescription: biasScore > 0.1 ? 'Minor bias detected in feature selection' : undefined
+      biasDetected: biasScore > 0.1
     };
+
+    // Only add biasDescription if bias is detected
+    if (biasScore > 0.1) {
+      biasAssessment.biasDescription = 'Minor bias detected in feature selection';
+    }
+
+    return biasAssessment;
   }
 
   private async calculateFairnessMetrics(input: any, output: any): Promise<FairnessMetrics> {

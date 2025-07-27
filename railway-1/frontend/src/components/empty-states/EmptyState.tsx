@@ -13,10 +13,10 @@ interface EmptyStateProps {
   action?: {
     label: string;
     onClick: () => void;
-    variant?: 'primary' | 'secondary' | 'outline';
-  };
-  variant?: 'default' | 'error' | 'warning' | 'info';
-  size?: 'sm' | 'md' | 'lg';
+    variant?: 'primary' | 'secondary' | 'outline' | undefined;
+  } | undefined;
+  variant?: 'default' | 'error' | 'warning' | 'info' | undefined;
+  size?: 'sm' | 'md' | 'lg' | undefined;
 }
 
 // ==================== EMPTY STATE COMPONENT ====================

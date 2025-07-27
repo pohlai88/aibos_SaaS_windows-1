@@ -608,13 +608,15 @@ class IoTDeviceManagementSystem {
           optimizationLevel: 0,
           aiOptimized: aiEnhanced
         },
-        quantumPerformance: quantumOptimized ? {
-          quantumState: 'initialized',
-          superposition: 0.5,
-          entanglement: [],
-          quantumAdvantage: false,
-          quantumSpeedup: 1.0
-        } : undefined,
+        ...(quantumOptimized && {
+          quantumPerformance: {
+            quantumState: 'initialized',
+            superposition: 0.5,
+            entanglement: [],
+            quantumAdvantage: false,
+            quantumSpeedup: 1.0
+          }
+        }),
         metrics: {
           dataPoints: 0,
           transmissions: 0,
@@ -696,7 +698,9 @@ class IoTDeviceManagementSystem {
         source: device.name,
         processing: [],
         aiInsights: aiProcessed ? await this.generateAIInsights(value, type) : [],
-        quantumAnalysis: quantumProcessed ? await this.generateQuantumAnalysis(value, type) : undefined
+        ...(quantumProcessed && {
+          quantumAnalysis: await this.generateQuantumAnalysis(value, type)
+        })
       },
       aiProcessed,
       quantumProcessed
@@ -786,13 +790,15 @@ class IoTDeviceManagementSystem {
           optimizationLevel: 0,
           aiOptimized
         },
-        quantumPerformance: quantumOptimized ? {
-          quantumState: 'initialized',
-          superposition: 0.5,
-          entanglement: [],
-          quantumAdvantage: false,
-          quantumSpeedup: 1.0
-        } : undefined,
+        ...(quantumOptimized && {
+          quantumPerformance: {
+            quantumState: 'initialized',
+            superposition: 0.5,
+            entanglement: [],
+            quantumAdvantage: false,
+            quantumSpeedup: 1.0
+          }
+        }),
         metrics: {
           dataTransmission: 0,
           errors: 0,

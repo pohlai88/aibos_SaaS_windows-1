@@ -3,7 +3,7 @@
  * Manifest-driven accessibility enhancement system
  */
 
-import { ManifestorEngine } from '../manifestor';
+import { Manifestor } from '../manifestor';
 
 // ==================== ACCESSIBILITY TYPES ====================
 
@@ -74,14 +74,14 @@ export interface MotionConfig {
 
 export class ManifestorAccessibility {
   private static instance: ManifestorAccessibility;
-  private manifestor: ManifestorEngine;
+  private manifestor: typeof Manifestor;
   private focusManager: FocusManager;
   private ariaManager: ARIAManager;
   private keyboardManager: KeyboardManager;
   private screenReaderManager: ScreenReaderManager;
 
   private constructor() {
-    this.manifestor = ManifestorEngine.getInstance();
+    this.manifestor = Manifestor;
     this.focusManager = new FocusManager();
     this.ariaManager = new ARIAManager();
     this.keyboardManager = new KeyboardManager();
@@ -337,7 +337,10 @@ export class FocusManager {
 
     // Focus first element
     if (focusableElements.length > 0) {
-      focusableElements[0].focus();
+      const firstElement = focusableElements[0];
+      if (firstElement) {
+        firstElement.focus();
+      }
     }
   }
 
@@ -347,7 +350,7 @@ export class FocusManager {
 
   restoreFocus(): void {
     if (this.focusHistory.length > 0) {
-      const lastFocused = this.focusHistory.pop();
+      const lastFocused = this.focusHistory.pop()!;
       if (lastFocused && document.contains(lastFocused)) {
         lastFocused.focus();
       }
@@ -507,7 +510,10 @@ export class KeyboardManager {
     const currentIndex = focusableElements.indexOf(currentElement);
 
     if (currentIndex < focusableElements.length - 1) {
-      focusableElements[currentIndex + 1].focus();
+      const nextElement = focusableElements[currentIndex + 1];
+      if (nextElement) {
+        nextElement.focus();
+      }
     }
   }
 
@@ -517,7 +523,10 @@ export class KeyboardManager {
     const currentIndex = focusableElements.indexOf(currentElement);
 
     if (currentIndex > 0) {
-      focusableElements[currentIndex - 1].focus();
+      const prevElement = focusableElements[currentIndex - 1];
+      if (prevElement) {
+        prevElement.focus();
+      }
     }
   }
 
@@ -685,7 +694,8 @@ export class AccessibilityUtils {
     const currentIndex = focusableElements.indexOf(currentElement);
 
     if (currentIndex < focusableElements.length - 1) {
-      return focusableElements[currentIndex + 1];
+      const nextElement = focusableElements[currentIndex + 1];
+      return nextElement || null;
     }
 
     return null;
@@ -699,7 +709,8 @@ export class AccessibilityUtils {
     const currentIndex = focusableElements.indexOf(currentElement);
 
     if (currentIndex > 0) {
-      return focusableElements[currentIndex - 1];
+      const prevElement = focusableElements[currentIndex - 1];
+      return prevElement || null;
     }
 
     return null;
